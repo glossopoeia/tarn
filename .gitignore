@@ -1,0 +1,11 @@
+# OS and editor artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Local scratch — never commit working notes
+*.local.md
+scratch/

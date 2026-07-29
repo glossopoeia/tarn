@@ -1,0 +1,20 @@
+TARN specification repository
+Copyright (c) 2026 Rob Kleffner and contributors
+
+This repository contains material under three licenses:
+
+  - Specification text and documentation (docs/, PLAN.md, OPEN-QUESTIONS.md,
+    README.md, CONTRIBUTING.md, AGENTS.md, other repository documentation
+    files, and, when present, spec/):
+    Creative Commons Attribution 4.0 International (see LICENSE-SPEC)
+
+  - Schemas, tooling, and conformance-test harness code (when present):
+    Apache License, Version 2.0 (see LICENSE)
+
+  - Binary conformance-vector files (when present, conformance/vectors/):
+    intended for release under CC0 1.0 Universal, so they can be embedded
+    in third-party test suites without attribution overhead
+    (see docs/decisions/0016-licensing.md)
+
+Attribution for the specification text: "TARN format specification,
+https://github.com/glossopoeia/tarn".
