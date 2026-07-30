@@ -18,7 +18,9 @@ questions plus those Confirm items that need real analysis.
 
 ## A. Container placement and discovery
 
-### Q-A1. Where does the consolidated metadata directory live? [blocking]
+### Q-A1. Where does the consolidated metadata directory live? [Resolved → ADR-0018]
+**Resolution:** hybrid — 16-byte constant, pointer-free front signature
+block plus the authoritative 64-byte trailer at EOF, directory adjacent.
 - **Why:** The O(1) round-trip requirement is fixed (ADR-0006); placement is
   not. A front directory gives the best cold read but forces in-place
   rewrites on every append; a tail directory supports cheap append but makes
@@ -35,7 +37,9 @@ questions plus those Confirm items that need real analysis.
   requests and rewritten bytes. Leaning: (c), if the front block stays ≤ 16
   bytes.
 
-### Q-A2. What is the mutability and consistency contract? [shaping]
+### Q-A2. What is the mutability and consistency contract? [Resolved → ADR-0017]
+**Resolution:** append-only with atomic trailer swap (committed-prefix
+immutability); read-only is the degenerate single-generation case.
 - **Why:** This is the highest-leverage open decision: it shapes the trailer,
   directory, integrity story, byte-coverage rule, and privacy section.
   In-place pointer patching inherently has torn-write windows — a crash
@@ -56,7 +60,10 @@ questions plus those Confirm items that need real analysis.
   amend metadata, compact) and check which ones actual workflows need.
   Leaning: (b), with the torn-append recovery rule written in the same ADR.
 
-### Q-A3. Is there a normative byte budget for the discovery fetch? [blocking]
+### Q-A3. Is there a normative byte budget for the discovery fetch? [Resolved → ADR-0019]
+**Resolution:** two-request baseline is normative (trailer, then
+exact-range directory); 64 KiB is the writer-SHOULD window that makes the
+single-fetch optimization succeed.
 - **Why:** PMTiles' "root directory MUST fit in the first 16,384 bytes"
   converts "O(1) round trips" from aspiration into a testable conformance
   property — but cost writers repeated attempts to satisfy it. Whether the
@@ -73,7 +80,10 @@ questions plus those Confirm items that need real analysis.
   a 10⁶-tile case). Pick the strongest budget a one-pass writer can always
   satisfy.
 
-### Q-A4. What indirection depth does the spec guarantee? [blocking]
+### Q-A4. What indirection depth does the spec guarantee? [Resolved → ADR-0019]
+**Resolution:** serial depth — complete metadata ≤ 3 requests, first tile
+≤ 4 (≤ 1 / ≤ 2 with the suffix optimization on typical files); per-layer
+index fetches parallelize.
 - **Why:** An unbounded metadata hierarchy silently destroys the O(1) claim;
   PMTiles normatively bounds leaf-directory depth for exactly this reason.
 - **Options:** (a) Everything inline in the directory — one request, but
@@ -106,7 +116,10 @@ questions plus those Confirm items that need real analysis.
   usage sketch showing which invariant consumers actually need. Leaning:
   (a), revisiting (b) only if index size forces it.
 
-### Q-B2. Which linearization order is normative? [blocking]
+### Q-B2. Which linearization order is normative? [Resolved → ADR-0020]
+**Resolution:** row-major (last-declared dimension fastest) via a u16 enum
+whose only emittable v1 value is 1; Morton/Hilbert IDs reserved without
+semantics; in-tile order row-major permanently.
 - **Why:** Slabs ("consecutive in linearization order"), index entry order,
   delta-encoded offsets, and range coalescing are all defined against one
   order — it cannot be implementation-defined. The two candidates are

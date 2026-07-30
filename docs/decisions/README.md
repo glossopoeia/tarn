@@ -21,7 +21,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0003](0003-spec-conventions-and-conformance.md) | Normative conventions and conformance classes | Accepted |
 | [0004](0004-tile-checksums-in-index.md) | Per-tile checksums live in the tile index and cover stored bytes | Accepted (Confirm: coverage domain — Q-C2) |
 | [0005](0005-optional-tile-alignment.md) | Optional per-layer tile alignment as a checkable invariant | Accepted (Confirm: values) |
-| [0006](0006-consolidated-metadata-directory.md) | Consolidated metadata directory, O(1) round trips | Accepted (requirement); Proposed (placement) |
+| [0006](0006-consolidated-metadata-directory.md) | Consolidated metadata directory, O(1) round trips | Accepted (placement resolved by ADR-0018) |
 | [0007](0007-64-bit-offsets-only.md) | All offsets, lengths, and extents are u64 | Accepted |
 | [0008](0008-checksum-all-metadata.md) | Every metadata structure checksummed; verification is a reader obligation | Accepted (Confirm: algorithm) |
 | [0009](0009-codec-menu.md) | Closed codec menu plus byte-shuffle filter | Accepted (Confirm: internal metadata codec) |
@@ -32,6 +32,10 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0014](0014-little-endian-only.md) | Little-endian only | Accepted |
 | [0015](0015-structured-user-metadata.md) | Structured, quarantined user metadata | Proposed |
 | [0016](0016-licensing.md) | Licensing: CC BY 4.0 / Apache-2.0 / CC0 split | Accepted (Confirm: CC0 vectors) |
+| [0017](0017-append-only-mutability.md) | Mutability: append-only with atomic trailer swap | Accepted (resolves Q-A2) |
+| [0018](0018-hybrid-discovery-anchoring.md) | Discovery anchoring: constant front block + 64-B trailer | Accepted (resolves Q-A1) |
+| [0019](0019-remote-open-model.md) | Remote open: two-request baseline, suffix optimization | Accepted (resolves Q-A3/Q-A4) |
+| [0020](0020-linearization-order.md) | Linearization: row-major via reserved enum | Accepted (resolves Q-B2) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).
