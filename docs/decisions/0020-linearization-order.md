@@ -3,7 +3,7 @@
 - Status: Accepted (resolves Q-B2)
 - Date: 2026-07-29
 - Covers: sample/tile/index linearization; future ordering extensions
-- Confirm: none (planar composition formula finalizes with Q-B3)
+- Confirm: none — planar composition formula finalized by ADR-0021
 
 ## Context
 

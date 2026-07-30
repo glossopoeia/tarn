@@ -19,15 +19,15 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions as in-repo ADRs | Accepted |
 | [0002](0002-vocabulary-and-identification.md) | Core vocabulary and file identification | Accepted (Confirm: signature form — Q-G4) |
 | [0003](0003-spec-conventions-and-conformance.md) | Normative conventions and conformance classes | Accepted |
-| [0004](0004-tile-checksums-in-index.md) | Per-tile checksums live in the tile index and cover stored bytes | Accepted (Confirm: coverage domain — Q-C2) |
+| [0004](0004-tile-checksums-in-index.md) | Per-tile checksums live in the tile index and cover stored bytes | Accepted (coverage ratified by ADR-0023) |
 | [0005](0005-optional-tile-alignment.md) | Optional per-layer tile alignment as a checkable invariant | Accepted (Confirm: values) |
 | [0006](0006-consolidated-metadata-directory.md) | Consolidated metadata directory, O(1) round trips | Accepted (placement resolved by ADR-0018) |
 | [0007](0007-64-bit-offsets-only.md) | All offsets, lengths, and extents are u64 | Accepted |
-| [0008](0008-checksum-all-metadata.md) | Every metadata structure checksummed; verification is a reader obligation | Accepted (Confirm: algorithm) |
+| [0008](0008-checksum-all-metadata.md) | Every metadata structure checksummed; verification is a reader obligation | Accepted (algorithm fixed by ADR-0023; index granularity amended by ADR-0024) |
 | [0009](0009-codec-menu.md) | Closed codec menu plus byte-shuffle filter | Accepted (Confirm: internal metadata codec) |
-| [0010](0010-fill-values-and-sparse-tiles.md) | Mandatory per-channel fill; unstored tiles read as fill | Accepted (Confirm: sentinel encoding, boolean fill) |
+| [0010](0010-fill-values-and-sparse-tiles.md) | Mandatory per-channel fill; unstored tiles read as fill | Accepted (sentinel fixed by ADR-0024; Confirm: boolean fill — Q-D3) |
 | [0011](0011-uniform-tiles-padded-edges.md) | Uniform tile sizes with padded edge tiles | Accepted (Confirm: padding content) |
-| [0012](0012-channel-layouts.md) | Interleaved and planar layouts with a full validity table | Accepted (Confirm: planar order, bool packing) |
+| [0012](0012-channel-layouts.md) | Interleaved and planar layouts with a full validity table | Accepted (planar order fixed by ADR-0021; Confirm: bool packing — Q-D6) |
 | [0013](0013-sample-type-list.md) | Closed sample-type list with zero optional members | Accepted (Confirm: fp8/opaque reservations) |
 | [0014](0014-little-endian-only.md) | Little-endian only | Accepted |
 | [0015](0015-structured-user-metadata.md) | Structured, quarantined user metadata | Proposed |
@@ -36,6 +36,12 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0018](0018-hybrid-discovery-anchoring.md) | Discovery anchoring: constant front block + 64-B trailer | Accepted (resolves Q-A1) |
 | [0019](0019-remote-open-model.md) | Remote open: two-request baseline, suffix optimization | Accepted (resolves Q-A3/Q-A4) |
 | [0020](0020-linearization-order.md) | Linearization: row-major via reserved enum | Accepted (resolves Q-B2) |
+| [0021](0021-planar-channel-major.md) | Planar tile ordering: channel-major | Accepted (resolves Q-B3) |
+| [0022](0022-slab-declaration.md) | Slab: declared layout guarantee, uniform S | Accepted (resolves Q-B1) |
+| [0023](0023-checksum-algorithm-and-domain.md) | CRC-32C everywhere; stored-bytes domain ratified | Accepted (resolves Q-C1/Q-C2) |
+| [0024](0024-segmented-index-and-sentinel.md) | Segmented raw index, all-ones sentinel, exactly-once extents | Accepted (resolves Q-E3/Q-D4/Q-B4) |
+| [0025](0025-format-versioning.md) | Format versioning: trailer major/minor, forever clause | Accepted (resolves Q-G1) |
+| [0026](0026-record-framing-and-flags.md) | Record framing: 24-B header, MU/PE flags | Accepted (resolves Q-G2) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

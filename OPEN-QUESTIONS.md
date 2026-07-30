@@ -96,7 +96,9 @@ index fetches parallelize.
 
 ## B. Slabs and physical layout
 
-### Q-B1. What exactly is a slab? [blocking]
+### Q-B1. What exactly is a slab? [Resolved → ADR-0022]
+**Resolution:** layout guarantee only — per-layer (S, A_slab) declaration in
+the core layer record; index stays per-tile.
 - **Why:** "Aligned, contiguous run of tiles treated as one I/O unit" admits
   at least two designs with very different spec surface. Zarr's
   sharding-indexed codec is the closest ancestor (a shard is a chunk of
@@ -134,7 +136,8 @@ semantics; in-tile order row-major permanently.
   and GPU tensor runtimes, (b) — or (c) defaulting to (b). The ADR carries a
   worked coordinates → tile-ordinal → byte-offset table either way.
 
-### Q-B3. Planar mode: how are per-channel tiles ordered on disk? [blocking]
+### Q-B3. Planar mode: how are per-channel tiles ordered on disk? [Resolved → ADR-0021]
+**Resolution:** channel-major — ord(c, s) = c·N + s.
 - **Why:** ADR-0012 fixes planar tile order normatively but leaves the choice
   open. Slab semantics must state which grouping contiguity preserves.
 - **Options:** (a) Channel-major (all spatial tiles of channel 0, then
@@ -147,7 +150,9 @@ semantics; in-tile order row-major permanently.
   vs all-channel window) in target workloads. Leaning: (a) channel-major —
   planar exists to serve channel-wise access.
 
-### Q-B4. Are shared/deduplicated tile extents ever permitted? [shaping]
+### Q-B4. Are shared/deduplicated tile extents ever permitted? [Resolved → ADR-0024]
+**Resolution:** no — every stored and metadata extent referenced exactly
+once; intra-layer overlap → reject-layer, cross-layer/metadata → reject-file.
 - **Why:** Two index entries pointing at one payload extent break alignment
   arithmetic, byte-coverage accounting, and verifier simplicity (aliasing is
   also an attack surface). PMTiles uses offset-reuse dedup deliberately —
@@ -178,7 +183,8 @@ semantics; in-tile order row-major permanently.
 
 ## C. Integrity
 
-### Q-C1. Which checksum algorithm? [blocking]
+### Q-C1. Which checksum algorithm? [Resolved → ADR-0023]
+**Resolution:** CRC-32C (RFC 3720 parameters) everywhere, LE u32.
 - **Why:** ADR-0008 recommends one algorithm everywhere; the Confirm is
   which. CRC-32C has hardware support (SSE4.2/ARMv8), 4-byte entries, and
   Zarr precedent; xxHash3-64 is faster in software with 64-bit strength but
@@ -191,7 +197,9 @@ semantics; in-tile order row-major permanently.
   commodity hardware; stdlib/tiny-dep availability across C, Go, JS,
   Python, and Rust. Leaning: (a).
 
-### Q-C2. Do tile checksums cover stored (wire) bytes or decoded bytes? [blocking]
+### Q-C2. Do tile checksums cover stored (wire) bytes or decoded bytes? [Resolved → ADR-0023]
+**Resolution:** stored bytes, verified before decompression; decoded-hash
+ancillary record type reserved.
 - **Why:** ADR-0004 decides *stored bytes* and flags the choice for
   ratification here, because it is a real tradeoff: wire-byte checksums give
   verify-before-decompress, exact-fetch validation, and bomb defense, but do
@@ -269,7 +277,9 @@ semantics; in-tile order row-major permanently.
   recorded in the same ADR that settles ADR-0012's boolean-packing Confirm
   item, with a paired test vector.
 
-### Q-D4. Unstored-tile sentinel encoding. [blocking]
+### Q-D4. Unstored-tile sentinel encoding. [Resolved → ADR-0024]
+**Resolution:** all-ones offset and length, CRC field 0, with the full
+invalid-combination table.
 - **Why:** ADR-0010 requires a sentinel; the Confirm is its bit pattern.
   Precedent (Zarr sharding) uses all-ones offset+length but leaves every
   other malformed combination undefined — the gap TARN closes.
@@ -346,7 +356,9 @@ semantics; in-tile order row-major permanently.
   writer-MUST-NOT / reader-MUST-reject cell in the filter column of
   ADR-0012's validity table.
 
-### Q-E3. Tile-index encoding: raw fixed-size vs columnar-compressed. [blocking]
+### Q-E3. Tile-index encoding: raw fixed-size vs columnar-compressed. [Resolved → ADR-0024]
+**Resolution:** raw 20 B entries + per-2¹⁶-entry segment CRC array;
+columnar reserved via the index-encoding enum.
 - **Why:** The single largest afternoon-readability vs efficiency tradeoff
   in the format. Raw fixed-size entries are mmap-able, random-access, and
   trivially specified but large (tens of MB at 10⁶ tiles); PMTiles-style
@@ -413,7 +425,9 @@ semantics; in-tile order row-major permanently.
 
 ## G. Extensibility, versioning, identity
 
-### Q-G1. Version mechanism. [shaping]
+### Q-G1. Version mechanism. [Resolved → ADR-0025]
+**Resolution:** trailer major/minor with additive-only minors, incompat/
+ignore flag lanes, and the cross-major forever clause.
 - **Why:** Version fields and capability flags solve different problems.
   PNG evolved for 30 years with no version field at all — per-chunk
   criticality bits carried everything — while formats with version fields
@@ -431,7 +445,9 @@ semantics; in-tile order row-major permanently.
   ("an old reader sees X"), plus the companion rule: known fixed structures
   never grow — a size mismatch is a validity error, not a newer version.
 
-### Q-G2. Must-understand / preserve-on-edit flag design. [blocking]
+### Q-G2. Must-understand / preserve-on-edit flag design. [Resolved → ADR-0026]
+**Resolution:** 24-byte record header with MU/PE bits, extent slot,
+no-embedded-offsets rule, and per-class semantics table.
 - **Why:** The single most load-bearing forward-compat mechanism. PNG's
   property bits are proven but its case-encoding trick misled implementers
   into locale-dependent case tests; the refinement worth adding is a banned

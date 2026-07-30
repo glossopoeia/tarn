@@ -3,8 +3,8 @@
 - Status: Accepted
 - Date: 2026-07-29
 - Covers: metadata integrity; verifier contract; checksum algorithm
-- Confirm: CRC-32C (Castagnoli) is the recommended single algorithm — confirm
-  vs a 64-bit fast hash (see OPEN-QUESTIONS Q-C1).
+- Confirm: none — CRC-32C fixed by ADR-0023; the tile index's whole-
+  structure CRC is amended to segment granularity by ADR-0024.
 
 ## Context
 

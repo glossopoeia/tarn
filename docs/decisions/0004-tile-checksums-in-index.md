@@ -3,9 +3,8 @@
 - Status: Accepted
 - Date: 2026-07-29
 - Covers: tile integrity; payload framing
-- Confirm: none for placement; the checksum algorithm itself is ADR-0008's
-  Confirm item, and stored-vs-decoded coverage is deliberately restated in
-  OPEN-QUESTIONS Q-C2 for maintainer ratification.
+- Confirm: none — algorithm and stored-bytes coverage ratified by
+  ADR-0023; index integrity granularity amended by ADR-0024.
 
 ## Context
 

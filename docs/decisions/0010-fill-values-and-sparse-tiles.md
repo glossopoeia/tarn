@@ -3,8 +3,8 @@
 - Status: Accepted
 - Date: 2026-07-29
 - Covers: fill/nodata semantics; sparse tiles; index sentinel
-- Confirm: sentinel bit pattern (all-ones offset+length vs zero/zero — see
-  OPEN-QUESTIONS Q-D4) and packed-boolean fill mechanics (Q-D3).
+- Confirm: sentinel fixed by ADR-0024 (all-ones offset+length, CRC 0);
+  packed-boolean fill mechanics remain open (Q-D3).
 
 ## Context
 

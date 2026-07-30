@@ -3,11 +3,8 @@
 - Status: Accepted
 - Date: 2026-07-29
 - Covers: channel layout; cross-field validity; boolean representation
-- Confirm: (a) planar disk-tile ordering — channel-major (recommended: a
-  whole channel's tiles form one contiguous, slab-friendly run) vs
-  spatial-major; (b) boolean representation — bit-packed LSB-first uniformly
-  in both layouts (recommended) vs one byte per boolean (see OPEN-QUESTIONS
-  Q-B3, Q-D6).
+- Confirm: planar disk-tile ordering fixed by ADR-0021 (channel-major);
+  boolean representation remains open (Q-D6).
 
 ## Context
 
