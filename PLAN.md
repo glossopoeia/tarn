@@ -71,7 +71,7 @@ a cleanroom round (§6):
 | # | Batch | Contents |
 |---|-------|----------|
 | 1 | Conventions & conformance skeleton | BCP 14 boilerplate, normative/non-normative demarcation, conformance classes (file / reader / writer / updater), actor-naming house rules, requirement IDs |
-| 2 | Data model | Layers, dimensions, channels, tiles, fill, linearization; the *reference array* defined as the conformance target |
+| 2 | Data model | Layers, dimensions, tiles, linearization, the noun set (channels and fill introduced as vocabulary, specified in Batch 5); the *reference array* defined as the conformance target |
 | 3 | Container | Signature, discovery structure, directory, byte-coverage rule, mutability/consistency contract |
 | 4 | Tile index and slabs | Entry layout, sentinels, alignment invariants, exhaustive invalid-state enumeration |
 | — | **Cleanroom round 1** | Container + index text only |
@@ -82,9 +82,9 @@ a cleanroom round (§6):
 | 8 | Reading a TARN file | The normative numbered read algorithm, including fill and checksum-failure paths |
 | 9 | Writing and updating | Writer tiers, updater obligations, append procedure |
 | 10 | Error-handling register | The consolidated violation × outcome table |
-| 11 | Security and privacy considerations | Named threat classes; deletion ≠ erasure; compaction |
-| 12 | Extensibility and registries | Flags, ID spaces, version semantics, the enumerated extension surface |
-| 13 | Conformance checklists, vectors, appendices | Per-class checklists; annotated hex dump of a minimal file; constants table |
+| 11 | Security and privacy considerations | Named threat classes; deletion ≠ erasure; compaction; the limits table (Q-H1) |
+| 12 | Extensibility and registries; user metadata | Flags, ID spaces, version semantics, the enumerated extension surface; the user-metadata document (ADR-0015, Q-F1/F3) |
+| 13 | Conformance checklists, vectors, appendices | Per-class checklists; annotated hex dump of a minimal file; constants table; normative references |
 | — | **Cleanroom round 3 (acceptance)** | Full spec; G1–G3 evaluated as pass/fail |
 
 Cross-cutting obligation: the undefined-behavior worklist below is tracked as

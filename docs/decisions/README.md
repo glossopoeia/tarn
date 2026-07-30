@@ -42,6 +42,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0024](0024-segmented-index-and-sentinel.md) | Segmented raw index, all-ones sentinel, exactly-once extents | Accepted (resolves Q-E3/Q-D4/Q-B4) |
 | [0025](0025-format-versioning.md) | Format versioning: trailer major/minor, forever clause | Accepted (resolves Q-G1) |
 | [0026](0026-record-framing-and-flags.md) | Record framing: 24-B header, MU/PE flags | Accepted (resolves Q-G2) |
+| [0027](0027-name-and-string-rules.md) | Name and string rules | Accepted (resolves Q-F2) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

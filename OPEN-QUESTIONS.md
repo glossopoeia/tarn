@@ -398,7 +398,10 @@ columnar reserved via the index-encoding enum.
   target workloads (multi-resolution pyramids suggest yes). Leaning: (a)
   with (e).
 
-### Q-F2. Name rules. [blocking]
+### Q-F2. Name rules. [Resolved → ADR-0027]
+**Resolution:** length-prefixed UTF-8 MUST; names non-empty, ≤ 255 bytes,
+no U+0000–U+001F; raw-byte comparison with SHOULD-NFC advisory; uniqueness
+per scope MUST. Encoded as spec §4.6.
 - **Why:** Names (layers, dimensions, channels, metadata keys) are lookup
   keys in a binary format; duplicate names are pure ambiguity, and
   unvalidated strings are a parser hazard and a terminal-escape hazard.
