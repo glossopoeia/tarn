@@ -43,6 +43,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0025](0025-format-versioning.md) | Format versioning: trailer major/minor, forever clause | Accepted (resolves Q-G1) |
 | [0026](0026-record-framing-and-flags.md) | Record framing: 24-B header, MU/PE flags | Accepted (resolves Q-G2) |
 | [0027](0027-name-and-string-rules.md) | Name and string rules | Accepted (resolves Q-F2) |
+| [0028](0028-degenerate-geometry.md) | Degenerate geometry: zero extents valid, everything else bounded | Accepted |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

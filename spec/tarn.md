@@ -56,14 +56,15 @@ requirement leaves its identifier permanently retired, and numbers above
 99 extend naturally (`[R-ENC-100]`) without renumbering. Identifier order
 carries no meaning.
 
-Prefixes: `CNF` (conformance), `ENC` (encoding), `CNT` (container
-structures), `LIF` (lifecycle and consistency), `EXT` (extension points
-and registry), `IDX` (tile index), `SLB` (slabs and alignment), `TYP`
-(types and fill), `SER` (tile serialization), `COD` (codecs and filters),
-`MTA` (user metadata), `RDR` (reading), `WRT` (writing and updating),
-`ERR` (error register), `SEC` (security), `PRV` (privacy). New prefixes
-are added by ADR when a section needs one; existing prefixes are never
-reassigned.
+Prefixes: `CNF` (conformance), `MDL` (terminology and data model), `ENC`
+(encoding), `CNT` (container structures), `LIF` (lifecycle and
+consistency), `EXT` (extension points and registry), `GEO` (layers,
+dimensions, and tiling), `IDX` (tile index), `SLB` (slabs and
+alignment), `TYP` (types and fill), `SER` (tile serialization), `COD`
+(codecs and filters), `MTA` (user metadata), `RDR` (reading), `WRT`
+(writing and updating), `ERR` (error register), `SEC` (security), `PRV`
+(privacy). New prefixes are added by ADR when a section needs one;
+existing prefixes are never reassigned.
 
 #### 2.3 Conformance classes
 
@@ -137,8 +138,84 @@ table is drafted with Batch 11, per Q-H1.)*
 
 ### 3. Terminology and Data Model
 
-*[Reserved — Batch 2: noun set per ADR-0002, including addressed vs
-stored tiles; the reference array as conformance target.]*
+#### 3.1 Terms
+
+The following terms are used throughout this specification with exactly
+these meanings.
+
+- **file** — a single TARN artifact: a byte sequence satisfying this
+  specification's file-level requirements.
+- **layer** — a named N-dimensional array within a file. All layers of a
+  file are equally first-class.
+- **dimension** — one axis of a layer's grid, having a name (§4.6), an
+  **extent** (the number of sample positions along the axis), and a
+  **tile extent** (the number of sample positions per tile along the
+  axis). Dimensions are declared in order; the declared order is
+  load-bearing (§11.4).
+- **rank** — a layer's number of dimensions, written *d*.
+- **channel** — a named, typed per-sample value of a layer (§12).
+  Channels are declared in order; a channel's **index** is its 0-based
+  position in that order, and the order is load-bearing (§11.4, §14).
+- **channel layout** — whether a layer's channels are stored together
+  within each tile (*interleaved*) or each channel is tiled separately
+  (*planar*); the two-value enum is specified in §14.
+- **sample** — the tuple of one value per channel at one coordinate.
+- **coordinate** — a *d*-tuple (x₀, …, x_{d−1}), in declared dimension
+  order, with 0 ≤ xᵢ < Eᵢ, identifying one sample position of a layer
+  with extents (E₀, …, E_{d−1}).
+- **tile** — the unit a tile-index entry addresses: in an interleaved
+  layer, one cell of the tiling grid carrying all channels; in a planar
+  layer, one cell of the grid for one channel. Every tile of a layer has
+  the same logical shape, a block of ∏ Tᵢ sample positions (§11.3).
+- **addressed tile / stored tile** — every tile of a layer is
+  *addressed*. A tile is additionally *stored* if and only if its
+  tile-index entry in the live generation is not the sentinel (§15);
+  superseded payload bytes from earlier generations do not make a tile
+  stored. An addressed tile that is not stored reads as fill (§13).
+- **fill value** — the per-channel value that a channel's samples take
+  wherever the tile carrying that channel is not stored (§13).
+- **slab** — a declared run of consecutive stored tiles kept physically
+  contiguous as one I/O unit (§16).
+- **tile index** — the per-layer table locating and checksumming stored
+  tiles (§15).
+- **directory** — the consolidated metadata structure describing every
+  layer and carrying all records (§7).
+- **trailer** — the fixed-size structure occupying the final 64 bytes of
+  a file, anchoring discovery and commits (§6).
+- **front signature block** — the constant 16 bytes at offset 0 (§6).
+- **generation** — the commit counter distinguishing successive
+  committed states of a file (§9).
+- **user metadata** — the structured document carrying non-structural,
+  application-level information (§18).
+
+#### 3.2 The reference array
+
+Each layer of a conforming file denotes exactly one **reference array**:
+the *d*-dimensional array with the layer's extents whose element at each
+coordinate is the sample at that coordinate, determined per channel. If
+the tile carrying that channel at that coordinate is stored, the
+channel's value is the one decoded from that tile under Part II's rules;
+otherwise it is that channel's fill value (§13). In an interleaved layer
+one tile carries every channel, so a coordinate's channel values are
+stored or fill together; in a planar layer each channel's storedness is
+independent, and a single sample can mix decoded and fill values.
+Sample positions that exist only as edge-tile padding (§11.3) have
+coordinates outside the layer's extents and are not part of the
+reference array. `[R-MDL-01]`
+
+The reference array is this specification's conformance target: a
+conforming reader that reads any portion of a layer MUST return exactly
+the corresponding portion of the reference array, bit-for-bit — sample
+values are bit patterns, and decoding MUST NOT alter them (floating-
+point payloads included; type semantics are §12's subject). `[R-MDL-02]`
+
+#### 3.3 Container and array model
+
+> **Note.** Part I (container) is independent of Part II (array model)
+> by construction: no Part I structure requires decoding sample
+> payloads, so verifiers, appenders, and compactors operate on files
+> whose layers they cannot decode — that independence is load-bearing
+> for the updater rules of §7 and §20.
 
 ### 4. Encoding Conventions
 
@@ -166,11 +243,12 @@ as a validity error at the owning scope. `[R-ENC-03]`
 > without unsigned arithmetic gymnastics.
 
 A reader — including any updater or verifier, which are readers of the
-files they process — MUST treat any computation over integers obtained
-from a file (sums of offsets and lengths, products of extents, index
-computations) whose mathematical result would exceed 2⁶³ − 1 as a
-validity error at the owning scope, and MUST NOT act on a wrapped or
-truncated result. `[R-ENC-04]` A reader MUST NOT allocate, seek, or
+files they process — MUST treat any quantity this specification defines
+as a sum or product of integers obtained from a file (offsets plus
+lengths, grid counts, tile counts, sample-position counts, ordinals)
+whose mathematical value would exceed 2⁶³ − 1 as a validity error at
+the owning scope, and MUST NOT act on a wrapped or truncated value.
+`[R-ENC-04]` A reader MUST NOT allocate, seek, or
 issue I/O based on any integer obtained from a file before the checksum
 covering it has been verified (§4.5, §8). `[R-ENC-05]`
 
@@ -320,8 +398,107 @@ experimental ranges per ADR-0025/0026/Q-G3.]*
 
 ### 11. Layers, Dimensions, and Tiling
 
-*[Reserved — Batch 2: grid math, uniform tiles, linearization per
-ADR-0011/0020.]*
+#### 11.1 Geometry and its validity floor
+
+The owning scope (§2.4) of a layer's geometry and linearization fields
+is the layer.
+
+A layer has rank d ≥ 1; each of its d dimensions has a name (§4.6), an
+extent Eᵢ ≥ 0, and a tile extent Tᵢ ≥ 1; and the layer has at least one
+channel. A tile extent MAY exceed its dimension's extent (the grid is
+then a single padded tile along that axis). Writers MUST NOT emit a
+layer with rank 0, any tile extent 0, or channel count 0; a reader MUST
+treat any of these as a validity error at layer scope. `[R-GEO-01]`
+
+A dimension with extent 0 is valid: its grid count is 0, the layer has
+zero addressed tiles, its tile index has zero entries, and its reference
+array is empty. Readers MUST accept such a layer, and a read of any
+region of it returns no samples. `[R-GEO-02]`
+
+> **Rationale.** Empty layers serve schema-first workflows: declare
+> layers at creation, grow extents as data arrives — extent growth is a
+> metadata-only operation under this specification's commit model.
+
+#### 11.2 Grid arithmetic
+
+For each dimension, the **grid count** Gᵢ is the ceiling division
+⌈Eᵢ / Tᵢ⌉, equal to Eᵢ/Tᵢ plus 1 if Eᵢ mod Tᵢ ≠ 0 (integer division).
+The layer's **spatial-tile count** is N = ∏ Gᵢ, and its
+**sample-position count per tile** is P = ∏ Tᵢ. The layer's
+**addressed-tile count** — the number of its tile-index entries (§15) —
+is N for an interleaved layer and C · N for a planar layer, where C is
+the channel count. These products, like all geometry arithmetic, are
+subject to `[R-ENC-04]`: a reader MUST treat a product exceeding
+2⁶³ − 1 as a validity error at layer scope. `[R-GEO-03]`
+
+> **Note.** The stated form of the ceiling division avoids the idiom
+> (Eᵢ + Tᵢ − 1)/Tᵢ, whose intermediate sum can exceed 2⁶³ − 1 — the
+> declared valid domain (§4.2) and the range of signed 64-bit
+> integers — for large extents, even though it fits an unsigned 64-bit
+> integer.
+
+> **Example.** A layer declared (y, x) with extents (1024, 2048) and
+> tile extents (256, 256): G = (4, 8), N = 32 spatial tiles,
+> P = 65,536 sample positions per tile. With extents (1000, 2048)
+> instead, G_y = ⌈1000/256⌉ = 4 still — the last row of tiles is
+> padded (§11.3).
+
+#### 11.3 Uniform tiles and edge padding
+
+Every tile of a layer has the same logical shape (T₀, …, T_{d−1}).
+Where Gᵢ · Tᵢ > Eᵢ, the tiles at the high edge of dimension i contain
+**padding positions** — sample positions whose coordinate along that
+axis would be ≥ Eᵢ. Padding positions are serialized like any other
+position (byte-level rules and padding content: §14) but are not part
+of the reference array (§3.2); a reader MUST NOT return padding
+positions as samples. `[R-GEO-04]`
+
+#### 11.4 Linearization
+
+Each layer carries a **linearization** field (`u16`, structural)
+selecting the rule that orders tiles within the grid and entries within
+the tile index. It does not govern sample order inside a tile: in-tile
+sample order is row-major for every linearization value, in every
+version of this format. Field values: 0 is invalid; **1 = row-major** —
+the last-declared dimension varies fastest — is the only value this
+format major version defines for writers, and writers MUST NOT emit any
+other value; values 2 and 3 are reserved without semantics; values 4
+through 0x7FFF are reserved for future assignment by this
+specification; values ≥ 0x8000 are the experimental range (§10). A
+reader MUST treat any linearization value other than 1 as a validity
+error at layer scope — this includes 0, all reserved values, and the
+experimental range, which no conforming writer of format major
+version 1 emits. `[R-GEO-05]`
+
+With grid counts (G₀, …, G_{d−1}) and tile extents (T₀, …, T_{d−1}),
+all in declared dimension order, and the convention that an empty
+product is 1 (so at d = 1 the ordinals below reduce to u₀ and t₀):
+
+- A coordinate (x₀, …, x_{d−1}) lies in the tile with **tile
+  coordinates** tᵢ = xᵢ div Tᵢ, at **in-tile position** uᵢ = xᵢ mod Tᵢ.
+- The **in-tile sample ordinal** of (u₀, …, u_{d−1}) is
+  Σᵢ uᵢ · ∏_{j>i} Tⱼ — for every linearization value, permanently.
+- Under linearization 1, the **spatial tile ordinal** of
+  (t₀, …, t_{d−1}) is s = Σᵢ tᵢ · ∏_{j>i} Gⱼ.
+- The **disk tile ordinal**, which orders tile-index entries (§15), is
+  s for an interleaved layer, and **c · N + s** for a planar layer
+  (§14), where c is the channel's index (§3.1) — channel-major
+  grouping. `[R-GEO-06]`
+
+> **Example.** The layer of §11.2's example, grid (G_y, G_x) = (4, 8).
+> Spatial ordinals: tile (0, 0) → 0; tile (0, 1) → 1; tile (1, 0) →
+> 1·8 + 0 = 8. The coordinate (y, x) = (300, 700) lies in tile
+> (1, 2) → s = 1·8 + 2 = 10, at in-tile position (44, 188) → in-tile
+> ordinal 44·256 + 188 = 11,452. If the same layer is planar with
+> C = 4 channels, the tile carrying channel 2 at that spatial position
+> has disk ordinal 2·32 + 10 = 74.
+
+> **Note.** Linearization fixes the mapping from *declared dimension
+> order* to bytes; it says nothing about axis direction or orientation
+> (whether y points up or down is semantics, carried in user metadata,
+> §18). Column-major ecosystems (Fortran, Julia, MATLAB) write
+> zero-copy by declaring dimensions in reversed order — the same
+> convention their HDF5 and netCDF bindings already apply.
 
 ### 12. Channels and Sample Types
 

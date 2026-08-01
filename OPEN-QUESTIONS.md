@@ -94,6 +94,22 @@ index fetches parallelize.
   cold-read accounting ("request 1: discovery window; request 2
   (conditional): spilled tile index; request 3: payload") as a guarantee.
 
+### Q-A5. Is a zero-layer file valid? [deferrable — resolves with Batch 3]
+- **Why:** The data model (spec §3.1) deliberately makes no minimum-layer
+  claim. The append model creates files generation by generation, and the
+  same schema-first reasoning that made zero-extent layers valid
+  (ADR-0028) applies one level up: create-and-commit an empty container,
+  append layers later. The container section must define what an empty
+  directory means either way.
+- **Options:** (a) Valid: a directory with zero layer records is a
+  conforming generation; readers open it and list nothing. Consistent
+  with ADR-0028's empty-things-are-valid principle. (b) Invalid: at
+  least one layer per file; writers buffer until the first layer is
+  ready. Simpler for readers that assume non-emptiness, at the cost of
+  an asymmetry with empty layers.
+- **What settles it:** Drafting §5/§7 (Batch 3): whether any container
+  invariant actually needs a layer to exist. Leaning: (a).
+
 ## B. Slabs and physical layout
 
 ### Q-B1. What exactly is a slab? [Resolved → ADR-0022]
