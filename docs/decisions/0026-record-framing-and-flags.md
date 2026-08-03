@@ -4,9 +4,8 @@
 - Date: 2026-07-30
 - Covers: directory record header; must-understand/preserve semantics;
   updater obligations
-- Confirm: none (the structural scope-binding mechanism — nesting vs a
-  framing-level layer field — is fixed in the directory section's
-  drafting, under the normative constraint below)
+- Confirm: none — the scope-binding mechanism is fixed by ADR-0032
+  (containment, depth exactly two)
 
 ## Context
 

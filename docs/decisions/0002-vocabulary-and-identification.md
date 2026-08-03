@@ -3,11 +3,8 @@
 - Status: Accepted
 - Date: 2026-07-29
 - Covers: terminology; file identity (name, extension, magic)
-- Confirm: the signature form — bare ASCII `TARN` or a PNG-style hardened
-  8-byte signature that *contains* ASCII "TARN" (e.g.
-  `89 54 41 52 4E 0D 0A 1A`). What is settled: the magic contains ASCII
-  "TARN". Leaning: hardened, per the transport-corruption argument in
-  Context (tracked as OPEN-QUESTIONS Q-G4).
+- Confirm: none — signature form fixed by ADR-0029 (hardened
+  `89 54 41 52 4E 0D 0A 1A`, containing ASCII "TARN").
 
 ## Context
 

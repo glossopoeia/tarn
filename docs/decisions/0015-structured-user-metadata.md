@@ -3,9 +3,9 @@
 - Status: Proposed
 - Date: 2026-07-29
 - Covers: user metadata (tags); extension registry hook for standardized keys
-- Confirm: (a) encoding — UTF-8 JSON (recommended) vs canonical CBOR;
-  (b) granularity — one document per file, plus optionally one per layer
-  (see OPEN-QUESTIONS Q-F1).
+- Confirm: encoding — UTF-8 JSON (recommended) vs canonical CBOR (see
+  OPEN-QUESTIONS Q-F1). Granularity is fixed by ADR-0032: one document
+  per file, at most one per layer.
 
 ## Context
 

@@ -94,7 +94,8 @@ index fetches parallelize.
   cold-read accounting ("request 1: discovery window; request 2
   (conditional): spilled tile index; request 3: payload") as a guarantee.
 
-### Q-A5. Is a zero-layer file valid? [deferrable — resolves with Batch 3]
+### Q-A5. Is a zero-layer file valid? [Resolved → ADR-0032]
+**Resolution:** valid — an empty directory is a conforming generation.
 - **Why:** The data model (spec §3.1) deliberately makes no minimum-layer
   claim. The append model creates files generation by generation, and the
   same schema-first reasoning that made zero-extent layers valid
@@ -181,7 +182,9 @@ once; intra-layer overlap → reject-layer, cross-layer/metadata → reject-file
 - **What settles it:** Whether any real N-D dedup case survives once fill
   sentinels exist. Leaning: (a).
 
-### Q-B5. Does TARN adopt a full byte-coverage rule? [shaping]
+### Q-B5. Does TARN adopt a full byte-coverage rule? [Resolved → ADR-0030]
+**Resolution:** strict — coverage is file validity; declared padding is
+zero bytes; unclaimed bytes make the file nonconforming.
 - **Why:** Unreferenced byte ranges are a smuggling channel and an
   ambiguity: PNG both forbids and merely-warns-about trailing data;
   PMTiles cannot certify a file byte-for-byte because sections may sit
@@ -231,7 +234,9 @@ ancillary record type reserved.
   the same ADR that resolves Q-C1 (checksum algorithm), which records both
   answers.
 
-### Q-C3. Checksum-mismatch severity table. [blocking]
+### Q-C3. Checksum-mismatch severity table. [Resolved → ADR-0031]
+**Resolution:** trailer/directory → reject-file; layer index → reject-
+layer; tile → reject-tile; user metadata → ignore-record + report.
 - **Why:** A checksum whose failure consequence is unspecified is
   documentation, not integrity. The outcome must be per-structure, not
   global: partial-read workflows should survive a single bad tile.
@@ -243,7 +248,10 @@ ancillary record type reserved.
 - **What settles it:** Mostly a decision to write down; (a) is the leaning.
   Every row of the final table gets a corrupted-file conformance vector.
 
-### Q-C4. Padding determinism: what bytes fill padding, normatively? [blocking]
+### Q-C4. Padding determinism: what bytes fill padding, normatively? [half resolved; edge samples remain — blocking §14]
+**Partial resolution → ADR-0030:** alignment-gap and pre-trailer padding
+bytes are zero. Open: edge-tile padding *samples* inside stored payloads
+(fill-encoding vs zero), resolved with Batch 6.
 - **Why:** ADR-0011 requires defined padding; the Confirm is *which*
   definition. Padding participates in compression and checksums, so
   unspecified padding makes identical logical data yield different physical
@@ -500,7 +508,9 @@ no-embedded-offsets rule, and per-class semantics table.
   numeric IDs belong on hot paths.
 - **What settles it:** Decidable at drafting; (a) is the leaning.
 
-### Q-G4. Signature bytes, trailer magic, MIME type. [deferrable]
+### Q-G4. Signature bytes, trailer magic, MIME type. [Resolved → ADR-0029]
+**Resolution:** front `89 54 41 52 4E 0D 0A 1A` + 8 zero bytes; trailer
+magic `8A 4E 52 41 54 0D 0A 1A` ("NRAT"); application/vnd.tarn.
 - **Why:** ADR-0002's Confirm: bare ASCII `TARN` vs a hardened 8-byte
   signature. A tail-anchored design (Q-A1) also needs a *distinct* trailer
   magic so a scan-back can never false-positive on the front signature.

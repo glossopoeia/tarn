@@ -3,8 +3,9 @@
 - Status: Accepted
 - Date: 2026-07-29
 - Covers: compression codecs; filters; codec boundary contract
-- Confirm: whether directory/index metadata gets its own internal codec
-  (recommended: yes, zstd-or-none, declared in the discovery structure).
+- Confirm: none — the internal metadata codec is fixed by ADR-0032
+  (none or zstd for directory and user metadata; the tile index is never
+  compressed).
 
 ## Context
 
