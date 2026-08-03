@@ -178,10 +178,15 @@ these meanings.
   wherever the tile carrying that channel is not stored (§13).
 - **slab** — a declared run of consecutive stored tiles kept physically
   contiguous as one I/O unit (§16).
-- **tile index** — the per-layer table locating and checksumming stored
-  tiles (§15).
-- **directory** — the consolidated metadata structure describing every
-  layer and carrying all records (§7).
+- **tile index** — the per-layer table with one entry per addressed
+  tile, locating and checksumming the stored ones and marking the rest
+  with the sentinel (§15).
+- **directory** — the consolidated metadata structure through which
+  everything else in a generation is reached: a sequence of records
+  (§7), including every layer record, followed by its checksum, located
+  from the trailer. Each commit appends a *complete* directory — never
+  a delta — so a file contains one directory per generation;
+  unqualified, *the directory* means the live generation's.
 - **trailer** — the fixed-size 64-byte structure that commits a
   generation (§6); each commit appends one, and the *live* trailer
   occupies the final 64 bytes of the file.
