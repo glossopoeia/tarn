@@ -379,10 +379,10 @@ equals the live trailer's committed file length F, and F is a multiple
 of 64 (§6.2). `[R-CNT-01]`
 
 > **Example.** The smallest conforming file is 128 bytes:
-> front block [0, 16); an empty directory — zero records under
-> metadata-codec *none*, so 4 bytes holding the CRC-32C of zero bytes,
-> `0x00000000` — at [16, 20); 44 bytes of zero padding; trailer at
-> [64, 128). It contains no layers (a valid, empty file).
+> front block [0, 16); an empty directory — zero records, so 4 bytes
+> holding the CRC-32C of zero bytes, `0x00000000` — at [16, 20);
+> 44 bytes of zero padding; trailer at [64, 128). It contains no
+> layers (a valid, empty file).
 
 #### 5.2 Byte coverage
 
@@ -450,8 +450,7 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 | 32 | 8 | u64 | dir_length | structural | ≥ 4; dir_offset + dir_length ≤ F − 64 |
 | 40 | 8 | u64 | committed_file_length | structural | = F; multiple of 64 |
 | 48 | 8 | u64 | file_id | semantic | ≠ 0 |
-| 56 | 1 | u8 | metadata_codec | structural | 1 = none, 2 = zstd (0 invalid) |
-| 57 | 3 | bytes | pad | structural | zero |
+| 56 | 4 | bytes | reserved | structural | zero |
 | 60 | 4 | u32 | trailer CRC | structural | CRC-32C over trailer bytes [0, 60) |
 
 Writers MUST place the directory so that only the zero pre-trailer pad
@@ -471,9 +470,8 @@ MUST validate all of the following before acting on the fields
 involved: the flag gates (§6.3); committed_file_length equals the file
 size (for a remote reader, the size reported by its transport) and is
 a multiple of 64; dir_offset ≥ 16; dir_length ≥ 4; dir_offset +
-dir_length ≤ F − 64; generation ≥ 1; file_id ≠ 0; metadata_codec is a
-defined value; pad bytes zero. Any failure is reject-file.
-`[R-CNT-06]`
+dir_length ≤ F − 64; generation ≥ 1; file_id ≠ 0; reserved bytes
+zero. Any failure is reject-file. `[R-CNT-06]`
 
 #### 6.3 Version and flag gates
 
@@ -534,23 +532,21 @@ substitute the trailer's committed_file_length for the transport size.
 #### 7.1 Directory region
 
 The directory region is dir_length bytes at dir_offset. Its final 4
-bytes are a CRC-32C over the preceding dir_length − 4 bytes exactly as
-stored. A reader MUST verify that CRC before any other use of the
-region (mismatch: reject-file, ADR-0031), then decode the covered
-bytes per the trailer's metadata_codec (*none*: the bytes are the
-record sequence; *zstd*: exactly one RFC 8878 frame whose decoded
-output is the record sequence), then parse records. A decode failure —
-covered bytes that are not exactly one well-formed frame of the
-declared codec, or bytes of the covered region remaining after the
-frame — is a validity error at the directory's owning scope
-(reject-file). `[R-CNT-11]` The owning scope of the directory is the
-file.
+bytes are a CRC-32C over the preceding dir_length − 4 bytes; those
+covered bytes are the record sequence itself — the directory is always
+raw, with no codec involvement on the open path. A reader MUST verify
+that CRC before any other use of the region (mismatch: reject-file,
+ADR-0031), then parse records. `[R-CNT-11]` The owning scope of the
+directory is the file.
 
-metadata_codec governs exactly two structure kinds: the directory
-region and user-metadata extents (§18). It never applies to the
-tile-index region, which is always stored raw so that it can be
-range-fetched (§15), nor to tile payloads, whose codec is the layer's
-codec field (§17). `[R-CNT-25]`
+Metadata compression exists only at record granularity: each
+user-metadata record declares its document's encoding in its own
+payload (u8: 0 invalid, 1 = none, 2 = zstd; §18), and an encoding
+value the reader does not implement makes that record unreadable, with
+the same outcome as a failed CRC — ignore-record, SHOULD be reported
+(ADR-0031). The directory and the tile-index region are always raw
+(the index so that it can be range-fetched, §15); tile payloads use
+the layer's codec field (§17). `[R-CNT-25]`
 
 #### 7.2 Record framing
 
@@ -699,7 +695,7 @@ stored. `[R-CNT-19]`
 |---|---|---|
 | Front signature block | none — checked by byte equality (§6.1) | — |
 | Trailer | trailer bytes [60, 64) | trailer bytes [0, 60) |
-| Directory region | final 4 bytes of the region | the preceding dir_length − 4 bytes (the encoded bytes exactly as stored, before decoding) |
+| Directory region | final 4 bytes of the region | the preceding dir_length − 4 bytes (the raw record sequence) |
 | Tile-index region | the per-segment CRC array, itself covered by the layer record's crc_of_crc_array | index entries, per segment (§15) |
 | Stored tile | the crc field of its index entry | the tile's stored bytes |
 | User-metadata extent | final 4 bytes of the extent | the preceding bytes (the encoded bytes exactly as stored, before decoding) |
