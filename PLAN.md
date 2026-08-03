@@ -79,8 +79,8 @@ a cleanroom round (§6):
 | 6 | Tile serialization | Both layouts, worked byte examples, edge-tile padding |
 | — | **Cleanroom round 2** | Byte-level quiz: planar offsets, edge tiles, unstored-tile reads |
 | 7 | Codecs and filters | Pinned external references, independence rule, shuffle |
-| 8 | Reading a TARN file | The normative numbered read algorithm, including fill and checksum-failure paths |
-| 9 | Writing and updating | Writer tiers, updater obligations, append procedure |
+| 8 | Reading a TARN file | The normative numbered read algorithm, including fill and checksum-failure paths; fixes eager-vs-lazy validation timing (cleanroom gate 1, reader ambiguity 4) |
+| 9 | Writing and updating | Writer tiers, updater obligations, append procedure; byte-identical re-emission of retained records, appender verification depth, and compaction generation-renumbering-from-1 (cleanroom gate 1 findings) |
 | 10 | Error-handling register | The consolidated violation × outcome table |
 | 11 | Security and privacy considerations | Named threat classes; deletion ≠ erasure; compaction; the limits table (Q-H1) |
 | 12 | Extensibility and registries; user metadata | Flags, ID spaces, version semantics, the enumerated extension surface; the user-metadata document (ADR-0015, Q-F1/F3) |
@@ -111,8 +111,10 @@ conversation history, no ADRs, no this-file. It must (a) describe how it
 would implement a conforming reader, (b) answer a fixed slate of byte-level
 questions, and (c) list every ambiguity it hit. Every ambiguity is treated as
 a spec bug and fixed before the next batch. Artifacts (prompt, transcript,
-findings, resulting spec diffs) land in `docs/cleanroom/`. Protocol details
-are pinned after a pilot round (OPEN-QUESTIONS Q-I2).
+findings, resulting spec diffs) land in `docs/cleanroom/`. The full
+protocol — four parallel roles, the access rule, finding taxonomy, pass
+criteria — is pinned in ADR-0034, as piloted on the container round
+(docs/cleanroom/01-container/).
 
 ## 7. Conformance vectors
 

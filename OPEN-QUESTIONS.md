@@ -551,7 +551,10 @@ magic `8A 4E 52 41 54 0D 0A 1A` ("NRAT"); application/vnd.tarn.
   (b) Nothing in v1.
 - **What settles it:** Demand; costs one appendix.
 
-### Q-I2. Cleanroom-test protocol details. [blocking — Phase 2 start]
+### Q-I2. Cleanroom-test protocol details. [Resolved → ADR-0034]
+**Resolution:** four parallel roles (reader/verifier/writer/quiz),
+spec-text-only access, finding taxonomy with mandatory disposition;
+piloted on the container round.
 - **Why:** The drafting process uses fresh-context implementer tests
   (an agent gets only the spec text and must describe a conforming reader,
   answer byte-level questions, and list ambiguities). Batch size, pass

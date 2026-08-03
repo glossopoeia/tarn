@@ -95,6 +95,11 @@ Conformance is defined for four classes.
   every writer requirement for the bytes it produces, and additionally
   MUST honor the preservation obligations of Part I for records it does
   not understand. `[R-CNF-06]`
+- **Conforming verifier.** A reader that additionally checks every
+  file-level requirement — including those ordinary readers are
+  exempted from — and certifies conformance. Verifiers and updaters are
+  readers of the files they process and inherit every reader
+  obligation. `[R-CNF-11]`
 
 #### 2.4 Outcome classes and owning scope
 
@@ -123,6 +128,14 @@ tile → reject-tile. `[R-CNF-08]`
 A reader MUST NOT return data as valid from a scope this specification
 rejects; in particular, a read of a rejected tile MUST NOT silently
 return fill. `[R-CNF-09]`
+
+A file is conforming only if it satisfies every requirement at every
+scope: the outcome classes describe the blast radius of a violation
+for readers, never degrees of file conformance, and a verifier
+certifies only violation-free files. For a nonconforming file no
+acceptance obligation exists — a reader MAY reject it upon detecting
+any violation, including violations whose assigned detector is the
+verifier. `[R-CNF-12]`
 
 > **Note.** "Reject" prescribes the scope of unusability, not user
 > interface: how failure is reported is implementation technique.
@@ -294,15 +307,21 @@ and final XOR 0xFFFFFFFF, stored as a little-endian `u32`. `[R-ENC-09]`
 
 **Check vector.** The CRC-32C of the nine ASCII bytes `"123456789"`
 (`31 32 33 34 35 36 37 38 39`) is `0xE3069283`, stored as the bytes
-`83 92 06 E3`. An implementation whose checksum function does not
-reproduce this value does not implement this specification's checksum.
+`83 92 06 E3`. The CRC-32C of zero bytes is `0x00000000`. An
+implementation whose checksum function does not reproduce these values
+does not implement this specification's checksum.
 
-A reader MUST verify the checksum covering a field before acting on that
-field. `[R-ENC-10]` Every field of every structure is covered by exactly
-one checksum, except the fields of the front signature block, which is a
-constant whose check is equality (§6); which bytes each checksum covers,
-and each conformance class's verification obligations, are defined with
-the structures that carry them (§8).
+A reader MUST verify the checksum covering a field before acting on
+that field — where *acting on* means using its value to allocate,
+seek, fetch, or select behavior; comparing a field against a constant
+for validation is not acting on it, and an explicit validation order
+(§6.2) governs where one is stated. `[R-ENC-10]` Every field of every
+structure is covered by exactly one checksum, excepting the front
+signature block (a constant whose check is equality, §6) and the
+checksum fields themselves (verified by comparison, covered by no
+further checksum); which bytes each checksum covers, and each
+conformance class's verification obligations, are defined with the
+structures that carry them (§8).
 
 > **Note.** Checksums detect accidental corruption. They do not
 > authenticate: an adversary who can modify bytes can recompute
@@ -476,7 +495,13 @@ involved: the flag gates (§6.3); committed_file_length equals the file
 size (for a remote reader, the size reported by its transport) and is
 a multiple of 64; dir_offset ≥ 16; dir_length ≥ 4; dir_offset +
 dir_length ≤ F − 64; generation ≥ 1; file_id ≠ 0; reserved bytes
-zero. Any failure is reject-file. `[R-CNT-06]`
+zero. Any failure is reject-file. The owning scope of the front
+signature block and the trailer is the file. `[R-CNT-06]`
+
+> **Note.** A payload byte-string that mimics a trailer and happens to
+> sit at exact physical end of file can pass every check above; it is
+> caught at the directory CRC (§7.1) — detection is never silent, per
+> §9.2's barrier note.
 
 #### 6.3 Version and flag gates
 
@@ -500,12 +525,21 @@ assigned. `[R-CNT-24]`
 
 Flags: a reader MUST reject-file on any set bit it does not implement
 in the incompat lane (bits 0–15), and MUST ignore all bits in the
-ignore lane (bits 16–31). In format major 1 no flag bits are defined:
-a writer creating a file MUST write flags = 0. An updater MUST copy
-forward unknown ignore-lane bits of the file it modifies and MUST NOT
-clear them; an updater encountering an unknown incompat-lane bit is a
-reader first, and therefore rejects the file before modifying
-anything. `[R-CNT-08]`
+ignore lane (bits 16–31). In this specification's text no flag bits
+are defined: a writer creating a file under this text MUST write
+flags = 0, but a set ignore-lane bit is not a file-conformance
+violation — such bits are defined by later minor versions, and files
+carrying them are conforming files this text's readers ignore. An
+updater MUST copy forward unknown ignore-lane bits of the file it
+modifies and MUST NOT clear them; an updater encountering an unknown
+incompat-lane bit is a reader first, and therefore rejects the file
+before modifying anything. `[R-CNT-08]`
+
+A writer SHOULD emit the lowest version_minor that defines every
+feature present in the file — for a file expressible under this text,
+0 — and an appender the maximum of that floor and the prior trailer's
+minor; a higher minor than needed costs readers nothing (minors never
+gate) but misstates the file's feature floor to tooling. `[R-CNT-26]`
 
 #### 6.4 Remote open accounting
 
@@ -540,18 +574,20 @@ The directory region is dir_length bytes at dir_offset. Its final 4
 bytes are a CRC-32C over the preceding dir_length − 4 bytes; those
 covered bytes are the record sequence itself — the directory is always
 raw, with no codec involvement on the open path. A reader MUST verify
-that CRC before any other use of the region (mismatch: reject-file,
-ADR-0031), then parse records. `[R-CNT-11]` The owning scope of the
-directory is the file.
+that CRC before any other use of the region (mismatch: reject-file),
+then parse records. `[R-CNT-11]` The owning scope of the directory is
+the file.
 
 Metadata compression exists only at record granularity: each
-user-metadata record declares its document's encoding in its own
-payload (u8: 0 invalid, 1 = none, 2 = zstd; §18), and an encoding
-value the reader does not implement makes that record unreadable, with
-the same outcome as a failed CRC — ignore-record, SHOULD be reported
-(ADR-0031). The directory and the tile-index region are always raw
-(the index so that it can be range-fetched, §15); tile payloads use
-the layer's codec field (§17). `[R-CNT-25]`
+user-metadata record carries its document in its extent — never
+inline; an extent of (0, 0) on a user-metadata record is a validity
+error at its containing scope — and declares the document's encoding
+in its own inline payload (u8: 0 invalid, 1 = none, 2 = zstd; §18).
+An encoding value of 0, or one the reader does not implement, makes
+that record unreadable, with the same outcome as a failed CRC —
+ignore-record, SHOULD be reported. The directory and the tile-index
+region are always raw (the index so that it can be range-fetched,
+§15); tile payloads use the layer's codec field (§17). `[R-CNT-25]`
 
 #### 7.2 Record framing
 
@@ -630,7 +666,10 @@ bits — a flipped stored bit never changes conforming behavior — and a
 verifier SHOULD report the mismatch; unreported, a writer defect
 propagates silently to consumers that do not know the type. Stored
 flag bits are authoritative only for record types the consuming tool
-does not implement (`[R-CNT-15]`). `[R-CNT-22]`
+does not implement (`[R-CNT-15]`). A stored-flag mismatch on a
+registered type makes the file nonconforming (`[R-CNF-05]`);
+conforming readers nevertheless process the record under the fixed
+semantics. `[R-CNT-22]`
 
 #### 7.4 The layer record
 
@@ -651,8 +690,8 @@ payload is, in order:
 | rank d | u8 | ≥ 1 |
 | channel count C | u16 | ≥ 1 |
 | d dimension entries | name (u8 len + bytes) · extent u64 · tile extent u64 | §11.1 |
-| C channel entries | name (u8 len + bytes) · type u16 · fill (u8 len + bytes) | type per §12; fill length equals the type's element size (`[R-CNT-23]`), so fill parses without type knowledge and validates with it |
-| index_encoding | u8 | 1 = raw-segmented (0 invalid; 2 reserved; ≥ 0x80 experimental; §15) |
+| C channel entries | name (u8 len + bytes) · type u16 (0 invalid) · fill (u8 len + bytes) | type per §12; fill length equals the type's element size (`[R-CNT-23]`), so fill parses without type knowledge and validates with it |
+| index_encoding | u8 | 1 = raw-segmented; any other value — including 0, reserved 2–0x7F, and the experimental range ≥ 0x80 (§10) — is a validity error at layer scope (§15) |
 | entry_count | u64 | equals the addressed-tile count (§11.2, `[R-CNT-17]`) |
 | crc_of_crc_array | u32 | CRC-32C over the index's segment-CRC array (§15); 0 when entry_count = 0 (`[R-CNT-23]`) |
 | sub-records | zero or more records (§7.2 framing) to the end of the inline payload | layer scope by containment |
@@ -676,12 +715,13 @@ entry_count × 20 + ⌈entry_count / 2¹⁶⌉ × 4 (and 0 when entry_count is
 geometry-derived addressed-tile count, is a validity error at layer
 scope. `[R-CNT-17]`
 
-The inline payload MUST parse exactly: the fixed fields, the d
-dimension entries, the C channel entries, and the trailing fixed
-fields MUST lie entirely within the inline payload, and the remaining
-bytes MUST parse as zero or more complete sub-records under §7.2's
-framing with no residue; any overrun, truncation, or residue is a
-validity error at layer scope. Sub-records are layer-scope records; a
+The inline payload MUST parse exactly: fields are packed in table
+order with no alignment or padding between them; the fixed fields,
+the d dimension entries, the C channel entries, and the trailing
+fixed fields MUST lie entirely within the inline payload, and the
+remaining bytes MUST parse as zero or more complete sub-records under
+§7.2's framing with no residue; any overrun, truncation, or residue
+is a validity error at layer scope. Sub-records are layer-scope records; a
 sub-record MUST NOT itself contain records (nesting depth beyond two
 is a validity error at layer scope), and an unknown sub-record type
 with MU = 1 is reject-layer — never reject-file — and with MU = 0 is
@@ -711,12 +751,12 @@ The chain of trust is strictly ordered: trailer → directory → (per
 layer) crc_of_crc_array → segment CRC array → index segment → index
 entry → stored tile. A reader MUST verify each link before acting on
 any field the link covers (`[R-ENC-05]`, `[R-ENC-10]`); failed
-verification takes the outcome of ADR-0031's table: trailer or
-directory → reject-file; any of a layer's index cross-checks
-(`[R-CNT-17]`), CRC array, or segments → reject-layer; a stored tile's
-CRC → reject-tile; a user-metadata extent's CRC → ignore-record, and
-readers SHOULD report the loss (silent metadata loss defeats the
-record's purpose). `[R-CNT-20]`
+verification takes these outcomes: trailer or directory →
+reject-file; any of a layer's index cross-checks (`[R-CNT-17]`), CRC
+array, or segments → reject-layer; a stored tile's CRC → reject-tile;
+a user-metadata extent's CRC → ignore-record, and readers SHOULD
+report the loss (silent metadata loss defeats the record's purpose).
+`[R-CNT-20]`
 
 Verification is not optional: no in-file flag disables it, and a
 reader that skips it is not a conforming reader.
@@ -754,8 +794,9 @@ committed_file_length equal to the new end; (6) make the trailer
 durable. `[R-LIF-02]`
 
 On creation there is no prior trailer: the writer first emits the
-front signature block (§6.1), then performs steps 2–6 beginning at
-offset 16, with generation 1.
+front signature block (§6.1) — whose durability the barriers of steps
+4 and 6 cover — then performs steps 2–6 beginning at offset 16, with
+generation 1.
 
 > **Note.** Where barriers are weaker than assumed, safety degrades
 > from "torn commits are invisible" to "torn commits are detected":
@@ -837,23 +878,30 @@ append is recoverable only by scanning back across its entire length.
 
 A verifier checking `[R-CNT-02]`'s partition proceeds as follows.
 (a) Enumerate trailer candidates by §9.6's probe continued to offset
-0, and accept only the set forming a **chain**: exactly one candidate
-per generation number from the live generation g down to 1, with
-committed_file_lengths strictly increasing, each equal to its
-candidate's offset + 64, and each candidate's directory bounds inside
-its own committed length. A candidate outside the chain is discarded
-as a payload mimic; a duplicate or missing generation number in the
-chain is a coverage-verification failure at file scope. (b) Attribute
-to generation k the byte range [F_{k−1}, F_k), with F₀ = 16 (the front
-block belongs to no generation). (c) For each generation k, the
-claimed set is: the structures referenced transitively from generation
-k's directory — extent slots, tile-index regions, and index entries —
+0. A candidate qualifies only if it satisfies `[R-CNT-06]`'s field
+validity against its own committed length F_k (taking the file size
+as F_k) and carries the same file_id as the live trailer. Anchored at
+the live trailer, the verifier MUST accept a candidate set forming a
+**chain** — exactly one candidate per generation number from the live
+generation g down to 1, with committed_file_lengths strictly
+increasing and each equal to its candidate's offset + 64 — whenever at
+least one such set exists; candidates outside the selected chain are
+discarded as payload mimics, and only when *no* consistent chain
+exists is coverage verification a failure at file scope (a conforming
+file always has one: its real trailers). (b) Attribute to generation
+k the byte range [F_{k−1}, F_k), with F₀ = 16 (the front block
+belongs to no generation). (c) For each generation k, the claimed set
+is: the structures referenced transitively from generation k's
+directory — extent slots, tile-index regions, and index entries —
 that lie within [F_{k−1}, F_k), plus that directory, its declared
-padding, and its trailer. Every byte of [F_{k−1}, F_k) MUST be claimed
-exactly once. (d) A verifier that cannot verify an enumerated
-generation's trailer, directory, or tile index cannot establish
-coverage and MUST treat the file as nonconforming (ADR-0030).
-`[R-LIF-08]`
+padding, and its trailer. Every byte of [F_{k−1}, F_k) MUST be
+claimed exactly once — except that a double claim arising within one
+layer's structures is the intra-layer overlap of `[R-CNT-13]`
+(reject-layer; certification fails either way). (d) A verifier that
+cannot verify an enumerated generation's trailer, directory, tile
+index, or any structure those claim (stored-tile extents and record
+extents included) cannot establish coverage and MUST treat the file
+as nonconforming. `[R-LIF-08]`
 
 > **Note.** Step (c)'s in-range restriction is what makes attribution
 > decidable: a generation's directory may reference structures
