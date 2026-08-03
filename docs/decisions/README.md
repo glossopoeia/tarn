@@ -20,7 +20,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0002](0002-vocabulary-and-identification.md) | Core vocabulary and file identification | Accepted (signature fixed by ADR-0029) |
 | [0003](0003-spec-conventions-and-conformance.md) | Normative conventions and conformance classes | Accepted |
 | [0004](0004-tile-checksums-in-index.md) | Per-tile checksums live in the tile index and cover stored bytes | Accepted (coverage ratified by ADR-0023) |
-| [0005](0005-optional-tile-alignment.md) | Optional per-layer tile alignment as a checkable invariant | Accepted (Confirm: values) |
+| [0005](0005-optional-tile-alignment.md) | Optional per-layer tile alignment as a checkable invariant | Accepted (values fixed by ADR-0035) |
 | [0006](0006-consolidated-metadata-directory.md) | Consolidated metadata directory, O(1) round trips | Accepted (placement resolved by ADR-0018) |
 | [0007](0007-64-bit-offsets-only.md) | All offsets, lengths, and extents are u64 | Accepted |
 | [0008](0008-checksum-all-metadata.md) | Every metadata structure checksummed; verification is a reader obligation | Accepted (algorithm fixed by ADR-0023; index granularity amended by ADR-0024) |
@@ -50,6 +50,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0032](0032-directory-scoping-and-closure.md) | Directory scoping by containment; zero-layer files; metadata codec | Accepted (resolves Q-A5; discharges ADR-0009/0015/0026 Confirms; codec scoping amended by ADR-0033) |
 | [0033](0033-raw-directory-per-record-codec.md) | Raw directory; user-metadata records declare their own codec | Accepted (amends ADR-0032/0025) |
 | [0034](0034-cleanroom-protocol.md) | The cleanroom protocol, as piloted | Accepted (resolves Q-I2) |
+| [0035](0035-alignment-values.md) | Alignment value sets | Accepted (discharges ADR-0005 Confirm) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

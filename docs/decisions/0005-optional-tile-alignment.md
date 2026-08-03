@@ -3,8 +3,8 @@
 - Status: Accepted
 - Date: 2026-07-29
 - Covers: physical layout; O_DIRECT / GPUDirect Storage / mmap support
-- Confirm: minimum and default alignment values (proposed: ≥ 512, with 4096
-  as the recommended default).
+- Confirm: none — values fixed by ADR-0035 (≥ 512, recommended default
+  4096; slab alignment separately ≥ 1).
 
 ## Context
 

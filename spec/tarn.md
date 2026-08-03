@@ -631,8 +631,10 @@ extents, is such a case. Extents are owned exactly once: within the
 live committed state — all structures reachable from the live trailer,
 whichever generation's commit appended them — no two extent slots and
 no two structures overlap; a verifier MUST treat an intra-layer
-overlap as reject-layer and any other overlap — across layers, or
-touching any metadata structure — as reject-file (readers are not
+overlap — including a stored extent overlapping its own layer's index
+region or sub-record extents — as reject-layer, and any overlap
+across layers or touching another scope's structures as reject-file
+(readers are not
 obligated to detect overlap, which requires whole-directory
 knowledge). `[R-CNT-13]`
 
@@ -684,9 +686,9 @@ payload is, in order:
 | linearization | u16 | §11.4 |
 | codec | u16 | §17 (0 invalid) |
 | filter | u16 | 1 = none, 2 = byte-shuffle (0 invalid; others reserved; §17) |
-| alignment A | u64 | 0 = none declared; else a power of two (§16) |
-| slab S | u64 | 0 = no slab declaration; else run length in tiles (§16) |
-| slab alignment A_slab | u64 | 0 when S = 0 (`[R-CNT-23]`); else a power of two (§16) |
+| alignment A | u64 | 0 = none declared; else a power of two, 512 ≤ A ≤ 2⁶² (§16.1) |
+| slab S | u64 | 0 = no slab declaration; else run length in tiles, 1 ≤ S ≤ 2⁶³ − 1 (§16.2) |
+| slab alignment A_slab | u64 | 0 when S = 0 (`[R-CNT-23]`); else a power of two, 1 ≤ A_slab ≤ 2⁶² (§16.2) |
 | rank d | u8 | ≥ 1 |
 | channel count C | u16 | ≥ 1 |
 | d dimension entries | name (u8 len + bytes) · extent u64 · tile extent u64 | §11.1 |
@@ -1038,13 +1040,189 @@ representation, edge padding per ADR-0012/0021 and Q-C4/Q-D6.]*
 
 ### 15. Tile Index
 
-*[Reserved — Batch 4: 20-byte entries, segment CRC array, sentinel and
-invalid-combination table per ADR-0024.]*
+#### 15.1 Region and entry layout
+
+The owning scope of a layer's tile index is the layer; the owning
+scope of an individual entry, and of the stored tile it addresses, is
+the tile. Under
+index_encoding 1 (the only encoding this format major version defines,
+§7.4), the tile-index region addressed by the layer record's extent
+slot is, contiguously:
+
+> [ entry array: entry_count × 20 bytes ] [ segment CRC array:
+> ⌈entry_count / 2¹⁶⌉ × 4 bytes ]
+
+with no padding anywhere inside the region. Each entry is 20 bytes:
+
+| Offset | Size | Type | Field | Class | Valid values |
+|---|---|---|---|---|---|
+| 0 | 8 | u64 | offset | structural | see §15.3 |
+| 8 | 8 | u64 | length | structural | see §15.3 |
+| 16 | 4 | u32 | crc | structural | CRC-32C of the stored tile's bytes (§8.1); 0 in a sentinel entry |
+
+The entry for the tile with disk ordinal k (§11.4) is the k-th entry,
+at region byte 20·k; entry order is disk-ordinal order, so a planar
+layer's entries group channel-major. `[R-IDX-01]`
+
+#### 15.2 The sentinel
+
+An addressed tile that is not stored has the **sentinel entry**:
+offset and length both `0xFFFF_FFFF_FFFF_FFFF` and crc 0 — the 20
+bytes `FF ×16 00 ×4`. A sentinel tile contributes fill to the
+reference array (§3.2, §13). Sentinel entries are a reserved pattern,
+not offsets or lengths: `[R-ENC-03]`'s value-domain rule and
+`[R-ENC-04]`'s sum rule apply to the fields of non-sentinel entries
+only. `[R-IDX-02]`
+
+> **Rationale.** All-ones was chosen over zero/zero for its failure
+> modes: a zeroed index region (uninitialized buffer, filesystem
+> hole) parses under this rule as offset 0 / length 0 — loudly
+> invalid (§15.3) — rather than as a valid all-sparse index silently
+> returning fill; an all-0xFF region (erased flash) is invalid too,
+> since a sentinel's crc field is 0. A reader that forgets the
+> sentinel test still fails safely: all-ones offsets trip the
+> overflow and bounds checks.
+
+#### 15.3 Entry validity
+
+For each entry, with F the committed file length and S denoting the
+sentinel value 2⁶⁴ − 1, a reader MUST classify as follows; rows
+marked *verifier* require whole-index or whole-file knowledge and
+bind verifiers, not ordinary readers. The per-entry outcomes below
+govern notwithstanding the general owning-scope mapping of
+`[R-ENC-03]`/`[R-ENC-04]`. `[R-IDX-03]`
+
+| Entry state | Outcome |
+|---|---|
+| offset = S ∧ length = S ∧ crc = 0 | valid sentinel — reads as fill |
+| offset = S ∧ length = S ∧ crc ≠ 0 | reject-tile |
+| offset = S ∧ length ≠ S, or offset ≠ S ∧ length = S | reject-tile |
+| length = 0 (non-sentinel) | reject-tile — absence is spelled sentinel; no codec emits zero bytes |
+| offset < 16 (non-sentinel) | reject-tile — the front block is never payload |
+| offset > 2⁶³ − 1 or length > 2⁶³ − 1 (non-sentinel) | reject-tile (`[R-ENC-03]`) |
+| offset + length overflows, or offset + length > F − 64 (non-sentinel) | reject-tile — the extent would touch the live trailer or beyond |
+| stored bytes fail the entry's crc | reject-tile (§8.2) |
+| two stored extents of the same layer overlap, or a stored extent overlaps its own layer's index region or sub-record extents | *verifier*: reject-layer (§7.2) |
+| a stored extent overlaps any structure outside its own layer | *verifier*: reject-file (§7.2) |
+| alignment or slab invariant violated (§16) | *verifier*: reject-layer |
+
+#### 15.4 Segments and verification
+
+Segment s covers entries [s·2¹⁶, min((s+1)·2¹⁶, entry_count)); the
+s-th u32 of the segment CRC array is the CRC-32C over exactly those
+entries' bytes as stored — the final partial segment's CRC covers
+only its actual bytes. The segment CRC array is covered by the layer
+record's crc_of_crc_array (§7.4, §8.1). To use entry k, a reader MUST
+verify, in dependency order, crc_of_crc_array over the fetched CRC
+array and the segment CRC over the fetched segment containing k
+(both ranges are computable from the layer record alone and MAY be
+fetched in parallel); any mismatch or cross-check failure
+(`[R-CNT-17]`) is reject-layer. `[R-IDX-04]`
+
+The CRC-32C of a segment consisting of 2¹⁶ sentinel entries is
+`0xEECB3BB2`; writers of sparse layers MAY emit this constant for any
+**full** segment whose entries are all sentinels, without computing
+it — a final partial segment's CRC MUST be computed. Equality with
+the constant licenses nothing for readers: verification is byte
+comparison of computed CRCs, never constant matching. `[R-IDX-05]`
+
+> **Example.** A layer with entry_count = 1,000,000: 16 segments (15
+> full, the last covering 16,960 entries), a 64-byte segment CRC
+> array, index region 20,000,064 bytes. Tile k = 999,999 lives in
+> segment 15 at segment-relative byte 20 × 16,959 = 339,180; a reader
+> fetches the CRC array at region bytes [20,000,000, 20,000,064) and
+> segment 15 at [19,660,800, 20,000,000) in parallel — ~339 KB
+> verified to read one cold tile here — and never more than one full
+segment (1.25 MiB) plus the CRC array, at any layer scale. A layer
+with
+> entry_count ≤ 65,536 has one segment and a 4-byte array: fetching
+> the whole region and verifying one CRC is the naive reader,
+> unchanged.
+
+> **Example.** The planar layer of §11.4's example (C = 4, N = 32):
+> the tile carrying channel 2 at spatial ordinal 10 has disk ordinal
+> 74; its entry occupies region bytes [1,480, 1,500). With every tile
+> of channel 3 unstored, entries 96–127 are 32 copies of
+> `FF ×16 00 ×4`.
 
 ### 16. Slabs and Alignment
 
-*[Reserved — Batch 4: slab declaration (S, A_slab) and per-tile alignment
-per ADR-0005/0022.]*
+A layer that declares neither alignment nor a slab makes no layout
+promise: its stored tiles MAY occupy any non-overlapping byte
+positions, in any order — a streaming writer places tiles in
+acquisition order at no cost to conformance (`[R-CNT-13]`).
+`[R-SLB-05]`
+
+#### 16.1 Per-tile alignment
+
+A layer MAY declare alignment A (§7.4): a power of two ≥ 512.
+Writers MUST NOT emit any other nonzero value; a reader MUST treat
+one as a validity error at layer scope (`[R-CNT-23]`). When declared:
+every stored tile's offset satisfies offset mod A = 0, and the gaps
+this creates between stored extents are declared padding — zero
+bytes, classified under §5.2. A verifier MUST check the invariant
+(violation: reject-layer, §15.3); readers are not obligated to —
+offsets are always explicit, so alignment is reader-invisible.
+`[R-SLB-01]`
+
+> **Note.** 4096 — the page size and modern physical sector size —
+> is the recommended value for writers that align: it satisfies
+> O_DIRECT, mmap, and GPU direct-storage paths everywhere. 512 is
+> the legacy sector floor.
+
+#### 16.2 The slab declaration
+
+A layer MAY declare a slab run length S ≥ 1 with slab alignment
+A_slab, a power of two ≥ 1 (§7.4; mutually exclusive with per-tile
+alignment, `[R-CNT-16]`). Runs partition each contiguous block of
+disk ordinals independently: for an interleaved layer the single
+block [0, N); for a planar layer each channel block [c·N, (c+1)·N) —
+runs never span channel blocks, and the final run of a block can
+cover fewer than S ordinals. Run r of a block starts at ordinal
+block_start + r·S. `[R-SLB-02]`
+
+When declared, for every run: the run's stored tiles are contiguous
+and packed in ordinal order — each stored tile's offset equals the
+previous stored tile's offset plus its length — and the first stored
+tile's offset satisfies offset mod A_slab = 0; the gaps A_slab
+creates between runs are declared padding — zero bytes, classified
+under §5.2. Sentinel tiles are transparent to run continuity: they
+occupy no bytes and do not break packing. A run with no stored tiles
+imposes nothing. A verifier MUST
+check these invariants (violation: reject-layer, §15.3); readers are
+not obligated to, and MAY instead detect contiguity arithmetically
+from any index segment. `[R-SLB-03]`
+
+A writer or updater whose commit supersedes a stored tile in, or
+grows the extents of, a slab-declared layer MUST either re-establish
+the invariants for every affected run or clear the declaration in
+the new generation; carrying a stale declaration forward is a
+validity error at layer scope. `[R-SLB-04]`
+
+> **Note.** The declaration is never copied blindly: tools that
+> modify a layer parse its full layer record, with the updater
+> obligations detailed in §20.
+
+> **Note — what slabs are, and are not.** A slab guarantees
+> *contiguity*: consecutive disk ordinals occupy consecutive bytes.
+> Which tiles are ordinal-consecutive is the linearization field's
+> job (§11.4); under row-major, a run is a band along the
+> last-declared dimension. Rectangular-window locality is therefore
+> not a slab property — it belongs to the reserved space-filling-
+> curve linearization values, under which the same slab machinery,
+> unchanged, would make compact windows contiguous. Slabs are the
+> byte-layout half of that future answer. With A_slab = 1 a slab is
+> contiguity-only — the right declaration for remote range
+> coalescing with no direct-I/O alignment need.
+
+> **Example.** The §11.2 layer (grid 4 × 8, N = 32, interleaved)
+> with S = 8, A_slab = 4096: four runs — ordinals [0, 8), [8, 16),
+> [16, 24), [24, 32) — each one tile-row, each run's first stored
+> byte 4096-aligned, interiors packed. A viewport spanning tile rows
+> 1–2 is ordinals 8–23 = exactly runs 1 and 2: two range requests
+> regardless of stored-tile sizes. If ordinal 10 is a sentinel, run
+> 1's stored tiles are 8, 9, 11…15, packed with no gap where 10
+> would have been.
 
 ### 17. Codecs and Filters
 
