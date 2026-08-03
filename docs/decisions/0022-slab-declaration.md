@@ -1,6 +1,10 @@
 # 0022. Slab: a declared layout guarantee, uniform every S tiles
 
-- Status: Accepted (resolves Q-B1)
+- Status: Accepted (resolves Q-B1; challenged 2026-07-30 on
+  rectangle-window GPU workloads and upheld — slabs are the contiguity
+  primitive, adjacency is the linearization enum's job, and rectangle
+  locality is the reserved curve values' job; §16 carries the scoping
+  note)
 - Date: 2026-07-30
 - Covers: slab semantics; contiguity declaration; slab alignment
 - Confirm: none

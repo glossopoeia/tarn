@@ -73,7 +73,7 @@ a cleanroom round (§6):
 | 1 | Conventions & conformance skeleton | BCP 14 boilerplate, normative/non-normative demarcation, conformance classes (file / reader / writer / updater), actor-naming house rules, requirement IDs |
 | 2 | Data model | Layers, dimensions, tiles, linearization, the noun set (channels and fill introduced as vocabulary, specified in Batch 5); the *reference array* defined as the conformance target |
 | 3 | Container | Signature, discovery structure, directory, byte-coverage rule, mutability/consistency contract |
-| 4 | Tile index and slabs | Entry layout, sentinels, alignment invariants, exhaustive invalid-state enumeration |
+| 4 | Tile index and slabs | Entry layout, sentinels, alignment invariants, exhaustive invalid-state enumeration; §16's non-normative scoping note (slabs guarantee contiguity; linearization defines adjacency; rectangle locality is the reserved curve door); discharge ADR-0005's alignment-values Confirm |
 | — | **Cleanroom round 1** | Container + index text only |
 | 5 | Sample types and fill encodings | Closed type list, bit-exact fill, boolean packing |
 | 6 | Tile serialization | Both layouts, worked byte examples, edge-tile padding |
