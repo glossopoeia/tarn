@@ -76,10 +76,12 @@ Conformance is defined for four classes.
   `[R-CNF-02]`
 - **Conforming reader.** A reader MUST accept every conforming file none
   of whose values exceeds the minimum guarantees of §21's limits table,
-  and MUST handle every codec that §17 designates as core, both channel
-  layouts (§14), and every sample type that §12 designates as core.
+  and MUST handle every codec and filter that §17 designates as core,
+  both channel layouts (§14), and every sample type that §12 designates
+  as core.
   There are no subset profiles: software that declines to support a core
-  codec, either channel layout, or a core sample type is not a conforming
+  codec, a core filter, either channel layout, or a core sample type is
+  not a conforming
   reader, even if it reads all other conforming files correctly.
   `[R-CNF-03]` A reader MUST detect the violations enumerated in the
   error register (§21) and apply the outcome class this specification
@@ -690,7 +692,7 @@ payload is, in order:
 | layout | u8 | 1 = interleaved, 2 = planar (0 invalid; others reserved); semantics §14 |
 | linearization | u16 | §11.4 |
 | codec | u16 | §17 (0 invalid) |
-| filter | u16 | 1 = none, 2 = byte-shuffle (0 invalid; others reserved; §17) |
+| filter | u16 | 1 = none, 2 = byte-shuffle (0 invalid; others per §17) |
 | alignment A | u64 | 0 = none declared; else a power of two, 512 ≤ A ≤ 2⁶² (§16.1) |
 | slab S | u64 | 0 = no slab declaration; else run length in tiles, 1 ≤ S ≤ 2⁶³ − 1 (§16.2) |
 | slab alignment A_slab | u64 | 0 when S = 0 (`[R-CNT-23]`); else a power of two, 1 ≤ A_slab ≤ 2⁶² (§16.2) |
@@ -1599,8 +1601,154 @@ validity error at layer scope. `[R-SLB-04]`
 
 ### 17. Codecs and Filters
 
-*[Reserved — Batch 7: codec menu, wrapper pinning, shuffle filter,
-boundary contract per ADR-0009 and Q-E1/E2.]*
+The owning scope of a layer's codec and filter declarations is the
+layer; the owning scope of one stored tile's payload under them is
+the tile (§2.4).
+
+#### 17.1 The pipeline
+
+A stored tile's bytes are produced from its decoded tile image
+(§14) by two per-tile stages: the layer's **filter** (§17.3), then
+its **codec** (§17.2) — the filtered image is the codec's input. A
+reader reverses the stages: after the entry's crc verifies (§8.2),
+the codec decodes the stored bytes, the filter's inverse is
+applied, and the result is the decoded tile image, subject to
+`[R-SER-07]`'s exact-size rule. Both stages consume and produce
+whole tiles. `[R-COD-01]`
+
+Every stored tile is independently decodable from its stored bytes
+and its layer's record alone: neither stage carries state between
+tiles, references bytes outside the tile's stored extent, or
+requires side data — dictionaries included (§17.2). Slabs (§16)
+are an I/O grouping, never a compression context. `[R-COD-02]`
+
+#### 17.2 Codecs
+
+Field values of the layer record's codec field (§7.4): 0 is
+invalid; 1 = none, 2 = deflate, 3 = zstd, and 4 = lz4 are assigned
+below, and all four are **core** — a conforming reader MUST
+implement every one of them (`[R-CNF-03]`); values 5 through
+0x7FFF are reserved for future assignment by this specification;
+values ≥ 0x8000 are the experimental range (§10). Writers MUST NOT
+emit a codec value other than 1 through 4; a reader MUST treat any
+other value — 0, every reserved value, and the experimental range
+included — as a validity error at layer scope (`[R-CNT-23]`).
+`[R-COD-03]`
+
+**Codec 1 — none.** The stored bytes are the filtered image
+verbatim. The index entry's length therefore MUST equal the tile's
+decoded size (§14.2, §14.3); a reader MUST treat a mismatch as a
+validity error at tile scope — checkable from the entry and the
+layer record alone, before any payload fetch. `[R-COD-04]`
+
+**Codec 2 — deflate.** The stored bytes are exactly one DEFLATE
+compressed data stream as defined by RFC 1951 — raw, not a zlib
+(RFC 1950) or gzip (RFC 1952) wrapper. `[R-COD-05]`
+
+**Codec 3 — zstd.** The stored bytes are exactly one Zstandard
+compressed frame as defined by RFC 8878: they MUST begin with the
+compressed-frame magic (0xFD2FB528, the bytes `28 B5 2F FD`), and
+a reader MUST treat a payload containing a skippable frame
+anywhere, or more than one frame, as a validity error at tile
+scope. Three frame features are excluded. Writers MUST NOT
+compress a tile using a dictionary — whether or not the header
+discloses one — and MUST NOT emit a nonzero dictionary ID; a
+reader MUST treat a frame carrying a nonzero dictionary ID as a
+validity error at tile scope (dictionary use the header does not
+disclose surfaces as a failed decode, `[R-COD-08]`). Writers MUST
+NOT set the frame's content-checksum flag — the entry's crc
+already serves that role — and MUST NOT declare a window size
+exceeding the tile's decoded size; a reader MUST treat either as
+a validity error at tile scope, both being header-checkable. The
+frame content-size field MAY be present; when present it MUST
+equal the tile's decoded size, a reader MUST treat a mismatch as
+a validity error at tile scope, and a reader MUST NOT allocate or
+size any buffer from it — the decoded size comes from the layer's
+declarations alone (§14, `[R-SER-07]`). `[R-COD-06]`
+
+> **Note.** Whole-buffer zstd decoders that tolerate concatenated
+> or skippable frames do not by themselves enforce the
+> exactly-one-frame rule: an implementation confirms that the
+> single frame spans the full stored extent — a frame-boundary
+> query or a streaming decode to end-of-frame, standard API in
+> every binding. The minimum window size a conforming reader must
+> support is §21's subject.
+
+**Codec 4 — lz4.** The stored bytes are exactly one LZ4 block per
+the LZ4 Block Format Description (lz4_Block_format.md, version
+1.0; Appendix F pins the exact revision), decoded with the stored
+length as the input size and the decoded size as the output
+capacity. The LZ4 frame format is not used. Writers MUST NOT
+declare this codec for a layer whose tiles' decoded size exceeds
+0x7E000000 bytes — the block format's practical interoperability
+bound — and a reader MUST treat such a declaration as a validity
+error at layer scope, checkable from declarations alone.
+`[R-COD-07]`
+
+For every codec: the stored bytes MUST decode to exactly the
+decoded size — no more, no fewer — and the decode MUST consume the
+stored bytes exactly, with no trailing bytes past the stream,
+frame, or block; a reader MUST treat a malformed stream and either
+inexactness as a validity error at tile scope (`[R-SER-07]`).
+`[R-COD-08]`
+
+> **Note.** Decoded output is never empty — §14's decoded sizes
+> are at least 1 byte — and none of the codecs above emits zero
+> bytes for a nonempty input; the index rule that a zero-length
+> non-sentinel entry is invalid (§15.3) rests on both facts.
+
+> **Note.** For the compressing codecs (2–4), no bound relates a
+> stored length to its decoded size in either direction — codec
+> 1's equality is `[R-COD-04]`'s subject. Compression may expand,
+> and a reader allocates from declarations, never from stored
+> data or embedded size fields. Resource limits are §21's
+> subject.
+
+#### 17.3 The filter
+
+Field values of the layer record's filter field (§7.4): 0 is
+invalid; 1 = none — the filtered image is the decoded image — and
+2 = byte-shuffle, defined below, are assigned, and both are
+**core** — a conforming reader MUST implement both
+(`[R-CNF-03]`); values 3 through 0x7FFF are reserved
+for future assignment by this specification; values ≥ 0x8000 are
+the experimental range (§10). Writers MUST NOT emit a filter value
+other than 1 or 2; a reader MUST treat any other value as a
+validity error at layer scope (`[R-CNT-23]`). `[R-COD-09]`
+
+**Byte-shuffle.** The shuffle stride s is the channel's element
+size for a planar tile and the sample stride Q for an interleaved
+tile (§14.2); for a packed boolean plane s = 1 and the filter is
+the identity. The decoded image's length L is divisible by s in
+every case (§14). Viewing the image as n = L/s consecutive groups
+of s bytes, the filtered image places byte i of group j at offset
+i · n + j — all first bytes in image order, then all second bytes,
+and so on; the inverse restores byte i · n + j to offset j · s + i.
+Length is unchanged. `[R-COD-10]`
+
+> **Example.** Three float32 values 1.0, 2.0, 3.0 decode as
+> `00 00 80 3F 00 00 00 40 00 00 40 40` (s = 4, n = 3). Shuffled:
+> `00 00 00 00 00 00 80 00 40 3F 40 40` — the three first bytes,
+> the three second bytes, then `80 00 40`, then `3F 40 40`.
+
+> **Rationale.** Same-significance bytes are far more self-similar
+> than adjacent mixed bytes, and the gain survives interleaving:
+> measured on representative interleaved data (float32 triples
+> with a class byte; four-channel uint16), stride-Q shuffle
+> reduced deflate output by 28–33% — comparable to the planar
+> case — which is why interleaved layers are in scope.
+
+#### 17.4 Certification under codecs
+
+The decoded-content obligations of §14 (`[R-SER-05]`,
+`[R-SER-08]`) require decoding. A verifier that cannot execute a
+layer's codec or filter cannot establish the layer's conformance
+and MUST NOT certify the file — the rule of §9.7(d) applied to
+content. For a conforming reader that position arises only at a
+reserved or experimental value, every assigned codec and filter
+being core: it rejects the layer (`[R-COD-03]`, `[R-COD-09]`);
+software unable to execute an assigned codec or filter is not a
+conforming reader (`[R-CNF-03]`). `[R-COD-11]`
 
 ### 18. User Metadata
 

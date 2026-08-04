@@ -24,7 +24,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0006](0006-consolidated-metadata-directory.md) | Consolidated metadata directory, O(1) round trips | Accepted (placement resolved by ADR-0018) |
 | [0007](0007-64-bit-offsets-only.md) | All offsets, lengths, and extents are u64 | Accepted |
 | [0008](0008-checksum-all-metadata.md) | Every metadata structure checksummed; verification is a reader obligation | Accepted (algorithm fixed by ADR-0023; index granularity amended by ADR-0024) |
-| [0009](0009-codec-menu.md) | Closed codec menu plus byte-shuffle filter | Accepted (internal codec fixed by ADR-0032) |
+| [0009](0009-codec-menu.md) | Closed codec menu plus byte-shuffle filter | Accepted (internal codec fixed by ADR-0032; wrappers and shuffle scope fixed by ADR-0039) |
 | [0010](0010-fill-values-and-sparse-tiles.md) | Mandatory per-channel fill; unstored tiles read as fill | Accepted (sentinel fixed by ADR-0024; boolean fill fixed by ADR-0036) |
 | [0011](0011-uniform-tiles-padded-edges.md) | Uniform tile sizes with padded edge tiles | Accepted (padding content fixed by ADR-0037) |
 | [0012](0012-channel-layouts.md) | Interleaved and planar layouts with a full validity table | Accepted (planar order fixed by ADR-0021; boolean representation fixed by ADR-0037 as amended by ADR-0038) |
@@ -54,6 +54,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0036](0036-sample-type-ids-and-fill-mechanics.md) | Sample-type identifiers and fill mechanics | Accepted (resolves Q-D1/Q-D2/Q-D3; discharges ADR-0010/0013 Confirms) |
 | [0037](0037-boolean-packing-and-padding-content.md) | Packed booleans over the value sequence; fill-encoded edge padding | Accepted (resolves Q-D6, completes Q-C4; interleaved boolean cells superseded by ADR-0038) |
 | [0038](0038-interleaved-boolean-bytes.md) | Interleaved boolean values are single bytes | Accepted (amends ADR-0012/0037 after maintainer challenge) |
+| [0039](0039-codec-wrappers-and-shuffle-scope.md) | Codec wrapper pinning and the shuffle stride rule | Accepted (resolves Q-E1/Q-E2; fixes ADR-0009 framing; discharges round-2 §17 deferrals) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

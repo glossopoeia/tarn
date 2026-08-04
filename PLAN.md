@@ -82,7 +82,7 @@ a cleanroom round (§6):
 | 8 | Reading a TARN file | The normative numbered read algorithm, including fill and checksum-failure paths; fixes eager-vs-lazy validation timing (cleanroom gate 1, reader ambiguity 4), duplicate-name detection timing, and multi-segment planar-read accounting (round 2) |
 | 9 | Writing and updating | Writer tiers, updater obligations, append procedure; byte-identical re-emission of retained records, appender verification depth, and compaction generation-renumbering-from-1 (cleanroom gate 1 findings) |
 | 10 | Error-handling register | The consolidated violation × outcome table |
-| 11 | Security and privacy considerations | Named threat classes; deletion ≠ erasure; compaction; the limits table (Q-H1) — entry_count bound for CRC-array growth and the checksum-uncovered-padding note (round 2) |
+| 11 | Security and privacy considerations | Named threat classes; deletion ≠ erasure; compaction; the limits table (Q-H1) — entry_count bound for CRC-array growth, the checksum-uncovered-padding note (round 2), and the zstd minimum-supported-window row (Batch 7) |
 | 12 | Extensibility and registries; user metadata | Flags, ID spaces, version semantics, the enumerated extension surface; the user-metadata document (ADR-0015, Q-F1/F3) |
 | 13 | Conformance checklists, vectors, appendices | Per-class checklists; annotated hex dump of a minimal file; constants table; normative references |
 | — | **Cleanroom round 3 (acceptance)** | Full spec; G1–G3 evaluated as pass/fail |

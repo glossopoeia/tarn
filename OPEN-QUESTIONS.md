@@ -372,7 +372,15 @@ entirely on layout regardless).
 
 ## E. Codecs and filters
 
-### Q-E1. Codec wrapper pinning. [blocking]
+### Q-E1. Codec wrapper pinning. [Resolved → ADR-0039]
+**Resolution:** deflate = raw RFC 1951; zstd = one minimal-strict
+RFC 8878 frame (dictionary and content-checksum flag forbidden,
+reject-tile; content-size allowed, cross-checked against decoded
+size); lz4 = one raw block (decoded size ≤ 0x7E000000). Codec IDs 1–4
+sequential; every wrapper field the container already carries was
+struck or pinned inert — zstd's default-emitted content-size is
+retained on adoption grounds, cross-checked, never an allocation
+source.
 - **Why:** Each codec must be pinned to one exact external definition
   (ADR-0009); the open choices are at the framing layer, decided by one
   test — does the wrapper add anything the container doesn't already carry?
@@ -387,7 +395,12 @@ entirely on layout regardless).
   verify the "tile decodable from stored bytes + layer metadata alone"
   sentence still holds.
 
-### Q-E2. Shuffle filter on interleaved layers. [blocking]
+### Q-E2. Shuffle filter on interleaved layers. [Resolved → ADR-0039]
+**Resolution:** permitted — stride = sample stride Q; measured 28–33%
+deflate-size reduction on representative interleaved data, comparable
+to the planar win. One stride rule (planar = element size, interleaved
+= Q); packed bool planes degenerate to the identity, so no forbidden
+cell exists.
 - **Why:** Byte-shuffle needs an element stride. Planar tiles are
   homogeneous (stride = channel element size — trivially correct).
   Interleaved tiles mix element sizes, so the stride is either the full

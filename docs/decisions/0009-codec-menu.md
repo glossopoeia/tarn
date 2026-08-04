@@ -1,6 +1,7 @@
 # 0009. Closed codec menu plus an orthogonal byte-shuffle filter
 
-- Status: Accepted
+- Status: Accepted (wrapper framing and shuffle scope fixed by
+  ADR-0039)
 - Date: 2026-07-29
 - Covers: compression codecs; filters; codec boundary contract
 - Confirm: none — the internal metadata codec is fixed by ADR-0032
