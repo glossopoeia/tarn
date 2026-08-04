@@ -318,8 +318,13 @@ for validation is not acting on it, and an explicit validation order
 (§6.2) governs where one is stated. `[R-ENC-10]` Every field of every
 structure is covered by exactly one checksum, excepting the front
 signature block (a constant whose check is equality, §6) and the
-checksum fields themselves (verified by comparison, covered by no
-further checksum); which bytes each checksum covers, and each
+terminal checksum fields of §8.1's map — the trailer, directory-
+region, and user-metadata checksum fields — which are verified by
+comparison and covered by no further checksum. Interior checksum
+fields — each segment CRC array and each layer record's
+crc_of_crc_array — are both comparison-verified and covered by
+exactly one further checksum, as §8.1 maps. Which bytes
+each checksum covers, and each
 conformance class's verification obligations, are defined with the
 structures that carry them (§8).
 
@@ -734,9 +739,9 @@ ignore-record. `[R-CNT-18]`
 #### 8.1 Coverage map
 
 Every field of every structure is covered by exactly one checksum —
-the equality-checked front signature block being §4.5's sole exception
-— per this map. All checksums are CRC-32C over bytes exactly as
-stored. `[R-CNT-19]`
+excepting the equality-checked front signature block and this map's
+terminal checksum fields, per §4.5 — as this map states. All
+checksums are CRC-32C over bytes exactly as stored. `[R-CNT-19]`
 
 | Structure | Checksum location | Covers |
 |---|---|---|
@@ -1292,7 +1297,9 @@ does detect it. `[R-SER-08]`
 > `b`'s tile is 12 bytes, and ordinal 5's value occupies bytes
 > 10–11. With channels `t` (float32) and `m` (bool) interleaved
 > instead: Q = 5, decoded size 30, and ordinal 5's sample is bytes
-> [25, 30) — `t` at 25–28, `m` the single byte at 29.
+> [25, 30) — `t` at 25–28, `m` the single byte at 29. In general,
+> channel c's value at in-tile ordinal u sits at byte u · Q + Fᶜ —
+> the table's forms with k = u · C + c.
 
 #### 14.3 Packed boolean planes
 
@@ -1308,6 +1315,13 @@ values. Every bit pattern of the value region decodes to a value
 sequence — decoding a packed plane never fails over its content;
 padding-position content binds writers (§14.5), never a reader's
 decode path. `[R-SER-03]`
+
+> **Note.** Pad bits are not padding positions (§11.3). A padding
+> position is a whole sample position outside the layer's extents,
+> arising in any layout; pad bits are a packed plane's final-byte
+> unused high bits, arising only when P is not a multiple of 8. A
+> plane can have many padding positions and no pad bits — §14.5
+> gives both their content.
 
 > **Example.** A planar bool tile, tile extents (2, 5), P = 10,
 > values alternating true, false, … in ordinal order: byte 0 is
@@ -1437,7 +1451,9 @@ sentinel value 2⁶⁴ − 1, a reader MUST classify as follows; rows
 marked *verifier* require whole-index or whole-file knowledge and
 bind verifiers, not ordinary readers. The per-entry outcomes below
 govern notwithstanding the general owning-scope mapping of
-`[R-ENC-03]`/`[R-ENC-04]`. `[R-IDX-03]`
+`[R-ENC-03]`/`[R-ENC-04]`; an entry these rows classify reject-tile
+contributes no stored extent to the *verifier* rows, which bind
+over well-formed entries' extents only. `[R-IDX-03]`
 
 | Entry state | Outcome |
 |---|---|
@@ -1466,10 +1482,16 @@ array and the segment CRC over the fetched segment containing k
 fetched in parallel); any mismatch or cross-check failure
 (`[R-CNT-17]`) is reject-layer. `[R-IDX-04]`
 
+> **Note.** "To use" obliges verification, not re-verification:
+> under committed-prefix immutability a reader MAY verify each
+> range once and cache the result, keyed as §9.3 licenses
+> (`[R-LIF-03]`).
+
 The CRC-32C of a segment consisting of 2¹⁶ sentinel entries is
 `0xEECB3BB2`; writers of sparse layers MAY emit this constant for any
-**full** segment whose entries are all sentinels, without computing
-it — a final partial segment's CRC MUST be computed. Equality with
+**full** segment — one covering exactly 2¹⁶ entries, final or not —
+whose entries are all sentinels, without computing
+it — a partial segment's CRC MUST be computed. Equality with
 the constant licenses nothing for readers: verification is byte
 comparison of computed CRCs, never constant matching. `[R-IDX-05]`
 
@@ -1505,9 +1527,10 @@ acquisition order at no cost to conformance (`[R-CNT-13]`).
 A layer MAY declare alignment A (§7.4): a power of two ≥ 512.
 Writers MUST NOT emit any other nonzero value; a reader MUST treat
 one as a validity error at layer scope (`[R-CNT-23]`). When declared:
-every stored tile's offset satisfies offset mod A = 0, and the gaps
-this creates between stored extents are declared padding — zero
-bytes, classified under §5.2. A verifier MUST check the invariant
+every stored tile's offset satisfies offset mod A = 0, and
+unclaimed bytes that this alignment leaves between claimed
+structures are declared padding — zero bytes, classified under
+§5.2. A verifier MUST check the invariant
 (violation: reject-layer, §15.3); readers are not obligated to —
 offsets are always explicit, so alignment is reader-invisible.
 `[R-SLB-01]`
@@ -1531,8 +1554,10 @@ block_start + r·S. `[R-SLB-02]`
 When declared, for every run: the run's stored tiles are contiguous
 and packed in ordinal order — each stored tile's offset equals the
 previous stored tile's offset plus its length — and the first stored
-tile's offset satisfies offset mod A_slab = 0; the gaps A_slab
-creates between runs are declared padding — zero bytes, classified
+tile's offset satisfies offset mod A_slab = 0. The runs themselves
+are not mutually ordered or joined: between runs, placement freedom
+(`[R-SLB-05]`) governs, and unclaimed bytes that a writer's run
+placement leaves are declared padding — zero bytes, classified
 under §5.2. Sentinel tiles are transparent to run continuity: they
 occupy no bytes and do not break packing. A run with no stored tiles
 imposes nothing. A verifier MUST
@@ -1542,7 +1567,8 @@ from any index segment. `[R-SLB-03]`
 
 A writer or updater whose commit supersedes a stored tile in, or
 grows the extents of, a slab-declared layer MUST either re-establish
-the invariants for every affected run or clear the declaration in
+the invariants for every affected run — a run whose stored-tile set
+or byte placement the commit changes — or clear the declaration in
 the new generation; carrying a stale declaration forward is a
 validity error at layer scope. `[R-SLB-04]`
 
