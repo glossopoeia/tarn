@@ -4,8 +4,9 @@
 - Date: 2026-07-29
 - Covers: channel layout; cross-field validity; boolean representation
 - Confirm: planar disk-tile ordering fixed by ADR-0021 (channel-major);
-  boolean representation fixed by ADR-0037 (bit-packed LSB-first over
-  the value sequence; mixed bool + numeric layers planar-only; Q-D6).
+  boolean representation fixed by ADR-0037 as amended by ADR-0038
+  (planar planes bit-packed LSB-first; interleaved bool values single
+  bytes; Q-D6).
 
 ## Context
 

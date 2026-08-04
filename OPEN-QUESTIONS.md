@@ -344,11 +344,16 @@ invalid-combination table.
   correctness (e.g. nodata-aware range scaling) vs convenience. Leaning:
   (a), or (d) if drafting shows the semantics cost more than they give.
 
-### Q-D6. Boolean representation. [Resolved → ADR-0037]
-**Resolution:** bit-packed LSB-first over the tile's value sequence in
-both layouts (bit k mod 8 of byte k div 8); pad bits carry the mapped
-channel's fill bit; layers mixing bool and non-bool channels are
-planar-only (interleaved declaration → reject-layer).
+### Q-D6. Boolean representation. [Resolved → ADR-0037 + ADR-0038]
+**Resolution:** planar bool planes bit-packed LSB-first (bit k mod 8
+of byte k div 8), pad bits the plane's fill bit; interleaved bool
+values are single bytes 0x00/0x01, strict, verifier-checked —
+ADR-0038 lifted ADR-0037's mixed-interleaved prohibition after
+maintainer challenge (int8-masquerade type erasure outweighed the
+uniformity clause). The outcome is option (c) below, overturning its
+inline rejection: ADR-0038 answers the implementer-surprise objection
+(representation keys on layout alone, and decode paths branch
+entirely on layout regardless).
 - **Why:** ADR-0012 requires one uniform boolean representation across both
   layouts; the Confirm is which. Bit-packing is 8× smaller but complicates
   interleaved sample framing; byte-per-bool is simple but bloated, and "any

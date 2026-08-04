@@ -1,7 +1,8 @@
 # 0037. Packed booleans over the value sequence; fill-encoded edge padding
 
 - Status: Accepted (discharges ADR-0011's and ADR-0012's remaining
-  Confirms; resolves Q-D6 and Q-C4's stored-sample half)
+  Confirms; resolves Q-D6 and Q-C4's stored-sample half; interleaved
+  boolean cells superseded by ADR-0038)
 - Date: 2026-08-04
 - Covers: boolean in-tile representation; edge-tile padding content;
   the layout × boolean validity cell
