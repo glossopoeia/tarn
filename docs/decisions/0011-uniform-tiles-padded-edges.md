@@ -3,8 +3,8 @@
 - Status: Accepted
 - Date: 2026-07-29
 - Covers: tiling geometry; edge-tile handling; padding content
-- Confirm: padding samples = fill-value bytes (recommended) vs all-zero
-  bytes (see OPEN-QUESTIONS Q-C4).
+- Confirm: padding content fixed by ADR-0037 (fill-encoded padding
+  samples and pad bits; Q-C4).
 
 ## Context
 

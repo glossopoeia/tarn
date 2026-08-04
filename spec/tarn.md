@@ -1220,8 +1220,155 @@ rejection is never satisfied by returning fill (`[R-CNF-09]`).
 
 ### 14. Tile Serialization
 
-*[Reserved — Batch 6: interleaved and planar byte layouts, boolean
-representation, edge padding per ADR-0012/0021 and Q-C4/Q-D6.]*
+This section defines the **decoded tile image**: the byte sequence a
+stored tile's payload decodes to under §17's codec pipeline, and the
+byte sequence a writer presents to that pipeline. The owning scope
+of a layer's serialization declarations is the layer; the owning
+scope of one tile's decoded content is the tile (§2.4).
+
+#### 14.1 The value sequence
+
+Every tile serializes a **value sequence** — its decoded values in
+one fixed order. With P the sample-position count per tile (§11.2),
+C the channel count, and in-tile positions ordered by the permanent
+row-major in-tile ordinal (§11.4):
+
+- **Planar** — the tile with disk ordinal c · N + s (§11.4) carries
+  exactly the values of channel c at the tile's P positions: value
+  k of the sequence is channel c's value at in-tile ordinal k, and
+  the sequence has V = P values.
+- **Interleaved** — the tile at spatial ordinal s carries all C
+  channels at the tile's P positions, sample-major: value k of the
+  sequence is channel (k mod C)'s value at in-tile ordinal
+  k div C — each sample's channel values are adjacent, in declared
+  channel order — and the sequence has V = P · C values. `[R-SER-01]`
+
+The layer's layout field (§7.4) selects the mode. Field values: 0 is
+invalid; 1 = interleaved and 2 = planar are the only values this
+specification defines and the only values a writer MAY emit; values
+3 through 255 are reserved without semantics. A reader MUST treat
+any value other than 1 or 2 as a validity error at layer scope
+(`[R-CNT-23]`). `[R-SER-06]`
+
+#### 14.2 Numeric layout and decoded size
+
+In a tile whose values are all of numeric types (§12.1), the decoded
+tile image is the value sequence with each value encoded in its
+type's element size, little-endian (`[R-ENC-01]`), packed in
+sequence order with no padding between values. The image's byte
+length — the **decoded size** — and each value's byte offset follow:
+
+| Layout | Decoded size | Offset of value k |
+|---|---|---|
+| planar, channel c | P · Bᶜ | k · Bᶜ |
+| interleaved (all numeric) | P · Q | (k div C) · Q + F_{k mod C} |
+
+where Bᶜ is channel c's element size (§12.1), Q = Σ Bᵢ over all
+channels (the **sample stride**), and Fᶜ = Σ Bⱼ over channels j < c
+(channel c's in-sample offset). These products and sums are
+declaration-derived quantities under `[R-ENC-04]`. `[R-SER-02]`
+
+> **Example.** An interleaved layer, tile extents (2, 3), P = 6,
+> channels `a` (uint8) and `b` (uint16): Q = 3, decoded size 18.
+> The position with in-tile coordinates (1, 2) has in-tile ordinal
+> 1·3 + 2 = 5; its sample occupies bytes [15, 18) — `a` at byte 15,
+> `b` at bytes 16–17, little-endian. The same layer planar: channel
+> `b`'s tile is 12 bytes, and ordinal 5's value occupies bytes
+> 10–11.
+
+#### 14.3 Boolean layout
+
+In a tile whose values are all bool — a planar tile of a bool
+channel, or any tile of an interleaved layer whose channels are all
+bool — the decoded tile image is the value sequence bit-packed
+LSB-first: value k occupies bit k mod 8 of byte k div 8 (§4.4),
+with 0 = false and 1 = true, and the decoded size is ⌈V/8⌉ bytes.
+The final byte's high bits beyond the last value (bit positions
+V mod 8 through 7, when V mod 8 ≠ 0) are the tile's **pad bits**;
+their content is fixed by `[R-SER-05]` and they never encode
+values. Every bit pattern of the value region decodes to a value
+sequence — decoding a boolean tile never fails over its content;
+padding-position content binds writers (§14.5), never a reader's
+decode path. `[R-SER-03]`
+
+> **Example.** A planar bool tile, tile extents (2, 5), P = V = 10,
+> values alternating true, false, … in ordinal order: byte 0 is
+> `0x55` (bits 0–7 = values 0–7), byte 1 carries values 8–9 in bits
+> 0–1 (`0x01`) and six pad bits. With the channel's fill false the
+> tile decodes as `55 01`; with fill true, `55 FD` (pad bits 2–7
+> set). An interleaved layer with two bool channels and tile
+> extents (2, 2), P = 4, V = 8: with channel 0 true at odd ordinals
+> and channel 1 true everywhere, the single byte is `0xEE`
+> (sequence 0, 1, 1, 1, 0, 1, 1, 1 from bit 0). With tile extents
+> (1, 5) instead — P = 5, V = 10, two bytes — and fills false for
+> channel 0, true for channel 1: byte 1 carries values 8–9 in bits
+> 0–1 and pad bits at value indices 10–15, which map to channels
+> 0, 1, 0, 1, 0, 1 (`[R-SER-05]`), so its bits 2–7 are
+> 0, 1, 0, 1, 0, 1. If channel 0 is false and channel 1 true at
+> every position, the tile is `AA AA`.
+
+Whichever of §14.2 or §14.3 defines a tile's decoded size, a reader
+MUST treat a decoded payload whose byte length is not exactly that
+decoded size as a validity error at tile scope: decoded size is a
+function of the layer's declarations alone — geometry and channel
+types — never of payload content, and readers allocate from those
+declarations, not from stored data. Every decoded size, and the
+value count V = P · C, is a declaration-derived quantity under
+`[R-ENC-04]`. `[R-SER-07]`
+
+#### 14.4 Layout–type validity
+
+Writers MUST NOT declare interleaved layout for a layer whose
+channels include bool together with any non-bool channel; a reader
+MUST treat such a declaration as a validity error at layer scope.
+Every other combination of layout and channel types is defined:
+planar layers carry any mix (each channel's tiles serialize under
+§14.2 or §14.3 by that channel's type alone), interleaved layers
+carry either all-numeric or all-bool channel sets, and a
+single-channel layer produces byte-identical tile images under
+either layout. `[R-SER-04]`
+
+> **Rationale.** A bool value inside a mixed interleaved sample has
+> no byte address: serializing it takes a per-sample packed
+> sub-field with its own offset arithmetic and pad rules — the
+> underspecified-interaction surface this specification refuses on
+> principle. Planar layout carries mixed bool + numeric data
+> first-class, so nothing is unrepresentable.
+
+#### 14.5 Padding content
+
+Padding positions (§11.3) are serialized like any other position,
+and their content is fixed: at every padding position, a writer
+MUST encode, for each channel the position carries, that channel's
+fill value — the recorded fill bytes for a numeric channel, the
+fill bit for a bool channel. Every pad bit (§14.3) MUST carry a
+fill bit under §14.1's index-to-channel rule applied past the last
+value: the pad bit at value index k — bit k mod 8 of byte
+k div 8 — carries channel (k mod C)'s fill bit in an interleaved
+tile and the plane's channel's fill bit in a planar tile. A
+conforming reader never returns this content (`[R-GEO-04]`) and is
+not obligated to check it; a verifier MUST check it, and a
+violation is a validity error at tile scope. `[R-SER-05]`
+
+> **Example.** A layer with extents (5, 5), tile extents (4, 4):
+> grid 2 × 2, and the edge tile at tile coordinates (1, 1) covers
+> coordinates 4–7 along both axes — one real position, (4, 4), and
+> 15 padding positions. With one uint16 channel and fill `0xABCD`,
+> that decoded tile is 32 bytes: value 0 is the stored sample, and
+> values 1–15 are each the bytes `CD AB`.
+
+> **Rationale.** Padding participates in compression and in the
+> stored tile's checksum, so its content decides whether identical
+> logical data yields identical bytes. Fill-encoded padding keeps
+> one invariant everywhere — every stored value outside the layer's
+> extents is fill — so a reader that forgets to clip observes fill
+> (a defined value, not garbage), content-addressing stays
+> deterministic, and padding can never leak writer memory.
+
+> **Note.** This rule governs sample content inside decoded tiles.
+> The zero-byte rule for declared padding *between* structures
+> (alignment gaps, pre-trailer padding, §5.2) is a different
+> mechanism and is unchanged.
 
 ### 15. Tile Index
 

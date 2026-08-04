@@ -26,8 +26,8 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0008](0008-checksum-all-metadata.md) | Every metadata structure checksummed; verification is a reader obligation | Accepted (algorithm fixed by ADR-0023; index granularity amended by ADR-0024) |
 | [0009](0009-codec-menu.md) | Closed codec menu plus byte-shuffle filter | Accepted (internal codec fixed by ADR-0032) |
 | [0010](0010-fill-values-and-sparse-tiles.md) | Mandatory per-channel fill; unstored tiles read as fill | Accepted (sentinel fixed by ADR-0024; boolean fill fixed by ADR-0036) |
-| [0011](0011-uniform-tiles-padded-edges.md) | Uniform tile sizes with padded edge tiles | Accepted (Confirm: padding content) |
-| [0012](0012-channel-layouts.md) | Interleaved and planar layouts with a full validity table | Accepted (planar order fixed by ADR-0021; Confirm: bool packing — Q-D6) |
+| [0011](0011-uniform-tiles-padded-edges.md) | Uniform tile sizes with padded edge tiles | Accepted (padding content fixed by ADR-0037) |
+| [0012](0012-channel-layouts.md) | Interleaved and planar layouts with a full validity table | Accepted (planar order fixed by ADR-0021; bool packing fixed by ADR-0037) |
 | [0013](0013-sample-type-list.md) | Closed sample-type list with zero optional members | Accepted (reservations fixed by ADR-0036) |
 | [0014](0014-little-endian-only.md) | Little-endian only | Accepted |
 | [0015](0015-structured-user-metadata.md) | Structured, quarantined user metadata | Proposed (granularity fixed by ADR-0032; Confirm: encoding — Q-F1) |
@@ -52,6 +52,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0034](0034-cleanroom-protocol.md) | The cleanroom protocol, as piloted | Accepted (resolves Q-I2) |
 | [0035](0035-alignment-values.md) | Alignment value sets | Accepted (discharges ADR-0005 Confirm) |
 | [0036](0036-sample-type-ids-and-fill-mechanics.md) | Sample-type identifiers and fill mechanics | Accepted (resolves Q-D1/Q-D2/Q-D3; discharges ADR-0010/0013 Confirms) |
+| [0037](0037-boolean-packing-and-padding-content.md) | Packed booleans over the value sequence; fill-encoded edge padding | Accepted (resolves Q-D6, completes Q-C4; discharges ADR-0011/0012 Confirms) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

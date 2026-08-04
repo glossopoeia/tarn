@@ -248,10 +248,12 @@ layer; tile → reject-tile; user metadata → ignore-record + report.
 - **What settles it:** Mostly a decision to write down; (a) is the leaning.
   Every row of the final table gets a corrupted-file conformance vector.
 
-### Q-C4. Padding determinism: what bytes fill padding, normatively? [half resolved; edge samples remain — blocking §14]
-**Partial resolution → ADR-0030:** alignment-gap and pre-trailer padding
-bytes are zero. Open: edge-tile padding *samples* inside stored payloads
-(fill-encoding vs zero), resolved with Batch 6.
+### Q-C4. Padding determinism: what bytes fill padding, normatively? [Resolved → ADR-0030 + ADR-0037]
+**Resolution:** alignment-gap and pre-trailer padding bytes are zero
+(ADR-0030; verifier-checked at file scope); edge-tile padding samples
+carry the channel's fill encoding, and packed-boolean pad bits the
+mapped channel's fill bit (ADR-0037) — the latter half writer-MUST,
+verifier-checked, reject-tile.
 - **Why:** ADR-0011 requires defined padding; the Confirm is *which*
   definition. Padding participates in compression and checksums, so
   unspecified padding makes identical logical data yield different physical
@@ -342,7 +344,11 @@ invalid-combination table.
   correctness (e.g. nodata-aware range scaling) vs convenience. Leaning:
   (a), or (d) if drafting shows the semantics cost more than they give.
 
-### Q-D6. Boolean representation. [blocking]
+### Q-D6. Boolean representation. [Resolved → ADR-0037]
+**Resolution:** bit-packed LSB-first over the tile's value sequence in
+both layouts (bit k mod 8 of byte k div 8); pad bits carry the mapped
+channel's fill bit; layers mixing bool and non-bool channels are
+planar-only (interleaved declaration → reject-layer).
 - **Why:** ADR-0012 requires one uniform boolean representation across both
   layouts; the Confirm is which. Bit-packing is 8× smaller but complicates
   interleaved sample framing; byte-per-bool is simple but bloated, and "any
