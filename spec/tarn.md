@@ -1026,12 +1026,197 @@ product is 1 (so at d = 1 the ordinals below reduce to u₀ and t₀):
 
 ### 12. Channels and Sample Types
 
-*[Reserved — Batch 5: closed type list per ADR-0013.]*
+A channel is declared by its layer record's channel entry (§7.4): a
+name (§4.6), a sample type (`u16`, structural), and a fill value
+(§13). The owning scope (§2.4) of a channel declaration is the layer
+(`[R-CNT-23]`); channels are declared in order, and the declared
+order is load-bearing (§3.1, §11.4).
+
+#### 12.1 Core sample types
+
+This specification defines exactly thirteen sample types, all
+**core**: a conforming reader MUST decode every one of them, and
+none is skippable (`[R-CNF-03]`). `[R-TYP-01]`
+
+| ID | Name | Element size | Definition |
+|---|---|---|---|
+| 1 | bool | 1 | logical value: false or true; fill encoding §13.2, in-tile representation §14 |
+| 2 | int8 | 1 | signed two's-complement integer |
+| 3 | int16 | 2 | signed two's-complement integer |
+| 4 | int32 | 4 | signed two's-complement integer |
+| 5 | int64 | 8 | signed two's-complement integer |
+| 6 | uint8 | 1 | unsigned integer |
+| 7 | uint16 | 2 | unsigned integer |
+| 8 | uint32 | 4 | unsigned integer |
+| 9 | uint64 | 8 | unsigned integer |
+| 10 | float16 | 2 | IEEE 754 binary16 |
+| 11 | bfloat16 | 2 | defined below |
+| 12 | float32 | 4 | IEEE 754 binary32 |
+| 13 | float64 | 8 | IEEE 754 binary64 |
+
+float16, float32, and float64 are the IEEE 754-2019 interchange
+formats binary16, binary32, and binary64. The twelve types other
+than bool are this specification's **numeric types**. A type's
+**element size** is the byte length of one encoded value of that
+type: it fixes the length of the channel's fill field
+(`[R-CNT-23]`) and, for the numeric types, enters §14's byte-layout
+arithmetic. Multi-byte values are little-endian (`[R-ENC-01]`). The
+in-tile representation of bool samples is §14's subject; a bool's
+element size of 1 governs its fill field (§13.2).
+
+**bfloat16.** A bfloat16 value occupies two bytes. In the numbering
+of §4.4, bit 15 is the sign, bits 14–7 the biased exponent, and bits
+6–0 the trailing significand. A bfloat16 bit pattern b denotes
+exactly the value that the IEEE 754 binary32 bit pattern b × 2¹⁶
+(b in the high 16 bits, low 16 bits zero) denotes; subnormals,
+infinities, and NaNs follow from that identification. `[R-TYP-02]`
+
+> **Example.** bfloat16 1.0 is `0x3F80` — binary32 1.0 is
+> `0x3F800000`, and keeping the high 16 bits leaves `0x3F80` —
+> stored as the bytes `80 3F`. The bit pattern `0x7FC0` denotes a
+> quiet NaN (binary32 `0x7FC00000`).
+
+#### 12.2 The type field's value set
+
+Field values: 0 is invalid; 1 through 13 are assigned per §12.1;
+values 14 through 19 are reserved without semantics; values 20
+through 0x7FFF are reserved for future assignment by this
+specification; values ≥ 0x8000 are the experimental range (§10).
+Writers MUST NOT emit a type value other than 1 through 13; a reader
+MUST treat any other value — 0, every reserved value, and the
+experimental range included — as a validity error at layer scope
+(`[R-CNT-23]`). Type identifiers are pure enumerators: a reader MUST
+NOT infer an element size or any semantics for a type value this
+specification does not assign, whatever pattern its bits suggest
+(`[R-CNF-04]`). `[R-TYP-03]`
+
+> **Note.** The reserved identifiers are pinned: 14 and 15 for 8-bit
+> floats — defined, if ever, as bit-exact OCP OFP8 E4M3 and E5M2, and
+> no other 8-bit float definition will be considered — 16, 17, and
+> 18 for int128, uint128, and float128, and 19 for a fixed-size
+> raw-bytes type. Reservation forecloses collision; it is not a
+> commitment to assign. Reserved types enter, if ever, through a
+> minor version, which an unaware reader handles gracefully: the
+> unknown type value makes exactly that layer unreadable
+> (reject-layer), never the file.
+
+#### 12.3 Values are bit patterns
+
+A sample value is its bit pattern (§3.2, `[R-MDL-02]`). Writers and
+readers MUST NOT alter a value's encoded bytes in storing, decoding,
+or returning it: NaN payloads are preserved — never quieted,
+canonicalized, or collapsed — and −0.0 and +0.0 are distinct values.
+Wherever this specification treats two sample or fill values as the
+same value, it means their encoded bytes are identical; this format
+defines no numeric equality, no ordering, and no NaN-aware
+comparison over sample values. `[R-TYP-04]`
+
+Every bit pattern of a numeric type's element size is a valid sample
+value and a valid fill value — subnormals, infinities, and every NaN
+payload included; there is no sample value a reader screens out.
+Boolean values are constrained by §13.2 (fill) and §14 (in-tile
+representation). `[R-TYP-05]`
+
+> **Example.** A channel entry (§7.4) declaring name `temp`, type
+> float32, fill the quiet NaN `0x7FC00000` is the twelve bytes
+> `04 74 65 6D 70 0C 00 04 00 00 C0 7F`: name length 4, the name
+> bytes, type `0C 00` (12, little-endian), fill length 4, fill bytes
+> `00 00 C0 7F`. A fill of `0x7FC00001` — a NaN carrying a payload —
+> is equally valid and round-trips bit-exactly (§13.1).
 
 ### 13. Fill Values and Sparse Tiles
 
-*[Reserved — Batch 5: bit-exact fill and unstored-tile reads per
-ADR-0010.]*
+Fill is what makes sparse layers first-class: an addressed tile that
+is not stored (§3.1) occupies no payload bytes, and reading it is
+defined behavior — each channel it carries reads as fill at every
+sample position (§13.3) — rather than an error. The owning scope of
+a fill field is the layer (`[R-CNT-23]`).
+
+#### 13.1 The fill field
+
+Every channel entry records a fill value: exactly the channel's
+element size in bytes, holding the little-endian encoding of one
+value of the channel's type (§7.4, `[R-CNT-23]`). The field is
+always present — §7.4's framing leaves absence unrepresentable — and
+it is authoritative: a reader MUST take a channel's fill from its
+channel entry, MUST NOT substitute a type-derived default or any
+other value, and MUST return fill bit-exactly as recorded
+(`[R-TYP-04]`). `[R-TYP-06]`
+
+The fill value is semantic (§4.7): it affects what unstored samples
+read as, never how any byte is located or decoded; the field's
+length prefix is §7.4's framing, cross-checked against the element
+size (`[R-CNT-23]`).
+
+Fill is mandatory-with-default: a writer whose caller does not
+choose a fill SHOULD record all-zero bytes. A writer that defaults
+differently still emits a conforming file, but its unwritten
+regions read back as a value consumers of the conventional zero
+default will not expect. `[R-TYP-10]`
+
+> **Note.** Nothing distinguishes the recorded default from a
+> deliberately chosen zero — deliberately so: readers never guess,
+> and the "field absent, behavior undefined" class of divergence is
+> unrepresentable.
+
+#### 13.2 Per-type fill constraints
+
+For the twelve numeric types, every bit pattern of the element size
+is a valid fill (`[R-TYP-05]`), NaN payloads and −0.0 included. For
+bool, the fill field is one byte and its value is constrained:
+`0x00` (false) or `0x01` (true). Writers MUST NOT emit any other
+byte; a reader MUST treat any other byte as a validity error at
+layer scope. `[R-TYP-07]`
+
+> **Rationale.** One value, one encoding. Admitting "any nonzero
+> byte is true" would create 255 encodings of true, and channel
+> entries with identical meaning but different bytes — the
+> two-encodings trap §4.6 closes for names, closed here for fill.
+
+#### 13.3 Unstored tiles read as fill
+
+For every addressed tile that is not stored in the live generation —
+its index entry is the sentinel (§15.2) — a reader that returns any
+of the tile's sample positions inside the layer's extents MUST
+return, for each channel the tile carries, that channel's fill value
+at every such position. In an interleaved layer an unstored tile
+yields the full fill sample — each channel's fill, in declared
+channel order — at every position; in a planar layer exactly the
+entry's channel reads as fill there, and a single sample can mix
+decoded and fill channels (§3.2). `[R-TYP-08]`
+
+> **Example.** An interleaved layer with channels `r`, `g`, `b`, all
+> uint8, fills `0xFF`, `0x00`, `0x00`: every sample of an unstored
+> tile reads as the tuple (255, 0, 0). With the same channels planar
+> and, at one spatial ordinal, the tiles for `r` and `g` stored but
+> the tile for `b` the sentinel, samples there read decoded `r`,
+> decoded `g`, and `b` = 0.
+
+Fill is produced by exactly one condition: a sentinel entry read
+from a verified index chain (§8.2, §15.4). A reader MUST NOT return
+fill for a tile whose entry is malformed (§15.3), whose index CRC
+array or segment failed verification, or whose stored bytes failed
+their checksum: those conditions reject their scopes, and a
+rejection is never satisfied by returning fill (`[R-CNF-09]`).
+`[R-TYP-09]`
+
+> **Rationale.** This rule is what makes sparse semantics safe.
+> Because every index byte is checksummed (§8.1), corruption cannot
+> silently convert "stored" into "absent, reads as fill": a zeroed
+> index region is loudly invalid rather than all-sparse (§15.2), and
+> a damaged entry rejects the tile rather than filling it.
+
+> **Note.** Fill governs unstored tiles. The padding positions of
+> stored edge tiles (§11.3) are a different mechanism — their stored
+> byte content is §14's subject — and a reader never returns padding
+> positions in any case (`[R-GEO-04]`).
+
+> **Note — sparse writing.** A writer creates a sparse layer by
+> emitting sentinel entries: no payload bytes, and for a full
+> segment of sentinels even the segment CRC is a known constant
+> (`[R-IDX-05]`). Extent growth is a metadata-only operation
+> (§11.1), so declare-then-fill workflows append tiles as data
+> arrives, generation by generation (§9).
 
 ### 14. Tile Serialization
 

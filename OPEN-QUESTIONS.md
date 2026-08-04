@@ -268,7 +268,10 @@ bytes are zero. Open: edge-tile padding *samples* inside stored payloads
 
 ## D. Types, fill, statistics
 
-### Q-D1. 8-bit floats: reservation details. [deferrable]
+### Q-D1. 8-bit floats: reservation details. [Resolved → ADR-0036]
+**Resolution:** both reserved, neither ships — IDs 14 (E4M3) and 15
+(E5M2) pinned to bit-exact OCP OFP8 only; no named consumer
+materialized.
 - **Why:** ADR-0013 keeps fp8 out of v1 with IDs reserved for OCP E4M3/E5M2
   only. The residual questions: are both reserved, and does any near-term
   consumer justify shipping them in v1 after all?
@@ -278,7 +281,11 @@ bytes are zero. Open: edge-tile padding *samples* inside stored payloads
 - **What settles it:** A named consumer exchanging OCP FP8 tensors through
   TARN files. Leaning: (a).
 
-### Q-D2. 128-bit integers/floats and an `opaque<N>` escape hatch. [deferrable]
+### Q-D2. 128-bit integers/floats and an `opaque<N>` escape hatch. [Resolved → ADR-0036]
+**Resolution:** all deferred — IDs 16/17/18 (int128/uint128/float128)
+and 19 (opaque) reserved without semantics; no v1 corpus materialized,
+and opaque's N-in-fill-length encoding would hollow out the
+fill-length cross-check.
 - **Why:** ADR-0013 drops 128-bit types from v1. The open sliver: does a
   fixed-size raw-bytes type (`opaque<N>`) enter v1 as the pressure valve
   (IDs/UUIDs/hashes as samples), or is it deferred too?
@@ -290,7 +297,10 @@ bytes are zero. Open: edge-tile padding *samples* inside stored payloads
   cell) exist. Leaning: (b) if a concrete case shows up during drafting,
   else (a).
 
-### Q-D3. Fill-value edge cases. [blocking]
+### Q-D3. Fill-value edge cases. [Resolved → ADR-0036]
+**Resolution:** bool fill is one byte, 0x00 or 0x01, others
+reject-layer; interleaved fill composes per channel in declared order.
+Packed-form pad bits stay with Q-D6 (serialization).
 - **Why:** ADR-0010 fixes fill as raw element bytes; two corners remain.
   Packed booleans: what is the fill *bit*, and what do final-byte pad bits
   contain? Interleaved layers: fill is per-channel and composed into a
