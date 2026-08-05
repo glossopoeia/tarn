@@ -56,6 +56,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0038](0038-interleaved-boolean-bytes.md) | Interleaved boolean values are single bytes | Accepted (amends ADR-0012/0037 after maintainer challenge) |
 | [0039](0039-codec-wrappers-and-shuffle-scope.md) | Codec wrapper pinning and the shuffle stride rule | Accepted (resolves Q-E1/Q-E2; fixes ADR-0009 framing; discharges round-2 §17 deferrals) |
 | [0040](0040-validation-follows-reliance.md) | Validation follows reliance | Accepted (discharges cleanroom timing deferrals from rounds 1 and 2) |
+| [0041](0041-updater-reemission-and-compaction-identity.md) | Updater re-emission, verification depth, and compaction identity | Accepted (discharges round 1's three §20 deferrals) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

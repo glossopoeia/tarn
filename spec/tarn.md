@@ -1916,8 +1916,179 @@ failure takes the cited rule's outcome:
 
 ### 20. Writing and Updating
 
-*[Reserved — Batch 9: writer tiers, append procedure, updater stories per
-ADR-0017/0026.]*
+Every conforming mutation of a file is a commit or a whole-file
+rewrite (`[R-LIF-01]`), by one writer at a time (`[R-LIF-05]`).
+This section defines the writer tiers and their procedures; like
+§19, it consolidates — each step cites the rule whose outcome
+governs it.
+
+#### 20.1 Writer tiers
+
+- **creator** — emits a complete file in one commit, generation 1:
+  the minimal conforming writer.
+- **appender** — extends an existing file by commits (§9.2):
+  adding layers or records, superseding tiles, growing extents,
+  amending metadata.
+- **compactor** — rewrites a file whole under a new identity
+  (§20.5), reclaiming dead space.
+
+A creator emits only conforming files (`[R-CNF-05]`). An appender
+and a compactor satisfy every writer requirement for the bytes
+they produce and the preservation obligations of §20.4 for what
+they carry forward (`[R-CNF-06]`), and are readers of every
+structure they process (`[R-CNF-11]`) — a violation latent in a
+structure they neither modify nor rely on travels with it, and
+certifying the whole file is a verifier's office (§9.7).
+`[R-WRT-01]`
+
+#### 20.2 Creation
+
+A creator MUST follow `[R-LIF-02]`'s creation path: the front
+signature block; each layer's stored tiles, tile-index region, and
+any record extents, in any order satisfying §5.2's coverage
+classes (`[R-CNT-02]`, `[R-CNT-03]`) and every declared layout
+invariant (`[R-SLB-01]`, `[R-SLB-03]`) — placement is otherwise
+free (`[R-SLB-05]`); then the complete directory and its CRC; then
+the barrier, the pad, the generation-1 trailer with a fresh
+nonzero file_id (§9.3), and the barrier that makes the trailer
+durable (`[R-LIF-02]` steps 4–6 — both barriers, not one).
+Content obligations travel with the structures:
+fill-encoded edge padding (`[R-SER-05]`), boolean byte values
+(`[R-SER-08]`), zero declared padding (`[R-CNT-03]`). `[R-WRT-02]`
+
+#### 20.3 The append procedure
+
+An updater's verification depth follows reliance
+(`[R-RDR-02]`'s principle, which §2.3 extends to updaters as
+readers of what they process, `[R-CNF-11]`): the trailer and the
+full directory always — re-emission (§20.4) relies on every
+directory byte — plus §19.3's layer validation for every layer
+whose record, index, or extents the commit modifies, and the
+§19.4 index chain for every segment whose entries the commit
+reuses (`[R-IDX-04]`). Structures the commit neither modifies nor
+relies on impose no further obligation. `[R-WRT-03]`
+
+An appender MUST, in order:
+
+1. **Establish F.** Validate the trailer at the physical end of
+   the file (`[R-LIF-04]`). On failure the file is torn: no
+   append; recovery (§9.6) is a deliberate, separate operation,
+   and an appender resuming from re-verified recovery output
+   takes F from that output, then truncates to F or overwrites
+   from it per `[R-LIF-04]` — in which case F, never the physical
+   end, anchors every step below.
+2. **Open.** Perform §19.1's open (`[R-RDR-01]`) — the appender is
+   a reader here.
+3. **Validate what the commit touches**, per `[R-WRT-03]`.
+4. **Write payloads and indexes** (`[R-LIF-02]` steps 1–2):
+   writing begins at exactly F; new stored tiles and record
+   extents follow, each byte classified under §5.2. Every layer
+   whose stored-tile set, index content, or index placement this
+   commit changes has its tile-index region re-emitted in full —
+   entry_count entries plus the segment CRC array — with entries
+   for tiles this commit stores or supersedes written to their
+   new state, entries for tiles that become unstored written as
+   the sentinel, entries new to this generation (added tiles,
+   grown extents) emitted per §15, and every other entry
+   byte-identical at its disk-ordinal position (a geometry change
+   renumbers ordinals, `[R-GEO-06]`). A layer whose record alone
+   changes keeps its extent slot, pointing at the existing
+   region. Extents this commit supersedes become dead space
+   (`[R-CNT-21]`); a slab declaration is re-established or
+   cleared (`[R-SLB-04]`), and an aligned layer's new tiles
+   satisfy its invariant or the declaration is cleared
+   (`[R-SLB-01]`, `[R-CNF-05]`).
+5. **Re-emit the directory** per §20.4, followed by its CRC
+   (`[R-LIF-02]` step 3).
+6. **Commit** (`[R-LIF-02]` steps 4–6): barrier; zero pad;
+   trailer with generation one greater, the same file_id, unknown
+   ignore-lane flag bits copied forward (`[R-CNT-08]`), and
+   version_minor per `[R-CNT-26]`; barrier. `[R-WRT-04]`
+
+> **Example.** Superseding one 100,000-byte stored tile of a
+> 32-tile interleaved layer appends: the new payload (100,000
+> bytes), the layer's full new index region (32 · 20 + 4 = 644
+> bytes — one entry re-pointed, 31 byte-identical), the new
+> directory (every record byte-identical except the modified
+> layer's), the pad, and the 64-byte trailer. The prior index
+> region and the superseded payload become dead space, reclaimable
+> only by compaction.
+
+#### 20.4 Re-emission and preservation
+
+In the new complete directory, an updater MUST re-emit
+byte-identically — header, inline payload, and extent slot — every
+record it retains and does not logically modify, whether or not it
+implements the record's type; a record it modifies is new output
+under its writer obligations (`[R-CNF-05]`). `[R-WRT-05]`
+
+For record types the updater does not implement, the stored flags
+govern (`[R-CNT-15]`; MU = 1 with PE = 0 is read as PE = 1,
+`[R-CNT-12]`):
+
+| Stored flags | Updater obligation |
+|---|---|
+| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs: an unknown critical record at layer scope blocks modification of that layer, and at file scope blocks file-scope modification entirely. |
+| MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
+| MU = 0, PE = 0 | Retain byte-identical, or — only in a commit that modifies the scope the record attaches to — drop it, its extent becoming dead space. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+
+An updater MUST NOT re-encode a record whose type it does not
+implement, and MUST NOT modify one except by relocating its
+extent and re-pointing its slot under §20.5 — the operation the
+no-embedded-offsets rule (§7.2) makes safe for MU = 0 records.
+`[R-WRT-08]`
+
+> **Rationale.** Complete-directory commits make re-emission the
+> preservation mechanism; byte-identity makes preservation
+> testable — the records of adjacent generations differ exactly by
+> those modified, added, or dropped (as a multiset: record order
+> carries no meaning, `[R-CNT-14]`) — and forecloses re-encode
+> drift: a re-serializer that renormalized a name would change the
+> name's identity (`[R-ENC-13]`).
+
+#### 20.5 Compaction
+
+A compactor emits a new conforming file containing only the
+structures reachable from the input's live trailer — the live
+committed state (§7.2), less any record §20.4 lets it drop — so
+dead space is never carried. It MUST give the output a new
+file_id (§9.3's randomness advice applies) and generation 1: a
+compacted file is a whole-file rewrite under a new file_id by
+definition (`[R-LIF-01]`), and reusing the input's would break
+the (file_id, range) cache contract of `[R-LIF-03]`, since
+relocation puts different bytes at the same ranges. The output
+trailer copies the input's unknown ignore-lane flag bits forward
+(`[R-CNT-08]`) and carries version_minor per `[R-CNT-26]`.
+A compactor MUST refuse to compact a file carrying any record
+whose type it does not implement with MU = 1: such a type can
+define references this specification does not (§7.2), so its
+bytes cannot be safely relocated. `[R-WRT-06]`
+
+A compactor preserves content, never placement: every stored
+tile's bytes verbatim — each index entry's crc is unchanged — and
+every retained record per §20.4, except that relocation re-points
+extent slots, regenerates each relocated tile-index region (entry
+offsets new; entry lengths, entry crcs, and sentinel entries
+unchanged; segment CRCs recomputed over the entries as
+re-emitted), and updates the layer-record fields covering a
+regenerated region (crc_of_crc_array). No other record payload
+carries a file offset: MU = 0 records by rule (§7.2), and an
+MU = 1 type the compactor does not implement never reaches this
+step (`[R-WRT-06]`). The output's reference arrays MUST equal the
+live generation's bit for bit (`[R-MDL-02]`): compaction changes
+where bytes live, never what a layer denotes. `[R-WRT-07]`
+
+A compactor's verification depth follows reliance over
+everything it carries (`[R-WRT-03]`): it relies on every
+structure it copies, so it MUST verify each link of the chain —
+the open (§19.1), each retained layer's record (§19.3) and full
+index chain (`[R-IDX-04]`), and each relocated extent's checksum,
+including every stored tile's entry crc — before emitting that
+structure's bytes. `[R-WRT-09]`
+
+> **Note.** Compaction is the only true removal: logical deletion
+> supersedes bytes but leaves them in the file as dead space
+> (`[R-CNT-21]`) — a privacy consideration (§23).
 
 ### 21. Error-Handling Register and Limits
 
