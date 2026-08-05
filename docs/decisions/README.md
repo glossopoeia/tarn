@@ -58,6 +58,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0040](0040-validation-follows-reliance.md) | Validation follows reliance | Accepted (discharges cleanroom timing deferrals from rounds 1 and 2) |
 | [0041](0041-updater-reemission-and-compaction-identity.md) | Updater re-emission, verification depth, and compaction identity | Accepted (discharges round 1's three §20 deferrals) |
 | [0042](0042-error-register-form.md) | The error register is derivative, complete, and per-violation | Accepted (fixes gate G5's coverage unit) |
+| [0043](0043-limits-as-minimum-guarantees.md) | Limits are minimum guarantees, sized by structural knees | Accepted (resolves Q-H1) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

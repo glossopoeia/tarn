@@ -148,8 +148,8 @@ Every limit that affects which files are valid or which files a
 conforming reader accepts lives in this specification, never only in an
 implementation. Readers MAY enforce resource limits, but MUST accept any
 conforming file within the minimum guarantees stated in §21's limits
-table; writers MAY rely on those minimums. `[R-CNF-10]` *(The limits
-table is drafted with Batch 11, per Q-H1.)*
+table; writers MAY rely on those minimums; the table is §21.9.
+`[R-CNF-10]`
 
 ### 3. Terminology and Data Model
 
@@ -1000,6 +1000,12 @@ axis would be ≥ Eᵢ. Padding positions are serialized like any other
 position (byte-level rules and padding content: §14) but are not part
 of the reference array (§3.2); a reader MUST NOT return padding
 positions as samples. `[R-GEO-04]`
+
+> **Note.** Tile extents are a writer's choice, and this
+> specification imposes none: the workable range in practice runs
+> from roughly 1 to 16 MiB of decoded tile, large enough to amortize
+> a range request and small enough that reading one sample does not
+> drag in megabytes. Tiles far outside that range remain conforming.
 
 #### 11.4 Linearization
 
@@ -2348,18 +2354,198 @@ gap in the corpus, not a licence to skip the check. `[R-ERR-02]`
 
 #### 21.9 Implementation limits
 
-*[Reserved — Batch 11: the limits table per Q-H1, including the
-entry_count bound on segment-CRC-array growth and the minimum zstd
-window a conforming reader is obliged to support.]*
+Every limit affecting which files are valid, or which files a
+conforming reader accepts, lives here (`[R-CNF-10]`). The table
+below states **minimum guarantees**, not caps: a conforming reader
+MUST accept any conforming file whose quantities lie within these
+bounds, and a writer MAY rely on that. `[R-ERR-03]`
+
+| Quantity | A conforming reader MUST accept at least |
+|---|---|
+| rank d of a layer | 32 |
+| channels per layer, C | 4096 |
+| addressed tiles per layer (entry_count) | 2³² |
+| layers per file | 65,536 |
+| decoded size of one tile | 256 MiB |
+| decoded size of one user-metadata document | 16 MiB |
+| zstd frame `Window_Size` | 8 MiB |
+
+A file exceeding any of these remains conforming, and a reader MAY
+decline it. Software that declines a file whose every quantity lies
+within the table is not a conforming reader (`[R-CNF-03]`) — the
+guarantees are the floor, not a suggestion. Either way, a refusal
+on resource grounds MUST be reported as a resource limit and not as
+a validity error: the two send a user to opposite remedies, and a
+reader that reports "too large" as "corrupt" invites the deletion
+of intact data. `[R-ERR-04]`
+
+> **Note.** Where the numbers come from: rank and channel counts
+> follow established array-ecosystem ceilings; 2³² addressed tiles
+> is the point where the segment-CRC array a reader fetches whole
+> before using any entry (§15.4) is still 256 KiB — it reaches 4 MiB
+> at 2³⁶; 65,536 layers is roughly a 12.5 MiB directory; 256 MiB is
+> an order of magnitude above the tile sizes §11.3 describes as
+> ordinary, so the guarantee never binds a typical file; 8 MiB is
+> the decoder window support
+> RFC 8878 itself recommends, which stock encoder settings stay
+> within.
+
+Some limits are instead **hard**: a file violating one is invalid,
+not merely large. They are stated where the structures forcing them
+are defined — a name at most 255 bytes (`[R-ENC-12]`, a `u8` length
+prefix); rank at most 255 and channel count at most 65,535 (§7.4's
+`u8` and `u16` fields); a layer declaring codec 4 at decoded tile
+size at most `0x7E000000` (`[R-COD-07]`); and every offset, length,
+extent, and count at most 2⁶³ − 1 (`[R-ENC-03]`). Each is a
+consequence of a field's width, an external format, or the value
+domain — never a number chosen here. `[R-ERR-05]`
 
 ### 22. Security Considerations
 
-*[Reserved — Batch 11.]*
+#### 22.1 Threat model
+
+A TARN file is untrusted input. This section assumes an adversary
+who fully controls the bytes a reader is given — including files
+that validate — and who can control the transport. The defenses
+below are structural: they hold because a conforming reader derives
+what it allocates and fetches from *declarations it has verified*,
+never from payload content. `[R-SEC-01]`
+
+#### 22.2 Resource exhaustion
+
+Three properties bound what a hostile file can make a reader spend.
+Decoded tile size is a function of the layer's declarations alone
+(§14.2, §14.3), so a reader allocates from geometry and never from
+a length embedded in a payload — a compressed stream that expands
+beyond the declared decoded size is a tile-scope error
+(`[R-COD-08]`), which is this format's decompression-bomb defense
+and the reason no codec's embedded size field is ever an allocation
+source (`[R-COD-06]`). Every sum and product taken from a file is
+overflow-checked before use (`[R-ENC-04]`). And nothing is
+allocated, sought, or fetched on the strength of a field before the
+checksum covering it verifies (`[R-ENC-05]`). A reader MUST
+NOT size an allocation, fetch, or index walk in proportion to a
+declared magnitude it has not corroborated against the file's actual
+length: a layer can declare 2⁶³ − 1 addressed tiles, and the
+declaration alone costs nothing to state. `[R-SEC-02]`
+
+> **Note.** The index is the cheapest hostile amplifier: entry_count
+> is one `u64`, and `[R-CNT-17]`'s cross-check ties it to the
+> region's declared length while `[R-CNT-13]` ties that length to
+> the file's actual size — a reader that validates both before
+> fetching cannot be induced to read more than the file contains.
+
+#### 22.3 Structural attacks
+
+Extents are owned exactly once (`[R-CNT-13]`): no two structures
+overlap, which removes aliasing — two index entries pointing at one
+payload, or a payload overlapping a structure that governs it — as
+a class. Byte coverage (`[R-CNT-02]`) leaves no *unattributed* bytes in a
+conforming file: every byte belongs to a named structure of a named
+generation. It bounds accounting, not content — a superseded
+generation's extents are attributed dead space and can hold anything
+(§23.1) — so coverage makes smuggled bytes locatable, not absent. Both are verifier-detected: a reader that skips them is
+still conforming, so a pipeline accepting files from untrusted
+sources SHOULD verify rather than merely read; without that, an
+attacker's smuggled bytes travel unexamined. `[R-SEC-03]`
+
+Two residues are stated rather than defended. Declared padding is
+covered by no checksum (§8.1): corruption confined to padding is
+invisible to a reader and caught only by a verifier's zero check
+(`[R-CNT-03]`). And a payload can contain a byte string that mimics
+a trailer; recovery tooling that scans backward can land on one, which
+is why recovery output is re-verified as a whole file before being
+trusted (`[R-LIF-06]`) and why generation enumeration discards
+off-chain candidates (`[R-LIF-08]`). `[R-SEC-04]`
+
+#### 22.4 Content the reader hands onward
+
+Names are length-prefixed and screened for C0 controls
+(`[R-ENC-12]`), which removes ESC-introduced escape sequences and
+CR/LF injection from the identifiers a tool is most likely to print.
+It removes nothing else: U+007F, the C1 range U+0080-U+009F (where
+U+009B is CSI to a terminal in 8-bit mode), and bidirectional
+overrides such as U+202E are all legal in a conforming name. A
+display surface MUST NOT assume a name is safe for its own syntax, and a reader MUST NOT interpret a name
+as a filesystem path — nothing in this format names a path, and
+treating one as such reintroduces traversal in the consumer.
+`[R-SEC-05]` User metadata is application data and is never
+structural (§7.1): a reader MUST NOT let it influence how any byte
+is located or decoded. `[R-SEC-06]`
+
+#### 22.5 What this format does not provide
+
+Checksums detect accidental corruption. They do not authenticate:
+an adversary who can modify bytes can recompute every checksum in
+the file, and a file that verifies proves only internal consistency
+(§4.5). This format provides no confidentiality, no authenticity, no
+signing, and no access control; deployments needing them wrap the
+file in a mechanism that does. Committed-prefix immutability (§9.1)
+makes that compose well: a detached signature over the committed
+prefix [0, F) of one generation, pinned to the file_id and
+generation its trailer names, stays valid over that prefix under
+every later append — though it attests that generation, not the
+file a reader opens later. `[R-SEC-07]`
 
 ### 23. Privacy Considerations
 
-*[Reserved — Batch 11: superseded bytes, deletion vs erasure, compaction
-per ADR-0017.]*
+#### 23.1 Deletion is not erasure
+
+The append-only model (§9.1) means a commit that removes data
+removes only its *reachability*: the superseded bytes remain in the
+file as dead space (`[R-CNT-21]`), readable by anyone with the
+bytes and a hex editor, and reachable by ordinary tooling through
+generation enumeration (§9.7). Writers and the tools built on them
+MUST NOT represent a commit that supersedes data as erasure of it.
+`[R-PRV-01]`
+
+Compaction (§20.5) is the only operation that removes dead space,
+and it does so by writing a new file — the input persists,
+unmodified, until something outside this specification deletes it,
+and a filesystem-level deletion leaves the bytes recoverable on many
+media. A deployment whose obligation is erasure MUST treat that
+obligation as belonging to its storage layer, not to this format.
+`[R-PRV-02]`
+
+#### 23.2 What a file discloses
+
+A conforming file discloses more than its sample values: layer,
+dimension, and channel names; declared geometry; the write footprint
+of every layer at tile granularity, since a sentinel entry (§15.2)
+marks each addressed tile that was never stored, so the index
+publishes which regions were written without disclosing what is in
+them; the user-metadata document,
+which is quarantined from structural interpretation (§7.1) but not
+hidden; and the shape of its own history — generation count,
+per-generation sizes, and the dead space each commit left behind.
+Writers handling sensitive material SHOULD treat names and metadata
+as published content, and SHOULD compact before publication when the
+history itself is sensitive. `[R-PRV-03]`
+
+The `file_id` (§9.3) is a stable 64-bit identifier that persists
+across every generation of a file - high-entropy only when its
+writer follows §9.3's randomness advice, which `[R-LIF-03]` states
+as a SHOULD. It is what makes
+`(file_id, range)` caching sound, and equally what lets an observer
+correlate two copies of a file as the same artifact. Compaction
+mints a new one (`[R-WRT-06]`) - the only defined way to break
+*file_id* linkage, and not an unlinkability measure: `[R-WRT-07]`
+preserves every stored tile's bytes and every index entry's crc bit
+for bit, so a compacted file remains trivially correlatable with its
+input by content. `[R-PRV-04]`
+
+#### 23.3 Remote access patterns
+
+The remote read path (§6.4, §19.4) issues byte ranges determined by
+which layer and which tiles a reader wants. An observer who sees
+those ranges — a server operator, a proxy, or anyone on an
+unencrypted transport — learns which region of which layer was read,
+and the tile grid makes that inference precise. This is a property
+of range-based random access, not a defect. A reader that needs to
+hide its access pattern MAY fetch whole files or interpose a
+private-retrieval layer, and SHOULD read only over an encrypted
+transport; over an unencrypted one every range it requests is
+visible to anyone on the path. `[R-PRV-05]`
 
 ### 24. Conformance Test Vectors
 

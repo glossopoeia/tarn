@@ -561,7 +561,13 @@ magic `8A 4E 52 41 54 0D 0A 1A` ("NRAT"); application/vnd.tarn.
 
 ## H. Limits and security
 
-### Q-H1. Normative constants vs implementation-declared minimums. [blocking]
+### Q-H1. Normative constants vs implementation-declared minimums. [Resolved → ADR-0043]
+**Resolution:** minimum guarantees, not caps — rank 32, channels 4096,
+entry_count 2³² (the segment-CRC-array knee), layers 65,536, decoded
+tile 256 MiB, user-metadata document 16 MiB, zstd window 8 MiB; a file
+exceeding any row stays conforming and a reader refusing it MUST say
+"resource", not "invalid". Hard caps remain only where a structure,
+an external format, or the value domain forces one.
 - **Why:** Limits that live only in implementations mean "valid file"
   differs by reader. The alternative pattern (RFC 8259): implementations
   MAY set limits, but the spec names minimum guarantees writers can rely
