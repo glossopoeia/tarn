@@ -329,7 +329,11 @@ invalid-combination table.
   past EOF, overlap, sentinel-offset with nonzero length, nonzero checksum
   on sentinel) with required outcomes and an invalid vector each.
 
-### Q-D5. Per-channel min/max statistics: keep, and where? [deferrable]
+### Q-D5. Per-channel min/max statistics: keep, and where? [Resolved → ADR-0045]
+**Resolution:** standardized user-metadata key `tarn.stats` — advisory
+by construction, since metadata cannot affect decoding, so no
+staleness rules, verifier obligations, or preserve-on-edit semantics
+are needed; NaN excluded from min and max.
 - **Why:** Eagerly-maintained stats go stale by construction the moment
   tiles are rewritten, and presence flags do not belong inside type words
   (ADR-0013). If stats exist they must be honest about their reliability.
@@ -438,7 +442,11 @@ columnar reserved via the index-encoding enum.
 
 ## F. Metadata and naming
 
-### Q-F1. User-metadata encoding. [shaping]
+### Q-F1. User-metadata encoding. [Resolved → ADR-0045]
+**Resolution:** UTF-8 JSON (RFC 8259), restricted — top-level object,
+no NaN/infinities, no duplicate keys, keys sorted by UTF-8 bytes;
+byte-identity across writers explicitly not promised, consistent with
+R-CNF-05. Granularity was already fixed by ADR-0032.
 - **Why:** ADR-0015 (Proposed) needs its Confirm items resolved: JSON vs
   canonical CBOR, and per-layer granularity. JSON is human-inspectable and
   ubiquitous but has no native binary values and needs explicit
@@ -472,7 +480,10 @@ per scope MUST. Encoded as spec §4.6.
 - **What settles it:** One consequence-analysis paragraph during drafting;
   the limits land in the spec's limits table (Q-H1).
 
-### Q-F3. Dimension coordinate/unit metadata: core or keys? [deferrable]
+### Q-F3. Dimension coordinate/unit metadata: core or keys? [Resolved → ADR-0045]
+**Resolution:** standardized keys — `tarn.axes` carries the affine
+mapping (unit, origin, step) per dimension; the core stays neutral and
+the extension mechanism is the promotion path.
 - **Why:** Scientific users want axis semantics (units, affine coordinate
   mappings, spectral bands); image users don't. Core fields commit every
   reader to parsing them forever; GeoTIFF and EXIF demonstrate that domain
@@ -526,7 +537,13 @@ no-embedded-offsets rule, and per-class semantics table.
 - **What settles it:** Walk the updater stories (re-tagger, appender,
   compactor) against each design; leaning (a).
 
-### Q-G3. Registry and ID-space design. [shaping]
+### Q-G3. Registry and ID-space design. [Resolved → ADR-0044]
+**Resolution:** every numeric space partitioned assigned / reserved /
+experimental (≥ 0x8000 for u16, ≥ 0x80 for u8), collected in §10.2;
+experimental values carry no collision protection and MUST NOT ship;
+registration requires a security review and, for record types, an
+MU/PE justification; the registry is a machine-readable file in this
+repository.
 - **Why:** Extension governance fails in two directions: a registry that
   dies (TIFF's registration mailbox was decommissioned; its "reusable"
   private range guaranteed collisions) or one with so much process nobody

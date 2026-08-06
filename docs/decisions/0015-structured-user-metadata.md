@@ -1,11 +1,11 @@
 # 0015. Structured, quarantined user metadata instead of flat string tags
 
-- Status: Proposed
+- Status: Accepted (encoding fixed by ADR-0045; granularity by ADR-0032)
 - Date: 2026-07-29
 - Covers: user metadata (tags); extension registry hook for standardized keys
-- Confirm: encoding — UTF-8 JSON (recommended) vs canonical CBOR (see
-  OPEN-QUESTIONS Q-F1). Granularity is fixed by ADR-0032: one document
-  per file, at most one per layer.
+- Confirm: encoding fixed by ADR-0045 (restricted UTF-8 JSON);
+  granularity fixed by ADR-0032 (one document per file, at most one
+  per layer).
 
 ## Context
 

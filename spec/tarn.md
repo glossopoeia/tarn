@@ -937,8 +937,92 @@ as nonconforming. `[R-LIF-08]`
 
 ### 10. Extension Points and Registry
 
-*[Reserved — Batch 12: enumerated extension surface, ID spaces,
-experimental ranges per ADR-0025/0026/Q-G3.]*
+#### 10.1 The extension surface
+
+This format grows through exactly four vehicles (`[R-ENC-07]`), and
+this section collects them:
+
+1. **New record types** (§7.3), which carry their own scope and
+   flags;
+2. **New values in the ranges this specification reserves** (§10.2);
+3. **New ignore-lane flag bits** in the trailer (§6.3);
+4. **New standardized user-metadata keys** (§18.4).
+
+Nothing else extends this format. A new fixed field, a widened
+structure, a changed field width, or a reinterpreted assigned value
+is a new format major version (`[R-CNT-24]`) — never a minor
+revision, and never an implementation's private convention.
+`[R-EXT-01]`
+
+#### 10.2 Numeric identifier spaces
+
+Every numeric identifier space is partitioned identically: values
+this specification assigns; a **reserved** range only this
+specification assigns from; and an **experimental** range for
+private use. The spaces, defined in the sections that own them and
+collected here:
+
+| Space | Width | Assigned | Reserved | Experimental |
+|---|---|---|---|---|
+| record type (§7.3) | u16 | 0x0001, 0x0002 | 0x0003–0x7FFF | ≥ 0x8000 |
+| channel layout (§14.1) | u8 | 1, 2 | 3–255 | none |
+| linearization (§11.4) | u16 | 1 | 2–0x7FFF | ≥ 0x8000 |
+| sample type (§12.2) | u16 | 1–13 | 14–0x7FFF | ≥ 0x8000 |
+| codec (§17.2) | u16 | 1–4 | 5–0x7FFF | ≥ 0x8000 |
+| filter (§17.3) | u16 | 1, 2 | 3–0x7FFF | ≥ 0x8000 |
+| index encoding (§7.4, §15.1) | u8 | 1 | 2–0x7F | ≥ 0x80 |
+| metadata encoding (§18.2) | u8 | 1, 2 | 3–0x7F | ≥ 0x80 |
+
+Value 0 is invalid in every space above. Two spaces carry no
+experimental range: channel layout, whose `u8` field is too narrow
+to spare one — 3 through 255 stay reserved to this specification —
+and the trailer's flag lanes, which §6.3 partitions instead.
+`[R-EXT-02]`
+
+#### 10.3 The experimental range
+
+Experimental values are private use and carry **no collision
+protection**: two unrelated experiments MAY select the same value,
+and nothing in this format distinguishes them. Writers MUST NOT emit
+files carrying an experimental value in released software or
+published data, and a value from a reserved range MUST NOT be
+emitted at all before this specification assigns it — an
+unregistered value that escapes into circulation is precisely the
+failure the experimental range exists to absorb. A reader
+encountering either treats it as its space's rules require: a
+validity error at the owning scope for the value sets of §11.4,
+§12.2, §14.1, §15.1, §17.2, and §17.3; for record types, the MU-bit
+outcome of `[R-CNT-15]` at file scope and `[R-CNT-18]` for layer
+sub-records; and for the metadata-encoding space of §18.2,
+ignore-record under the quarantine (`[R-CNT-25]`), never a
+scope-level rejection. `[R-EXT-03]`
+
+#### 10.4 Registration
+
+A value leaves the reserved range by registration, which requires an
+unambiguous specification of its semantics — sufficient for
+independent implementation without consulting any implementation — a
+security review of what accepting it obliges a reader to do, and, for
+a record type, its MU and PE assignment with justification. A type
+registers MU = 0 only if ignoring it leaves every stored sample
+bit-exact and every geometry identical; sample types, geometry,
+channel sets and layout, codecs, filters, linearization, fill, and
+index location or encoding are never ignorable, so no record
+carrying them registers as ancillary. `[R-EXT-04]`
+
+The registry is `spec/registry.json` in this specification's
+repository, versioned with the specification itself; Appendix C is
+its snapshot at publication. Its `registry_version` field
+increments on every change to an assignment. Where the registry,
+§10.2's table, and Appendix C diverge, the section that defines the
+space governs — the registry is machine-readable convenience, never
+a second authority (§21.1 applies the same principle to the error
+register). `[R-EXT-05]`
+
+> **Note.** A registry hosted apart from the specification it serves
+> can be decommissioned out from under it, which is how a
+> well-designed private range becomes a collision field. Keeping the
+> registry in the repository makes it as durable as the document.
 
 ---
 
@@ -1785,8 +1869,158 @@ conforming reader (`[R-CNF-03]`). `[R-COD-11]`
 
 ### 18. User Metadata
 
-*[Reserved — Batch 12: structured document, determinism, key uniqueness,
-standardized keys per ADR-0015 and Q-F1/F3.]*
+#### 18.1 The document
+
+A file MAY carry one user-metadata document at file scope, and each
+layer MAY carry one of its own, each held in a user-metadata
+record's extent (§7.1). Its content is application data: this
+specification defines its encoding, not its meaning. `[R-MTA-01]`
+
+The owning scope of a user-metadata record is the file when the
+record is top-level and the layer when it is a sub-record — but the
+outcome of every failure to read its **document** is ignore-record
+whatever the scope, because the document is **quarantined**
+(`[R-CNT-25]`). The quarantine covers the document only: a
+malformed extent slot on such a record, (0, 0) included, is a
+validity error at the record's containing scope (`[R-CNT-13]`,
+`[R-CNT-25]`), because that failure precedes the document. A
+reader MUST NOT let any part of a user-metadata document affect how
+a byte is located, decoded, or returned; structural facts live in
+structural fields, and a reader that consults metadata to decode has
+built a second parser out of untrusted input (§22.4). `[R-MTA-02]`
+
+#### 18.2 Encoding
+
+A user-metadata record's inline payload is exactly one byte:
+
+| Offset | Size | Type | Field | Class | Valid values |
+|---|---|---|---|---|---|
+| 0 | 1 | u8 | encoding | structural | 1 or 2; see below |
+
+A record whose inline_length is not 1 is a validity error at the
+record's containing scope — the payload is a fixed structure
+(`[R-ENC-07]`), not a growable one. Field values: 0 is invalid;
+1 = none and 2 = zstd are assigned; 3 through 0x7F are reserved;
+values ≥ 0x80 are the experimental range (§10). An encoding this
+specification does not assign, or one the reader does not
+implement, is ignore-record (`[R-CNT-25]`). `[R-MTA-03]`
+
+Encoding 1 stores the document verbatim. Encoding 2 stores it as
+exactly one RFC 8878 compressed frame occupying the extent's bytes
+before its terminal CRC, under the frame constraints of
+`[R-COD-06]` that do not reference a tile: the frame magic; no
+skippable frame and no second frame; no nonzero dictionary ID; no
+content-checksum flag. The constraints §17.2 states against a
+tile's declared decoded size do not apply, because a document has
+no declared size — a reader instead decodes with a bound of its
+own choosing, no smaller than §21.9's user-metadata guarantee, and
+a document exceeding that bound is ignore-record like any other it
+cannot read. Any violation here is ignore-record, never the
+tile-scope outcome §17.2 assigns. `[R-MTA-09]`
+
+The decoded document is a JSON text as defined by RFC 8259, encoded
+in UTF-8. Four restrictions apply, and a document violating any of
+them is unreadable — ignore-record, with the report `[R-CNT-25]`
+asks for:
+
+- **A JSON object, unmarked.** The top-level value is an object,
+  and the encoding carries no byte-order mark: a leading U+FEFF
+  makes the document unreadable.
+
+- **Finite numbers only.** A reader interprets every JSON number as
+  an IEEE 754 binary64 value and MAY use a wider representation. A
+  document is unreadable if it contains a number whose binary64
+  interpretation is not finite — which covers a magnitude that
+  overflows on conversion, `1e400` being the ordinary case — or any
+  of the bare tokens `NaN`, `Infinity`, or `-Infinity`, which RFC
+  8259 does not admit and some parsers accept regardless. Writers
+  SHOULD NOT emit a number binary64 cannot represent exactly; a
+  value needing bit-exact representation belongs in a structural
+  field (§13.1), not here.
+- **No duplicate keys.** Within any one object, each key appears
+  once; two members with byte-identical keys make the document
+  unreadable, since which member wins would otherwise be a parser's
+  choice.
+- **Well-formed UTF-8 throughout** (`[R-ENC-11]`), and every key
+  satisfying §4.6's name rules — non-empty, at most 255 bytes, free
+  of U+0000 through U+001F. Key comparison is raw bytes
+  (`[R-ENC-13]`), so two keys differing only in Unicode
+  normalization are distinct keys.
+
+`[R-MTA-04]`
+
+Writers MUST serialize object members in ascending order of their
+keys' UTF-8 bytes. This makes one writer's output reproducible for
+identical content; it does not make two writers' output identical,
+and this specification promises no byte-identity here or anywhere
+else (`[R-CNF-05]`) — an application needing content-addressed
+metadata canonicalizes the decoded document itself. Readers MUST NOT
+depend on member order for meaning, and unsorted members do not make
+a document unreadable: the file is nonconforming, a verifier MUST
+report it, and readers process the document unchanged. `[R-MTA-05]`
+
+> **Note.** JSON was chosen over a binary encoding because every
+> target language parses it without a dependency, and because a
+> document a human can read in a hex dump's tail is one a human can
+> debug. The costs are real and priced: no binary values — base64 in
+> a string is the escape — and no cross-writer byte-identity, since
+> JSON number formatting varies by runtime.
+
+#### 18.3 Keys and namespaces
+
+The key prefix `tarn.` is reserved for keys this specification
+registers (§10.4); writers MUST NOT emit a `tarn.`-prefixed key this
+specification's registry does not define at the version they target,
+and a reader MUST ignore a `tarn.` key it does not recognize rather
+than guessing. A file carrying an unrecognized `tarn.` key is
+**conforming** — later minor versions register keys, exactly as
+they define ignore-lane flag bits (§6.3), and this text's readers
+skip both harmlessly. Every other key is application
+space: applications SHOULD prefix theirs with a domain they control
+in reverse-DNS form, and an application using an unprefixed key
+accepts that another application can mean something else by it.
+`[R-MTA-06]`
+
+#### 18.4 Standardized keys
+
+This specification registers the following. Each is OPTIONAL and
+advisory — being metadata, none can affect decoding
+(`[R-MTA-02]`) — and a reader that finds one malformed MUST ignore
+that key rather than the document.
+
+| Key | Scope | Value |
+|---|---|---|
+| `tarn.title` | file, layer | string: a short human-readable label |
+| `tarn.description` | file, layer | string: longer prose |
+| `tarn.created` | file | string: an RFC 3339 `date-time` |
+| `tarn.creator` | file | string: the producing software's name and version |
+| `tarn.axes` | layer | array of one object per dimension, in declared order, each with optional `unit` (string), `origin` (number), and `step` (number) |
+| `tarn.stats` | layer | object keyed by channel name, each value an object with optional `min` and `max` (numbers) |
+
+A writer MUST NOT emit a standardized key outside the scopes its row
+lists, and a reader MUST ignore a standardized key found outside its
+listed scope, or whose value does not match the shape its row gives,
+rather than rejecting the document. `[R-MTA-07]`
+
+`tarn.axes` gives the affine mapping from a dimension's integer
+coordinate i to a physical position, `origin + i × step`, in the
+stated unit — the convention scientific consumers need, kept out of
+the core so that no reader is obliged to parse it and no future
+domain convention needs a format revision to exist (§10.1).
+
+`tarn.stats` reports the minimum and maximum finite value observed
+per channel, NaN excluded from both. It is a hint for range scaling
+and nothing more: it MAY be absent, MAY be stale after any commit
+that changes the layer, and a reader MUST NOT use it to skip reading
+data it would otherwise read, nor to decide any question of
+correctness. `[R-MTA-08]`
+
+> **Note.** Advisory needs no enforcement machinery here. Because
+> metadata cannot affect decoding by construction, a stale
+> `tarn.stats` misleads a colour ramp and nothing else — which is
+> why statistics live here rather than as a structural record whose
+> staleness would need rules, verifier obligations, and an
+> updater's attention.
 
 ---
 
@@ -2145,6 +2379,8 @@ from that scope, never from the severity of the corruption.
 The **Instances** column lists the fields a condition ranges over
 where one condition applies to several: the row is the rule, the
 instances are what a conformance corpus enumerates (§21.8).
+Instances within a cell are separated by semicolons, and a cell
+reading — is one instance; the count is therefore mechanical.
 Detection points name §19.2's reader tiers — open, layer access,
 tile use, extent use — or *certification* for the rows a verifier
 detects, which §19.2 places outside the reader tiers entirely.
@@ -2155,21 +2391,21 @@ Outcome: reject-file. 43 conditions.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
-| F1 | A multi-byte field is stored big-endian rather than little-endian, detectable only through that field's own value or range gate | trailer version_major, dir_offset, dir_length, committed_file_length, generation, file_id | reader | open | `[R-ENC-01]` (R-CNT-07) |
-| F2 | A signature constant is stored byte-reversed — never to be adapted as a foreign-endian TARN file | front signature block bytes [0,8), trailer magic at F-64 | reader | open | `[R-ENC-02]` (R-CNT-04, R-CNT-06) |
-| F3 | A u64 offset or length field holds a value above 2^63 - 1 | dir_offset, dir_length, committed_file_length, non-layer top-level record extent_offset, extent_length | reader | open | `[R-ENC-03]` (R-CNT-06, R-CNT-13) |
-| F4 | A sum of a u64 offset and length taken from the file exceeds 2^63 - 1, so the sum wraps | dir_offset + dir_length, non-layer top-level record extent_offset + extent_length | reader | open | `[R-ENC-04]` (R-CNT-06, R-CNT-13) |
-| F5 | A fixed file-scope structure places its fields at widths other than those the spec fixes, with total size unchanged | trailer (e.g. version_major/version_minor written as u32 each), top-level record header | reader | open | `[R-ENC-06]` (R-CNT-06) |
+| F1 | A multi-byte field is stored big-endian rather than little-endian, detectable only through that field's own value or range gate | trailer version_major; dir_offset; dir_length; committed_file_length; generation; file_id | reader | open | `[R-ENC-01]` (R-CNT-07) |
+| F2 | A signature constant is stored byte-reversed — never to be adapted as a foreign-endian TARN file | front signature block bytes [0,8); trailer magic at F-64 | reader | open | `[R-ENC-02]` (R-CNT-04, R-CNT-06) |
+| F3 | A u64 offset or length field holds a value above 2^63 - 1 | dir_offset; dir_length; committed_file_length; non-layer top-level record extent_offset; extent_length | reader | open | `[R-ENC-03]` (R-CNT-06, R-CNT-13) |
+| F4 | A sum of a u64 offset and length taken from the file exceeds 2^63 - 1, so the sum wraps | dir_offset + dir_length; non-layer top-level record extent_offset + extent_length | reader | open | `[R-ENC-04]` (R-CNT-06, R-CNT-13) |
+| F5 | A fixed file-scope structure places its fields at widths other than those the spec fixes, with total size unchanged | trailer (e.g. version_major/version_minor written as u32 each); top-level record header | reader | open | `[R-ENC-06]` (R-CNT-06) |
 | F7 | Two layer records in the live directory carry byte-identical name fields (comparison is raw bytes, no normalization) | layer record name | reader | open | `[R-ENC-15]` (R-ENC-13) |
-| F8 | File size is below the 128-byte minimum, so the front block, directory, pre-trailer pad and trailer cannot all fit | F (physical file size), committed_file_length | reader | open | `[R-CNT-01]` (R-ENC-07, R-CNT-06) |
+| F8 | File size is below the 128-byte minimum, so the front block, directory, pre-trailer pad and trailer cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-01]` (R-ENC-07, R-CNT-06) |
 | F9 | A byte in a generation's attributed range [F_k-1, F_k) is claimed by no coverage class: no structure, directory, trailer or declared padding | — | verifier | certification | `[R-CNT-02]` (R-LIF-08) |
-| F10 | A byte of declared padding is nonzero | per-tile alignment gaps (16.1), slab run-placement gaps (16.2), each generation's pre-trailer pad | verifier | certification | `[R-CNT-03]` (R-SLB-01, R-SLB-03, R-LIF-02) |
-| F11 | The 16-byte front signature block is not byte-identical to the constant | magic bytes [0,8), reserved bytes [8,16) | reader | open | `[R-CNT-04]` |
+| F10 | A byte of declared padding is nonzero | per-tile alignment gaps (16.1); slab run-placement gaps (16.2); each generation's pre-trailer pad | verifier | certification | `[R-CNT-03]` (R-SLB-01, R-SLB-03, R-LIF-02) |
+| F11 | The 16-byte front signature block is not byte-identical to the constant | magic bytes [0,8); reserved bytes [8,16) | reader | open | `[R-CNT-04]` |
 | F12 | A structure other than the zero pre-trailer pad occupies bytes between a generation's directory end and its trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
-| F13 | The gap between the directory's end and the trailer start is 64 bytes or more, exceeding the sub-64-byte pre-trailer pad bound | dir_offset + dir_length, F - 64 | verifier | certification | `[R-CNT-05]` (R-LIF-02) |
+| F13 | The gap between the directory's end and the trailer start is 64 bytes or more, exceeding the sub-64-byte pre-trailer pad bound | dir_offset + dir_length; F - 64 | verifier | certification | `[R-CNT-05]` (R-LIF-02) |
 | F14 | The 8 bytes at F-64 are not exactly the trailer magic 8A 4E 52 41 54 0D 0A 1A | trailer magic | reader | open | `[R-CNT-06]` |
 | F15 | Trailer dir_offset is less than 16, pointing the directory into or before the front signature block | dir_offset | reader | open | `[R-CNT-06]` |
-| F16 | Trailer dir_offset + dir_length exceeds F - 64, so the declared directory region runs into or past the live trailer | dir_offset, dir_length | reader | open | `[R-CNT-06]` |
+| F16 | Trailer dir_offset + dir_length exceeds F - 64, so the declared directory region runs into or past the live trailer | dir_offset; dir_length | reader | open | `[R-CNT-06]` |
 | F17 | Trailer generation is 0, below the live generation counter's floor of 1 | generation | reader | open | `[R-CNT-06]` |
 | F18 | Trailer file_id is 0 | file_id | reader | open | `[R-CNT-06]` |
 | F19 | Trailer committed_file_length is not a multiple of 64, so the trailer does not begin at a 64-aligned offset | committed_file_length | reader | open | `[R-CNT-06]` (R-CNT-01) |
@@ -2181,23 +2417,23 @@ Outcome: reject-file. 43 conditions.
 | F25 | Trailer version_major is a nonzero major the reader does not implement (e.g. 2); magic and CRC still validate | version_major | reader | open | `[R-CNT-07]` (R-CNT-24) |
 | F26 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-15 | reader | open | `[R-CNT-08]` |
 | F27 | The final 4 bytes of the directory region do not equal the CRC-32C of the preceding dir_length - 4 bytes (the raw record sequence) | directory region CRC | reader | open | `[R-CNT-11]` (R-CNT-20, R-ENC-10) |
-| F28 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0), placing its document inline | extent_offset, extent_length | reader | open | `[R-CNT-25]` |
+| F28 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0), placing its document inline | extent_offset; extent_length | reader | open | `[R-CNT-25]` |
 | F29 | A top-level record's type field is 0x0000; type 0 is invalid and is never treated as an unknown type | type | reader | open | `[R-CNT-12]` |
-| F30 | A non-layer top-level record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0, a combination no writer emits | flags bit 0, flags bit 1 | verifier | certification | `[R-CNT-12]` |
+| F30 | A non-layer top-level record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0, a combination no writer emits | flags bit 0; flags bit 1 | verifier | certification | `[R-CNT-12]` |
 | F31 | Any of a non-layer top-level record's reserved flag bits 2-15 is set | flags bits 2-15 | verifier | certification | `[R-CNT-12]` |
-| F32 | A top-level record's 24-byte header or its inline payload extends past the end of the directory's record sequence (dir_offset + dir_length - 4) | record header, inline_length | reader | open | `[R-CNT-12]` (R-ENC-07) |
-| F33 | A non-layer top-level record's extent slot has exactly one half zero (offset 0 with length != 0, or offset != 0 with length 0) | extent_offset, extent_length | reader | open | `[R-CNT-13]` |
+| F32 | A top-level record's 24-byte header or its inline payload extends past the end of the directory's record sequence (dir_offset + dir_length - 4) | record header; inline_length | reader | open | `[R-CNT-12]` (R-ENC-07) |
+| F33 | A non-layer top-level record's extent slot has exactly one half zero (offset 0 with length != 0, or offset != 0 with length 0) | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
 | F34 | A non-layer top-level record's nonzero extent slot has extent_offset in 1-15, placing the extent inside the front signature block | extent_offset | reader | open | `[R-CNT-13]` |
-| F35 | A non-layer top-level record's extent_offset + extent_length exceeds F - 64, so the extent touches or passes the live trailer | extent_offset, extent_length | reader | open | `[R-CNT-13]` |
-| F36 | A byte is claimed by two structures that do not belong to the same layer - across two layers, or a layer structure against another scope's structure | stored-tile extents, tile-index regions, record extents, sub-record extents, directory region, trailer, front signature block, declared padding | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03, R-LIF-08) |
+| F35 | A non-layer top-level record's extent_offset + extent_length exceeds F - 64, so the extent touches or passes the live trailer | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
+| F36 | A byte is claimed by two structures that do not belong to the same layer - across two layers, or a layer structure against another scope's structure | stored-tile extents; tile-index regions; record extents; sub-record extents; directory region; trailer; front signature block; declared padding | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03, R-LIF-08) |
 | F37 | The directory's top-level record sequence contains two or more user-metadata records (type 0x0002) | type | reader | open | `[R-CNT-14]` |
-| F38 | A top-level record has an unassigned type value with MUST_UNDERSTAND (flags bit 0) set to 1 | type, flags bit 0 | reader | open | `[R-CNT-15]` |
+| F38 | A top-level record has an unassigned type value with MUST_UNDERSTAND (flags bit 0) set to 1 | type; flags bit 0 | reader | open | `[R-CNT-15]` |
 | F40 | Bytes were appended past a completed commit and never truncated, so the tail read at [size-64, size) is not a valid trailer | physical file bytes beyond committed_file_length | reader | open | `[R-LIF-05]` (R-LIF-04) |
-| F41 | A superseded generation's structures cannot be attributed within its own range [F_{k-1}, F_k), leaving bytes of that range claimed by nothing | extent_offset + extent_length, tile-index entry offset + length | verifier | certification | `[R-LIF-08]` (R-CNT-13) |
-| F42 | A structure claimed by an enumerated (superseded) generation fails its own checksum, so that generation's coverage cannot be verified | superseded directory CRC, crc_of_crc_array, segment CRC array entry, index-entry tile crc, record-extent CRC | verifier | certification | `[R-LIF-08]` (R-CNT-20, R-IDX-04) |
-| F43 | No candidate set anchored at the live trailer forms a chain, because for some generation pair the only qualifying candidates have non-increasing committed_file_lengths (candidates outside a chain are discarded as mimics, §9.7) | generation, committed_file_length | verifier | certification | `[R-LIF-08]` (R-LIF-02) |
-| F44 | A generation's directory or declared padding lies below F_k-1, i.e. the commit did not begin writing at exactly F | directory region, pre-trailer pad | verifier | certification | `[R-LIF-08]` (R-LIF-02, R-LIF-01) |
-| F45 | Some generation number between 1 and the live generation g has no qualifying trailer candidate, so no chain can be formed | trailer magic, trailer CRC, committed_file_length = candidate offset + 64, file_id (nonzero and equal to live file_id), dir_offset, dir_length, dir_offset + dir_length, generation, version_major, reserved bytes, flags (incompat lane, §6.3) | verifier | certification | `[R-LIF-08]` (R-LIF-06, R-CNT-06) |
+| F41 | A superseded generation's structures cannot be attributed within its own range [F_{k-1}, F_k), leaving bytes of that range claimed by nothing | extent_offset + extent_length; tile-index entry offset + length | verifier | certification | `[R-LIF-08]` (R-CNT-13) |
+| F42 | A structure claimed by an enumerated (superseded) generation fails its own checksum, so that generation's coverage cannot be verified | superseded directory CRC; crc_of_crc_array; segment CRC array entry; index-entry tile crc; record-extent CRC | verifier | certification | `[R-LIF-08]` (R-CNT-20, R-IDX-04) |
+| F43 | No candidate set anchored at the live trailer forms a chain, because for some generation pair the only qualifying candidates have non-increasing committed_file_lengths (candidates outside a chain are discarded as mimics, §9.7) | generation; committed_file_length | verifier | certification | `[R-LIF-08]` (R-LIF-02) |
+| F44 | A generation's directory or declared padding lies below F_k-1, i.e. the commit did not begin writing at exactly F | directory region; pre-trailer pad | verifier | certification | `[R-LIF-08]` (R-LIF-02, R-LIF-01) |
+| F45 | Some generation number between 1 and the live generation g has no qualifying trailer candidate, so no chain can be formed | trailer magic; trailer CRC; committed_file_length = candidate offset + 64; file_id (nonzero and equal to live file_id); dir_offset; dir_length; dir_offset + dir_length; generation; version_major; reserved bytes; flags (incompat lane, §6.3) | verifier | certification | `[R-LIF-08]` (R-LIF-06, R-CNT-06) |
 
 #### 21.3 Layer-scope violations
 
@@ -2206,28 +2442,28 @@ layer unaffected. 47 conditions.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
-| L1 | A u64 offset, length, extent, or count field of a layer record holds a value above 2^63 - 1 | extent_offset, extent_length (layer record and sub-record slots), dimension extent Eᵢ, tile extent Tᵢ, entry_count, slab run length S | reader | layer access | `[R-ENC-03]` (R-CNT-13, R-CNT-23) |
-| L2 | A declaration-derived sum or product of a layer exceeds 2^63 - 1 although every contributing field is in domain | extent_offset + extent_length, N = ∏⌈Eᵢ/Tᵢ⌉, P = ∏Tᵢ, N·P, C·N, max disk ordinal (C−1)·N + (N−1), V = P·C, P·Q, P·Bᶜ, entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 | reader | layer access | `[R-ENC-04]` (R-GEO-03, R-CNT-13, R-SER-02, R-SER-07) |
+| L1 | A u64 offset, length, extent, or count field of a layer record holds a value above 2^63 - 1 | extent_offset; extent_length (layer record and sub-record slots); dimension extent Eᵢ; tile extent Tᵢ; entry_count; slab run length S | reader | layer access | `[R-ENC-03]` (R-CNT-13, R-CNT-23) |
+| L2 | A declaration-derived sum or product of a layer exceeds 2^63 - 1 although every contributing field is in domain | extent_offset + extent_length; N = ∏⌈Eᵢ/Tᵢ⌉; P = ∏Tᵢ; N·P; C·N; max disk ordinal (C−1)·N + (N−1); V = P·C; P·Q; P·Bᶜ; entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 | reader | layer access | `[R-ENC-04]` (R-GEO-03, R-CNT-13, R-SER-02, R-SER-07) |
 | L3 | A field of a layer-scope structure is written at a width other than the one this specification fixes (e.g. rank d as u16) | any layer-record inline-payload field | reader | layer access | `[R-ENC-06]` (R-CNT-18) |
 | L4 | A layer record's name bytes are not well-formed UTF-8 | — | reader | open | `[R-ENC-11]` |
-| L5 | A dimension or channel entry's name bytes are not well-formed UTF-8 | dimension entry name, channel entry name | reader | layer access | `[R-ENC-11]` (R-CNT-23) |
+| L5 | A dimension or channel entry's name bytes are not well-formed UTF-8 | dimension entry name; channel entry name | reader | layer access | `[R-ENC-11]` (R-CNT-23) |
 | L6 | A layer record's name has length prefix 0 (empty name) | — | reader | open | `[R-ENC-12]` |
 | L7 | A layer record's name contains a code point in U+0000-U+001F | — | reader | open | `[R-ENC-12]` |
-| L8 | A dimension or channel entry's name has length prefix 0 (empty name) | dimension entry name, channel entry name | reader | layer access | `[R-ENC-12]` (R-CNT-23) |
-| L9 | A dimension or channel entry's name contains a code point in U+0000-U+001F | dimension entry name, channel entry name | reader | layer access | `[R-ENC-12]` (R-CNT-23) |
-| L10 | Two dimension entries, or two channel entries, of one layer carry byte-identical name fields | dimension entry name, channel entry name | reader | layer access | `[R-ENC-15]` (R-CNT-23) |
+| L8 | A dimension or channel entry's name has length prefix 0 (empty name) | dimension entry name; channel entry name | reader | layer access | `[R-ENC-12]` (R-CNT-23) |
+| L9 | A dimension or channel entry's name contains a code point in U+0000-U+001F | dimension entry name; channel entry name | reader | layer access | `[R-ENC-12]` (R-CNT-23) |
+| L10 | Two dimension entries, or two channel entries, of one layer carry byte-identical name fields | dimension entry name; channel entry name | reader | layer access | `[R-ENC-15]` (R-CNT-23) |
 | L11 | A user-metadata sub-record of a layer record carries extent slot (0, 0) | — | reader | layer access | `[R-CNT-25]` |
 | L12 | A sub-record of a layer record has type 0x0000 | — | reader | layer access | `[R-CNT-12]` (R-CNT-18) |
-| L13 | A sub-record does not fit in the layer record's inline payload: its 24-byte header is truncated at the payload end, or its inline_length runs past that end | sub-record header, sub-record inline_length, trailing residue | reader | layer access | `[R-CNT-12]` (R-CNT-18, R-ENC-07) |
-| L14 | A layer record's or sub-record's extent slot has exactly one of extent_offset and extent_length zero | layer record extent slot, sub-record extent slot | reader | layer access | `[R-CNT-13]` |
-| L15 | A layer record's or sub-record's nonzero extent slot has extent_offset < 16, pointing into the front signature block | layer record extent slot, sub-record extent slot | reader | layer access | `[R-CNT-13]` |
-| L16 | A layer record's or sub-record's extent reaches the live trailer or beyond: extent_offset + extent_length > F - 64 | layer record extent slot, sub-record extent slot | reader | layer access | `[R-CNT-13]` |
-| L17 | Two structures of one and the same layer claim overlapping bytes in the live committed state | stored-tile extents, tile-index region, layer sub-record extents | verifier | certification | `[R-CNT-13]` (R-IDX-03, R-LIF-08) |
+| L13 | A sub-record does not fit in the layer record's inline payload: its 24-byte header is truncated at the payload end, or its inline_length runs past that end | sub-record header; sub-record inline_length; trailing residue | reader | layer access | `[R-CNT-12]` (R-CNT-18, R-ENC-07) |
+| L14 | A layer record's or sub-record's extent slot has exactly one of extent_offset and extent_length zero | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
+| L15 | A layer record's or sub-record's nonzero extent slot has extent_offset < 16, pointing into the front signature block | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
+| L16 | A layer record's or sub-record's extent reaches the live trailer or beyond: extent_offset + extent_length > F - 64 | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
+| L17 | Two structures of one and the same layer claim overlapping bytes in the live committed state | stored-tile extents; tile-index region; layer sub-record extents | verifier | certification | `[R-CNT-13]` (R-IDX-03, R-LIF-08) |
 | L18 | A layer record's sub-record sequence contains more than one user-metadata sub-record (type 0x0002) | — | reader | layer access | `[R-CNT-14]` |
 | L19 | A layer record declares both a per-tile alignment A ≠ 0 and a slab S ≠ 0 | — | reader | layer access | `[R-CNT-16]` |
 | L20 | entry_count does not equal the geometry-derived addressed-tile count (N interleaved, C·N planar) | — | reader | layer access | `[R-CNT-17]` (R-CNT-20) |
-| L21 | Under index_encoding 1, extent_length ≠ entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 — including slot (0,0) with entry_count > 0, or a nonzero slot with entry_count = 0 | extent_offset, extent_length, entry_count | reader | layer access | `[R-CNT-17]` (R-ENC-07, R-CNT-20) |
-| L22 | A declared region of the layer record's inline payload does not lie entirely within inline_length (overrun or truncation) | leading fixed fields (name … C), d dimension entries, C channel entries, trailing fixed fields (index_encoding, entry_count, crc_of_crc_array) | reader | layer access | `[R-CNT-18]` |
+| L21 | Under index_encoding 1, extent_length ≠ entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 — including slot (0,0) with entry_count > 0, or a nonzero slot with entry_count = 0 | extent_offset; extent_length; entry_count | reader | layer access | `[R-CNT-17]` (R-ENC-07, R-CNT-20) |
+| L22 | A declared region of the layer record's inline payload does not lie entirely within inline_length (overrun or truncation) | leading fixed fields (name … C); d dimension entries; C channel entries; trailing fixed fields (index_encoding, entry_count, crc_of_crc_array) | reader | layer access | `[R-CNT-18]` |
 | L23 | A layer record's sub-record itself contains records (nesting depth beyond two) | — | reader | layer access | `[R-CNT-18]` |
 | L24 | A layer record's sub-record sequence contains a record of an unassigned type with MUST_UNDERSTAND = 1 | — | reader | layer access | `[R-CNT-18]` (R-CNT-15) |
 | L25 | A record of type 0x0001 (layer) appears inside a layer record's sub-record sequence | — | reader | layer access | `[R-CNT-18]` (§7.3 registry table) |
@@ -2236,7 +2472,7 @@ layer unaffected. 47 conditions.
 | L28 | Layer record declares S ≠ 0 with an A_slab that is not a power of two in 1 … 2^62 (A_slab = 0 included) | — | reader | layer access | `[R-CNT-23]` (R-SLB-02) |
 | L29 | A channel entry's fill length prefix differs from the element size of the channel's declared type | — | reader | layer access | `[R-CNT-23]` (R-TYP-06) |
 | L30 | Layer record's index_encoding is a value other than 1 — 0, reserved 2–0x7F, or experimental ≥ 0x80 | — | reader | layer access | `[R-CNT-23]` (§15.1) |
-| L31 | A layer geometry field whose floor is 1 is 0 | rank d, channel count C, tile extent Tᵢ | reader | layer access | `[R-GEO-01]` (R-CNT-23) |
+| L31 | A layer geometry field whose floor is 1 is 0 | rank d; channel count C; tile extent Tᵢ | reader | layer access | `[R-GEO-01]` (R-CNT-23) |
 | L32 | Layer record's linearization is a value other than 1 — 0, reserved 2–3, reserved 4–0x7FFF, or experimental ≥ 0x8000 | — | reader | layer access | `[R-GEO-05]` (R-CNT-23) |
 | L33 | A channel entry's type is outside 1 … 13 — 0, reserved 14–19, reserved 20–0x7FFF, or experimental ≥ 0x8000 | — | reader | layer access | `[R-TYP-03]` (R-CNT-23, R-CNF-04) |
 | L34 | A bool channel's one-byte fill holds a byte other than 0x00 or 0x01 | — | reader | layer access | `[R-TYP-07]` (R-CNT-23) |
@@ -2247,11 +2483,11 @@ layer unaffected. 47 conditions.
 | L39 | Alignment A declared and a stored tile's index-entry offset is not a multiple of A | — | verifier | certification | `[R-SLB-01]` (R-IDX-03) |
 | L41 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels are transparent) | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
 | L42 | A slab run's first stored tile's offset is not a multiple of A_slab | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
-| L43 | A new generation carries a slab declaration forward although the commit changed an affected run's stored-tile set or byte placement and the invariants were not re-established | S, A_slab | verifier | certification | `[R-SLB-04]` (R-SLB-03) |
+| L43 | A new generation carries a slab declaration forward although the commit changed an affected run's stored-tile set or byte placement and the invariants were not re-established | S; A_slab | verifier | certification | `[R-SLB-04]` (R-SLB-03) |
 | L44 | Layer record's codec is a value other than 1 … 4 — 0, reserved 5–0x7FFF, or experimental ≥ 0x8000 | — | reader | layer access | `[R-COD-03]` (R-CNT-23) |
 | L45 | Codec 4 (lz4) declared on a layer whose per-tile decoded size exceeds 0x7E000000 bytes | — | reader | layer access | `[R-COD-07]` |
 | L46 | Layer record's filter is a value other than 1 or 2 — 0, reserved 3–0x7FFF, or experimental ≥ 0x8000 | — | reader | layer access | `[R-COD-09]` (R-CNT-23) |
-| L47 | A layer record's or sub-record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0 | flags bit 0, flags bit 1 | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
+| L47 | A layer record's or sub-record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0 | flags bit 0; flags bit 1 | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
 | L48 | Any of a layer record's or sub-record's reserved flag bits 2-15 is set | flags bits 2-15 | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
 
 #### 21.4 Tile-scope violations
@@ -2263,30 +2499,30 @@ returns fill in place of data (`[R-CNF-09]`). 26 conditions.
 |---|---|---|---|---|---|
 | T1 | A stored tile's bytes at [offset, offset + length) do not match the crc field of its non-sentinel tile-index entry | — | reader | tile use | `[R-CNT-20]` (R-IDX-03, R-ENC-10) |
 | T2 | In an interleaved tile, a bool channel's single value byte at a real (non-padding) sample position is neither 0x00 nor 0x01 | — | verifier | certification | `[R-SER-08]` |
-| T3 | The decoded payload's byte length is not exactly the tile's decoded size derived from the layer's declarations | interleaved P·Q, planar numeric P·Bᶜ, packed planar bool ⌈P/8⌉; payload longer or shorter | reader | tile use | `[R-SER-07]` (R-COD-08) |
-| T4 | A padding position does not encode, for each channel it carries, that channel's recorded fill value | interleaved numeric fill bytes, interleaved bool fill byte, planar numeric plane fill bytes, packed planar bool plane fill bit | verifier | certification | `[R-SER-05]` |
+| T3 | The decoded payload's byte length is not exactly the tile's decoded size derived from the layer's declarations | interleaved P·Q; planar numeric P·Bᶜ; packed planar bool ⌈P/8⌉; payload longer or shorter | reader | tile use | `[R-SER-07]` (R-COD-08) |
+| T4 | A padding position does not encode, for each channel it carries, that channel's recorded fill value | interleaved numeric fill bytes; interleaved bool fill byte; planar numeric plane fill bytes; packed planar bool plane fill bit | verifier | certification | `[R-SER-05]` |
 | T5 | In a packed planar bool plane with P mod 8 ≠ 0, a final-byte pad bit (bit positions P mod 8 through 7) is not the channel's fill bit | — | verifier | certification | `[R-SER-05]` (R-SER-03) |
 | T6 | A tile-index entry has offset and length both 0xFFFF_FFFF_FFFF_FFFF but crc ≠ 0 | — | reader | tile use | `[R-IDX-03]` |
-| T7 | A tile-index entry sets exactly one of offset and length to the sentinel value 0xFFFF_FFFF_FFFF_FFFF | offset, length | reader | tile use | `[R-IDX-03]` |
+| T7 | A tile-index entry sets exactly one of offset and length to the sentinel value 0xFFFF_FFFF_FFFF_FFFF | offset; length | reader | tile use | `[R-IDX-03]` |
 | T8 | A non-sentinel tile-index entry has offset < 16, addressing bytes of the front signature block | — | reader | tile use | `[R-IDX-03]` |
 | T9 | A non-sentinel tile-index entry's extent ends past F − 64, touching the live trailer or running beyond the committed file length | — | reader | tile use | `[R-IDX-03]` (R-CNT-13) |
 | T10 | A non-sentinel tile-index entry has length = 0 | — | reader | tile use | `[R-IDX-03]` (R-COD-08) |
-| T11 | A non-sentinel tile-index entry's offset or length exceeds 2⁶³ − 1 (bit 63 set), the value being distinct from the all-ones sentinel | offset, length | reader | tile use | `[R-IDX-03]` (R-ENC-03) |
+| T11 | A non-sentinel tile-index entry's offset or length exceeds 2⁶³ − 1 (bit 63 set), the value being distinct from the all-ones sentinel | offset; length | reader | tile use | `[R-IDX-03]` (R-ENC-03) |
 | T12 | A non-sentinel tile-index entry's offset + length exceeds 2⁶³ − 1 although each field alone is in domain | — | reader | tile use | `[R-IDX-03]` (R-ENC-04) |
-| T13 | A stored tile is not independently decodable from its own extent and layer record — the decode needs state or side data outside the extent | deflate stream carrying a previous tile's history window, lz4 block whose match offset reaches before its own output start | reader | tile use | `[R-COD-02]` (R-COD-06, R-COD-08) |
+| T13 | A stored tile is not independently decodable from its own extent and layer record — the decode needs state or side data outside the extent | deflate stream carrying a previous tile's history window; lz4 block whose match offset reaches before its own output start | reader | tile use | `[R-COD-02]` (R-COD-06, R-COD-08) |
 | T14 | Codec 1 (none) declared and the index entry's length differs from the tile's decoded size | — | reader | tile use | `[R-COD-04]` |
-| T15 | Codec 2 (deflate) and the stored bytes carry a wrapper rather than a raw RFC 1951 DEFLATE stream | zlib RFC 1950 (CMF/FLG header + trailing Adler-32), gzip RFC 1952 member (1F 8B, trailing CRC32+ISIZE) | reader | tile use | `[R-COD-05]` |
+| T15 | Codec 2 (deflate) and the stored bytes carry a wrapper rather than a raw RFC 1951 DEFLATE stream | zlib RFC 1950 (CMF/FLG header + trailing Adler-32); gzip RFC 1952 member (1F 8B, trailing CRC32+ISIZE) | reader | tile use | `[R-COD-05]` |
 | T16 | Codec 2 (deflate) and the stored extent holds more than one DEFLATE stream — a second stream begins after the BFINAL block | — | reader | tile use | `[R-COD-05]` |
 | T17 | Codec 3 (zstd) and the stored bytes do not begin with the compressed-frame magic 28 B5 2F FD | — | reader | tile use | `[R-COD-06]` |
-| T18 | Codec 3 (zstd) and the stored extent holds more than the single compressed frame | a second concatenated compressed frame, a skippable frame (magic 0x184D2A5x) before, after, or between frames | reader | tile use | `[R-COD-06]` |
+| T18 | Codec 3 (zstd) and the stored extent holds more than the single compressed frame | a second concatenated compressed frame; a skippable frame (magic 0x184D2A5x) before; after; or between frames | reader | tile use | `[R-COD-06]` |
 | T19 | Codec 3 (zstd) and the frame header carries a nonzero Dictionary_ID | — | reader | tile use | `[R-COD-06]` |
 | T20 | Codec 3 (zstd) and the frame header sets the Content_Checksum_flag | — | reader | tile use | `[R-COD-06]` |
 | T21 | Codec 3 (zstd) and the frame declares a window size larger than the tile's decoded size | — | reader | tile use | `[R-COD-06]` |
 | T22 | Codec 3 (zstd) and the frame's Frame_Content_Size field is present but does not equal the tile's decoded size | — | reader | tile use | `[R-COD-06]` |
 | T23 | Codec 4 (lz4) and the stored bytes are an LZ4 frame (magic 04 22 4D 18) instead of exactly one raw LZ4 block | — | reader | tile use | `[R-COD-07]` |
 | T24 | The decode does not consume the entry's length exactly — bytes remain in the stored extent after the stream, frame, or block ends | any codec | reader | tile use | `[R-COD-08]` |
-| T25 | The stored bytes are a malformed stream that fails to decode | deflate block type 3 / invalid Huffman table, corrupt zstd block header, lz4 match offset 0 or match reaching past produced output | reader | tile use | `[R-COD-08]` |
-| T26 | Filter 2 applied at a stride other than the mandated one, where the resulting image breaks §14.5's padding content or `[R-SER-08]`'s bool bytes (a wrong stride with no such structural constraint is undetectable, §21.7) | planar numeric: channel element size, interleaved: sample stride Q, packed planar bool: identity s = 1 | verifier | certification | `[R-COD-10]` (R-SER-05) |
+| T25 | The stored bytes are a malformed stream that fails to decode | deflate block type 3 / invalid Huffman table; corrupt zstd block header; lz4 match offset 0 or match reaching past produced output | reader | tile use | `[R-COD-08]` |
+| T26 | Filter 2 applied at a stride other than the mandated one, where the resulting image breaks §14.5's padding content or `[R-SER-08]`'s bool bytes (a wrong stride with no such structural constraint is undetectable, §21.7) | planar numeric: channel element size; interleaved: sample stride Q; packed planar bool: identity s = 1 | verifier | certification | `[R-COD-10]` (R-SER-05) |
 
 #### 21.5 Ignored records
 
@@ -2303,7 +2539,11 @@ be unreadable lands here, whatever the containing scope.
 | R3 | A user-metadata document's stored bytes fail to decode under its declared encoding | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
 | R4 | A decoded user-metadata document violates the document's own content rules — a key or string value containing ill-formed UTF-8 | top-level document; layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-11) |
 | R5 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | top-level document; layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-12) |
-| R6 | An unknown record type carries MU = 0 | top-level record; layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-15]` (R-CNT-18) |
+| R6 | A decoded user-metadata document is not well-formed JSON, or its top-level value is not an object | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+| R7 | A user-metadata document contains a non-finite number, in any form | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+| R8 | Two members of one object in a user-metadata document have byte-identical keys | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+| R9 | A user-metadata document key is longer than 255 bytes | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-ENC-12) |
+| R10 | An unknown record type carries MU = 0 | top-level record; layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-15]` (R-CNT-18) |
 
 #### 21.6 Conditions that are not violations
 
@@ -2321,6 +2561,8 @@ of them as a failure is the nonconforming party.
 | version_minor is higher than this text defines | Accepted; minors never gate | `[R-CNT-07]` |
 | Superseded bytes of earlier generations sit in the file | Dead space, conforming by construction; only compaction reclaims it | `[R-CNT-21]` |
 | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
+| A user-metadata document's object members are not sorted by their keys' UTF-8 bytes | The file is nonconforming, but the document is readable: a verifier reports it and readers process it unchanged | `[R-MTA-05]` |
+| A user-metadata document carries a `tarn.`-prefixed key this specification does not define | The file is nonconforming, but a reader ignores that key and reads the rest of the document | `[R-MTA-06]` |
 | A registered record type's stored MU or PE bit differs from the value §7.3's registry fixes | The file is nonconforming, but readers apply the type's fixed semantics regardless and process the record; a verifier SHOULD report the mismatch | `[R-CNT-22]` |
 | A payload contains a byte string that mimics a trailer | Discarded as a mimic during generation enumeration; never a failure | `[R-LIF-08]` |
 | Under a compressing codec (2–4), a stored tile's decoded size differs from its stored length | Expected: codecs compress, and can expand — codec 1's equality is `[R-COD-04]`'s subject | `[R-COD-08]` |
@@ -2346,7 +2588,7 @@ Nothing here authenticates, either (§4.5). `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 122 conditions over 226 named
+Every row of §21.2 through §21.5 — 126 conditions over 235 named
 instances — has at least one conformance vector (§24) whose expected
 verdict is that row's outcome, and a row naming instances has one
 vector per instance. A row without a vector is a

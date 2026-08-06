@@ -1,0 +1,77 @@
+{
+  "registry_version": 1,
+  "format_major": 1,
+  "note": "Machine-readable snapshot of every identifier space TARN assigns. Spec section 10 is normative; this file follows it.",
+  "record_type": {
+    "width": "u16", "reserved": "0x0003-0x7FFF", "experimental": ">=0x8000",
+    "assigned": [
+      {"id": 1, "name": "layer", "scope": "file", "mu": 1, "pe": 1},
+      {"id": 2, "name": "user_metadata", "scope": "file or layer", "mu": 0, "pe": 1}
+    ]
+  },
+  "channel_layout": {
+    "width": "u8", "reserved": "3-255", "experimental": null,
+    "assigned": [{"id": 1, "name": "interleaved"}, {"id": 2, "name": "planar"}]
+  },
+  "linearization": {
+    "width": "u16", "reserved": "2-0x7FFF", "experimental": ">=0x8000",
+    "assigned": [{"id": 1, "name": "row_major"}]
+  },
+  "sample_type": {
+    "width": "u16", "reserved": "14-0x7FFF", "experimental": ">=0x8000",
+    "assigned": [
+      {"id": 1, "name": "bool", "element_size": 1},
+      {"id": 2, "name": "int8", "element_size": 1},
+      {"id": 3, "name": "int16", "element_size": 2},
+      {"id": 4, "name": "int32", "element_size": 4},
+      {"id": 5, "name": "int64", "element_size": 8},
+      {"id": 6, "name": "uint8", "element_size": 1},
+      {"id": 7, "name": "uint16", "element_size": 2},
+      {"id": 8, "name": "uint32", "element_size": 4},
+      {"id": 9, "name": "uint64", "element_size": 8},
+      {"id": 10, "name": "float16", "element_size": 2},
+      {"id": 11, "name": "bfloat16", "element_size": 2},
+      {"id": 12, "name": "float32", "element_size": 4},
+      {"id": 13, "name": "float64", "element_size": 8}
+    ],
+    "pinned_reservations": [
+      {"id": 14, "name": "float8_e4m3", "note": "OCP OFP8 E4M3 only"},
+      {"id": 15, "name": "float8_e5m2", "note": "OCP OFP8 E5M2 only"},
+      {"id": 16, "name": "int128"}, {"id": 17, "name": "uint128"},
+      {"id": 18, "name": "float128"}, {"id": 19, "name": "opaque"}
+    ]
+  },
+  "codec": {
+    "width": "u16", "reserved": "5-0x7FFF", "experimental": ">=0x8000",
+    "assigned": [
+      {"id": 1, "name": "none"},
+      {"id": 2, "name": "deflate", "reference": "RFC 1951, raw"},
+      {"id": 3, "name": "zstd", "reference": "RFC 8878, single frame"},
+      {"id": 4, "name": "lz4", "reference": "LZ4 Block Format Description v1.0"}
+    ]
+  },
+  "filter": {
+    "width": "u16", "reserved": "3-0x7FFF", "experimental": ">=0x8000",
+    "assigned": [{"id": 1, "name": "none"}, {"id": 2, "name": "byte_shuffle"}]
+  },
+  "index_encoding": {
+    "width": "u8", "reserved": "2-0x7F", "experimental": ">=0x80",
+    "assigned": [{"id": 1, "name": "raw_segmented"}]
+  },
+  "metadata_encoding": {
+    "width": "u8", "reserved": "3-0x7F", "experimental": ">=0x80",
+    "assigned": [{"id": 1, "name": "none"}, {"id": 2, "name": "zstd"}]
+  },
+  "metadata_keys": {
+    "reserved_prefix": "tarn.",
+    "assigned": [
+      {"key": "tarn.title", "scope": ["file", "layer"], "type": "string"},
+      {"key": "tarn.description", "scope": ["file", "layer"], "type": "string"},
+      {"key": "tarn.created", "scope": ["file"], "type": "string", "format": "RFC 3339 date-time"},
+      {"key": "tarn.creator", "scope": ["file"], "type": "string"},
+      {"key": "tarn.axes", "scope": ["layer"], "type": "array of object", "members": ["unit", "origin", "step"]},
+      {"key": "tarn.stats", "scope": ["layer"], "type": "object by channel name", "members": ["min", "max"]}
+    ]
+  },
+  "trailer_flags": {"incompat_lane": "bits 0-15", "ignore_lane": "bits 16-31", "assigned": []}
+}

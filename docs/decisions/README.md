@@ -30,7 +30,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0012](0012-channel-layouts.md) | Interleaved and planar layouts with a full validity table | Accepted (planar order fixed by ADR-0021; boolean representation fixed by ADR-0037 as amended by ADR-0038) |
 | [0013](0013-sample-type-list.md) | Closed sample-type list with zero optional members | Accepted (reservations fixed by ADR-0036) |
 | [0014](0014-little-endian-only.md) | Little-endian only | Accepted |
-| [0015](0015-structured-user-metadata.md) | Structured, quarantined user metadata | Proposed (granularity fixed by ADR-0032; Confirm: encoding — Q-F1) |
+| [0015](0015-structured-user-metadata.md) | Structured, quarantined user metadata | Accepted (granularity fixed by ADR-0032; encoding fixed by ADR-0045) |
 | [0016](0016-licensing.md) | Licensing: CC BY 4.0 / Apache-2.0 / CC0 split | Accepted (Confirm: CC0 vectors) |
 | [0017](0017-append-only-mutability.md) | Mutability: append-only with atomic trailer swap | Accepted (resolves Q-A2) |
 | [0018](0018-hybrid-discovery-anchoring.md) | Discovery anchoring: constant front block + 64-B trailer | Accepted (resolves Q-A1) |
@@ -58,7 +58,9 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0040](0040-validation-follows-reliance.md) | Validation follows reliance | Accepted (discharges cleanroom timing deferrals from rounds 1 and 2) |
 | [0041](0041-updater-reemission-and-compaction-identity.md) | Updater re-emission, verification depth, and compaction identity | Accepted (discharges round 1's three §20 deferrals) |
 | [0042](0042-error-register-form.md) | The error register is derivative, complete, and per-violation | Accepted (fixes gate G5's coverage unit) |
-| [0043](0043-limits-as-minimum-guarantees.md) | Limits are minimum guarantees, sized by structural knees | Accepted (resolves Q-H1) |
+| [0043](0043-limits-as-minimum-guarantees.md) | Limits are minimum guarantees, sized by cost budgets | Accepted (resolves Q-H1) |
+| [0044](0044-extension-surface-and-registry.md) | The enumerated extension surface and its registry | Accepted (resolves Q-G3) |
+| [0045](0045-user-metadata-json-and-standardized-keys.md) | User metadata is restricted JSON; conventions live as keys | Accepted (resolves Q-F1/Q-F3/Q-D5; discharges ADR-0015 Confirm) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).
