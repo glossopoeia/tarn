@@ -598,7 +598,12 @@ an external format, or the value domain forces one.
 
 ## I. Process
 
-### Q-I1. Reproducible-writer profile. [deferrable]
+### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
+**Resolution:** a non-normative Appendix G — codec 1 or a named codec
+build (byte-identity across implementations is unattainable for
+compressed tiles), file_id from a content hash, tiles in disk-ordinal
+order, records in a fixed order, one generation. Core writer
+conformance stays semantic.
 - **Why:** Content-addressing and build reproducibility want byte-identical
   output for identical input, but core writer conformance is deliberately
   semantic (ADR-0003) — promising canonical bytes in the core would

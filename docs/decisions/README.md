@@ -61,6 +61,8 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0043](0043-limits-as-minimum-guarantees.md) | Limits are minimum guarantees, sized by cost budgets | Accepted (resolves Q-H1) |
 | [0044](0044-extension-surface-and-registry.md) | The enumerated extension surface and its registry | Accepted (resolves Q-G3) |
 | [0045](0045-user-metadata-json-and-standardized-keys.md) | User metadata is restricted JSON; conventions live as keys | Accepted (resolves Q-F1/Q-F3/Q-D5; discharges ADR-0015 Confirm) |
+| [0046](0046-corpus-is-derivative.md) | The conformance corpus is derivative evidence | Accepted |
+| [0047](0047-reproducible-writer-profile.md) | A non-normative reproducible-writer profile | Accepted (resolves Q-I1) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

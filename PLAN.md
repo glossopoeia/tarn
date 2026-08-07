@@ -137,8 +137,14 @@ sentinel, boundary, and error-register row gets at least one vector.
 
 ## 9. Milestones
 
-- **M1** — Phase 1 scaffolding merged (this repository state).
+- **M1** — Phase 1 scaffolding merged. *(Reached.)*
 - **M2** — The structure-shaping subset (§5 Step 0) resolved as ADRs.
-- **M3** — Batches 1–4 drafted; cleanroom round 1 passed.
-- **M4** — Full draft; all vectors authored.
-- **M5** — Gates G1–G5 pass → 1.0-rc.
+  *(Reached.)*
+- **M3** — Batches 1–4 drafted; cleanroom round 1 passed. *(Reached;
+  round 2 passed after Batch 6.)*
+- **M4** — Full draft; all vectors authored. *(Draft complete: all 24
+  sections and Appendices A–H are written, and the decision ledger is
+  fully resolved into ADRs 0001–0047. Vectors outstanding — §24 fixes
+  the corpus contract, the corpus itself is the remaining work.)*
+- **M5** — Gates G1–G5 pass → 1.0-rc. *(Next: cleanroom round 3
+  evaluates G1–G3; G4 and G5 follow the corpus.)*

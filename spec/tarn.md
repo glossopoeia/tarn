@@ -1,9 +1,9 @@
 # The TARN Format Specification
 
 **Status: working draft — nothing here is stable.** This document is being
-drafted batch by batch under the process in [PLAN.md](../PLAN.md); sections
-marked *[Reserved]* have agreed scope but no text yet. Decisions encoded
-here are governed by the ADRs in
+drafted batch by batch under the process in [PLAN.md](../PLAN.md). All
+sections are drafted; the document has not yet passed acceptance
+review. Decisions encoded here are governed by the ADRs in
 [docs/decisions/](../docs/decisions/README.md).
 
 License: CC BY 4.0 (see [LICENSE-SPEC](../LICENSE-SPEC)).
@@ -24,7 +24,63 @@ License: CC BY 4.0 (see [LICENSE-SPEC](../LICENSE-SPEC)).
 
 ### 1. Introduction
 
-*[Reserved — non-normative; drafted last.]*
+TARN is a single-file container for tiled, N-dimensional arrays,
+designed to be read directly over a network by byte range and to be
+implementable from this document alone.
+
+An array format has to answer four questions: where the data is, what
+shape it has, how to find one piece of it, and what to do when the
+bytes are wrong. TARN answers them with a fixed 64-byte trailer that
+commits each state of the file, a consolidated metadata directory
+reachable in one further request, a per-layer index with one entry per
+tile, and an outcome class attached to every violation this document
+names. There are no subset profiles, no subset readers, and no
+feature a conforming reader can decline.
+
+The design pillars, each paid for elsewhere in this document:
+
+- **Random access without a server.** Opening a file costs two range
+  requests whatever its size (§6.4); reading one tile costs that
+  layer's segment-CRC array, the index segment covering the tile, and
+  the tile's own bytes (§19.4) — the array being the only term that
+  grows with the layer, which is what §21.9's tile-count guarantee is
+  sized against.
+- **Integrity by default.** Every structure is checksummed, and
+  verification is a reader obligation with no flag that disables it
+  (§8). Corruption is detected at the finest scope it damages, so one
+  bad tile does not condemn a file.
+- **Append without rewriting.** A commit appends payloads, a complete
+  directory, and a trailer, in that order; committed bytes are never
+  modified, so a torn write cannot damage the previous state — a
+  recovery tool truncates back to it (§9.6), while a conforming
+  reader declines the torn file rather than scanning backward (§9.5).
+- **Defined behavior at the edges.** Sparse tiles, zero-extent
+  dimensions, padding content, malformed index entries, and every
+  other boundary have stated answers rather than conventions (§21).
+- **A closed core with an open edge.** The type list, codec menu, and
+  filter set are closed; growth happens through four enumerated
+  vehicles and a registry (§10).
+
+What TARN is not: a database — it has no transactions, no queries, and
+one writer at a time; an image format — it carries no colour model,
+orientation, or display semantics; and a compression format — codecs
+are pinned external references, not contributions of this document.
+It provides no confidentiality and no authenticity: checksums detect
+accidental corruption, not tampering (§22.5).
+
+**Reading this document.** §2 fixes the conformance vocabulary every
+later section uses, and is worth reading first. Part I (§5–§10) is the
+container and can be implemented without decoding a single sample;
+Part II (§11–§18) is the array model; Part III (§19–§24) states the
+reader, writer, and updater algorithms, the consequences of getting
+them wrong, and what the conformance corpus does and does not prove.
+§21's register lists every violation with its outcome, and the
+appendices carry the constants, an annotated minimal file, and the
+registry. Part I alone yields a container reader — one that opens
+files, walks the directory, and lists layers without decoding a
+sample; returning sample values needs Part II as well, since §19.3's
+layer validation resolves into Part II's value sets and geometry
+rules at every step.
 
 ### 2. Conformance
 
@@ -63,7 +119,7 @@ dimensions, and tiling), `IDX` (tile index), `SLB` (slabs and
 alignment), `TYP` (types and fill), `SER` (tile serialization), `COD`
 (codecs and filters), `MTA` (user metadata), `RDR` (reading), `WRT`
 (writing and updating), `ERR` (error register), `SEC` (security), `PRV`
-(privacy). New prefixes are added by ADR when a section needs one;
+(privacy), `VEC` (conformance vectors). New prefixes are added by ADR when a section needs one;
 existing prefixes are never reassigned.
 
 #### 2.3 Conformance classes
@@ -468,6 +524,12 @@ block). `[R-CNT-04]`
 > **Rationale.** The signature is engineered against transport
 > corruption: the high-bit byte catches 7-bit stripping, CR LF catches
 > line-ending translation, ctrl-Z stops accidental console display.
+
+> **Note.** The intended media type for a TARN file is
+> `application/vnd.tarn`, registration pending; the customary
+> extension is `.tarn`. Content
+> sniffers match the 16-byte front block by equality — no other
+> prefix of a conforming file is constant.
 
 #### 6.2 Trailer
 
@@ -2791,12 +2853,319 @@ visible to anyone on the path. `[R-PRV-05]`
 
 ### 24. Conformance Test Vectors
 
-*[Reserved — Batch 13: corpus contract.]*
+The conformance corpus is a set of TARN files with recorded
+expectations, distributed with this specification in `conformance/`
+and licensed CC0 so that using it imposes nothing on an
+implementation.
+
+The corpus is **derivative**: a conforming implementation is one that
+satisfies this specification's requirements, and where a vector's
+recorded expectation and this specification disagree, this
+specification governs and the vector is corrected. Passing the corpus
+is evidence of conformance, never its definition — a corpus exercises
+what someone thought to write, and this document states more than any
+finite set of files can demonstrate. `[R-VEC-01]`
+
+Each vector is one file plus a manifest entry recording, at minimum:
+its identifier; whether the file is **conforming**; the decoded
+content a reader is to return from every scope it can read, with each
+floating-point value written as a hexadecimal bit pattern so that no
+comparison depends on a number formatter; and, for each structure the
+file damages, the outcome class (§2.4), the scope, and the §21
+register row it exercises. The two axes are independent: a conforming
+file can carry a record a reader ignores (§21.5, §21.6), and a
+nonconforming file can still read correctly outside the scope its
+violation damages. A vector whose expectation cannot be stated in
+those terms is testing something this specification has not defined,
+which makes it a finding against this document rather than a vector.
+`[R-VEC-02]`
+
+Coverage is the corpus's own obligation, inherited from
+`[R-ERR-02]`: every register row has at least one vector for each
+instance it names, and every sentinel, every boundary value, and every
+hard limit of `[R-ERR-05]` has one at its stated bound. §21.9's
+minimum guarantees are exercised where a vector at the bound is
+constructible — the tile-count guarantee is not, its index region
+alone running to tens of gigabytes of incompressible entries, and is
+exercised instead by a scaled vector spanning several segments with
+the bound checked arithmetically. A missing vector is a gap in the
+corpus and never a licence to skip the check it would have exercised.
+`[R-VEC-03]`
+
+> **Note.** A recorded outcome is the *narrowest* scope a reader may
+> refuse to serve, not the only one: a vector exercising a
+> reject-layer row expects that layer to be unusable, and an
+> implementation that instead rejects the whole nonconforming file is
+> exercising `[R-CNF-12]`'s licence, not failing the vector. What the
+> corpus tests is that no reader serves data from a scope this
+> specification rejects — which a corpus checking only "accepted or
+> rejected" could not tell you.
 
 ---
 
 ## Appendices
 
-*[Reserved — Batch 13: A annotated hex dump · B constants table ·
-C registry snapshot · D design rationale (non-normative) · E changelog ·
-F normative references.]*
+### Appendix A — An annotated minimal file (non-normative)
+
+The smallest conforming TARN file is 128 bytes: a front signature
+block, an empty directory, the pre-trailer pad, and a trailer. It
+contains no layers, which §21.6 records as valid.
+
+```
+0000  89 54 41 52 4E 0D 0A 1A  00 00 00 00 00 00 00 00
+0010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+0020  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+0030  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+0040  8A 4E 52 41 54 0D 0A 1A  01 00 00 00 00 00 00 00
+0050  01 00 00 00 00 00 00 00  10 00 00 00 00 00 00 00
+0060  04 00 00 00 00 00 00 00  80 00 00 00 00 00 00 00
+0070  EF CD AB 89 67 45 23 01  00 00 00 00 D2 38 09 E0
+```
+
+| Bytes | Value | Meaning |
+|---|---|---|
+| [0, 8) | `89 54 41 52 4E 0D 0A 1A` | front signature magic (§6.1) |
+| [8, 16) | zero | front signature reserved (§6.1) |
+| [16, 20) | `00 00 00 00` | the directory region: a record sequence of zero bytes, followed by its CRC-32C — which for zero bytes is 0x00000000 (§7.1, §4.5) |
+| [20, 64) | zero | pre-trailer pad, 44 bytes, zero by `[R-CNT-03]` |
+| [64, 72) | `8A 4E 52 41 54 0D 0A 1A` | trailer magic (§6.2) |
+| [72, 74) | `01 00` | version_major = 1 |
+| [74, 76) | `00 00` | version_minor = 0 |
+| [76, 80) | `00 00 00 00` | flags: no incompat bit set, no ignore-lane bit set |
+| [80, 88) | `01 00 …` | generation = 1 |
+| [88, 96) | `10 00 …` | dir_offset = 16 |
+| [96, 104) | `04 00 …` | dir_length = 4 |
+| [104, 112) | `80 00 …` | committed_file_length = 128 = the file size |
+| [112, 120) | `EF CD AB 89 67 45 23 01` | file_id = 0x0123456789ABCDEF, little-endian (any nonzero value; a real writer draws it randomly, §9.3) |
+| [120, 124) | `00 00 00 00` | trailer reserved, zero |
+| [124, 128) | `D2 38 09 E0` | trailer CRC-32C = 0xE00938D2, over trailer bytes [0, 60) |
+
+A remote reader opens this file in §6.4's two requests: the final 64
+bytes, validated per §6.2; then [16, 20), whose CRC it verifies. A
+local reader additionally verifies bytes [0, 16) by equality first,
+which `[R-CNT-04]` requires of it. That is §19.1's four-step open
+applied to this file; the layer table is empty, and there is nothing
+further to read.
+
+### Appendix B — Constants (non-normative)
+
+Every named constant this specification fixes, collected. Each is
+normative where it is defined; this table is a finding aid.
+
+| Constant | Value | Defined in |
+|---|---|---|
+| Front signature block | `89 54 41 52 4E 0D 0A 1A` + 8 zero bytes (16 bytes) | §6.1 |
+| Trailer magic | `8A 4E 52 41 54 0D 0A 1A` | §6.2 |
+| Trailer size | 64 bytes, at a 64-aligned offset | §6.2 |
+| Smallest conforming file | 128 bytes | §5.1 |
+| Media type (intended; registration pending) | `application/vnd.tarn` | §6.1 |
+| Record header size | 24 bytes | §7.2 |
+| Index entry size | 20 bytes | §15.1 |
+| Index segment size | 2¹⁶ entries; 4-byte CRC each | §15.1, §15.4 |
+| Unstored-tile sentinel | `FF ×16 00 ×4` (offset and length 2⁶⁴ − 1, crc 0) | §15.2 |
+| CRC of a full all-sentinel segment | `0xEECB3BB2` | §15.4 |
+| Checksum | CRC-32C, polynomial 0x1EDC6F41, reflected in and out, init 0xFFFFFFFF, final XOR 0xFFFFFFFF, stored little-endian | §4.5 |
+| CRC check vector | CRC-32C(`"123456789"`) = `0xE3069283`; CRC-32C(zero bytes) = `0x00000000` | §4.5 |
+| Value domain | 0 to 2⁶³ − 1 for every offset, length, extent, and count | §4.2 |
+| Name length | at most 255 bytes of UTF-8 | §4.6 |
+| Rank d, channel count C | at most 255 and 65,535 — the widths of their fields | §7.4 |
+| Slab run length S | 1 ≤ S ≤ 2⁶³ − 1 | §7.4, §16.2 |
+| Per-tile alignment A | power of two, 512 ≤ A ≤ 2⁶²; 4096 recommended | §7.4, §16.1 |
+| Slab alignment A_slab | power of two, 1 ≤ A_slab ≤ 2⁶² | §7.4, §16.2 |
+| Discovery window (writer SHOULD) | trailer + pad + directory within 65,536 bytes | §6.4 |
+| Tile working range (guidance) | roughly 1–16 MiB decoded | §11.3 |
+| zstd frame magic | `28 B5 2F FD` (0xFD2FB528) | §17.2 |
+| lz4 decoded tile size cap | `0x7E000000` | §17.2 |
+| Reserved metadata key prefix | `tarn.` | §18.3 |
+| Reader minimum guarantees | rank 32 · C 4096 · entry_count 2³² · 65,536 layers · 256 MiB decoded tile · 16 MiB metadata document · 8 MiB zstd window | §21.9 |
+
+### Appendix C — Registry snapshot (non-normative)
+
+The machine-readable registry is `spec/registry.json`, versioned with
+this specification; §10.2's table and this snapshot restate it, and
+where any of the three diverge the section defining the space governs
+(`[R-EXT-05]`).
+
+**Record types** (§7.3): 0x0001 layer (MU = 1, PE = 1); 0x0002 user
+metadata (MU = 0, PE = 1).
+
+**Sample types** (§12.1): 1 bool · 2–5 int8/16/32/64 · 6–9
+uint8/16/32/64 · 10 float16 · 11 bfloat16 · 12 float32 · 13 float64.
+Pinned reservations: 14 float8 E4M3 and 15 float8 E5M2 (OCP OFP8
+only) · 16 int128 · 17 uint128 · 18 float128 · 19 opaque.
+
+**Codecs** (§17.2): 1 none · 2 deflate · 3 zstd · 4 lz4.
+**Filters** (§17.3): 1 none · 2 byte-shuffle.
+**Channel layouts** (§14.1): 1 interleaved · 2 planar.
+**Linearizations** (§11.4): 1 row-major.
+**Index encodings** (§15.1): 1 raw-segmented.
+**Metadata encodings** (§18.2): 1 none · 2 zstd.
+**Trailer flags** (§6.3): none assigned; bits 0–15 incompat lane, bits
+16–31 ignore lane.
+
+**Standardized metadata keys** (§18.4): `tarn.title` · `tarn.description`
+· `tarn.created` · `tarn.creator` · `tarn.axes` · `tarn.stats`.
+
+### Appendix D — Design rationale (non-normative)
+
+Six choices shape everything else, and each has a cost worth naming.
+
+**A tail-anchored trailer.** Discovery lives at the end of the file so
+that appending never rewrites a committed byte. The cost is that a
+cold remote open begins with a suffix request, which is why §6.4
+states the request accounting rather than leaving it to be discovered.
+
+**Append-only, with a complete directory per generation.** Every
+commit re-emits the whole directory, so a torn write leaves the prior
+state intact and readable. The cost is dead space, which is why the
+byte-coverage rule classifies it (§5.2), compaction exists (§20.5),
+and §23 treats deletion and erasure as different things.
+
+**Checksums everywhere, with per-scope outcomes.** Integrity is not a
+mode. The cost is one CRC per structure and a strictly ordered chain
+of trust (§8.2); the benefit is that a corrupt tile costs a tile.
+
+**A closed type list and codec menu.** Every conforming reader opens
+every conforming file. The cost is that anyone needing a type or codec
+outside the list waits for a minor version, which is the deliberate
+price of having no dialects.
+
+**Raw fixed-size index entries.** Twenty bytes per tile, segmented so
+that any entry is reachable by fetching one segment and its CRC array.
+The cost is size at extreme tile counts; the benefit is that no reader
+decodes an index to read one tile, and §21.9's entry_count guarantee
+is set where that cost is still bounded.
+
+**Quarantined metadata.** Application metadata can never affect how a
+byte is located or decoded, so it can be unbounded, compressible, and
+skippable. The cost is that anything structural has to be a
+structural field, which is why fill values, geometry, and codecs are not keys.
+
+### Appendix E — Changelog (non-normative)
+
+| Version | Date | Summary |
+|---|---|---|
+| 1.0 (draft) | unreleased | First complete draft of format major version 1. |
+
+Once this specification is published, every subsequent revision
+records here what it changed and which ADR governs the change.
+Minor versions are additive only (§6.3); a change that is not additive
+is a new format major version.
+
+### Appendix F — Normative references
+
+- **[BCP 14]** RFC 2119 and RFC 8174 — the requirement keywords (§2.1).
+- **[RFC 3720]** §12.1 — the CRC-32C polynomial and parameters (§4.5).
+- **[IEEE 754]** IEEE 754-2019 — binary16, binary32, and binary64 (§12.1).
+- **[RFC 1951]** DEFLATE Compressed Data Format Specification version 1.3 — codec 2 (§17.2).
+- **[RFC 8878]** Zstandard Compression and the `application/zstd` Media Type — codec 3 and metadata encoding 2 (§17.2, §18.2).
+- **[LZ4 Block]** LZ4 Block Format Description, version 1.0 — `doc/lz4_Block_format.md` in the lz4/lz4 repository, as published with lz4 release v1.9.4 — codec 4 (§17.2).
+- **[RFC 8259]** The JavaScript Object Notation (JSON) Data Interchange Format — the user-metadata document (§18.2).
+- **[RFC 3339]** Date and Time on the Internet: Timestamps — the `tarn.created` key (§18.4).
+- **[Unicode]** The Unicode Standard — UTF-8, and Normalization Form C where §4.6 advises it.
+
+Informative: the OCP OFP8 specification, cited only to pin what
+sample-type identifiers 14 and 15 would mean if ever assigned (§12.2).
+
+### Appendix G — Reproducible-writer profile (non-normative)
+
+Core writer conformance is semantic: two conforming writers given the
+same input can emit different files (`[R-CNF-05]`). Applications that
+need byte-identical output — content-addressed storage, reproducible
+builds — can adopt this profile, which closes the degrees of freedom
+this format deliberately leaves open. It adds no requirement to any
+actor: a writer ignoring it is fully conforming, and conformance to
+the profile can be refuted cheaply but confirmed only by reproducing
+the file.
+
+1. **Codec 1 (none), or a named codec implementation at a named
+   version with fixed encoder settings** — level, strategy, and
+   thread count included, since a multithreaded encoder can vary its
+   output run to run. This is the profile's real boundary: RFC 1951
+   and RFC 8878 constrain what a decoder accepts, not how an encoder
+   chooses blocks, matches, or tables, so two conforming encoders
+   emit different, equally valid streams for the same input.
+   Byte-identity across *implementations* is therefore unattainable
+   for codecs 2–4; codec 1 is reproducible by anyone.
+2. **`file_id` from a cryptographic hash of the file's own emitted
+   bytes**, computed over [0, F − 64) together with the trailer's
+   other fields with the `file_id` field taken as zero, then written
+   in. Deterministic, and high-entropy — satisfying §9.3's advice
+   rather than contradicting it, which a counter would not. Hashing
+   the bytes rather than an abstract notion of "content" is what
+   makes the identifier well defined: this format fixes no canonical
+   serialization of logical content, and two files carrying the same
+   arrays can legitimately differ in tiling, layout, and codec.
+3. **A total emission order.** For each layer in ascending
+   layer-name byte order: its stored tiles in disk-ordinal order,
+   then its tile-index region; then any record extents in ascending
+   record order; then the directory. Records are ordered by type,
+   and within type 0x0001 by layer name — record order carries no
+   meaning (`[R-CNT-14]`), so it is otherwise free to vary, as is
+   structure placement (`[R-LIF-02]` step 2).
+4. **One generation**, so that the file is the output of a single
+   commit. Appending is reproducible only in the weaker sense that
+   the appended bytes are.
+5. **No declared alignment and no slab**, or fixed declared values —
+   both change placement and neither is implied by content.
+6. **The sentinel for every all-fill tile**, so that a tile whose
+   samples all equal fill is never stored; otherwise two writers
+   agreeing on content still disagree on bytes.
+7. **`version_minor` at the floor** `[R-CNT-26]` states, and
+   `flags` = 0.
+8. **User metadata either absent, or serialized by a named JSON
+   writer at a named version.** `[R-MTA-05]`'s sorted keys make one
+   writer's output reproducible but explicitly do not make two
+   writers' output identical — number formatting varies by runtime —
+   so this degree of freedom closes the same way item 1 does, by
+   pinning the producer.
+
+Everything else the profile needs is already mandatory: zero declared
+padding (`[R-CNT-03]`), fill-encoded edge padding (`[R-SER-05]`), and
+explicitly recorded fill (`[R-TYP-06]`).
+
+### Appendix H — Conformance checklists (non-normative)
+
+A summary of each class's obligations, for implementers auditing their
+own work. §2.3 defines the classes; each entry's authority is the
+requirement or section cited, never this summary.
+
+**Conforming file** — every requirement at every scope holds (§2.4);
+bytes partition into the coverage classes (§5.2, `[R-CNT-02]`); every
+structure's checksum verifies (§8.1); no violation row of §21.2–§21.5
+applies, though §21.6's defined conditions can — an unknown MU = 0
+record being conforming (`[R-CNT-15]`).
+
+**Conforming reader** — validates the trailer in §6.2's order; verifies
+each checksum before acting on what it covers (§4.5, §8.2); detects
+every reader-assigned violation no later than its tier (§19.2);
+implements all four codecs, both filters, both layouts, and all
+thirteen sample types (`[R-CNF-03]`, §2.3); accepts every conforming
+file within §21.9's minimum guarantees and reports any resource
+refusal as a limit rather than as corruption (`[R-ERR-04]`); applies
+the outcome and scope §21 assigns; never returns padding positions (§11.3) and never returns
+fill for a rejected tile (§2.4); returns sample bit patterns unaltered
+(§3.2).
+
+**Conforming writer** — emits only conforming files (§2.3); records
+fill for every channel (`[R-TYP-06]`, §13.1); fill-encodes edge
+padding and pad bits (`[R-SER-05]`, §14.5); emits interleaved boolean
+values as only 0x00 or 0x01 (`[R-SER-08]`, §14.2); sorts
+user-metadata object members by their keys' UTF-8 bytes
+(`[R-MTA-05]`, §18.2); zeroes declared padding (`[R-CNT-03]`, §5.2); follows the commit protocol
+including both barriers (§9.2); honors any alignment or slab it
+declares (§16).
+
+**Conforming updater** — everything a writer does for the bytes it
+produces, plus: validates the trailer and full directory, and every
+layer it modifies (§20.3); re-emits every retained record
+byte-identically (§20.4); respects unknown records' MU and PE bits
+(§20.4); never modifies a scope governed by an unknown critical
+record.
+
+**Conforming verifier** — every reader obligation, plus the checks
+readers are exempt from: byte coverage and generation attribution
+(§9.7); extent overlap (§7.2); declared-padding content (§5.2);
+alignment and slab invariants (§16); decoded-content obligations —
+padding samples and interleaved boolean bytes (§14.5, §14.2); and
+certifies only files with no violation at any scope (§2.4).
