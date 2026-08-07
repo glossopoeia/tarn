@@ -488,17 +488,36 @@ scope. `[R-CNT-27]`
 #### 5.2 Byte coverage
 
 Every byte of a conforming file belongs to exactly one of: the front
-signature block; a structure — stored-tile extent, tile-index region,
-record extent (bytes referenced by a record's extent slot, §7.2 — in
-format major 1, tile-index regions and user-metadata extents),
-directory, or trailer — of exactly one generation (the generation whose
-commit appended it); or **declared padding** of exactly one generation.
-A file containing bytes claimed by no class is not a conforming file.
-`[R-CNT-02]` Declared padding — the alignment gaps of aligned or
-slab-declared layers (§16) and each generation's pre-trailer pad — MUST
-be zero bytes; writers MUST NOT emit nonzero padding, and a verifier
-MUST treat nonzero padding as a validity error at file scope.
-`[R-CNT-03]`
+signature block; a **structure** of exactly one generation — the
+generation whose commit appended it — being a stored-tile extent, a
+record extent (the bytes any record's extent slot references,
+whatever the record's type, §7.2), a directory, or a trailer; or
+**declared padding** of exactly one generation. A file containing
+bytes claimed by no class is not a conforming file. `[R-CNT-02]`
+
+Declared padding is defined constructively, so that a verifier can
+compute it rather than infer it. A maximal run of unclaimed bytes
+[p, q) within a generation's range is declared padding when, and only
+when, it is one of:
+
+- the run immediately preceding a structure whose offset a layer's
+  alignment or slab declaration constrains (§16), whose length
+  q − p is less than that declaration's modulus — A for per-tile
+  alignment, A_slab for a slab run — so that the run is exactly the
+  distance to the next legal offset; or
+- a generation's pre-trailer pad, of fewer than 64 bytes (§6.2).
+
+Every other unclaimed run belongs to no class, and makes the file
+nonconforming: a declaration licenses the gap it forces, never a
+larger one. Declared padding MUST be zero bytes; writers MUST NOT
+emit nonzero padding, and a verifier MUST treat nonzero padding, or
+an unclaimed run that is not declared padding under this rule, as a
+validity error at file scope. `[R-CNT-03]`
+
+> **Note.** The bound matters beyond bookkeeping: without it, one
+> layer declaring alignment would license arbitrary unaccounted bytes
+> anywhere in the file, and §22.3's claim that coverage makes
+> smuggled bytes locatable would be false for that file.
 
 **Superseded structures** — structures of prior generations no longer
 reachable from the live trailer via the live directory's records,
@@ -1004,7 +1023,14 @@ that lie within [F_{k−1}, F_k), plus that directory, its declared
 padding, and its trailer. Every byte of [F_{k−1}, F_k) MUST be
 claimed exactly once — except that a double claim arising within one
 layer's structures is the intra-layer overlap of `[R-CNT-13]`
-(reject-layer; certification fails either way). (d) A verifier that
+(reject-layer; certification fails either way). Enumerating that set
+requires generation k's directory to parse as a record sequence
+(§7.2) and its records' extent slots to be well formed; where a
+superseded generation's directory does not, its structures cannot be
+attributed and coverage verification fails at file scope. This is
+the one respect in which a superseded generation's content still
+binds, and `[R-LIF-09]`'s exemption does not reach it: attribution
+is what makes the partition decidable. (d) A verifier that
 cannot verify an enumerated generation's trailer, directory, tile
 index, or any structure those claim (stored-tile extents and record
 extents included) cannot establish coverage and MUST treat the file
@@ -1733,10 +1759,9 @@ unclaimed byte makes the file nonconforming (`[R-CNT-02]`).
 A layer MAY declare alignment A (§7.4): a power of two with
 512 ≤ A ≤ 2⁶². Writers MUST NOT emit any other nonzero value; a reader MUST treat
 one as a validity error at layer scope (`[R-CNT-23]`). When declared:
-every stored tile's offset satisfies offset mod A = 0, and
-unclaimed bytes that this alignment leaves between claimed
-structures are declared padding — zero bytes, classified under
-§5.2. A verifier MUST check the invariant
+every stored tile's offset satisfies offset mod A = 0, and the run
+of unclaimed bytes immediately preceding each such tile is declared
+padding — zero bytes, shorter than A, classified under §5.2. A verifier MUST check the invariant
 (violation: reject-layer, §15.3); readers are not obligated to —
 offsets are always explicit, so alignment is reader-invisible.
 `[R-SLB-01]`
@@ -1762,9 +1787,9 @@ and packed in ordinal order — each stored tile's offset equals the
 previous stored tile's offset plus its length — and the first stored
 tile's offset satisfies offset mod A_slab = 0. The runs themselves
 are not mutually ordered or joined: between runs, placement freedom
-(`[R-SLB-05]`) governs, and unclaimed bytes that a writer's run
-placement leaves are declared padding — zero bytes, classified
-under §5.2. Sentinel tiles are transparent to run continuity: they
+(`[R-SLB-05]`) governs, and the run of unclaimed bytes immediately
+preceding each run's first stored tile is declared padding — zero
+bytes, shorter than A_slab, classified under §5.2. Sentinel tiles are transparent to run continuity: they
 occupy no bytes and do not break packing. A run with no stored tiles
 imposes nothing. A verifier MUST
 check these invariants (violation: reject-layer, §15.3); readers are
@@ -2398,7 +2423,7 @@ govern (`[R-CNT-15]`; MU = 1 with PE = 0 is read as PE = 1,
 |---|---|
 | MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs: an unknown critical record at layer scope blocks modification of that layer, leaving other layers editable; at file scope it blocks any modification of file-scope structure — adding, removing, or reordering top-level records — while a commit that only changes a layer's own tiles, index, or record remains permitted. |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
-| MU = 0, PE = 0 | Retain byte-identical, or — only in a commit that modifies the scope the record attaches to — drop it, its extent becoming dead space. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+| MU = 0, PE = 0 | Retain byte-identical, or drop it — an appender only in a commit that modifies the scope the record attaches to, its extent becoming dead space; a compactor whenever it rewrites the file, the record simply not being carried. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
 An updater MUST NOT re-encode a record whose type it does not
 implement, and MUST NOT modify one except by relocating its
