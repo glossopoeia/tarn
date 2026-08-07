@@ -1,11 +1,11 @@
-# 0048. Coverage certifies the live state; dead space is counted, not modelled
+# 0048. Coverage certifies the live state; slack is counted, not modelled
 
 - Status: Accepted (supersedes ADR-0030's history-wide coverage;
   amends ADR-0017's consequences)
 - Date: 2026-08-07
 - Covers: what byte coverage certifies; the status of superseded
-  bytes; what a verifier reports; the retirement of generation
-  attribution
+  bytes and alignment gaps; what a verifier reports; the retirement
+  of generation attribution and of declared padding as a class
 - Confirm: none
 
 ## Context
@@ -36,14 +36,26 @@ record of every commit the file ever took.
 
 - **Coverage is a property of the live committed state.** Every byte
   reachable from the live trailer belongs to exactly one class —
-  front block, structure, or declared padding — with no overlaps.
+  front block or structure — with no overlaps.
   That partition is file validity, and it is decidable in one pass
   from the live trailer.
-- **Every other byte is dead space**: unconstrained content, no
-  internal structure this specification defines, no conformance
-  requirement. A reader MUST NOT interpret it; a verifier MUST
-  **report the total number of dead bytes**, which is the number that
-  tells an operator to compact.
+- **Every other byte is slack**: alignment and slab gaps, the
+  pre-trailer pad, and everything an earlier commit superseded —
+  unconstrained content, no internal structure this specification
+  defines, no conformance requirement. A reader MUST NOT interpret
+  it; a verifier MUST **report the total number of slack bytes**,
+  which is the number that tells an operator to compact.
+- **Declared padding ceases to be a certified class**, which cleanroom
+  round 4 showed is forced rather than chosen. To check "declared
+  padding MUST be zero" a verifier must identify which unclaimed
+  bytes are padding, and no discriminator survives: a maximal run
+  reaches backward through superseded bytes (round 4 built a file
+  where it swallows a prior trailer, making a natural append
+  unconstructible); bounding the run by the previous claimed
+  structure fails identically; and "bytes this commit wrote" requires
+  the generation awareness this decision removes. Zeroing survives as
+  writer advice with its consequence stated — bytes indistinguishable
+  from stale data, and no byte reproducibility.
 - **Generation attribution and the trailer chain are retired.**
   §9.7's enumeration, candidate qualification, chain selection, and
   per-generation partition go, and with them `[R-LIF-09]` and five
@@ -59,15 +71,14 @@ record of every commit the file ever took.
 The ambiguity cluster dissolves rather than shrinks: "which
 generation", "which chain", "how deep into superseded structures",
 and "may a live extent point into a prior generation's padding" all
-stop being questions. §9.7 drops from roughly 530 words to 120,
-§5.2 states a constructive rule over one state, and the register
-loses five rows and rewords four.
+stop being questions. §9.7 drops from roughly 530 words to 150, §5.2 states one partition
+over one state, and the register loses six rows and rewords four.
 
 Given up: the ability to certify that every byte in a file was
 legitimately committed. That property was always weaker than it
 sounded — an adversary who can write the file can commit junk as a
-payload under any model — and §22.3 already conceded that dead space
-can hold anything. What replaces it is more useful to an operator: a
+payload under any model — and §22.3 already conceded that unreachable
+bytes can hold anything. What replaces it is more useful to an operator: a
 verifier that certifies exactly what a reader can reach, and counts
 what it cannot.
 

@@ -63,7 +63,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0045](0045-user-metadata-json-and-standardized-keys.md) | User metadata is restricted JSON; conventions live as keys | Accepted (resolves Q-F1/Q-F3/Q-D5; discharges ADR-0015 Confirm) |
 | [0046](0046-corpus-is-derivative.md) | The conformance corpus is derivative evidence | Accepted |
 | [0047](0047-reproducible-writer-profile.md) | A non-normative reproducible-writer profile | Accepted (resolves Q-I1) |
-| [0048](0048-live-state-coverage.md) | Coverage certifies the live state; dead space is counted, not modelled | Accepted (supersedes ADR-0030's history-wide coverage) |
+| [0048](0048-live-state-coverage.md) | Coverage certifies the live state; slack is counted, not modelled | Accepted (supersedes ADR-0030's history-wide coverage) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).
