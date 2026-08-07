@@ -1,6 +1,6 @@
 # 0030. Byte coverage is file validity
 
-- Status: Accepted (resolves Q-B5; pins the alignment-gap half of Q-C4)
+- Status: Accepted (history-wide coverage superseded by ADR-0048; the live-state partition it established stands) (resolves Q-B5; pins the alignment-gap half of Q-C4)
 - Date: 2026-07-30
 - Covers: the byte-coverage partition; declared padding content;
   unclaimed bytes

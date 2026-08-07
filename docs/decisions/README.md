@@ -45,7 +45,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0027](0027-name-and-string-rules.md) | Name and string rules | Accepted (resolves Q-F2) |
 | [0028](0028-degenerate-geometry.md) | Degenerate geometry: zero extents valid, everything else bounded | Accepted |
 | [0029](0029-identification-constants.md) | File identification constants | Accepted (resolves Q-G4) |
-| [0030](0030-byte-coverage-as-validity.md) | Byte coverage is file validity | Accepted (resolves Q-B5) |
+| [0030](0030-byte-coverage-as-validity.md) | Byte coverage is file validity | Accepted (resolves Q-B5; history-wide scope superseded by ADR-0048) |
 | [0031](0031-checksum-mismatch-outcomes.md) | Checksum-mismatch outcomes per structure | Accepted (resolves Q-C3) |
 | [0032](0032-directory-scoping-and-closure.md) | Directory scoping by containment; zero-layer files; metadata codec | Accepted (resolves Q-A5; discharges ADR-0009/0015/0026 Confirms; codec scoping amended by ADR-0033) |
 | [0033](0033-raw-directory-per-record-codec.md) | Raw directory; user-metadata records declare their own codec | Accepted (amends ADR-0032/0025) |
@@ -63,6 +63,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0045](0045-user-metadata-json-and-standardized-keys.md) | User metadata is restricted JSON; conventions live as keys | Accepted (resolves Q-F1/Q-F3/Q-D5; discharges ADR-0015 Confirm) |
 | [0046](0046-corpus-is-derivative.md) | The conformance corpus is derivative evidence | Accepted |
 | [0047](0047-reproducible-writer-profile.md) | A non-normative reproducible-writer profile | Accepted (resolves Q-I1) |
+| [0048](0048-live-state-coverage.md) | Coverage certifies the live state; dead space is counted, not modelled | Accepted (supersedes ADR-0030's history-wide coverage) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

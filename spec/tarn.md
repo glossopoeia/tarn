@@ -54,6 +54,11 @@ The design pillars, each paid for elsewhere in this document:
   modified, so a torn write cannot damage the previous state — a
   recovery tool truncates back to it (§9.6), while a conforming
   reader declines the torn file rather than scanning backward (§9.5).
+  Superseded bytes remain as dead space until compaction reclaims
+  them: this is a write-mostly artifact, not a version store, and
+  bulk work followed by compaction is the shape it is built for. A
+  long series of small edits is supported and wasteful — each costs a
+  full tile and its layer's whole index (§20.3).
 - **Defined behavior at the edges.** Sparse tiles, zero-extent
   dimensions, padding content, malformed index entries, and every
   other boundary have stated answers rather than conventions (§21).
@@ -487,50 +492,57 @@ scope. `[R-CNT-27]`
 
 #### 5.2 Byte coverage
 
-Every byte of a conforming file belongs to exactly one of: the front
-signature block; a **structure** of exactly one generation — the
-generation whose commit appended it — being a stored-tile extent, a
-record extent (the bytes any record's extent slot references,
-whatever the record's type, §7.2), a directory, or a trailer; or
-**declared padding** of exactly one generation. A file containing
-bytes claimed by no class is not a conforming file. `[R-CNT-02]`
+Coverage is a property of the **live committed state** — the front
+signature block, and every structure reachable from the live trailer
+through the live directory's records, extent slots, and tile-index
+entries, together with the live directory, its declared padding, and
+the live trailer. Every byte of the live committed state belongs to
+exactly one of: the front signature block; a **structure** — a
+stored-tile extent, a record extent (the bytes any record's extent
+slot references, whatever the record's type, §7.2), the directory, or
+the trailer; or **declared padding**. No two of them overlap, and a
+file whose live state does not partition this way is not a conforming
+file. `[R-CNT-02]`
 
-Declared padding is defined constructively, so that a verifier can
-compute it rather than infer it. A maximal run of unclaimed bytes
-[p, q) within a generation's range is declared padding when, and only
-when, it is one of:
+Declared padding is defined constructively, so a verifier computes it
+rather than infers it. A maximal run of bytes the live state does not
+otherwise claim is declared padding when, and only when, it is one of:
 
 - the run immediately preceding a structure whose offset a layer's
-  alignment or slab declaration constrains (§16), whose length
-  q − p is less than that declaration's modulus — A for per-tile
-  alignment, A_slab for a slab run — so that the run is exactly the
-  distance to the next legal offset; or
-- a generation's pre-trailer pad, of fewer than 64 bytes (§6.2).
+  alignment or slab declaration constrains (§16), whose length is
+  less than that declaration's modulus — A for per-tile alignment,
+  A_slab for a slab run — so that the run is exactly the distance to
+  the next legal offset; or
+- the pre-trailer pad, of fewer than 64 bytes (§6.2).
 
-Every other unclaimed run belongs to no class, and makes the file
-nonconforming: a declaration licenses the gap it forces, never a
-larger one. Declared padding MUST be zero bytes; writers MUST NOT
-emit nonzero padding, and a verifier MUST treat nonzero padding, or
-an unclaimed run that is not declared padding under this rule, as a
-validity error at file scope. `[R-CNT-03]`
+Declared padding MUST be zero bytes; writers MUST NOT emit nonzero
+padding, and a verifier MUST treat nonzero padding as a validity
+error at file scope. `[R-CNT-03]`
 
-> **Note.** The bound matters beyond bookkeeping: without it, one
-> layer declaring alignment would license arbitrary unaccounted bytes
-> anywhere in the file, and §22.3's claim that coverage makes
-> smuggled bytes locatable would be false for that file.
+Every other byte of the file is **dead space**: bytes an earlier
+commit wrote that the live state no longer reaches — superseded
+payloads and index regions, and every prior generation's directory,
+padding, and trailer. Dead space has no internal structure this
+specification defines, its content is unconstrained, and no
+conformance requirement applies to it. A reader MUST NOT interpret it
+(§9.5); a verifier MUST report the total number of dead bytes, since
+that number is what tells an operator to compact. Only compaction
+(§20.5) reclaims it. `[R-CNT-21]` Dead space is a privacy
+consideration (§23).
 
-**Superseded structures** — structures of prior generations no longer
-reachable from the live trailer via the live directory's records,
-extent slots, and tile-index entries — are **dead space**: readers MUST
-NOT interpret them on the default read path (§9.5), verifiers classify
-them via generation enumeration (§9.7), and only compaction (§20)
-reclaims them. `[R-CNT-21]` Dead space is a privacy consideration
-(§23).
+> **Rationale.** Dead space is the byproduct of committing without
+> rewriting, not a record anyone keeps: this format is not a version
+> store, and an operator paying for storage compacts rather than
+> retains. Certifying its internal structure would mean specifying,
+> verifying, and defending the shape of bytes whose whole purpose is
+> to be discarded — so this specification certifies the live state
+> exactly, and counts the rest.
 
 > **Note.** Coverage is checked by verifiers, never by readers: a
-> reader's obligations never require enumerating prior generations.
-> Conforming writers produce partitioned files by construction — the
-> commit protocol (§9.2) appends nothing it does not declare.
+> reader's obligations never require walking anything but the live
+> state. Conforming writers produce partitioned files by
+> construction — the commit protocol (§9.2) appends nothing it does
+> not declare.
 
 ### 6. Front Signature Block and Trailer
 
@@ -1006,61 +1018,21 @@ append is recoverable only by scanning back across its entire length.
 
 #### 9.7 Coverage verification
 
-A verifier checking `[R-CNT-02]`'s partition proceeds as follows.
-(a) Enumerate trailer candidates by §9.6's probe continued to offset
-0. A candidate qualifies only if it satisfies `[R-CNT-06]`'s field
-validity against its own committed length F_k (taking the file size
-as F_k) and carries the same file_id as the live trailer. Anchored at
-the live trailer, the verifier MUST accept a candidate set forming a
-**chain** — exactly one candidate per generation number from the live
-generation g down to 1, with committed_file_lengths strictly
-increasing and each equal to its candidate's offset + 64 — whenever at
-least one such set exists. Where more than one candidate set forms a
-chain, the verifier searches: the file's coverage is established if
-*any* qualifying chain yields the complete partition of step (c), and
-fails only when none does. Candidates outside the selected chain are
-discarded as payload mimics, and only when no chain yields that
-partition is coverage verification a failure at file scope (a
-conforming file always has one: its real trailers). Certification
-therefore depends on the bytes alone, never on which chain a
-particular verifier examined first (`[R-CNF-02]`). (b) Attribute to generation
-k the byte range [F_{k−1}, F_k), with F₀ = 16 (the front block
-belongs to no generation). (c) For each generation k, the claimed set
-is: the structures referenced transitively from generation k's
-directory — extent slots, tile-index regions, and index entries —
-that lie within [F_{k−1}, F_k), plus that directory, its declared
-padding, and its trailer. Every byte of [F_{k−1}, F_k) MUST be
-claimed exactly once — except that a double claim arising within one
-layer's structures is the intra-layer overlap of `[R-CNT-13]`
-(reject-layer; certification fails either way). Enumerating that set
-requires generation k's directory to parse as a record sequence
-(§7.2) and its records' extent slots to be well formed; where a
-superseded generation's directory does not, its structures cannot be
-attributed and coverage verification fails at file scope. This is
-the one respect in which a superseded generation's content still
-binds, and `[R-LIF-09]`'s exemption does not reach it: attribution
-is what makes the partition decidable. (d) A verifier that
-cannot verify an enumerated generation's trailer, directory, tile
-index, or any structure those claim (stored-tile extents and record
-extents included) cannot establish coverage and MUST treat the file
-as nonconforming. `[R-LIF-08]`
+A verifier checking `[R-CNT-02]`'s partition walks the live state
+only. From the live trailer it enumerates the live directory and its
+records, each record's extent, each layer's tile-index region and
+that region's non-sentinel entries, and the declared padding §5.2
+defines; it checks that these occupy disjoint byte ranges, that each
+lies within [16, F − 64), and that each verifies against the checksum
+covering it (§8.1). Bytes the walk does not reach are dead space:
+the verifier sums them and reports the total, and their content is
+not its concern. `[R-LIF-08]`
 
-Superseded structures are checked to the depth this subsection
-states — trailer field validity against their own F_k, the checksums
-of their directories, indexes, and claimed extents, declared-padding
-content, the gap bound, and the partition — and to no greater depth.
-A requirement this specification states about a structure binds that
-structure while it is reachable from a live trailer; once superseded,
-a structure's content constraints no longer bind, since nothing is
-permitted to read it (`[R-CNT-21]`). A file is not made nonconforming by a
-malformed record in a generation no reader is permitted to consult.
-`[R-LIF-09]`
-
-> **Note.** Step (c)'s in-range restriction is what makes attribution
-> decidable: a generation's directory may reference structures
-> appended by earlier commits (retained layers), but those bytes are
-> claimed by the generation that appended them, not by the generation
-> that retains them.
+> **Note.** Nothing here enumerates prior commits. A verifier
+> certifies what a reader can reach and counts what it cannot, which
+> is decidable from the live trailer in one pass and does not depend
+> on reconstructing the file's history — a history the format does
+> not promise to keep and compaction is expected to discard.
 
 ### 10. Extension Points and Registry
 
@@ -1758,10 +1730,12 @@ promise: its stored tiles MAY occupy any non-overlapping byte
 positions, in any order — a streaming writer places tiles in
 acquisition order at no cost to conformance (`[R-CNT-13]`). That
 freedom is over *ordering and relative position*, not over coverage:
-the byte-coverage classes admit declared padding only where an
-alignment or slab declaration creates it, and before the trailer, so
-a layer declaring neither leaves no gap between its structures — an
-unclaimed byte makes the file nonconforming (`[R-CNT-02]`).
+§5.2 admits declared padding only where an alignment or slab
+declaration forces it, and before the trailer, so a layer declaring
+neither leaves no gap between its live structures — a byte the live
+state neither claims nor accounts for as declared padding is dead
+space, and a commit that produces dead space it did not supersede is
+a writer defect (`[R-CNT-02]`, `[R-LIF-02]`).
 `[R-SLB-05]`
 
 #### 16.1 Per-tile alignment
@@ -2413,6 +2387,14 @@ An appender MUST, in order:
    ignore-lane flag bits copied forward (`[R-CNT-08]`), and
    version_minor per `[R-CNT-26]`; barrier. `[R-WRT-04]`
 
+> **Note.** A commit's cost is dominated by its index, not its data:
+> any change to a layer's stored-tile set re-emits that layer's whole
+> tile-index region, so editing one sample of a 10⁶-tile layer
+> appends about 20 MB of index and leaves as much dead. Writers doing
+> many small updates SHOULD batch them into one commit, and compact
+> (§20.5) when dead space grows — a verifier reports its total
+> (§9.7).
+
 > **Example.** Superseding one 100,000-byte stored tile of a
 > 32-tile interleaved layer appends: the new payload (100,000
 > bytes), the layer's full new index region (32 · 20 + 4 = 644
@@ -2528,7 +2510,7 @@ detects, which §19.2 places outside the reader tiers entirely.
 
 #### 21.2 File-scope violations
 
-Outcome: reject-file. 43 conditions.
+Outcome: reject-file. 38 conditions.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
@@ -2537,44 +2519,39 @@ Outcome: reject-file. 43 conditions.
 | F3 | A u64 offset or length field holds a value above 2^63 - 1 | dir_offset; dir_length; committed_file_length; non-layer top-level record extent_offset; extent_length | reader | open | `[R-ENC-03]` (R-CNT-06, R-CNT-13) |
 | F4 | A sum of a u64 offset and length taken from the file exceeds 2^63 - 1, so the sum wraps | dir_offset + dir_length; non-layer top-level record extent_offset + extent_length | reader | open | `[R-ENC-04]` (R-CNT-06, R-CNT-13) |
 | F5 | A fixed file-scope structure places its fields at widths other than those the spec fixes, with total size unchanged | trailer (e.g. version_major/version_minor written as u32 each); top-level record header | reader | open | `[R-ENC-06]` (R-CNT-06) |
-| F7 | Two layer records in the live directory carry byte-identical name fields (comparison is raw bytes, no normalization) | layer record name | reader | open | `[R-ENC-15]` (R-ENC-13) |
-| F8 | File size is below the 128-byte minimum, so the front block, directory, pre-trailer pad and trailer cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-01]` (R-ENC-07, R-CNT-06) |
-| F9 | A byte in a generation's attributed range [F_k-1, F_k) is claimed by no coverage class: no structure, directory, trailer or declared padding | — | verifier | certification | `[R-CNT-02]` (R-LIF-08) |
-| F10 | A byte of declared padding is nonzero | per-tile alignment gaps (16.1); slab run-placement gaps (16.2); each generation's pre-trailer pad | verifier | certification | `[R-CNT-03]` (R-SLB-01, R-SLB-03, R-LIF-02) |
-| F11 | The 16-byte front signature block is not byte-identical to the constant | magic bytes [0,8); reserved bytes [8,16) | reader | open | `[R-CNT-04]` |
-| F12 | A structure other than the zero pre-trailer pad occupies bytes between a generation's directory end and its trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
-| F13 | The gap between the directory's end and the trailer start is 64 bytes or more, exceeding the sub-64-byte pre-trailer pad bound | dir_offset + dir_length; F - 64 | verifier | certification | `[R-CNT-05]` (R-LIF-02) |
-| F14 | The 8 bytes at F-64 are not exactly the trailer magic 8A 4E 52 41 54 0D 0A 1A | trailer magic | reader | open | `[R-CNT-06]` |
-| F15 | Trailer dir_offset is less than 16, pointing the directory into or before the front signature block | dir_offset | reader | open | `[R-CNT-06]` |
-| F16 | Trailer dir_offset + dir_length exceeds F - 64, so the declared directory region runs into or past the live trailer | dir_offset; dir_length | reader | open | `[R-CNT-06]` |
-| F17 | Trailer generation is 0, below the live generation counter's floor of 1 | generation | reader | open | `[R-CNT-06]` |
-| F18 | Trailer file_id is 0 | file_id | reader | open | `[R-CNT-06]` |
-| F19 | Trailer committed_file_length is not a multiple of 64, so the trailer does not begin at a 64-aligned offset | committed_file_length | reader | open | `[R-CNT-06]` (R-CNT-01) |
-| F20 | The u32 at trailer offset 60 does not equal the CRC-32C of trailer bytes [0,60) | trailer CRC | reader | open | `[R-CNT-06]` (R-CNT-20, R-ENC-09) |
-| F21 | The 4 reserved bytes at trailer offset 56 are not all zero | trailer reserved [56,60) | reader | open | `[R-CNT-06]` (R-CNT-24) |
-| F22 | Trailer dir_length is less than 4, too small to hold the directory region's terminal CRC-32C | dir_length | reader | open | `[R-CNT-06]` (R-ENC-07) |
-| F23 | Trailer committed_file_length does not equal the transport-authoritative file size (physical file not truncated or extended to it) | committed_file_length | reader | open | `[R-CNT-06]` (R-LIF-04, R-CNT-10) |
-| F24 | Trailer version_major is 0, a permanently invalid major in every format major version | version_major | reader | open | `[R-CNT-07]` |
-| F25 | Trailer version_major is a nonzero major the reader does not implement (e.g. 2); magic and CRC still validate | version_major | reader | open | `[R-CNT-07]` (R-CNT-24) |
-| F26 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-15 | reader | open | `[R-CNT-08]` |
-| F27 | The final 4 bytes of the directory region do not equal the CRC-32C of the preceding dir_length - 4 bytes (the raw record sequence) | directory region CRC | reader | open | `[R-CNT-11]` (R-CNT-20, R-ENC-10) |
-| F28 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0), placing its document inline | extent_offset; extent_length | reader | open | `[R-CNT-25]` |
-| F29 | A top-level record's type field is 0x0000; type 0 is invalid and is never treated as an unknown type | type | reader | open | `[R-CNT-12]` |
-| F30 | A non-layer top-level record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0, a combination no writer emits | flags bit 0; flags bit 1 | verifier | certification | `[R-CNT-12]` |
-| F31 | Any of a non-layer top-level record's reserved flag bits 2-15 is set | flags bits 2-15 | verifier | certification | `[R-CNT-12]` |
-| F32 | A top-level record's 24-byte header or its inline payload extends past the end of the directory's record sequence (dir_offset + dir_length - 4) | record header; inline_length | reader | open | `[R-CNT-12]` (R-ENC-07) |
-| F33 | A non-layer top-level record's extent slot has exactly one half zero (offset 0 with length != 0, or offset != 0 with length 0) | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
-| F34 | A non-layer top-level record's nonzero extent slot has extent_offset in 1-15, placing the extent inside the front signature block | extent_offset | reader | open | `[R-CNT-13]` |
-| F35 | A non-layer top-level record's extent_offset + extent_length exceeds F - 64, so the extent touches or passes the live trailer | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
-| F36 | A byte is claimed by two structures that do not belong to the same layer - across two layers, or a layer structure against another scope's structure | stored-tile extents; tile-index regions; record extents; sub-record extents; directory region; trailer; front signature block; declared padding | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03, R-LIF-08) |
-| F37 | The directory's top-level record sequence contains two or more user-metadata records (type 0x0002) | type | reader | open | `[R-CNT-14]` |
-| F38 | A top-level record has an unassigned type value with MUST_UNDERSTAND (flags bit 0) set to 1 | type; flags bit 0 | reader | open | `[R-CNT-15]` |
-| F40 | Bytes were appended past a completed commit and never truncated, so the tail read at [size-64, size) is not a valid trailer | physical file bytes beyond committed_file_length | reader | open | `[R-LIF-05]` (R-LIF-04) |
-| F41 | A superseded generation's structures cannot be attributed within its own range [F_{k-1}, F_k), leaving bytes of that range claimed by nothing | extent_offset + extent_length; tile-index entry offset + length | verifier | certification | `[R-LIF-08]` (R-CNT-13) |
-| F42 | A structure claimed by an enumerated (superseded) generation fails its own checksum, so that generation's coverage cannot be verified | superseded directory CRC; crc_of_crc_array; segment CRC array entry; index-entry tile crc; record-extent CRC | verifier | certification | `[R-LIF-08]` (R-CNT-20, R-IDX-04) |
-| F43 | No candidate set anchored at the live trailer forms a chain, because for some generation pair the only qualifying candidates have non-increasing committed_file_lengths (candidates outside a chain are discarded as mimics, §9.7) | generation; committed_file_length | verifier | certification | `[R-LIF-08]` (R-LIF-02) |
-| F44 | A generation's directory or declared padding lies below F_k-1, i.e. the commit did not begin writing at exactly F | directory region; pre-trailer pad | verifier | certification | `[R-LIF-08]` (R-LIF-02, R-LIF-01) |
-| F45 | Some generation number between 1 and the live generation g has no qualifying trailer candidate, so no chain can be formed | trailer magic; trailer CRC; committed_file_length = candidate offset + 64; file_id (nonzero and equal to live file_id); dir_offset; dir_length; dir_offset + dir_length; generation; version_major; reserved bytes; flags (incompat lane, §6.3) | verifier | certification | `[R-LIF-08]` (R-LIF-06, R-CNT-06) |
+| F6 | Two layer records in the live directory carry byte-identical name fields (comparison is raw bytes, no normalization) | layer record name | reader | open | `[R-ENC-15]` (R-ENC-13) |
+| F7 | File size is below the 128-byte minimum, so the front block, directory, pre-trailer pad and trailer cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-01]` (R-ENC-07, R-CNT-06) |
+| F8 | A byte of the live committed state is claimed by no coverage class: no structure, directory, trailer, or declared padding | — | verifier | certification | `[R-CNT-02]` (R-LIF-08) |
+| F9 | A byte of declared padding is nonzero | per-tile alignment gaps (16.1); slab run-placement gaps (16.2); the pre-trailer pad | verifier | certification | `[R-CNT-03]` (R-SLB-01, R-SLB-03, R-LIF-02) |
+| F10 | The 16-byte front signature block is not byte-identical to the constant | magic bytes [0,8); reserved bytes [8,16) | reader | open | `[R-CNT-04]` |
+| F11 | A structure other than the zero pre-trailer pad occupies bytes between the live directory's end and the live trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
+| F12 | The gap between the directory's end and the trailer start is 64 bytes or more, exceeding the sub-64-byte pre-trailer pad bound | dir_offset + dir_length; F - 64 | verifier | certification | `[R-CNT-05]` (R-LIF-02) |
+| F13 | The 8 bytes at F-64 are not exactly the trailer magic 8A 4E 52 41 54 0D 0A 1A | trailer magic | reader | open | `[R-CNT-06]` |
+| F14 | Trailer dir_offset is less than 16, pointing the directory into or before the front signature block | dir_offset | reader | open | `[R-CNT-06]` |
+| F15 | Trailer dir_offset + dir_length exceeds F - 64, so the declared directory region runs into or past the live trailer | dir_offset; dir_length | reader | open | `[R-CNT-06]` |
+| F16 | Trailer generation is 0, below the live generation counter's floor of 1 | generation | reader | open | `[R-CNT-06]` |
+| F17 | Trailer file_id is 0 | file_id | reader | open | `[R-CNT-06]` |
+| F18 | Trailer committed_file_length is not a multiple of 64, so the trailer does not begin at a 64-aligned offset | committed_file_length | reader | open | `[R-CNT-06]` (R-CNT-01) |
+| F19 | The u32 at trailer offset 60 does not equal the CRC-32C of trailer bytes [0,60) | trailer CRC | reader | open | `[R-CNT-06]` (R-CNT-20, R-ENC-09) |
+| F20 | The 4 reserved bytes at trailer offset 56 are not all zero | trailer reserved [56,60) | reader | open | `[R-CNT-06]` (R-CNT-24) |
+| F21 | Trailer dir_length is less than 4, too small to hold the directory region's terminal CRC-32C | dir_length | reader | open | `[R-CNT-06]` (R-ENC-07) |
+| F22 | Trailer committed_file_length does not equal the transport-authoritative file size (physical file not truncated or extended to it) | committed_file_length | reader | open | `[R-CNT-06]` (R-LIF-04, R-CNT-10) |
+| F23 | Trailer version_major is 0, a permanently invalid major in every format major version | version_major | reader | open | `[R-CNT-07]` |
+| F24 | Trailer version_major is a nonzero major the reader does not implement (e.g. 2); magic and CRC still validate | version_major | reader | open | `[R-CNT-07]` (R-CNT-24) |
+| F25 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-15 | reader | open | `[R-CNT-08]` |
+| F26 | The final 4 bytes of the directory region do not equal the CRC-32C of the preceding dir_length - 4 bytes (the raw record sequence) | directory region CRC | reader | open | `[R-CNT-11]` (R-CNT-20, R-ENC-10) |
+| F27 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0), placing its document inline | extent_offset; extent_length | reader | open | `[R-CNT-25]` |
+| F28 | A top-level record's type field is 0x0000; type 0 is invalid and is never treated as an unknown type | type | reader | open | `[R-CNT-12]` |
+| F29 | A non-layer top-level record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0, a combination no writer emits | flags bit 0; flags bit 1 | verifier | certification | `[R-CNT-12]` |
+| F30 | Any of a non-layer top-level record's reserved flag bits 2-15 is set | flags bits 2-15 | verifier | certification | `[R-CNT-12]` |
+| F31 | A top-level record's 24-byte header or its inline payload extends past the end of the directory's record sequence (dir_offset + dir_length - 4) | record header; inline_length | reader | open | `[R-CNT-12]` (R-ENC-07) |
+| F32 | A non-layer top-level record's extent slot has exactly one half zero (offset 0 with length != 0, or offset != 0 with length 0) | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
+| F33 | A non-layer top-level record's nonzero extent slot has extent_offset in 1-15, placing the extent inside the front signature block | extent_offset | reader | open | `[R-CNT-13]` |
+| F34 | A non-layer top-level record's extent_offset + extent_length exceeds F - 64, so the extent touches or passes the live trailer | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
+| F35 | A byte of the live committed state is claimed by two structures that do not belong to the same layer — across two layers, or a layer structure against another scope's structure | stored-tile extents; tile-index regions; record extents; sub-record extents; directory region; trailer; front signature block; declared padding | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03) |
+| F36 | The directory's top-level record sequence contains two or more user-metadata records (type 0x0002) | type | reader | open | `[R-CNT-14]` |
+| F37 | A top-level record has an unassigned type value with MUST_UNDERSTAND (flags bit 0) set to 1 | type; flags bit 0 | reader | open | `[R-CNT-15]` |
+| F38 | Bytes were appended past a completed commit and never truncated, so the tail read at [size-64, size) is not a valid trailer | physical file bytes beyond committed_file_length | reader | open | `[R-LIF-05]` (R-LIF-04) |
 
 #### 21.3 Layer-scope violations
 
@@ -2599,7 +2576,7 @@ layer unaffected. 47 conditions.
 | L14 | A layer record's or sub-record's extent slot has exactly one of extent_offset and extent_length zero | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
 | L15 | A layer record's or sub-record's nonzero extent slot has extent_offset < 16, pointing into the front signature block | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
 | L16 | A layer record's or sub-record's extent reaches the live trailer or beyond: extent_offset + extent_length > F - 64 | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
-| L17 | Two structures of one and the same layer claim overlapping bytes in the live committed state | stored-tile extents; tile-index region; layer sub-record extents | verifier | certification | `[R-CNT-13]` (R-IDX-03, R-LIF-08) |
+| L17 | Two structures of one and the same layer claim overlapping bytes in the live committed state | stored-tile extents; tile-index region; layer sub-record extents | verifier | certification | `[R-CNT-13]` (R-IDX-03) |
 | L18 | A layer record's sub-record sequence contains more than one user-metadata sub-record (type 0x0002) | — | reader | layer access | `[R-CNT-14]` |
 | L19 | A layer record declares both a per-tile alignment A ≠ 0 and a slab S ≠ 0 | — | reader | layer access | `[R-CNT-16]` |
 | L20 | entry_count does not equal the geometry-derived addressed-tile count (N interleaved, C·N planar) | — | reader | layer access | `[R-CNT-17]` (R-CNT-20) |
@@ -2700,12 +2677,12 @@ of them as a failure is the nonconforming party.
 | An unknown record type carries MU = 0 | Ignored, and preserved or dropped per its PE bit | `[R-CNT-15]`, `[R-WRT-08]` |
 | An ignore-lane flag bit (16–31) is set | Ignored; the file is conforming — such bits are defined by later minor versions | `[R-CNT-08]` |
 | version_minor is higher than this text defines | Accepted; minors never gate | `[R-CNT-07]` |
-| Superseded bytes of earlier generations sit in the file | Dead space, conforming by construction; only compaction reclaims it | `[R-CNT-21]` |
+| Superseded bytes of earlier commits sit in the file | Dead space: unconstrained content, no conformance requirement, counted and reported by a verifier; only compaction reclaims it | `[R-CNT-21]` |
 | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
 | A user-metadata document's object members are not sorted by their keys' UTF-8 bytes | The file is nonconforming, but the document is readable: a verifier reports it and readers process it unchanged | `[R-MTA-05]` |
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
 | A registered record type's stored MU or PE bit differs from the value §7.3's registry fixes | The file is nonconforming, but readers apply the type's fixed semantics regardless and process the record; a verifier SHOULD report the mismatch | `[R-CNT-22]` |
-| A payload contains a byte string that mimics a trailer | Discarded as a mimic during generation enumeration; never a failure | `[R-LIF-08]` |
+| A payload contains a byte string that mimics a trailer | Inert: nothing enumerates dead space, and a recovery tool re-verifies its output whole (§9.6) | `[R-LIF-06]` |
 | Under a compressing codec (2–4), a stored tile's decoded size differs from its stored length | Expected: codecs compress, and can expand — codec 1's equality is `[R-COD-04]`'s subject | `[R-COD-08]` |
 
 A distinct case is **version_major naming a major this reader does
@@ -2729,7 +2706,7 @@ Nothing here authenticates, either (§4.5). `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 126 conditions over 235 named
+Every row of §21.2 through §21.5 — 121 conditions over 213 named
 instances — has at least one conformance vector (§24) whose expected
 verdict is that row's outcome, and a row naming instances has one
 vector per instance. A row without a vector is a
@@ -2824,11 +2801,13 @@ declaration alone costs nothing to state. `[R-SEC-02]`
 Extents are owned exactly once (`[R-CNT-13]`): no two structures
 overlap, which removes aliasing — two index entries pointing at one
 payload, or a payload overlapping a structure that governs it — as
-a class. Byte coverage (`[R-CNT-02]`) leaves no *unattributed* bytes in a
-conforming file: every byte belongs to a named structure of a named
-generation. It bounds accounting, not content — a superseded
-generation's extents are attributed dead space and can hold anything
-(§23.1) — so coverage makes smuggled bytes locatable, not absent. Both are verifier-detected: a reader that skips them is
+a class. Byte coverage (`[R-CNT-02]`) partitions the *live* state
+exactly: every byte a reader can reach belongs to one named structure.
+It bounds nothing outside that — dead space is unconstrained and can
+hold anything (§23.1) — so coverage makes bytes reachable by a reader
+accounted for, and makes everything else *countable* rather than
+absent: a verifier reports the dead total (§9.7), which is the number
+that distinguishes a working file from a padded one. Both are verifier-detected: a reader that skips them is
 still conforming, so a pipeline accepting files from untrusted
 sources SHOULD verify rather than merely read; without that, an
 attacker's smuggled bytes travel unexamined. `[R-SEC-03]`
@@ -2839,8 +2818,10 @@ invisible to a reader and caught only by a verifier's zero check
 (`[R-CNT-03]`). And a payload can contain a byte string that mimics
 a trailer; recovery tooling that scans backward can land on one, which
 is why recovery output is re-verified as a whole file before being
-trusted (`[R-LIF-06]`) and why generation enumeration discards
-off-chain candidates (`[R-LIF-08]`). `[R-SEC-04]`
+trusted (`[R-LIF-06]`) before any use. Under live-state coverage a
+mimic in dead space is inert — nothing enumerates it — but a recovery
+tool that truncates to one produces a different file, which is why
+its output is re-verified whole. `[R-SEC-04]`
 
 #### 22.4 Content the reader hands onward
 
@@ -2877,9 +2858,9 @@ file a reader opens later. `[R-SEC-07]`
 
 The append-only model (§9.1) means a commit that removes data
 removes only its *reachability*: the superseded bytes remain in the
-file as dead space (`[R-CNT-21]`), readable by anyone with the
-bytes and a hex editor, and reachable by ordinary tooling through
-generation enumeration (§9.7). Writers and the tools built on them
+file as dead space (`[R-CNT-21]`), readable by anyone with the bytes
+and a hex editor, and recoverable by any tool that scans backward for
+an earlier trailer (§9.6). Writers and the tools built on them
 MUST NOT represent a commit that supersedes data as erasure of it.
 `[R-PRV-01]`
 
@@ -3097,9 +3078,12 @@ states the request accounting rather than leaving it to be discovered.
 
 **Append-only, with a complete directory per generation.** Every
 commit re-emits the whole directory, so a torn write leaves the prior
-state intact and readable. The cost is dead space, which is why the
-byte-coverage rule classifies it (§5.2), compaction exists (§20.5),
-and §23 treats deletion and erasure as different things.
+state intact. The cost is dead space — and the decision that shaped
+this specification most is what dead space *is not*: not a history to
+certify, not a log to audit, just waste awaiting compaction. Coverage
+therefore certifies the live state and counts the rest (§5.2, §9.7),
+which is why this document has no generation-attribution machinery
+and no trailer chain.
 
 **Checksums everywhere, with per-scope outcomes.** Integrity is not a
 mode. The cost is one CRC per structure and a strictly ordered chain
@@ -3244,8 +3228,8 @@ byte-identically (§20.4); respects unknown records' MU and PE bits
 record.
 
 **Conforming verifier** — every reader obligation, plus the checks
-readers are exempt from: byte coverage and generation attribution
-(§9.7); extent overlap (§7.2); declared-padding content (§5.2);
+readers are exempt from: the live-state coverage partition and the
+dead-space total (§9.7); extent overlap (§7.2); declared-padding content (§5.2);
 alignment and slab invariants (§16); decoded-content obligations —
 padding samples and interleaved boolean bytes (§14.5, §14.2); and
 certifies only files with no violation at any scope (§2.4).

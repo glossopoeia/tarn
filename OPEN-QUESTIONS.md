@@ -182,7 +182,7 @@ once; intra-layer overlap → reject-layer, cross-layer/metadata → reject-file
 - **What settles it:** Whether any real N-D dedup case survives once fill
   sentinels exist. Leaning: (a).
 
-### Q-B5. Does TARN adopt a full byte-coverage rule? [Resolved → ADR-0030]
+### Q-B5. Does TARN adopt a full byte-coverage rule? [Resolved → ADR-0030, rescoped by ADR-0048]
 **Resolution:** strict — coverage is file validity; declared padding is
 zero bytes; unclaimed bytes make the file nonconforming.
 - **Why:** Unreferenced byte ranges are a smuggling channel and an
