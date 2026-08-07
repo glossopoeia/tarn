@@ -129,7 +129,11 @@ Conformance is defined for four classes.
 - **Conforming TARN file.** A byte sequence satisfying every file-level
   requirement of this specification. File conformance is a pure predicate
   on bytes: it does not depend on any reader, writer, or environment.
-  `[R-CNF-02]`
+  A few obligations this specification places on writers govern their
+  *conduct* rather than their output — where a value is published, or
+  which registry version a writer targets (§10.3, §18.3) — and a file
+  is never nonconforming by virtue of one: conduct rules bind the
+  actor, the predicate binds the bytes. `[R-CNF-02]`
 - **Conforming reader.** A reader MUST accept every conforming file none
   of whose values exceeds the minimum guarantees of §21's limits table,
   and MUST handle every codec and filter that §17 designates as core,
@@ -469,7 +473,13 @@ trailer come last (§6.2, §9.2). The file size of a conforming file
 equals the live trailer's committed file length F, and F is a multiple
 of 64 (§6.2). `[R-CNT-01]`
 
-> **Example.** The smallest conforming file is 128 bytes:
+No conforming file is shorter than 128 bytes: the front signature
+block, a directory of at least 4 bytes at an offset of at least 16,
+and the 64-byte trailer at a 64-aligned offset cannot be satisfied in
+fewer. A reader MUST treat a shorter file as a validity error at file
+scope. `[R-CNT-27]`
+
+> **Example.** The smallest conforming file is exactly 128 bytes:
 > front block [0, 16); an empty directory — zero records, so 4 bytes
 > holding the CRC-32C of zero bytes, `0x00000000` — at [16, 20);
 > 44 bytes of zero padding; trailer at [64, 128). It contains no
@@ -542,7 +552,7 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 | 8 | 2 | u16 | version_major | structural | 1 (0 invalid; others: §6.3) |
 | 10 | 2 | u16 | version_minor | structural | any (see §6.3) |
 | 12 | 4 | u32 | flags | structural | bits 0–15 incompat lane; bits 16–31 ignore lane (§6.3) |
-| 16 | 8 | u64 | generation | semantic | ≥ 1 |
+| 16 | 8 | u64 | generation | semantic | 1 ≤ generation ≤ 2⁶³ − 1 (`[R-ENC-03]`) |
 | 24 | 8 | u64 | dir_offset | structural | ≥ 16 |
 | 32 | 8 | u64 | dir_length | structural | ≥ 4; dir_offset + dir_length ≤ F − 64 |
 | 40 | 8 | u64 | committed_file_length | structural | = F; multiple of 64 |
@@ -551,7 +561,8 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 | 60 | 4 | u32 | trailer CRC | structural | CRC-32C over trailer bytes [0, 60) |
 
 Writers MUST place the directory so that only the zero pre-trailer pad
-— fewer than 64 bytes — lies between the directory's end and the
+— fewer than 64 bytes, and none at all when the directory already
+ends on a 64-byte boundary — lies between the directory's end and the
 trailer; a verifier MUST treat a violation as a validity error at file
 scope (readers are not obligated to check the gap bound; their check
 is the dir-bounds rule of `[R-CNT-06]`). `[R-CNT-05]`
@@ -653,7 +664,9 @@ the file.
 
 Metadata compression exists only at record granularity: each
 user-metadata record carries its document in its extent — never
-inline; an extent of (0, 0) on a user-metadata record is a validity
+inline; an extent of (0, 0) on a user-metadata record, or one whose
+extent_length is less than 5 — too short to hold both a document and
+the terminal CRC-32C §8.1 places in its final 4 bytes — is a validity
 error at its containing scope — and declares the document's encoding
 in its own inline payload (u8: 0 invalid, 1 = none, 2 = zstd; §18).
 An encoding value of 0, or one the reader does not implement, makes
@@ -682,9 +695,10 @@ is a 24-byte header followed by inline_length bytes of inline payload:
 | 8 | 8 | u64 | extent_offset | structural |
 | 16 | 8 | u64 | extent_length | structural |
 
-A record whose header or inline payload would extend past the end of
-its containing record sequence is a validity error at the sequence's
-owning scope: reject-file for the directory's top-level sequence,
+The sequence MUST parse as zero or more complete records with no
+residue. A record whose header or inline payload would extend past
+the end of its containing record sequence is a validity error at the
+sequence's owning scope: reject-file for the directory's top-level sequence,
 reject-layer for a layer record's sub-record sequence (§7.4). Type 0
 is not an unknown type: a reader MUST treat a record of type 0 as a
 validity error at the same scope. Reserved flag bits: writers MUST
@@ -973,10 +987,15 @@ the live trailer, the verifier MUST accept a candidate set forming a
 **chain** — exactly one candidate per generation number from the live
 generation g down to 1, with committed_file_lengths strictly
 increasing and each equal to its candidate's offset + 64 — whenever at
-least one such set exists; candidates outside the selected chain are
-discarded as payload mimics, and only when *no* consistent chain
-exists is coverage verification a failure at file scope (a conforming
-file always has one: its real trailers). (b) Attribute to generation
+least one such set exists. Where more than one candidate set forms a
+chain, the verifier searches: the file's coverage is established if
+*any* qualifying chain yields the complete partition of step (c), and
+fails only when none does. Candidates outside the selected chain are
+discarded as payload mimics, and only when no chain yields that
+partition is coverage verification a failure at file scope (a
+conforming file always has one: its real trailers). Certification
+therefore depends on the bytes alone, never on which chain a
+particular verifier examined first (`[R-CNF-02]`). (b) Attribute to generation
 k the byte range [F_{k−1}, F_k), with F₀ = 16 (the front block
 belongs to no generation). (c) For each generation k, the claimed set
 is: the structures referenced transitively from generation k's
@@ -990,6 +1009,17 @@ cannot verify an enumerated generation's trailer, directory, tile
 index, or any structure those claim (stored-tile extents and record
 extents included) cannot establish coverage and MUST treat the file
 as nonconforming. `[R-LIF-08]`
+
+Superseded structures are checked to the depth this subsection
+states — trailer field validity against their own F_k, the checksums
+of their directories, indexes, and claimed extents, declared-padding
+content, the gap bound, and the partition — and to no greater depth.
+A requirement this specification states about a structure binds that
+structure while it is reachable from a live trailer; once superseded,
+a structure's content constraints no longer bind, since nothing is
+permitted to read it (`[R-CNT-21]`). A file is not made nonconforming by a
+malformed record in a generation no reader is permitted to consult.
+`[R-LIF-09]`
 
 > **Note.** Step (c)'s in-range restriction is what makes attribution
 > decidable: a generation's directory may reference structures
@@ -1690,13 +1720,18 @@ with
 A layer that declares neither alignment nor a slab makes no layout
 promise: its stored tiles MAY occupy any non-overlapping byte
 positions, in any order — a streaming writer places tiles in
-acquisition order at no cost to conformance (`[R-CNT-13]`).
+acquisition order at no cost to conformance (`[R-CNT-13]`). That
+freedom is over *ordering and relative position*, not over coverage:
+the byte-coverage classes admit declared padding only where an
+alignment or slab declaration creates it, and before the trailer, so
+a layer declaring neither leaves no gap between its structures — an
+unclaimed byte makes the file nonconforming (`[R-CNT-02]`).
 `[R-SLB-05]`
 
 #### 16.1 Per-tile alignment
 
-A layer MAY declare alignment A (§7.4): a power of two ≥ 512.
-Writers MUST NOT emit any other nonzero value; a reader MUST treat
+A layer MAY declare alignment A (§7.4): a power of two with
+512 ≤ A ≤ 2⁶². Writers MUST NOT emit any other nonzero value; a reader MUST treat
 one as a validity error at layer scope (`[R-CNT-23]`). When declared:
 every stored tile's offset satisfies offset mod A = 0, and
 unclaimed bytes that this alignment leaves between claimed
@@ -2361,7 +2396,7 @@ govern (`[R-CNT-15]`; MU = 1 with PE = 0 is read as PE = 1,
 
 | Stored flags | Updater obligation |
 |---|---|
-| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs: an unknown critical record at layer scope blocks modification of that layer, and at file scope blocks file-scope modification entirely. |
+| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs: an unknown critical record at layer scope blocks modification of that layer, leaving other layers editable; at file scope it blocks any modification of file-scope structure — adding, removing, or reordering top-level records — while a commit that only changes a layer's own tiles, index, or record remains permitted. |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
 | MU = 0, PE = 0 | Retain byte-identical, or — only in a commit that modifies the scope the record attaches to — drop it, its extent becoming dead space. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
@@ -2384,20 +2419,24 @@ no-embedded-offsets rule (§7.2) makes safe for MU = 0 records.
 A compactor emits a new conforming file containing only the
 structures reachable from the input's live trailer — the live
 committed state (§7.2), less any record §20.4 lets it drop — so
-dead space is never carried. It MUST give the output a new
-file_id (§9.3's randomness advice applies) and generation 1: a
+dead space is never carried. It MUST mint a fresh file_id for the output — a new draw under §9.3's
+randomness advice, not merely a value compared against the input's —
+and generation 1: a
 compacted file is a whole-file rewrite under a new file_id by
 definition (`[R-LIF-01]`), and reusing the input's would break
 the (file_id, range) cache contract of `[R-LIF-03]`, since
 relocation puts different bytes at the same ranges. The output
 trailer copies the input's unknown ignore-lane flag bits forward
-(`[R-CNT-08]`) and carries version_minor per `[R-CNT-26]`.
+(`[R-CNT-08]`) and carries the greater of `[R-CNT-26]`'s floor and
+the input's version_minor — a compactor cannot know which minor
+version defined an ignore-lane bit it does not implement, so it does
+not lower the floor beneath one.
 A compactor MUST refuse to compact a file carrying any record
 whose type it does not implement with MU = 1: such a type can
 define references this specification does not (§7.2), so its
 bytes cannot be safely relocated. `[R-WRT-06]`
 
-A compactor preserves content, never placement: every stored
+A compactor preserves content but not placement — placement is not among the things it carries forward, and it is free to place structures anywhere §5.2 admits: every stored
 tile's bytes verbatim — each index entry's crc is unchanged — and
 every retained record per §20.4, except that relocation re-points
 extent slots, regenerates each relocated tile-index region (entry
@@ -2624,7 +2663,7 @@ of them as a failure is the nonconforming party.
 | Superseded bytes of earlier generations sit in the file | Dead space, conforming by construction; only compaction reclaims it | `[R-CNT-21]` |
 | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
 | A user-metadata document's object members are not sorted by their keys' UTF-8 bytes | The file is nonconforming, but the document is readable: a verifier reports it and readers process it unchanged | `[R-MTA-05]` |
-| A user-metadata document carries a `tarn.`-prefixed key this specification does not define | The file is nonconforming, but a reader ignores that key and reads the rest of the document | `[R-MTA-06]` |
+| A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
 | A registered record type's stored MU or PE bit differs from the value §7.3's registry fixes | The file is nonconforming, but readers apply the type's fixed semantics regardless and process the record; a verifier SHOULD report the mismatch | `[R-CNT-22]` |
 | A payload contains a byte string that mimics a trailer | Discarded as a mimic during generation enumeration; never a failure | `[R-LIF-08]` |
 | Under a compressing codec (2–4), a stored tile's decoded size differs from its stored length | Expected: codecs compress, and can expand — codec 1's equality is `[R-COD-04]`'s subject | `[R-COD-08]` |
@@ -2675,7 +2714,8 @@ bounds, and a writer MAY rely on that. `[R-ERR-03]`
 | zstd frame `Window_Size` | 8 MiB |
 
 A file exceeding any of these remains conforming, and a reader MAY
-decline it. Software that declines a file whose every quantity lies
+decline it — at the whole file, or at the narrowest scope whose
+declarations exceed what it can serve, a layer or a tile. Software that declines a file whose every quantity lies
 within the table is not a conforming reader (`[R-CNF-03]`) — the
 guarantees are the floor, not a suggestion. Either way, a refusal
 on resource grounds MUST be reported as a resource limit and not as
