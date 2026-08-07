@@ -543,10 +543,12 @@ Bytes [0, 16) of every file, constant in every format major version:
 | 0 | 8 | `89 54 41 52 4E 0D 0A 1A` (`\x89`, "TARN", CR, LF, ctrl-Z) | structural |
 | 8 | 8 | zero | structural (reserved) |
 
-Writers MUST emit exactly these 16 bytes. A local reader or content
-sniffer MUST verify the full block by byte equality before other
-processing and MUST treat any mismatch as reject-file; a remote reader
-MAY defer or omit this check (its open path is anchored at the trailer,
+Writers MUST emit exactly these 16 bytes. A **local reader** — one
+whose transport delivers the file's bytes from offset 0 without a
+separate request, as against a **remote reader** fetching byte ranges
+(§6.4) — or a content sniffer MUST verify the full block by byte
+equality before other processing and MUST treat any mismatch as
+reject-file; a remote reader MAY defer or omit this check (its open path is anchored at the trailer,
 §6.2, and the two-request accounting of §6.4 does not include the front
 block). `[R-CNT-04]`
 
@@ -765,7 +767,14 @@ most one user-metadata sub-record per layer record, a second being a
 validity error at layer scope. `[R-CNT-14]`
 
 An unknown record type at file scope: MU = 1 → reject-file; MU = 0 →
-ignore-record. Updater obligations for unknown records are §20's
+ignore-record. This governs a reader's treatment, not the file's
+validity: a record type from the experimental range is conforming
+(§10.3's prohibition binds the writer's conduct, not the bytes,
+`[R-CNF-02]`), while one from the reserved range is a value this
+specification has not assigned — emitting it is a violation, and a
+verifier MUST treat a reserved-range record type as a validity error
+at the record's governing scope. Readers of both apply the MU rule
+above unchanged. Updater obligations for unknown records are §20's
 subject. `[R-CNT-15]`
 
 #### 7.3 Record types of format major 1
@@ -1177,7 +1186,8 @@ The layer's **spatial-tile count** is N = ∏ Gᵢ, and its
 **sample-position count per tile** is P = ∏ Tᵢ. The layer's
 **addressed-tile count** — the number of its tile-index entries (§15) —
 is N for an interleaved layer and C · N for a planar layer, where C is
-the channel count. These products, like all geometry arithmetic, are
+the channel count, and its **total sample-position count** is N · P.
+These products, like all geometry arithmetic, are
 subject to `[R-ENC-04]`: a reader MUST treat a product exceeding
 2⁶³ − 1 as a validity error at layer scope. `[R-GEO-03]`
 
@@ -2059,11 +2069,16 @@ asks for:
   SHOULD NOT emit a number binary64 cannot represent exactly; a
   value needing bit-exact representation belongs in a structural
   field (§13.1), not here.
-- **No duplicate keys.** Within any one object, each key appears
-  once; two members with byte-identical keys make the document
+- **No duplicate keys.** Key identity is the *decoded* string, not
+  its JSON source bytes: `"a"` and `"\u0061"` are the same key, and
+  a document in which any one object carries that key twice is
   unreadable, since which member wins would otherwise be a parser's
-  choice.
-- **Well-formed UTF-8 throughout** (`[R-ENC-11]`), and every key
+  choice. `[R-MTA-05]`'s sort order is likewise over decoded keys'
+  UTF-8 bytes.
+- **Well-formed UTF-8 throughout** (`[R-ENC-11]`) — including after
+  escape resolution: a `\uXXXX` escape denoting an unpaired
+  surrogate has no UTF-8 encoding and makes the document unreadable,
+  as does an ill-formed byte sequence in the source — and every key
   satisfying §4.6's name rules — non-empty, at most 255 bytes, free
   of U+0000 through U+001F. Key comparison is raw bytes
   (`[R-ENC-13]`), so two keys differing only in Unicode
