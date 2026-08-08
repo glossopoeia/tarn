@@ -471,10 +471,10 @@ A TARN file is written generation by generation (§9). Byte 0 begins the
 constant 16-byte **front signature block** (§6.1). The final 64 bytes of
 the file are the live **trailer** (§6.2). Between them lie the
 structures of every generation — stored-tile payloads, tile-index
-regions, record extents (§5.2), each generation's directory, declared
-padding, and each prior generation's trailer — appended generation by
-generation; within each generation the directory, pre-trailer pad, and
-trailer come last (§6.2, §9.2). The file size of a conforming file
+regions, record extents (§5.2), each generation's directory, and each
+prior generation's trailer — appended generation by generation, with
+slack (§5.2) wherever a commit left a gap; within each generation the
+directory, pre-trailer pad, and trailer come last (§6.2, §9.2). The file size of a conforming file
 equals the live trailer's committed file length F, and F is a multiple
 of 64 (§6.2). `[R-CNT-01]`
 
@@ -487,7 +487,8 @@ scope. `[R-CNT-27]`
 > **Example.** The smallest conforming file is exactly 128 bytes:
 > front block [0, 16); an empty directory — zero records, so 4 bytes
 > holding the CRC-32C of zero bytes, `0x00000000` — at [16, 20);
-> 44 bytes of zero padding; trailer at [64, 128). It contains no
+> 44 bytes of slack, zeroed by advice; trailer at [64, 128). It
+> contains no
 > layers (a valid, empty file).
 
 #### 5.2 Byte coverage
@@ -545,11 +546,12 @@ Bytes [0, 16) of every file, constant in every format major version:
 | 8 | 8 | zero | structural (reserved) |
 
 Writers MUST emit exactly these 16 bytes. A **local reader** — one
-whose transport delivers the file's bytes from offset 0 without a
-separate request, as against a **remote reader** fetching byte ranges
-(§6.4) — or a content sniffer MUST verify the full block by byte
-equality before other processing and MUST treat any mismatch as
-reject-file; a remote reader MAY defer or omit this check (its open path is anchored at the trailer,
+whose transport serves any byte range at no per-range round trip, a
+local file or a memory mapping being the ordinary cases — or a content
+sniffer MUST verify the full block by byte equality before other
+processing and MUST treat any mismatch as reject-file. A **remote
+reader**, one whose transport charges a round trip per range (§6.4),
+MAY defer or omit this check (its open path is anchored at the trailer,
 §6.2, and the two-request accounting of §6.4 does not include the front
 block). `[R-CNT-04]`
 
@@ -582,11 +584,12 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 | 56 | 4 | bytes | reserved | structural | zero |
 | 60 | 4 | u32 | trailer CRC | structural | CRC-32C over trailer bytes [0, 60) |
 
-Writers MUST place the directory so that only the zero pre-trailer pad
-— fewer than 64 bytes, and none at all when the directory already
-ends on a 64-byte boundary — lies between the directory's end and the
-trailer; a verifier MUST treat a violation as a validity error at file
-scope (readers are not obligated to check the gap bound; their check
+Writers MUST place the directory so that no structure lies between
+its end and the trailer: the gap is slack (§5.2), fewer than 64 bytes,
+and none at all when the directory already ends on a 64-byte
+boundary. A verifier MUST treat a structure in that gap as a validity
+error at file scope; the gap's *content* is unconstrained, and
+writers zero it by the advice of `[R-CNT-03]` (readers are not obligated to check the gap bound; their check
 is the dir-bounds rule of `[R-CNT-06]`). `[R-CNT-05]`
 
 > **Note.** The trailer magic's first byte differs from the front
@@ -919,7 +922,8 @@ classes; (3) append the new complete directory — re-emitting every
 retained record per §20's preservation rules — followed by its CRC;
 (4) make steps 1–3 durable (a storage barrier such as fdatasync, or
 the platform equivalent needed to order writes against power loss);
-(5) append the zero pad to the next 64-byte boundary and the new
+(5) append the pad to the next 64-byte boundary — zeroed by advice,
+`[R-CNT-03]` — and the new
 trailer, with generation one greater than the prior trailer's and
 committed_file_length equal to the new end; (6) make the trailer
 durable. `[R-LIF-02]`
@@ -2370,7 +2374,7 @@ An appender MUST, in order:
    (`[R-SLB-01]`, `[R-CNF-05]`).
 5. **Re-emit the directory** per §20.4, followed by its CRC
    (`[R-LIF-02]` step 3).
-6. **Commit** (`[R-LIF-02]` steps 4–6): barrier; zero pad;
+6. **Commit** (`[R-LIF-02]` steps 4–6): barrier; pad;
    trailer with generation one greater, the same file_id, unknown
    ignore-lane flag bits copied forward (`[R-CNT-08]`), and
    version_minor per `[R-CNT-26]`; barrier. `[R-WRT-04]`
@@ -2510,7 +2514,7 @@ Outcome: reject-file. 37 conditions.
 | F7 | File size is below the 128-byte minimum, so the front block, directory, pre-trailer pad and trailer cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-01]` (R-ENC-07, R-CNT-06) |
 | F8 | A byte of the live committed state is claimed by no coverage class: no structure, directory, or trailer | — | verifier | certification | `[R-CNT-02]` (R-LIF-08) |
 | F9 | A byte of the live committed state is claimed by no coverage class: no structure, directory, or trailer | — | verifier | certification | `[R-CNT-02]` (R-LIF-08) |
-| F10 | A structure other than the zero pre-trailer pad occupies bytes between the live directory's end and the live trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
+| F10 | A structure occupies bytes between the live directory's end and the live trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
 | F11 | A structure occupies bytes between the live directory's end and the live trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
 | F12 | The 8 bytes at F-64 are not exactly the trailer magic 8A 4E 52 41 54 0D 0A 1A | trailer magic | reader | open | `[R-CNT-06]` |
 | F13 | Trailer dir_offset is less than 16, pointing the directory into or before the front signature block | dir_offset | reader | open | `[R-CNT-06]` |
@@ -2798,10 +2802,12 @@ still conforming, so a pipeline accepting files from untrusted
 sources SHOULD verify rather than merely read; without that, an
 attacker's smuggled bytes travel unexamined. `[R-SEC-03]`
 
-Two residues are stated rather than defended. Declared padding is
-covered by no checksum (§8.1): corruption confined to padding is
-invisible to a reader and caught only by a verifier's zero check
-(`[R-CNT-03]`). And a payload can contain a byte string that mimics
+Two residues are stated rather than defended. Slack is covered by no
+checksum (§8.1) and constrained by no rule: corruption confined to it
+is invisible to reader and verifier alike, and is caught only by the
+slack total changing (§9.7) — which is why a writer that zeroes its
+gaps (`[R-CNT-03]`) makes its own files easier to reason about, not
+because conformance turns on it. And a payload can contain a byte string that mimics
 a trailer; recovery tooling that scans backward can land on one, which
 is why recovery output is re-verified as a whole file before being
 trusted (`[R-LIF-06]`) before any use. Under live-state coverage a
@@ -3170,9 +3176,10 @@ the file.
    so this degree of freedom closes the same way item 1 does, by
    pinning the producer.
 
-Everything else the profile needs is already mandatory: zero declared
-gaps (`[R-CNT-03]`), fill-encoded edge padding (`[R-SER-05]`), and
-explicitly recorded fill (`[R-TYP-06]`).
+Everything else the profile needs is already mandatory except gap
+content, which `[R-CNT-03]` only advises and this profile requires:
+fill-encoded edge padding (`[R-SER-05]`) and explicitly recorded fill
+(`[R-TYP-06]`).
 
 ### Appendix H — Conformance checklists (non-normative)
 
@@ -3215,7 +3222,7 @@ record.
 
 **Conforming verifier** — every reader obligation, plus the checks
 readers are exempt from: the live-state coverage partition and the
-slack total (§9.7); extent overlap (§7.2); declared-padding content (§5.2);
+slack total (§9.7); extent overlap (§7.2);
 alignment and slab invariants (§16); decoded-content obligations —
 padding samples and interleaved boolean bytes (§14.5, §14.2); and
 certifies only files with no violation at any scope (§2.4).
