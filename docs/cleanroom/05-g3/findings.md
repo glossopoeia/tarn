@@ -1,8 +1,8 @@
 # G3 round 5 — findings and disposition
 
-**Verdict: G3 not met. Two distinct byte-level defects, both
-incomplete propagation of the previous round's own fix. One role of
-six did not return.**
+**Verdict: G3 not met. Three distinct byte-level defects across the
+round and its re-run — all three in text this project had recently
+written or amended.**
 
 Six blind fresh-context roles, third distinct partition, standard
 unchanged: every report had to carry a discriminator, and every agent
@@ -75,13 +75,37 @@ conformance.
 exemption exists to save. A local reader's transport serves any range
 at no per-range round trip; a remote reader's charges one.
 
-## The missing role
+## The missing role, re-run
 
 The verifier implementer stalled on all six attempts and returned
-nothing. It is the role that found two byte-level defects in round 4,
-so this round's coverage is incomplete and its clean-ish result
-should be read accordingly. Re-running that charter alone is the
-cheapest way to close the gap.
+nothing — the role that found two byte-level defects in round 4. It
+was re-run afterwards as two independent agents against the amended
+text: **A** on the original four-commit trace (slab cleared mid-life,
+first-axis extent grown, unknown `MU = 0 / PE = 0` record dropped),
+**B** on the specification of certification itself — every
+verifier-only check and whether it is decidable from bytes alone,
+every reported figure and whether two verifiers must agree on it, and
+every place the verifier's obligations are stated twice.
+
+**B found nothing.** **A found one**, in text this project wrote:
+§20.4's `MU = 0 / PE = 0` drop licence was **circular**. An appender
+could drop such a record "only in a commit that modifies the scope
+the record attaches to" — but §20.4's own MU = 1 row defines
+file-scope modification as "adding, removing, or reordering top-level
+records", so dropping the record *is* the modification that licenses
+dropping it. The precondition satisfied itself, making the
+restriction inoperative.
+
+**Fixed**: the change must be independent of the drop — for a layer
+sub-record, that layer's record, index, or stored tiles; for a
+top-level record, the file's layer set or another top-level record —
+and a commit whose only effect would be the drop MUST retain it.
+
+Both agents produced complete certification procedures. A's is a
+41-row dependency-ordered table marking every verifier-only row, with
+the reported figures and their computations — including the slack
+total as `F − claimed bytes`, which is the figure ADR-0048 made
+mandatory.
 
 ## Disposition
 

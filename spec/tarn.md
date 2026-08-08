@@ -2411,7 +2411,7 @@ govern (`[R-CNT-15]`; MU = 1 with PE = 0 is read as PE = 1,
 |---|---|
 | MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs: an unknown critical record at layer scope blocks modification of that layer, leaving other layers editable; at file scope it blocks any modification of file-scope structure — adding, removing, or reordering top-level records — while a commit that only changes a layer's own tiles, index, or record remains permitted. |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
-| MU = 0, PE = 0 | Retain byte-identical, or drop it — an appender only in a commit that modifies the scope the record attaches to, its extent becoming slack; a compactor whenever it rewrites the file, the record simply not being carried. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender may drop it only in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, index, or stored tiles; for a top-level record, the file's layer set or another top-level record. Dropping the record is not itself such a change, so a commit whose only effect would be the drop MUST retain it. A compactor may drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
 An updater MUST NOT re-encode a record whose type it does not
 implement, and MUST NOT modify one except by relocating its
