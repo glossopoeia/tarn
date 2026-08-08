@@ -109,5 +109,5 @@ mandatory.
 
 ## Disposition
 
-Both defects fixed; gates re-run clean; Appendix A still byte-exact.
-Nothing deferred.
+All three defects fixed; gates re-run clean; Appendix A still
+byte-exact. Nothing deferred.
