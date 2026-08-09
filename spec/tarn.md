@@ -1321,7 +1321,10 @@ canonicalized, or collapsed — and −0.0 and +0.0 are distinct values.
 Wherever this specification treats two sample or fill values as the
 same value, it means their encoded bytes are identical; this format
 defines no numeric equality, no ordering, and no NaN-aware
-comparison over sample values. `[R-TYP-04]`
+comparison over sample values. In a conforming file this rule admits
+no exception; the one case where a reader resolves a byte to a value
+rather than passing it through arises only in a nonconforming file,
+and `[R-SER-08]` states it. `[R-TYP-04]`
 
 Every bit pattern of a numeric type's element size is a valid sample
 value and a valid fill value — subnormals, infinities, and every NaN
@@ -1490,10 +1493,31 @@ interleaved bool value. Any other byte makes the file
 nonconforming: its assigned detector is the verifier, for which it
 is a validity error at tile scope. A reader is not obligated to
 screen decoded content, and a reader that does not detect the
-violation is not thereby nonconforming — such a byte belongs to a
-nonconforming file, for which no acceptance obligation and no
-defined return value exist, and `[R-CNF-12]` governs a reader that
-does detect it. `[R-SER-08]`
+violation is not thereby nonconforming; `[R-CNF-12]` governs a
+reader that does detect it. A reader that neither detects the
+violation nor rejects the tile, and returns the value, MUST report
+0x00 as false and every other byte as true. That rule fixes what
+such a reader returns; it neither makes the byte conforming nor
+relieves the verifier, and it never arises in a conforming file,
+where the only bytes present are 0x00 and 0x01. `[R-SER-08]`
+
+> **Rationale.** The writer-side constraint and the reader-side
+> interpretation answer different questions, and the earlier text
+> answered only the first. One encoding per value is what keeps
+> §14.5's padding check, `[R-COD-10]`'s stride detection and
+> Appendix G's byte reproducibility working, so the constraint
+> stays. But leaving the return value undefined bought nothing: two
+> readers handed the same malformed tile could disagree about a
+> sample and both be conforming, which is the divergence this
+> document exists to prevent. Defining the charitable path costs
+> nothing, since a conforming file never exercises it.
+
+> **Note.** The parallel constraint on a bool *fill* byte (§13.2)
+> needs no such rule: `[R-TYP-07]` assigns its detection to the
+> reader with a defined outcome — reject-layer — so a reader never
+> reaches a fill byte it must interpret. Only the in-tile byte,
+> whose detector is the verifier, could be met by a reader with no
+> obligation to act on it.
 
 > **Example.** An interleaved layer, tile extents (2, 3), P = 6,
 > channels `a` (uint8) and `b` (uint16): Q = 3, decoded size 18.
@@ -2273,7 +2297,10 @@ failure takes the cited rule's outcome:
    arithmetic; padding positions are never returned
    (`[R-GEO-04]`).
 8. **Return.** Return the requested values' bit patterns
-   unaltered (`[R-MDL-02]`, `[R-TYP-04]`). `[R-RDR-04]`
+   unaltered (`[R-MDL-02]`, `[R-TYP-04]`) — for every byte a
+   conforming file can carry, the whole of this step
+   (`[R-SER-08]` fixes what a reader returns for the one byte a
+   conforming file cannot). `[R-RDR-04]`
 
 > **Note — planar all-channel reads.** The entries for one spatial
 > ordinal lie at disk ordinals c · N + s, spaced N · 20 region
@@ -3249,7 +3276,8 @@ file within §21.9's minimum guarantees and reports any resource
 refusal as a limit rather than as corruption (`[R-ERR-04]`); applies
 the outcome and scope §21 assigns; never returns padding positions (§11.3) and never returns
 fill for a rejected tile (§2.4); returns sample bit patterns unaltered
-(§3.2).
+(§3.2), the sole resolved byte being a nonconforming interleaved
+boolean it chooses to return rather than reject (`[R-SER-08]`, §14.2).
 
 **Conforming writer** — emits only conforming files (§2.3); records
 fill for every channel (`[R-TYP-06]`, §13.1); fill-encodes edge
