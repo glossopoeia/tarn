@@ -143,8 +143,45 @@ sentinel, boundary, and error-register row gets at least one vector.
 - **M3** — Batches 1–4 drafted; cleanroom round 1 passed. *(Reached;
   round 2 passed after Batch 6.)*
 - **M4** — Full draft; all vectors authored. *(Draft complete: all 24
-  sections and Appendices A–H are written, and the decision ledger is
-  fully resolved into ADRs 0001–0047. Vectors outstanding — §24 fixes
-  the corpus contract, the corpus itself is the remaining work.)*
-- **M5** — Gates G1–G5 pass → 1.0-rc. *(Next: cleanroom round 3
-  evaluates G1–G3; G4 and G5 follow the corpus.)*
+  sections and Appendices A–H written; the ledger fully resolved into
+  ADRs 0001–0048. Vectors outstanding — §24 fixes the corpus
+  contract, the corpus itself is the remaining work.)*
+- **M5** — Gates G1–G5 pass → 1.0-rc. *(In progress; status below.)*
+
+### Gate status
+
+| Gate | Status |
+|---|---|
+| **G1** afternoon-readable | Evidence positive, verdict reserved to the maintainer. ~23,300 normative words, 158 requirements, 24 tables ≈ two hours' reading. Cleanroom navigators found the spine coherent and the three lookup questions (malformed-X, how-big-is-Y, what-does-this-enum-mean) answerable without linear reading. |
+| **G2** weekend-implementable | **PASS** (rounds 3 and 4). Fresh-context readers built complete minimal readers from the text alone, high confidence. |
+| **G3** cleanroom-clean | **Not met.** Five rounds; byte-level findings 5 → 4 → 4 → 3 → 3, all fixed. See below. |
+| **G4** O(1) remote open | Not started. Needs the request accounting demonstrated against a dumb HTTP server. |
+| **G5** every error has a vector | Not started. §21's register is the checklist: 120 conditions over 214 instances. |
+
+### What the G3 history actually shows
+
+Rounds 1–3 kept finding *new classes* of ambiguity, all clustered in
+byte coverage and multi-generation attribution — which is what
+produced ADR-0048, retiring history-wide coverage in favour of
+certifying the live state and counting slack.
+
+Rounds 4–5 found a different failure mode: every remaining defect was
+a **propagation failure**, not a design gap — a rule changed in one
+place and left standing elsewhere (the pad-zeroing rule survived at
+seven sites after §5.2 made it advisory), a definition that did not
+survive contact with an ordinary implementation (`local reader` vs a
+`pread` call), a precondition that quantified over itself (§20.4's
+drop licence). Meanwhile the two *constructive* instruments — an
+adversary tasked with building a file two verifiers judge
+differently, and a differential writer writing the same file twice —
+came back empty: the adversary tried 23 attacks in round 5 and
+refuted every one from the spec's own text, and the differential
+writer has returned zero three rounds running.
+
+The reading: the format looks determinate; the residual risk is
+editorial consistency. Two things would close G3 better than a sixth
+round of the same shape — a mechanical consistency check (every
+requirement's restatements agreed; every defined term used only where
+defined), and the G5 corpus itself, since a vector encoding the wrong
+verdict is exactly how a stale restatement gets caught. All three of
+round 5's defects would have been caught by vectors.
