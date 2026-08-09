@@ -156,7 +156,7 @@ sentinel, boundary, and error-register row gets at least one vector.
 | **G2** weekend-implementable | **PASS** (rounds 3 and 4). Fresh-context readers built complete minimal readers from the text alone, high confidence. |
 | **G3** cleanroom-clean | **Not met.** Five rounds; byte-level findings 5 → 4 → 4 → 3 → 3, all fixed. See below. |
 | **G4** O(1) remote open | Not started. Needs the request accounting demonstrated against a dumb HTTP server. |
-| **G5** every error has a vector | Corpus not started; its checklist repaired. §21's register is 127 conditions over 224 instances after ADR-0049 — the audit that preceded the corpus found the table mis-stated its own size, carried three duplicate rows, and omitted five conditions stated elsewhere. |
+| **G5** every error has a vector | Corpus not started; its checklist repaired. §21's register is 128 conditions over 234 instances after ADR-0049 — the audit that preceded the corpus found the table mis-stated its own size, carried three duplicate rows, and omitted five conditions stated elsewhere. |
 
 ### What the G3 history actually shows
 
@@ -189,7 +189,7 @@ round 5's defects would have been caught by vectors.
 That reading has since been tested and held. The audit that had to
 precede the corpus — a mechanical recount of §21 against its own
 counting rule, plus a sweep of every requirement identifier against
-the rows citing it — found nine defects in the register before a
+the rows citing it — found ten defects in the register before a
 single vector existed, including three duplicate rows and five
 omitted conditions (ADR-0049). None was a design gap; every one was a
 propagation failure, and one of them had survived a dedicated

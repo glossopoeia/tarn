@@ -2657,20 +2657,21 @@ decoding of stored data is unaffected. Readers SHOULD report the
 loss; silent metadata loss defeats the record's purpose. User
 metadata is quarantined (`[R-CNT-25]`): every way its document can
 be unreadable lands here, whatever the containing scope.
-10 conditions.
+11 conditions.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
 | R1 | A user-metadata record declares a document encoding of 0, or any value other than 1 (none) or 2 (zstd) | encoding 0, top-level record; encoding 0, layer sub-record; reserved 3–0x7F, top-level record; reserved 3–0x7F, layer sub-record; experimental ≥ 0x80, top-level record; experimental ≥ 0x80, layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-25]` |
 | R2 | A user-metadata extent's final 4 bytes do not equal the CRC-32C of the preceding bytes | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-20]` (R-CNT-25) |
 | R3 | A user-metadata document's stored bytes fail to decode under its declared encoding | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
-| R4 | A decoded user-metadata document violates the document's own content rules — a key or string value containing ill-formed UTF-8 | top-level document; layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-11) |
-| R5 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-12) |
-| R6 | A decoded user-metadata document is not well-formed JSON, or its top-level value is not an object | not well-formed JSON, top-level document; not well-formed JSON, layer sub-record document; top-level value not an object, top-level document; top-level value not an object, layer sub-record document; leading U+FEFF, top-level document; leading U+FEFF, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
-| R7 | A user-metadata document contains a non-finite number, in any form | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
-| R8 | Two members of one object in a user-metadata document carry the same key, identity being the decoded string and not the JSON source bytes (`"a"` and `"\u0061"` are the same key) | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
-| R9 | A user-metadata document key is longer than 255 bytes | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-ENC-12) |
-| R10 | An unknown record type carries MU = 0 | top-level record; layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-15]` (R-CNT-18) |
+| R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 carries over from `[R-COD-06]`; unlike R3, the constraint is broken whether or not the bytes decode | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
+| R5 | A decoded user-metadata document violates the document's own content rules — a key or string value containing ill-formed UTF-8 | top-level document; layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-11) |
+| R6 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-12) |
+| R7 | A decoded user-metadata document is not well-formed JSON, or its top-level value is not an object | not well-formed JSON, top-level document; not well-formed JSON, layer sub-record document; top-level value not an object, top-level document; top-level value not an object, layer sub-record document; leading U+FEFF, top-level document; leading U+FEFF, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+| R8 | A user-metadata document contains a non-finite number, in any form | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+| R9 | Two members of one object in a user-metadata document carry the same key, identity being the decoded string and not the JSON source bytes (`"a"` and `"\u0061"` are the same key) | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+| R10 | A user-metadata document key is longer than 255 bytes | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-ENC-12) |
+| R11 | An unknown record type carries MU = 0 | top-level record; layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-15]` (R-CNT-18) |
 
 #### 21.6 Conditions that are not violations
 
@@ -2724,7 +2725,7 @@ Nothing here authenticates, either (§4.5). `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 127 conditions over 224 named
+Every row of §21.2 through §21.5 — 128 conditions over 234 named
 instances — has at least one conformance vector (§24) whose expected
 verdict is that row's outcome, and a row naming instances has one
 vector per instance. A row without a vector is a
