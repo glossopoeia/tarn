@@ -491,6 +491,27 @@ scope. `[R-CNT-27]`
 > contains no
 > layers (a valid, empty file).
 
+> **Example — a file after three commits.** Regions, not offsets;
+> ▓ marks slack.
+>
+> ```
+> ┌───────┬───────────┬───────┬───────────┬───────┬──────┬────┬────────┐
+> │ front │  layer A  │▓▓▓▓▓▓▓│  layer B  │▓▓▓▓▓▓▓│ dir₃ │pad │ trail₃ │
+> └───────┴───────────┴───────┴───────────┴───────┴──────┴────┴────────┘
+>          └tiles+index┘       └tiles+index┘       └── the live state ──┘
+> ```
+>
+> The ▓ runs are the directories, pads and trailers of commits 1 and 2,
+> superseded when commit 3 wrote its own. Layer A's tiles and index have
+> never moved: only the directory, the pad and the trailer are rewritten
+> per commit, and a layer the commit does not touch keeps its extent
+> slot pointing where it always pointed (§20.3, `[R-WRT-05]`).
+>
+> This is what tail-anchored discovery buys. Because the structures that
+> must change on every commit are the last ones in the file, a commit
+> appends and never rewrites a committed byte (§9.1) — the property
+> §9.6's recovery and §9.3's caching both rest on.
+
 #### 5.2 Byte coverage
 
 Coverage is a property of the **live committed state** — the front
@@ -956,6 +977,29 @@ generation 1.
 > from "torn commits are invisible" to "torn commits are detected":
 > §8's chain still catches every inconsistent state loudly — the
 > outcome is rejection at the affected scope, never silent corruption.
+
+> **Example — what a crash sees.** ▓ marks the bytes an interrupted
+> commit had written.
+>
+> ```
+> committed    │ … │ dirₙ │pad│ trailₙ │
+>                                       ↑ F: a reader opens here
+>
+> mid-commit   │ … │ dirₙ │pad│ trailₙ │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+>                                       ↑ trailₙ intact, but no longer
+>                                         at the file's end
+>
+> committed    │ … │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ … │dirₙ₊₁│pad│ trailₙ₊₁ │
+> ```
+>
+> Mid-commit the physical tail is not a trailer, so a reader on the
+> default path reports the file torn and MUST NOT scan backward
+> (`[R-LIF-05]`). What makes that recoverable rather than fatal is that
+> trailₙ and everything it reaches are still byte-intact: §9.6's
+> deliberate scan finds trailₙ and truncating to it restores the file
+> exactly. The window is not one in which the old state is *readable* —
+> it is one in which the old state is *recoverable*, which is the whole
+> return on never modifying a committed byte.
 
 #### 9.3 Generations, file_id, caching
 
@@ -2445,6 +2489,49 @@ An appender MUST, in order:
 > region and the superseded payload become slack, reclaimable
 > only by compaction.
 
+> **Example — the three shapes a commit takes.** Regions, not offsets;
+> ▓ marks what the commit turned to slack.
+>
+> **(a) A new layer.** Nothing existing is rewritten.
+>
+> ```
+> before │front│ A: tiles+index │ dir₁│pad│tr₁│
+> after  │front│ A: tiles+index │▓▓▓▓▓▓▓▓▓▓▓▓▓│ B: tiles+index │ dir₂│pad│tr₂│
+>               └── untouched ──┘└ was dir₁ ──┘
+> ```
+>
+> A's record is carried into dir₂ byte-identically, extent slot and
+> all, so it still addresses A's original index. The slack is the old
+> directory, pad and trailer — sized by the file's *layer count*, never
+> by any layer's data. This is the shape a tool that derives layers
+> takes: decimation, pyramid levels, an added mask.
+>
+> **(b) Tiles added to, or superseded in, an existing layer.** That
+> layer's index is re-emitted whole.
+>
+> ```
+> before │front│ tiles │ index │ dir₁│pad│tr₁│
+> after  │front│ tiles │▓index▓│▓▓▓▓▓│ +tiles │ index′ │ dir₂│pad│tr₂│
+>                       └ old ─┘              └ every entry, re-emitted
+> ```
+>
+> The whole region moves because it is addressed by one extent slot, so
+> a single changed entry costs its whole length — the cost this
+> section's note above quantifies. Superseded payloads become slack
+> too; retained ones do not move.
+>
+> **(c) A metadata-only change** — clearing a slab declaration, editing
+> user metadata. Only the directory is rewritten.
+>
+> ```
+> before │front│ A: tiles+index │ dir₁│pad│tr₁│
+> after  │front│ A: tiles+index │▓▓▓▓▓▓▓▓▓▓▓▓▓│ dir₂│pad│tr₂│
+> ```
+>
+> In every shape the file grows and no committed byte changes, which is
+> what lets a reader hold a generation open while a writer commits
+> (§9.5) and a cache keep every range it has already fetched (§9.3).
+
 #### 20.4 Re-emission and preservation
 
 In the new complete directory, an updater MUST re-emit
@@ -2512,6 +2599,31 @@ MU = 1 type the compactor does not implement never reaches this
 step (`[R-WRT-06]`). The output's reference arrays MUST equal the
 live generation's bit for bit (`[R-MDL-02]`): compaction changes
 where bytes live, never what a layer denotes. `[R-WRT-07]`
+
+> **Example — what compaction reclaims.** Regions, not offsets; ▓ marks
+> slack.
+>
+> ```
+> input  │front│ A │▓▓▓▓│ B │▓▓│ A: index′ │▓▓▓│ dir │pad│ tr │
+>                                                  file_id = X, generation = 7
+>
+> output │front│ A │ B │ A: index′ │ dir │pad│ tr │
+>                                                  file_id = Y, generation = 1
+> ```
+>
+> Every live structure survives byte-for-byte and the reference arrays
+> are identical; only placement changes, which is why the output is a
+> different file rather than a later generation of the same one. The
+> fresh file_id is the mechanism, not bookkeeping: a cache keyed
+> (file_id, range) is sound precisely because ranges never change
+> beneath a file_id (§9.3), and compaction is the one operation that
+> moves live bytes. Reusing the input's identifier would serve
+> generation 7's bytes for generation 1's ranges.
+>
+> This is also the only operation that shrinks a file. Slack accumulates
+> a directory, a pad and a trailer per commit, plus a whole index region
+> for each layer a commit touched (§20.3); a verifier reports the total
+> (§9.7), and that total is what tells an operator when to run this.
 
 A compactor's verification depth follows reliance over
 everything it carries (`[R-WRT-03]`): it relies on every
