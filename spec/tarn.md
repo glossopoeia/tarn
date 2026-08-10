@@ -654,7 +654,10 @@ gate) but misstates the file's feature floor to tooling. `[R-CNT-26]`
 #### 6.4 Remote open accounting
 
 The baseline remote open is two requests, each with an exact target:
-(1) fetch the final 64 bytes; validate per §6.2–§6.3; (2) fetch
+(1) fetch the final 64 bytes — a suffix range, whose response also
+carries the transport-authoritative file size F (`[R-CNT-10]`), so that
+§19.1's first two steps cost one request between them; validate per
+§6.2–§6.3; (2) fetch
 [dir_offset, dir_offset + dir_length); verify and decode per §7.1. A
 reader MAY instead speculatively fetch a suffix window in one request
 and use containment: if the fetched buffer contains the directory
@@ -663,6 +666,18 @@ the pre-trailer pad plus 64 within 65,536 bytes so that a 64 KiB
 suffix fetch captures trailer and directory together; a larger
 directory is conforming and merely costs the second request.
 `[R-CNT-09]`
+
+> **Note.** This accounting is a theory of operation, not a budget: no
+> request count is a conformance property, and nothing here bounds what
+> a reader fetches. A reader speculating a megabyte and one fetching two
+> exact ranges are equally conforming, and which is better is a property
+> of the transport rather than of the file — high-latency links reward
+> fewer, larger requests and metered ones reward the opposite. What the
+> open does bind is its *working set*: the trailer and the directory,
+> and nothing else, at any file size and layer count (`[R-RDR-01]`).
+> That is the invariant this section exists to make legible, and the
+> request counts are what it costs a reader that fetches exactly what it
+> needs.
 
 A remote reader MUST handle a 200 response to a range request (abort
 or accept the full body deliberately — never treat the body prefix as
@@ -2169,7 +2184,11 @@ cites the requirement whose outcome governs its failure.
 A conforming reader opens a file by these steps, in order:
 
 1. **End of file.** Obtain the transport-authoritative file size F
-   (`[R-CNT-10]`). A local reader MUST verify the front signature
+   (`[R-CNT-10]`). These steps are ordered by dependency, not by
+   I/O: a remote reader's suffix range for step 2 carries F in its
+   own response, so steps 1 and 2 cost one request between them
+   (§6.4), and a local reader obtains F without any. A local reader
+   MUST verify the front signature
    block by byte equality before other processing (mismatch:
    reject-file); a remote reader MAY defer or omit that check
    (`[R-CNT-04]`).

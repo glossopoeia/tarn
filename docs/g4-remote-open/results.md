@@ -69,26 +69,39 @@ costs the second request."* D is not a failure.
 **Nothing was fetched that the open does not consume.** No request touched a
 tile index, an extent, or a payload, as `[R-RDR-01]` and `[R-RDR-02]` require.
 
-## What the measurement found wrong
+## What the measurement found
 
-Three findings against the document, in severity order. Each was reached
-independently by agents deriving expected counts from the text alone, before
-seeing these measurements.
+Three findings, each reached independently by agents deriving expected counts
+from the text alone, before seeing these measurements. The first was
+miscalibrated and is retained with its resolution, because the error is
+instructive; the other two led to edits.
 
-### G4-1 — No rule bounds a reader's request count
+### G4-1 — No rule bounds a reader's request count (resolved: not a defect)
 
 §6.4's BCP 14 keywords are MAY (speculation), SHOULD (the writer's window
 budget), MUST (handling a 200), SHOULD (the no-suffix fallback), MUST and
 MUST NOT (size authority). *"The baseline remote open is two requests"* is
-declarative prose, and `[R-RDR-01]` restates it descriptively.
+declarative prose, and **M5 measures a reader that takes three round trips on
+every case and violates nothing.**
 
-So no request count is a conformance property. **M5 measures a reader that
-takes three round trips on every case and violates nothing.** G4 as chartered —
-"request counts matching the stated guarantee" — cannot be a pass/fail test of
-readers against the current text. It can only demonstrate that the stated
-counts are *achievable*.
+This was first recorded as a gap in the specification. It is not. §6.4 places
+its MUSTs exactly where a reader can be *wrong* — transport handling and size
+authority — and leaves alone everything where a reader is merely *different*.
+Which strategy is better is a property of the transport, not of the file: a
+high-latency link rewards fewer, larger requests and a metered one rewards the
+opposite, and a format that legislated the choice would be dictating I/O
+strategy to every deployment.
 
-### G4-2 — The two-request baseline is circular as written
+The mismatch was in the gate's own wording, which called the accounting
+"normative" and its counts a "guarantee". PLAN.md §1 now states G4 as the
+**working-set invariant** — the open consumes the trailer and directory and
+nothing else, at any file size and layer count (`[R-RDR-01]`) — with request
+counts as illustration. That is the claim that binds readers, that is a
+property of the format's structure rather than of anyone's strategy, and it is
+the one the measurement actually establishes. §6.4 gained a note saying so, so
+the next reader does not repeat the inference.
+
+### G4-2 — The two-request baseline was circular as written (fixed)
 
 §6.4's request 1 is *"fetch the final 64 bytes"*, an exact target that cannot
 be addressed without knowing F. §19.1 makes obtaining F its own numbered step 1
@@ -100,6 +113,12 @@ it appears only in the speculative option and the fallback clause.
 A reader implementing §19.1 in its stated order performs a size probe, a
 trailer fetch, and a directory fetch. That is M5, and it is three requests.
 
+**Fixed.** §6.4's request 1 now names itself a suffix range whose response
+carries F, and §19.1's step 1 now says the steps are ordered by dependency
+rather than by I/O — so a reader following either text literally arrives at
+the same two requests. Neither edit adds a requirement; a three-request open
+remains conforming, as G4-1 records.
+
 ### G4-3 — "O(1) remote open" is O(1) in requests only
 
 Nothing bounds the open's byte volume. `[R-CNT-10]` permits a reader meeting a
@@ -110,11 +129,22 @@ trips ranks that reader above the baseline.
 
 ## Verdict
 
-**Not yet met, and not because of the numbers.** Every count the specification
-intends is achieved and the invariance claim is demonstrated. What is missing
-is a statement of what G4 is asserting: an achievability demonstration, or a
-conformance property. The text currently supports only the first, while the
-gate's wording implies the second.
+**G4 passes**, on the claim PLAN.md §1 now states.
 
-The remaining work is three decisions about §6.4's wording, not about this
-harness.
+The working-set invariant is demonstrated: across six files spanning five
+orders of magnitude of size and 0 to 617 layers, and five transport
+strategies, **no request in any mode touched a tile index, an extent, or a
+payload**. The open consumes the trailer and the directory, and nothing else,
+exactly as `[R-RDR-01]` claims — which is a property of the format's
+structure, so no reader's strategy can spoil it.
+
+The request counts are recorded as illustration of what that costs a reader
+fetching exactly what it needs: two, invariant across every file measured,
+opening a 16.7 MB file on 185 bytes. They bound no reader, and M4 and M5 are
+in the table precisely to show conforming readers that spend more.
+
+What G4 does **not** establish, stated so it is not assumed: that any
+particular implementation is efficient, that byte volume is bounded (G4-3), or
+that a reader exists at all. It establishes that the format's discovery
+structure permits a constant-cost open, and that a program stopping at §19.1's
+open needs nothing else.
