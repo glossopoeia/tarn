@@ -60,7 +60,74 @@ def seed_pair():
     return build_with_layout([ok, bad])
 
 
-SEEDS = {"minimal": seed_minimal, "pair": seed_pair}
+def seed_sparse():
+    """A layer whose tiles are mostly unstored: sentinel entries read as fill."""
+    ok = Layer("ok", extents=(2, 3), tile_extents=(2, 3), channels=[Channel("t", 12)],
+               tiles=[struct.pack("<6I", 0x3F800000, 0x80000000, 0x7FC00001,
+                                  0xC0000000, 0x00000000, 0x7F800000)])
+    sp = Layer("sparse", extents=(4, 4), tile_extents=(2, 2),
+               channels=[Channel("v", 6, b"\x2A")],
+               tiles=[bytes([9, 9, 9, 9]), None, None, None])
+    return build_with_layout([ok, sp])
+
+
+def seed_planar():
+    """Planar layout, mixed channel types including bool (packed plane)."""
+    ok = Layer("ok", extents=(2, 3), tile_extents=(2, 3), channels=[Channel("t", 12)],
+               tiles=[struct.pack("<6I", 0x3F800000, 0x80000000, 0x7FC00001,
+                                  0xC0000000, 0x00000000, 0x7F800000)])
+    pl = Layer("planar", extents=(2, 4), tile_extents=(2, 4), layout=2,
+               channels=[Channel("u", 7), Channel("m", 1, b"\x00")],
+               tiles=[bytes(16), bytes(1)])       # u: 8 values x 2 B; m: ceil(8/8)
+    return build_with_layout([pl, ok])
+
+
+def seed_meta():
+    """A top-level user-metadata record with a zstd-free (encoding 1) document."""
+    doc = b'{"tarn.title":"vector"}'
+    ext = doc + struct.pack("<I", crc32c(doc))
+    ok = Layer("ok", extents=(2, 3), tile_extents=(2, 3), channels=[Channel("t", 12)],
+               tiles=[struct.pack("<6I", 0x3F800000, 0x80000000, 0x7FC00001,
+                                  0xC0000000, 0x00000000, 0x7F800000)])
+    return build_with_layout([ok], [Record(0x0002, inline=b"\x01", extent=ext)])
+
+
+SEEDS = {"minimal": seed_minimal, "pair": seed_pair, "sparse": seed_sparse,
+         "planar": seed_planar, "meta": seed_meta}
+
+_LAYER_CACHE: dict[str, list] = {}
+
+
+def _seed_layers(seed: str) -> list:
+    """The Layer declarations a seed was built from, for content derivation."""
+    if seed in _LAYER_CACHE:
+        return _LAYER_CACHE[seed]
+    import inspect
+    fn = SEEDS.get(seed)
+    if fn is None:
+        return []
+    src_layers: list = []
+    try:
+        # Re-run the seed with build_with_layout captured, so we see its Layers.
+        import tarn_build
+        real = tarn_build.build_with_layout
+        def spy(layers, records=None, **kw):
+            src_layers.extend(layers)
+            return real(layers, records, **kw)
+        tarn_build.build_with_layout = spy
+        g = fn.__globals__
+        prev = g.get("build_with_layout")
+        g["build_with_layout"] = spy
+        try:
+            fn()
+        finally:
+            tarn_build.build_with_layout = real
+            if prev is not None:
+                g["build_with_layout"] = prev
+    except Exception:
+        src_layers = []
+    _LAYER_CACHE[seed] = src_layers
+    return src_layers
 
 
 # --------------------------------------------------------------------------
@@ -215,66 +282,95 @@ OK_CONTENT = {
 u16 = lambda v: struct.pack("<H", v)
 u64 = lambda v: struct.pack("<Q", v)
 
-VECTORS = [
-    Vector("TV-0001", "minimal", "Appendix A's minimal file", True,
-           serves=["file opens; zero layers"]),
-    Vector("TV-0002", "pair", "two layers, one float32 tile of edge values", True,
-           serves=["ok", "bad"]),
+#: Vectors withheld pending a maintainer decision. A vector that names the
+#: wrong row is worse than a missing one: it evidences a rule it does not test.
+CONTESTED = {
+    "TV-0538": ("claims R11, but [R-CNT-15] says an unknown MU = 0 record "
+                "'governs a reader's treatment, not the file's validity' and "
+                "§21.6 lists the same condition as not a violation. Byte-"
+                "identical to TV-0636, which ships it as conforming."),
+    "TV-0539": ("same construction as TV-0538, sub-record instance of the "
+                "disputed row R11"),
+    "TV-0401": "claims T3 but keeps codec 1, where [R-COD-04]'s entry-length check (T14) fires first",
+    "TV-0402": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
+    "TV-0403": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
+    "TV-0404": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
+    "TV-0405": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
+    "TV-0406": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
+}
 
-    Vector("TV-0003", "minimal", "trailer magic corrupted", False,
-           patches=[Patch("trailer.magic", b"\x8aNRAT\r\n\x1b")],
-           repair=["trailer.crc"],
-           row="F11", rule="R-CNT-06", outcome="reject-file",
-           scope={"kind": "file"}, detected="open",
-           must_not_serve=["file"]),
-    Vector("TV-0004", "pair", "trailer dir_offset = 15, inside the front block", False,
-           patches=[Patch("trailer.dir_offset", u64(15))],
-           repair=["trailer.crc"],
-           breaks_checksums=["trailer.gates"],   # dir_offset < 16 IS a gate failure
-           row="F12", rule="R-CNT-06", outcome="reject-file",
-           scope={"kind": "file"}, detected="open",
-           must_not_serve=["file"]),
 
-    Vector("TV-0005", "pair", "layer `bad` declares index_encoding 0", False,
-           patches=[Patch("layer[bad].index_encoding", b"\x00")],
-           repair=["directory.crc", "trailer.crc"],
-           row="L32", rule="R-CNT-23", outcome="reject-layer",
-           scope={"kind": "layer", "name": "bad"}, detected="layer access",
-           must_not_serve=["layer:bad"], serves=["ok"]),
-    Vector("TV-0006", "pair", "layer `bad` declares linearization 2 (reserved)", False,
-           patches=[Patch("layer[bad].linearization", u16(2))],
-           repair=["directory.crc", "trailer.crc"],
-           row="L34", rule="R-GEO-05", outcome="reject-layer",
-           scope={"kind": "layer", "name": "bad"}, detected="layer access",
-           must_not_serve=["layer:bad"], serves=["ok"]),
+def load_vectors() -> list["Vector"]:
+    """Vector definitions live in `vectordefs/`, one module per register
+    section, so they can be authored and reviewed independently. Each module
+    exports VECTORS: a list of Vector."""
+    import importlib.util
+    out = []
+    d = Path(__file__).resolve().parent / "vectordefs"
+    for mod in sorted(d.glob("*.py")):
+        if mod.name.startswith("_"):
+            continue
+        spec_ = importlib.util.spec_from_file_location(f"vectordefs.{mod.stem}", mod)
+        m = importlib.util.module_from_spec(spec_)
+        sys.modules[spec_.name] = m
+        spec_.loader.exec_module(m)
+        out.extend(getattr(m, "VECTORS", []))
+    out = [v for v in out if v.id not in CONTESTED]
+    seen = {}
+    for v in out:
+        if v.id in seen:
+            raise ValueError(f"duplicate vector id {v.id}")
+        seen[v.id] = v
+    return sorted(out, key=lambda v: v.id)
 
-    Vector("TV-0007", "pair", "layer `bad` entry 0 has length 0", False,
-           patches=[Patch("layer[bad].entry[0].length", u64(0))],
-           # crc_of_crc_array sits in the layer record, so an index repair
-           # propagates into the directory and then the trailer.
-           repair=["index:bad", "directory.crc", "trailer.crc"],
-           breaks_checksums=["entry:bad[0].wellformed"],
-           row="T10", rule="R-IDX-03", outcome="reject-tile",
-           scope={"kind": "tile", "layer": "bad", "disk_ordinal": 0},
-           detected="tile use",
-           must_not_serve=["tile:bad:0"], serves=["ok"]),
-    Vector("TV-0008", "pair", "layer `bad` tile 0 fails its entry crc", False,
-           patches=[Patch("layer[bad].entry[0].crc", b"\x00\x00\x00\x00")],
-           repair=["index:bad", "directory.crc", "trailer.crc"],
-           breaks_checksums=["tile:bad[0].crc"],
-           row="T1", rule="R-CNT-20", outcome="reject-tile",
-           scope={"kind": "tile", "layer": "bad", "disk_ordinal": 0},
-           detected="tile use",
-           must_not_serve=["tile:bad:0"], serves=["ok"]),
 
-    Vector("TV-0009", "pair", "layer `bad` reserved flag bit 2 set", False,
-           patches=[Patch("layer[bad].flags", u16(0b111))],
-           repair=["directory.crc", "trailer.crc"],
-           row="L49", rule="R-CNT-12", outcome="reject-layer",
-           scope={"kind": "layer", "name": "bad"},
-           detector="verifier", detected="certification",
-           must_not_serve=[], serves=["ok", "bad"]),
-]
+VECTORS = []  # populated in main()
+
+
+
+_TYPE_NAME = {1: "bool", 2: "int8", 3: "int16", 4: "int32", 5: "int64",
+              6: "uint8", 7: "uint16", 8: "uint32", 9: "uint64",
+              10: "float16", 11: "bfloat16", 12: "float32", 13: "float64"}
+
+
+def seed_content(seed: str, layer_name: str) -> dict | None:
+    """The decoded content a reader must return for one layer of one seed.
+
+    Derived from the seed's own declarations, so it cannot drift from the bytes
+    the builder emits. [R-VEC-02] asks for the content of every scope a reader
+    can read, with floating-point values as hexadecimal bit patterns.
+    """
+    layers = _seed_layers(seed)
+    L = next((l for l in layers if l.name == layer_name), None)
+    if L is None:
+        return None
+    from tarn_build import ELEMENT_SIZE
+    tiles = []
+    for k, payload in enumerate(L.resolved_tiles()):
+        if payload is None:
+            tiles.append({"disk_ordinal": k, "stored": False,
+                          "reads_as": "fill, every position (§13.3)"})
+            continue
+        if L.layout == 1:
+            widths = [ELEMENT_SIZE[c.type] for c in L.channels]
+        else:
+            widths = [ELEMENT_SIZE[L.channels[k // L.N].type]]
+        vals, p, i = [], 0, 0
+        while p + widths[i % len(widths)] <= len(payload):
+            w = widths[i % len(widths)]
+            vals.append("0x" + payload[p:p + w][::-1].hex().upper())
+            p += w; i += 1
+        tiles.append({"disk_ordinal": k, "stored": True, "values": vals})
+    return {
+        "layer": L.name,
+        "geometry": {"rank": len(L.extents), "extents": list(L.extents),
+                     "tile_extents": list(L.tile_extents)},
+        "layout": "interleaved" if L.layout == 1 else "planar",
+        "channels": [{"name": c.name, "type": _TYPE_NAME.get(c.type, c.type),
+                      "fill": "0x" + (c.fill or bytes(ELEMENT_SIZE[c.type]))[::-1].hex().upper()}
+                     for c in L.channels],
+        "tiles": tiles,
+    }
 
 
 def manifest(built: dict[str, bytes]) -> dict:
@@ -301,8 +397,14 @@ def manifest(built: dict[str, bytes]) -> dict:
             }]
             e["expect"]["must_not_serve"] = v.must_not_serve
             e["expect"]["may_escalate_to"] = "file"
-        if "ok" in v.serves:
-            e["expect"]["serves"] = [OK_CONTENT]
+        served = [seed_content(v.seed, nm) for nm in v.serves]
+        served = [c for c in served if c]
+        if served:
+            e["expect"]["serves"] = served
+        elif v.conforming:
+            # A conforming file with no layer still asserts something: it opens.
+            e["expect"]["serves"] = []
+            e["expect"]["opens"] = True
         out.append(e)
     return {
         "corpus_version": "1.0-rc",
@@ -340,6 +442,8 @@ def verify(built: dict[str, bytes]) -> list[str]:
 
 
 def main() -> int:
+    global VECTORS
+    VECTORS = load_vectors()
     built = {}
     for v in VECTORS:
         built[v.id] = apply_recipe(v)
@@ -368,6 +472,10 @@ def main() -> int:
     for sub in ("conforming", "reject-file", "reject-layer",
                 "reject-tile", "ignore-record"):
         (OUT / sub).mkdir(parents=True, exist_ok=True)
+    keep = {v.path for v in VECTORS}
+    for stale in sorted(OUT.rglob("*.tarn")):
+        if str(stale.relative_to(OUT)) not in keep:
+            stale.unlink()
     for v in VECTORS:
         (OUT / v.path).write_bytes(built[v.id])
     (OUT / "manifest.json").write_text(json.dumps(m, indent=2) + "\n")

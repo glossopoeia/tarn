@@ -199,17 +199,29 @@ def build_with_layout(layers: list[Layer], records: list[Record] | None = None,
             layout[f"layer[{nm}].extent_offset"] = (p + 8, 8)
             layout[f"layer[{nm}].extent_length"] = (p + 16, 8)
             layout[f"layer[{nm}].index_region"] = (eo, el)
-            n = blob[q]; layout[f"layer[{nm}].name"] = (q, 1 + n); q += 1 + n
+            n = blob[q]
+            layout[f"layer[{nm}].name"] = (q, 1 + n)
+            layout[f"layer[{nm}].name_len"] = (q, 1)
+            layout[f"layer[{nm}].name_bytes"] = (q + 1, n)
+            q += 1 + n
             for f, w in (("layout", 1), ("linearization", 2), ("codec", 2),
                          ("filter", 2), ("alignment", 8), ("slab", 8),
                          ("slab_alignment", 8), ("rank", 1), ("channel_count", 2)):
                 layout[f"layer[{nm}].{f}"] = (q, w); q += w
             for di in range(len(layers[li].extents)):
-                n = blob[q]; q += 1 + n
+                n = blob[q]
+                layout[f"layer[{nm}].dim[{di}].name"] = (q, 1 + n)
+                layout[f"layer[{nm}].dim[{di}].name_len"] = (q, 1)
+                layout[f"layer[{nm}].dim[{di}].name_bytes"] = (q + 1, n)
+                q += 1 + n
                 layout[f"layer[{nm}].dim[{di}].extent"] = (q, 8); q += 8
                 layout[f"layer[{nm}].dim[{di}].tile_extent"] = (q, 8); q += 8
             for ci in range(len(layers[li].channels)):
-                n = blob[q]; layout[f"layer[{nm}].chan[{ci}].name"] = (q, 1 + n); q += 1 + n
+                n = blob[q]
+                layout[f"layer[{nm}].chan[{ci}].name"] = (q, 1 + n)
+                layout[f"layer[{nm}].chan[{ci}].name_len"] = (q, 1)
+                layout[f"layer[{nm}].chan[{ci}].name_bytes"] = (q + 1, n)
+                q += 1 + n
                 layout[f"layer[{nm}].chan[{ci}].type"] = (q, 2); q += 2
                 n = blob[q]; layout[f"layer[{nm}].chan[{ci}].fill"] = (q, 1 + n); q += 1 + n
             layout[f"layer[{nm}].index_encoding"] = (q, 1); q += 1

@@ -634,6 +634,27 @@ def check_coverage(spec: Spec, root: Path, report: Report) -> None:
             failures.append(f"{v['id']}: {v['file']} is {len(blob)} B, manifest says {v['size']}")
     report.add("COV-01", "manifest matches the bytes", failures)
 
+    # COV-04 -- two vectors with identical bytes and different claims is the
+    # corpus contradicting itself; the review found exactly one such pair.
+    seen: dict[str, list] = defaultdict(list)
+    for v in vectors:
+        seen[v["sha256"]].append(v)
+    failures = []
+    for digest, group in seen.items():
+        if len(group) < 2:
+            continue
+        claims = {(g["conforming"],
+                   tuple(sorted(x["row"] for x in g.get("violations", []))))
+                  for g in group}
+        ids = ", ".join(g["id"] for g in group)
+        if len(claims) > 1:
+            failures.append(
+                f"{ids} are byte-identical but claim different things — "
+                f"the corpus contradicts itself")
+        else:
+            failures.append(f"{ids} are byte-identical duplicates")
+    report.add("COV-04", "no contradictory duplicates", failures)
+
     # COV-02 -- every row a vector cites still exists in the register.
     known = {r["id"] for rows in spec.rows.values() for r in rows}
     cited = {}
