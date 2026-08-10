@@ -152,6 +152,85 @@ class Record:
     flags: int = 0b10                              # MU = 0, PE = 1
 
 
+def build_with_layout(layers: list[Layer], records: list[Record] | None = None,
+                      file_id: int = 0x0123456789ABCDEF, generation: int = 1,
+                      version_minor: int = 0) -> tuple[bytes, dict]:
+    """`build`, plus a map naming where every field landed.
+
+    Vector recipes address fields by name — `trailer.dir_offset`,
+    `layer[bad].index_encoding` — so that a mutation stays readable and stays
+    correct when an unrelated declaration changes the file's geometry. Raw
+    offsets in a recipe would be a restatement site of exactly the kind
+    ADR-0049 came out of.
+    """
+    blob = build(layers, records, file_id, generation, version_minor)
+    F = len(blob)
+    t = F - 64
+    layout: dict[str, tuple[int, int]] = {
+        "front": (0, 16),
+        "trailer": (t, 64),
+        "trailer.magic": (t, 8),
+        "trailer.version_major": (t + 8, 2),
+        "trailer.version_minor": (t + 10, 2),
+        "trailer.flags": (t + 12, 4),
+        "trailer.generation": (t + 16, 8),
+        "trailer.dir_offset": (t + 24, 8),
+        "trailer.dir_length": (t + 32, 8),
+        "trailer.committed_file_length": (t + 40, 8),
+        "trailer.file_id": (t + 48, 8),
+        "trailer.reserved": (t + 56, 4),
+        "trailer.crc": (t + 60, 4),
+    }
+    d0, dl = struct.unpack("<QQ", blob[t + 24:t + 40])
+    layout["directory"] = (d0, dl)
+    layout["directory.crc"] = (d0 + dl - 4, 4)
+
+    # Walk the record sequence to name each layer's fields.
+    p = d0
+    end = d0 + dl - 4
+    li = 0
+    while p < end:
+        ty, fl, il, eo, el = struct.unpack("<HHIQQ", blob[p:p + 24])
+        if ty == 1:
+            nm = layers[li].name
+            q = p + 24
+            layout[f"layer[{nm}].record"] = (p, 24 + il)
+            layout[f"layer[{nm}].flags"] = (p + 2, 2)
+            layout[f"layer[{nm}].extent_offset"] = (p + 8, 8)
+            layout[f"layer[{nm}].extent_length"] = (p + 16, 8)
+            layout[f"layer[{nm}].index_region"] = (eo, el)
+            n = blob[q]; layout[f"layer[{nm}].name"] = (q, 1 + n); q += 1 + n
+            for f, w in (("layout", 1), ("linearization", 2), ("codec", 2),
+                         ("filter", 2), ("alignment", 8), ("slab", 8),
+                         ("slab_alignment", 8), ("rank", 1), ("channel_count", 2)):
+                layout[f"layer[{nm}].{f}"] = (q, w); q += w
+            for di in range(len(layers[li].extents)):
+                n = blob[q]; q += 1 + n
+                layout[f"layer[{nm}].dim[{di}].extent"] = (q, 8); q += 8
+                layout[f"layer[{nm}].dim[{di}].tile_extent"] = (q, 8); q += 8
+            for ci in range(len(layers[li].channels)):
+                n = blob[q]; layout[f"layer[{nm}].chan[{ci}].name"] = (q, 1 + n); q += 1 + n
+                layout[f"layer[{nm}].chan[{ci}].type"] = (q, 2); q += 2
+                n = blob[q]; layout[f"layer[{nm}].chan[{ci}].fill"] = (q, 1 + n); q += 1 + n
+            layout[f"layer[{nm}].index_encoding"] = (q, 1); q += 1
+            layout[f"layer[{nm}].entry_count"] = (q, 8); q += 8
+            layout[f"layer[{nm}].crc_of_crc_array"] = (q, 4); q += 4
+            # index entries, in disk-ordinal order
+            for k in range(layers[li].entry_count):
+                layout[f"layer[{nm}].entry[{k}]"] = (eo + 20 * k, 20)
+                layout[f"layer[{nm}].entry[{k}].offset"] = (eo + 20 * k, 8)
+                layout[f"layer[{nm}].entry[{k}].length"] = (eo + 20 * k + 8, 8)
+                layout[f"layer[{nm}].entry[{k}].crc"] = (eo + 20 * k + 16, 4)
+            li += 1
+        else:
+            layout[f"record[{ty:#06x}].header"] = (p, 24)
+            layout[f"record[{ty:#06x}].inline"] = (p + 24, il)
+            if el:
+                layout[f"record[{ty:#06x}].extent"] = (eo, el)
+        p += 24 + il
+    return blob, layout
+
+
 def build(layers: list[Layer], records: list[Record] | None = None,
           file_id: int = 0x0123456789ABCDEF, generation: int = 1,
           version_minor: int = 0) -> bytes:

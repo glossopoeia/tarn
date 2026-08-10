@@ -19,6 +19,7 @@ Usage:
     tarn_check.py                 # every check
     tarn_check.py register        # the §21 error register only
     tarn_check.py spec            # spec-wide consistency only
+    tarn_check.py coverage        # G5: the corpus against the register
     tarn_check.py --rev <commit>  # check a historical revision
 
 Exit status is 0 when no check fails, 1 otherwise. Warnings never fail the
@@ -606,6 +607,64 @@ def _check_constants(spec: Spec) -> list[str]:
 # Entry point
 # --------------------------------------------------------------------------
 
+def check_coverage(spec: Spec, root: Path, report: Report) -> None:
+    """G5: every register instance has a vector (§21.8, `[R-ERR-02]`)."""
+    import json
+
+    mpath = root / "conformance" / "vectors" / "manifest.json"
+    if not mpath.exists():
+        report.add("COV-00", "corpus manifest present",
+                   [f"{mpath} does not exist; the corpus has not been built"])
+        return
+    man = json.loads(mpath.read_text())
+    vectors = man.get("vectors", [])
+
+    # COV-01 -- every file the manifest names exists and matches its digest.
+    import hashlib
+    failures = []
+    for v in vectors:
+        p = mpath.parent / v["file"]
+        if not p.exists():
+            failures.append(f"{v['id']}: {v['file']} is missing")
+            continue
+        blob = p.read_bytes()
+        if hashlib.sha256(blob).hexdigest() != v["sha256"]:
+            failures.append(f"{v['id']}: {v['file']} does not match its recorded sha256")
+        if len(blob) != v["size"]:
+            failures.append(f"{v['id']}: {v['file']} is {len(blob)} B, manifest says {v['size']}")
+    report.add("COV-01", "manifest matches the bytes", failures)
+
+    # COV-02 -- every row a vector cites still exists in the register.
+    known = {r["id"] for rows in spec.rows.values() for r in rows}
+    cited = {}
+    failures = []
+    for v in vectors:
+        for viol in v.get("violations", []):
+            cited.setdefault(viol["row"], []).append(v["id"])
+            if viol["row"] not in known:
+                failures.append(
+                    f"{v['id']} cites register row {viol['row']}, which no longer exists")
+    report.add("COV-02", "cited rows exist", failures)
+
+    # COV-03 -- coverage itself. Reported, never failed: a partial corpus is
+    # work in progress, and [R-ERR-02] makes a gap a gap, not a licence.
+    total_rows = sum(len(r) for r in spec.rows.values())
+    total_inst = sum(spec.instance_count(r["instances"])
+                     for rows in spec.rows.values() for r in rows)
+    covered_rows = len([r for r in known if r in cited])
+    warnings = [
+        f"rows with at least one vector: {covered_rows}/{total_rows}"
+        f" ({covered_rows / total_rows * 100:.1f}%)",
+        f"named instances in the register: {total_inst}; vectors so far: {len(vectors)}",
+    ]
+    per_class = defaultdict(int)
+    for v in vectors:
+        per_class["conforming" if v["conforming"] else
+                  (v["violations"][0]["outcome"] if v.get("violations") else "?")] += 1
+    warnings.append("by class: " + ", ".join(f"{k} {n}" for k, n in sorted(per_class.items())))
+    report.add("COV-03", "register coverage", [], warnings)
+
+
 def repo_root() -> Path:
     here = Path(__file__).resolve()
     for parent in here.parents:
@@ -631,7 +690,7 @@ def main(argv: list[str] | None = None) -> int:
         description="Mechanical consistency checks for the TARN specification."
     )
     ap.add_argument("subcommand", nargs="?", default="all",
-                    choices=["all", "register", "spec"])
+                    choices=["all", "register", "spec", "coverage"])
     ap.add_argument("--rev", help="check a git revision instead of the working tree")
     args = ap.parse_args(argv)
 
@@ -646,6 +705,8 @@ def main(argv: list[str] | None = None) -> int:
         check_register(spec, report)
     if args.subcommand in ("all", "spec"):
         check_spec(spec, report)
+    if args.subcommand in ("all", "coverage"):
+        check_coverage(spec, root, report)
     return report.render()
 
 
