@@ -155,7 +155,7 @@ sentinel, boundary, and error-register row gets at least one vector.
 | **G1** afternoon-readable | Evidence positive, verdict reserved to the maintainer. ~23,300 normative words, 158 requirements, 24 tables ≈ two hours' reading. Cleanroom navigators found the spine coherent and the three lookup questions (malformed-X, how-big-is-Y, what-does-this-enum-mean) answerable without linear reading. |
 | **G2** weekend-implementable | **PASS** (rounds 3 and 4). Fresh-context readers built complete minimal readers from the text alone, high confidence. |
 | **G3** cleanroom-clean | **Not met.** Five rounds; byte-level findings 5 → 4 → 4 → 3 → 3, all fixed. See below. |
-| **G4** O(1) remote open | Not started. Needs the request accounting demonstrated against a dumb HTTP server. |
+| **G4** O(1) remote open | **Measured, verdict blocked on wording.** The accounting is demonstrated against a dumb HTTP server: the exact-target baseline is 2 requests across six files, 128 B → 16.7 MB and 0 → 617 layers, opening a 16.7 MB file on 185 fetched bytes. But §6.4 bounds no reader's request count, so the counts are achievable rather than required — three findings in [docs/g4-remote-open/results.md](docs/g4-remote-open/results.md). |
 | **G5** every error has a vector | Corpus not started; its checklist repaired. §21's register is 128 conditions over 234 instances after ADR-0049 — the audit that preceded the corpus found the table mis-stated its own size, carried three duplicate rows, and omitted five conditions stated elsewhere. |
 
 ### What the G3 history actually shows
