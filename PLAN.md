@@ -155,7 +155,7 @@ sentinel, boundary, and error-register row gets at least one vector.
 
 | Gate | Status |
 |---|---|
-| **G1** afternoon-readable | Evidence positive, verdict reserved to the maintainer. ~23,300 normative words, 158 requirements, 24 tables ≈ two hours' reading. Cleanroom navigators found the spine coherent and the three lookup questions (malformed-X, how-big-is-Y, what-does-this-enum-mean) answerable without linear reading. |
+| **G1** afternoon-readable | Evidence positive, verdict reserved to the maintainer. 159 requirements, 24 tables; the word count behind the "≈ two hours' reading" estimate predates this session's edits and should be recomputed before the verdict is given. Cleanroom navigators found the spine coherent and the three lookup questions (malformed-X, how-big-is-Y, what-does-this-enum-mean) answerable without linear reading. |
 | **G2** weekend-implementable | **PASS** (rounds 3 and 4). Fresh-context readers built complete minimal readers from the text alone, high confidence. |
 | **G3** cleanroom-clean | **Not met.** Five rounds; byte-level findings 5 → 4 → 4 → 3 → 3, all fixed. See below. |
 | **G4** O(1) remote open | **PASS.** Working-set invariant demonstrated against a dumb HTTP server: across six files (128 B → 16.7 MB, 0 → 617 layers) and five transport strategies, no request in any mode touched a tile index, extent, or payload. The exact-target baseline is 2 requests throughout, opening a 16.7 MB file on 185 fetched bytes. Request counts bound no reader and are recorded as illustration. Evidence: [docs/g4-remote-open/results.md](docs/g4-remote-open/results.md). |
