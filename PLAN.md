@@ -159,7 +159,7 @@ sentinel, boundary, and error-register row gets at least one vector.
 | **G2** weekend-implementable | **PASS** (rounds 3 and 4). Fresh-context readers built complete minimal readers from the text alone, high confidence. |
 | **G3** cleanroom-clean | **Not met.** Five rounds; byte-level findings 5 → 4 → 4 → 3 → 3, all fixed. See below. |
 | **G4** O(1) remote open | **PASS.** Working-set invariant demonstrated against a dumb HTTP server: across six files (128 B → 16.7 MB, 0 → 617 layers) and five transport strategies, no request in any mode touched a tile index, extent, or payload. The exact-target baseline is 2 requests throughout, opening a 16.7 MB file on 185 fetched bytes. Request counts bound no reader and are recorded as illustration. Evidence: [docs/g4-remote-open/results.md](docs/g4-remote-open/results.md). |
-| **G5** every error has a vector | Corpus not started; its checklist repaired. §21's register is 128 conditions over 234 instances after ADR-0049 — the audit that preceded the corpus found the table mis-stated its own size, carried three duplicate rows, and omitted five conditions stated elsewhere. |
+| **G5** every error has a vector | Corpus not started; its checklist repaired. §21's register is 128 conditions over 248 instances after ADR-0049 and ADR-0056 — the audit that preceded the corpus found the table mis-stated its own size, carried three duplicate rows, and omitted five conditions stated elsewhere. |
 
 ### What the G3 history actually shows
 
@@ -193,7 +193,7 @@ That reading has since been tested and held. The audit that had to
 precede the corpus — a mechanical recount of §21 against its own
 counting rule, plus a sweep of every requirement identifier against
 the rows citing it — found ten defects in the register before a
-single vector existed, including three duplicate rows and five
+single vector existed, and the corpus itself found five more, including three duplicate rows and five
 omitted conditions (ADR-0049). None was a design gap; every one was a
 propagation failure, and one of them had survived a dedicated
 adversarial round that edited the very row it sat in. The consistency

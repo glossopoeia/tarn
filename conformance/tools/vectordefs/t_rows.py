@@ -70,7 +70,7 @@ VECTORS = [
     # the channel bool makes each byte a bool value: 0x01 is legal, 0x02 0x03
     # 0x04 are not. Fill stays 0x00 (a legal bool fill, so [R-TYP-07] is not
     # tripped) and its length prefix still matches bool's element size 1, so
-    # L31 is not tripped either. E == T here, so the tile has no padding
+    # L32 is not tripped either. E == T here, so the tile has no padding
     # positions and T4 cannot co-fire.
     _verifier("TV-0400",
               "layer `bad` redeclared bool: interleaved value bytes 02, 03, 04 "
@@ -215,9 +215,9 @@ VECTORS = [
     # -- T8 -----------------------------------------------------------------
     # NOTE: this condition cannot be isolated. Every offset below 16 addresses
     # bytes of the front signature block, so the entry's declared extent always
-    # overlaps a structure outside its own layer — F37, [R-CNT-13]. That
+    # overlaps a structure outside its own layer — F36, [R-CNT-13]. That
     # co-violation is inherent to the row's text, not to this construction, and
-    # it does not mask: F37's detector is the verifier at certification, which
+    # it does not mask: F36's detector is the verifier at certification, which
     # §19.2 places outside the reader tiers entirely, while §15.3 classifies
     # this entry reject-tile at tile use. Reported as a register finding.
     _reader("TV-0414",
@@ -356,7 +356,7 @@ SKIPPED = {
         "inverse from one that ignores it, which is the only thing a filter "
         "vector tests. The channel's type cannot be widened either: the fill "
         "field is two bytes (prefix + one byte) and a recipe cannot grow it, so "
-        "any wider type trips L31 instead. Needs a seed whose non-`ok` layer "
+        "any wider type trips L32 instead. Needs a seed whose non-`ok` layer "
         "carries a multi-byte channel.",
     "T26 [interleaved: sample stride Q]":
         "Same: Q = 1 for the damageable layer, so the mandated shuffle is the "

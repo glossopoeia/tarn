@@ -285,12 +285,13 @@ u64 = lambda v: struct.pack("<Q", v)
 #: Vectors withheld pending a maintainer decision. A vector that names the
 #: wrong row is worse than a missing one: it evidences a rule it does not test.
 CONTESTED = {
-    "TV-0538": ("claims R11, but [R-CNT-15] says an unknown MU = 0 record "
-                "'governs a reader's treatment, not the file's validity' and "
-                "§21.6 lists the same condition as not a violation. Byte-"
-                "identical to TV-0636, which ships it as conforming."),
-    "TV-0539": ("same construction as TV-0538, sub-record instance of the "
-                "disputed row R11"),
+    # Resolved by ADR-0056: the row these claimed was deleted. §21.6 already
+    # carried the identical condition as a defined behavior, and [R-CNT-15]
+    # agreed with §21.6. TV-0636 ships the same bytes as the conforming vector
+    # they always were.
+    "TV-0538": ("the register row it claimed no longer exists (ADR-0056); the "
+                "condition is §21.6's defined behavior, shipped as TV-0636"),
+    "TV-0539": ("as TV-0538, sub-record instance of the deleted row"),
     "TV-0401": "claims T3 but keeps codec 1, where [R-COD-04]'s entry-length check (T14) fires first",
     "TV-0402": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
     "TV-0403": "claims T3 but keeps codec 1; T14 is detected strictly earlier",

@@ -549,6 +549,14 @@ slack content either way. `[R-CNT-03]`
 > walks. So this specification certifies the live state exactly, and
 > counts the rest.
 
+> **Note.** Of this rule's two halves, only disjointness is testable.
+> The live committed state is *defined* as the front block plus what
+> the coverage walk reaches, and `[R-LIF-08]` makes every byte the walk
+> misses slack — so "belongs to no class" describes nothing, and a
+> register row for it would be a row no file could exhibit (ADR-0056
+> deleted one). What remains, and what a verifier actually checks, is
+> that no two claimants overlap.
+
 > **Note.** Coverage is checked by verifiers, never by readers: a
 > reader's obligations never require walking anything but the live
 > state. Conforming writers produce partitioned live states by
@@ -2674,51 +2682,51 @@ Outcome: reject-file. 40 conditions.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
-| F1 | A multi-byte field is stored big-endian rather than little-endian, detectable only through that field's own value or range gate | trailer version_major; dir_offset; dir_length; committed_file_length; generation; file_id | reader | open | `[R-ENC-01]` (R-CNT-07) |
+| F1 | A multi-byte field is stored big-endian rather than little-endian, detectable only through that field's own value or range gate | trailer version_major; dir_offset; dir_length; committed_file_length; generation | reader | open | `[R-ENC-01]` (R-CNT-07) |
 | F2 | A signature constant is stored byte-reversed — never to be adapted as a foreign-endian TARN file | front signature block bytes [0,8); trailer magic at F-64 | reader | open | `[R-ENC-02]` (R-CNT-04, R-CNT-06) |
 | F3 | A u64 offset or length field holds a value above 2^63 - 1 | dir_offset; dir_length; committed_file_length; non-layer top-level record extent_offset; extent_length | reader | open | `[R-ENC-03]` (R-CNT-06, R-CNT-13) |
 | F4 | A sum of a u64 offset and length taken from the file exceeds 2^63 - 1, so the sum wraps | dir_offset + dir_length; non-layer top-level record extent_offset + extent_length | reader | open | `[R-ENC-04]` (R-CNT-06, R-CNT-13) |
 | F5 | A fixed file-scope structure places its fields at widths other than those the spec fixes, with total size unchanged | trailer (e.g. version_major/version_minor written as u32 each); top-level record header | reader | open | `[R-ENC-06]` (R-CNT-06) |
 | F6 | Two layer records in the live directory carry byte-identical name fields (comparison is raw bytes, no normalization) | layer record name | reader | open | `[R-ENC-15]` (R-ENC-13) |
 | F7 | File size is below the 128-byte minimum, so the front block, directory, pre-trailer pad and trailer cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-27]` (R-CNT-01, R-CNT-06) |
-| F8 | A byte of the live committed state is claimed by no coverage class: no structure, directory, or trailer | — | verifier | certification | `[R-CNT-02]` (R-LIF-08) |
-| F9 | The 16-byte front signature block is not byte-identical to the constant | magic bytes [0,8); reserved bytes [8,16) | reader | open | `[R-CNT-04]` |
-| F10 | A structure occupies bytes between the live directory's end and the live trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
-| F11 | The 8 bytes at F-64 are not exactly the trailer magic 8A 4E 52 41 54 0D 0A 1A | trailer magic | reader | open | `[R-CNT-06]` |
-| F12 | Trailer dir_offset is less than 16, pointing the directory into or before the front signature block | dir_offset | reader | open | `[R-CNT-06]` |
-| F13 | Trailer dir_offset + dir_length exceeds F - 64, so the declared directory region runs into or past the live trailer | — | reader | open | `[R-CNT-06]` |
-| F14 | Trailer generation is 0, below the live generation counter's floor of 1 | generation | reader | open | `[R-CNT-06]` |
-| F15 | Trailer file_id is 0 | file_id | reader | open | `[R-CNT-06]` |
-| F16 | Trailer committed_file_length is not a multiple of 64, so the trailer does not begin at a 64-aligned offset | committed_file_length | reader | open | `[R-CNT-06]` (R-CNT-01) |
-| F17 | The u32 at trailer offset 60 does not equal the CRC-32C of trailer bytes [0,60) | trailer CRC | reader | open | `[R-CNT-06]` (R-CNT-20, R-ENC-09) |
-| F18 | The 4 reserved bytes at trailer offset 56 are not all zero | trailer reserved [56,60) | reader | open | `[R-CNT-06]` (R-CNT-24) |
-| F19 | Trailer dir_length is less than 4, too small to hold the directory region's terminal CRC-32C | dir_length | reader | open | `[R-CNT-06]` (R-ENC-07) |
-| F20 | Trailer committed_file_length does not equal the transport-authoritative file size (physical file not truncated or extended to it) | committed_file_length | reader | open | `[R-CNT-06]` (R-LIF-04, R-CNT-10) |
-| F21 | Trailer version_major is 0, a permanently invalid major in every format major version | version_major | reader | open | `[R-CNT-07]` |
-| F22 | Trailer version_major is a nonzero major the reader does not implement (e.g. 2); magic and CRC still validate | version_major | reader | open | `[R-CNT-07]` (R-CNT-24) |
-| F23 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-15 | reader | open | `[R-CNT-08]` |
-| F24 | The final 4 bytes of the directory region do not equal the CRC-32C of the preceding dir_length - 4 bytes (the raw record sequence) | directory region CRC | reader | open | `[R-CNT-11]` (R-CNT-20, R-ENC-10) |
-| F25 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0), placing its document inline | — | reader | open | `[R-CNT-25]` |
-| F26 | A top-level user-metadata record's extent_length is less than 5, too short to hold both a document and the terminal CRC-32C of its final 4 bytes | — | reader | open | `[R-CNT-25]` (R-ENC-07) |
-| F27 | A top-level user-metadata record's inline_length is not 1; the encoding field is a fixed structure, not a growable one | — | reader | open | `[R-MTA-03]` (R-ENC-07) |
-| F28 | A top-level record's type field is 0x0000; type 0 is invalid and is never treated as an unknown type | type | reader | open | `[R-CNT-12]` |
-| F29 | A non-layer top-level record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0, a combination no writer emits | — | verifier | certification | `[R-CNT-12]` |
-| F30 | Any of a non-layer top-level record's reserved flag bits 2-15 is set | flags bits 2-15 | verifier | certification | `[R-CNT-12]` |
-| F31 | A top-level user-metadata document's object members are not in ascending order of their keys' UTF-8 bytes; the document stays readable and readers process it unchanged | — | verifier | certification | `[R-MTA-05]` (R-CNF-05) |
-| F32 | A top-level record of a type §7.3 registers carries a stored MU or PE bit differing from the value the registry fixes; readers apply the type's fixed semantics regardless | flags bit 0; flags bit 1 | verifier | certification | `[R-CNT-22]` (R-CNF-05) |
-| F33 | A top-level record's 24-byte header or its inline payload extends past the end of the directory's record sequence (dir_offset + dir_length - 4) | record header; inline_length | reader | open | `[R-CNT-12]` (R-ENC-07) |
-| F34 | A non-layer top-level record's extent slot has exactly one half zero (offset 0 with length != 0, or offset != 0 with length 0) | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
-| F35 | A non-layer top-level record's nonzero extent slot has extent_offset in 1-15, placing the extent inside the front signature block | extent_offset | reader | open | `[R-CNT-13]` |
-| F36 | A non-layer top-level record's extent_offset + extent_length exceeds F - 64, so the extent touches or passes the live trailer | — | reader | open | `[R-CNT-13]` |
-| F37 | A byte of the live committed state is claimed by two structures that do not belong to the same layer — across two layers, or a layer structure against another scope's structure | stored-tile extents; tile-index regions; record extents; sub-record extents; directory region; trailer; front signature block | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03) |
-| F38 | The directory's top-level record sequence contains two or more user-metadata records (type 0x0002) | type | reader | open | `[R-CNT-14]` |
-| F39 | A top-level record has an unassigned type value with MUST_UNDERSTAND (flags bit 0) set to 1 | type; flags bit 0 | reader | open | `[R-CNT-15]` |
+| F8 | The 16-byte front signature block is not byte-identical to the constant | magic bytes [0,8); reserved bytes [8,16) | reader | open | `[R-CNT-04]` |
+| F9 | A structure occupies bytes between the live directory's end and the live trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
+| F10 | The 8 bytes at F-64 are not exactly the trailer magic 8A 4E 52 41 54 0D 0A 1A | trailer magic | reader | open | `[R-CNT-06]` |
+| F11 | Trailer dir_offset is less than 16, pointing the directory into or before the front signature block | dir_offset | reader | open | `[R-CNT-06]` |
+| F12 | Trailer dir_offset + dir_length exceeds F - 64, so the declared directory region runs into or past the live trailer | — | reader | open | `[R-CNT-06]` |
+| F13 | Trailer generation is 0, below the live generation counter's floor of 1 | generation | reader | open | `[R-CNT-06]` |
+| F14 | Trailer file_id is 0 | file_id | reader | open | `[R-CNT-06]` |
+| F15 | Trailer committed_file_length is not a multiple of 64, so the trailer does not begin at a 64-aligned offset | committed_file_length | reader | open | `[R-CNT-06]` (R-CNT-01) |
+| F16 | The u32 at trailer offset 60 does not equal the CRC-32C of trailer bytes [0,60) | trailer CRC | reader | open | `[R-CNT-06]` (R-CNT-20, R-ENC-09) |
+| F17 | The 4 reserved bytes at trailer offset 56 are not all zero | trailer reserved [56,60) | reader | open | `[R-CNT-06]` (R-CNT-24) |
+| F18 | Trailer dir_length is less than 4, too small to hold the directory region's terminal CRC-32C | dir_length | reader | open | `[R-CNT-06]` (R-ENC-07) |
+| F19 | Trailer committed_file_length does not equal the transport-authoritative file size (physical file not truncated or extended to it) | committed_file_length | reader | open | `[R-CNT-06]` (R-LIF-04, R-CNT-10) |
+| F20 | Trailer version_major is 0, a permanently invalid major in every format major version | version_major | reader | open | `[R-CNT-07]` |
+| F21 | Trailer version_major is a nonzero major the reader does not implement (e.g. 2); magic and CRC still validate | version_major | reader | open | `[R-CNT-07]` (R-CNT-24) |
+| F22 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-15 | reader | open | `[R-CNT-08]` |
+| F23 | The final 4 bytes of the directory region do not equal the CRC-32C of the preceding dir_length - 4 bytes (the raw record sequence) | directory region CRC | reader | open | `[R-CNT-11]` (R-CNT-20, R-ENC-10) |
+| F24 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0), placing its document inline | — | reader | open | `[R-CNT-25]` |
+| F25 | A top-level user-metadata record's extent_length is less than 5, too short to hold both a document and the terminal CRC-32C of its final 4 bytes | — | reader | open | `[R-CNT-25]` (R-ENC-07) |
+| F26 | A top-level user-metadata record's inline_length is not 1; the encoding field is a fixed structure, not a growable one | — | reader | open | `[R-MTA-03]` (R-ENC-07) |
+| F27 | A top-level record's type field is 0x0000; type 0 is invalid and is never treated as an unknown type | type | reader | open | `[R-CNT-12]` |
+| F28 | A non-layer top-level record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0, a combination no writer emits | — | verifier | certification | `[R-CNT-12]` |
+| F29 | Any of a non-layer top-level record's reserved flag bits 2-15 is set | flags bits 2-15 | verifier | certification | `[R-CNT-12]` |
+| F30 | A top-level user-metadata document's object members are not in ascending order of their keys' UTF-8 bytes; the document stays readable and readers process it unchanged | — | verifier | certification | `[R-MTA-05]` (R-CNF-05) |
+| F31 | A top-level record of a type §7.3 registers carries a stored MU or PE bit differing from the value the registry fixes; readers apply the type's fixed semantics regardless | flags bit 0; flags bit 1 | verifier | certification | `[R-CNT-22]` (R-CNF-05) |
+| F32 | A top-level record's 24-byte header or its inline payload extends past the end of the directory's record sequence (dir_offset + dir_length - 4) | record header; inline_length | reader | open | `[R-CNT-12]` (R-ENC-07) |
+| F33 | A non-layer top-level record's extent slot has exactly one half zero (offset 0 with length != 0, or offset != 0 with length 0) | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
+| F34 | A non-layer top-level record's nonzero extent slot has extent_offset in 1-15, placing the extent inside the front signature block | extent_offset | reader | open | `[R-CNT-13]` |
+| F35 | A non-layer top-level record's extent_offset + extent_length exceeds F - 64, so the extent touches or passes the live trailer | — | reader | open | `[R-CNT-13]` |
+| F36 | A byte of the live committed state is claimed by two structures that do not belong to the same layer — across two layers, or a layer structure against another scope's structure | stored-tile extents; tile-index regions; record extents; sub-record extents; directory region; trailer; front signature block | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03) |
+| F37 | The directory's top-level record sequence contains two or more user-metadata records (type 0x0002) | type | reader | open | `[R-CNT-14]` |
+| F38 | A top-level record has a reserved-range type value (0x0003-0x7FFF, §10.2) with MUST_UNDERSTAND (flags bit 0) set to 1 | — | reader | open | `[R-CNT-15]` |
+| F39 | A top-level record carries a type value from the reserved range 0x0003-0x7FFF, which this specification has not assigned; emitting one is a violation whatever its MU bit | — | verifier | certification | `[R-CNT-15]` |
 | F40 | Bytes were appended past a completed commit and never truncated, so the tail read at [size-64, size) is not a valid trailer | physical file bytes beyond committed_file_length | reader | open | `[R-LIF-05]` (R-LIF-04) |
 
 #### 21.3 Layer-scope violations
 
 Outcome: reject-layer — the named layer is unusable, every other
-layer unaffected. 51 conditions.
+layer unaffected. 52 conditions.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
@@ -2748,31 +2756,32 @@ layer unaffected. 51 conditions.
 | L24 | A declared region of the layer record's inline payload does not lie entirely within inline_length (overrun or truncation) | leading fixed fields (name … C); d dimension entries; C channel entries; trailing fixed fields (index_encoding, entry_count, crc_of_crc_array) | reader | layer access | `[R-CNT-18]` |
 | L25 | A layer record's sub-record itself contains records (nesting depth beyond two) | — | reader | layer access | `[R-CNT-18]` |
 | L26 | A layer record's sub-record sequence contains a record of an unassigned type with MUST_UNDERSTAND = 1 | — | reader | layer access | `[R-CNT-18]` (R-CNT-15) |
-| L27 | A record of type 0x0001 (layer) appears inside a layer record's sub-record sequence | — | reader | layer access | `[R-CNT-18]` (§7.3 registry table) |
-| L28 | Layer record has entry_count = 0 but a nonzero crc_of_crc_array | — | reader | layer access | `[R-CNT-23]` (R-IDX-04) |
-| L29 | Layer record has slab S = 0 but a nonzero slab alignment A_slab | — | reader | layer access | `[R-CNT-23]` (R-SLB-02) |
-| L30 | Layer record declares S ≠ 0 with an A_slab that is not a power of two in 1 … 2^62 (A_slab = 0 included) | — | reader | layer access | `[R-CNT-23]` (R-SLB-02) |
-| L31 | A channel entry's fill length prefix differs from the element size of the channel's declared type | — | reader | layer access | `[R-CNT-23]` (R-TYP-06) |
-| L32 | Layer record's index_encoding is a value other than 1 — 0, reserved 2–0x7F, or experimental ≥ 0x80 | — | reader | layer access | `[R-CNT-23]` (§15.1) |
-| L33 | A layer geometry field whose floor is 1 is 0 | rank d; channel count C; tile extent Tᵢ | reader | layer access | `[R-GEO-01]` (R-CNT-23) |
-| L34 | Layer record's linearization is a value other than 1 — 0, reserved 2–3, reserved 4–0x7FFF, or experimental ≥ 0x8000 | — | reader | layer access | `[R-GEO-05]` (R-CNT-23) |
-| L35 | A channel entry's type is outside 1 … 13 — 0, reserved 14–19, reserved 20–0x7FFF, or experimental ≥ 0x8000 | — | reader | layer access | `[R-TYP-03]` (R-CNT-23, R-CNF-04) |
-| L36 | A bool channel's one-byte fill holds a byte other than 0x00 or 0x01 | — | reader | layer access | `[R-TYP-07]` (R-CNT-23) |
-| L37 | Layer record's layout is a value other than 1 or 2 — 0 or reserved 3–255 | — | reader | layer access | `[R-SER-06]` (R-CNT-23) |
-| L38 | The layer record's crc_of_crc_array ≠ CRC-32C over the segment-CRC array as stored at the tail of the tile-index region | — | reader | tile use | `[R-IDX-04]` (R-CNT-20, R-ENC-10) |
-| L39 | A segment CRC ≠ CRC-32C over that segment's entry bytes as stored, entries [s·2¹⁶, min((s+1)·2¹⁶, entry_count)) — a partial segment covers only its actual bytes, and the all-sentinel constant 0xEECB3BB2 never substitutes for comparison | — | reader | tile use | `[R-IDX-04]` (R-IDX-05, R-CNT-20, R-ENC-10) |
-| L40 | Layer record declares a nonzero alignment A that is not a power of two in 512 … 2^62 | — | reader | layer access | `[R-SLB-01]` (R-CNT-23) |
-| L41 | Alignment A declared and a stored tile's index-entry offset is not a multiple of A | — | verifier | certification | `[R-SLB-01]` (R-IDX-03) |
-| L42 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels are transparent) | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
-| L43 | A slab run's first stored tile's offset is not a multiple of A_slab | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
-| L44 | A new generation carries a slab declaration forward although the commit changed an affected run's stored-tile set or byte placement and the invariants were not re-established | S; A_slab | verifier | certification | `[R-SLB-04]` (R-SLB-03) |
-| L45 | Layer record's codec is a value other than 1 … 4 — 0, reserved 5–0x7FFF, or experimental ≥ 0x8000 | — | reader | layer access | `[R-COD-03]` (R-CNT-23) |
-| L46 | Codec 4 (lz4) declared on a layer whose per-tile decoded size exceeds 0x7E000000 bytes | — | reader | layer access | `[R-COD-07]` |
-| L47 | Layer record's filter is a value other than 1 or 2 — 0, reserved 3–0x7FFF, or experimental ≥ 0x8000 | — | reader | layer access | `[R-COD-09]` (R-CNT-23) |
-| L48 | A layer record's or sub-record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0 | — | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
-| L49 | Any of a layer record's or sub-record's reserved flag bits 2-15 is set | flags bits 2-15 | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
-| L50 | A layer sub-record's user-metadata document has object members not in ascending order of their keys' UTF-8 bytes; the document stays readable and readers process it unchanged | — | verifier | certification | `[R-MTA-05]` (R-CNF-05) |
-| L51 | A layer record, or a sub-record of a type §7.3 registers, carries a stored MU or PE bit differing from the value the registry fixes; readers apply the type's fixed semantics regardless | layer record flags; sub-record flags | verifier | certification | `[R-CNT-22]` (R-CNF-05) |
+| L27 | A layer record's sub-record carries a type value from the reserved range 0x0003-0x7FFF, which this specification has not assigned; emitting one is a violation whatever its MU bit | — | verifier | certification | `[R-CNT-15]` (R-CNT-18) |
+| L28 | A record of type 0x0001 (layer) appears inside a layer record's sub-record sequence | — | reader | layer access | `[R-CNT-18]` (§7.3 registry table) |
+| L29 | Layer record has entry_count = 0 but a nonzero crc_of_crc_array | — | reader | layer access | `[R-CNT-23]` (R-IDX-04) |
+| L30 | Layer record has slab S = 0 but a nonzero slab alignment A_slab | — | reader | layer access | `[R-CNT-23]` (R-SLB-02) |
+| L31 | Layer record declares S ≠ 0 with an A_slab that is not a power of two in 1 … 2^62 (A_slab = 0 included) | A_slab = 0; A_slab not a power of two; A_slab above 2^62 | reader | layer access | `[R-CNT-23]` (R-SLB-02) |
+| L32 | A channel entry's fill length prefix differs from the element size of the channel's declared type | — | reader | layer access | `[R-CNT-23]` (R-TYP-06) |
+| L33 | Layer record's index_encoding is a value other than 1 — 0, reserved 2–0x7F, or experimental ≥ 0x80 | index_encoding 0; reserved 2-0x7F; experimental >= 0x80 | reader | layer access | `[R-CNT-23]` (§15.1) |
+| L34 | A layer geometry field whose floor is 1 is 0 | rank d; channel count C; tile extent Tᵢ | reader | layer access | `[R-GEO-01]` (R-CNT-23) |
+| L35 | Layer record's linearization is a value other than 1 — 0, reserved 2–3, reserved 4–0x7FFF, or experimental ≥ 0x8000 | linearization 0; reserved 2-3; reserved 4-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-GEO-05]` (R-CNT-23) |
+| L36 | A channel entry's type is outside 1 … 13 — 0, reserved 14–19, reserved 20–0x7FFF, or experimental ≥ 0x8000 | type 0; reserved 14-19; reserved 20-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-TYP-03]` (R-CNT-23, R-CNF-04) |
+| L37 | A bool channel's one-byte fill holds a byte other than 0x00 or 0x01 | — | reader | layer access | `[R-TYP-07]` (R-CNT-23) |
+| L38 | Layer record's layout is a value other than 1 or 2 — 0 or reserved 3–255 | layout 0; reserved 3-255 | reader | layer access | `[R-SER-06]` (R-CNT-23) |
+| L39 | The layer record's crc_of_crc_array ≠ CRC-32C over the segment-CRC array as stored at the tail of the tile-index region | — | reader | tile use | `[R-IDX-04]` (R-CNT-20, R-ENC-10) |
+| L40 | A segment CRC ≠ CRC-32C over that segment's entry bytes as stored, entries [s·2¹⁶, min((s+1)·2¹⁶, entry_count)) — a partial segment covers only its actual bytes, and the all-sentinel constant 0xEECB3BB2 never substitutes for comparison | — | reader | tile use | `[R-IDX-04]` (R-IDX-05, R-CNT-20, R-ENC-10) |
+| L41 | Layer record declares a nonzero alignment A that is not a power of two in 512 … 2^62 | A not a power of two; A below 512; A above 2^62 | reader | layer access | `[R-SLB-01]` (R-CNT-23) |
+| L42 | Alignment A declared and a stored tile's index-entry offset is not a multiple of A | — | verifier | certification | `[R-SLB-01]` (R-IDX-03) |
+| L43 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels are transparent) | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
+| L44 | A slab run's first stored tile's offset is not a multiple of A_slab | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
+| L45 | A new generation carries a slab declaration forward although the commit changed an affected run's stored-tile set or byte placement and the invariants were not re-established | S; A_slab | verifier | certification | `[R-SLB-04]` (R-SLB-03) |
+| L46 | Layer record's codec is a value other than 1 … 4 — 0, reserved 5–0x7FFF, or experimental ≥ 0x8000 | codec 0; reserved 5-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-03]` (R-CNT-23) |
+| L47 | Codec 4 (lz4) declared on a layer whose per-tile decoded size exceeds 0x7E000000 bytes | — | reader | layer access | `[R-COD-07]` |
+| L48 | Layer record's filter is a value other than 1 or 2 — 0, reserved 3–0x7FFF, or experimental ≥ 0x8000 | filter 0; reserved 3-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-09]` (R-CNT-23) |
+| L49 | A layer record's or sub-record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0 | — | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
+| L50 | Any of a layer record's or sub-record's reserved flag bits 2-15 is set | flags bits 2-15 | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
+| L51 | A layer sub-record's user-metadata document has object members not in ascending order of their keys' UTF-8 bytes; the document stays readable and readers process it unchanged | — | verifier | certification | `[R-MTA-05]` (R-CNF-05) |
+| L52 | A layer record, or a sub-record of a type §7.3 registers, carries a stored MU or PE bit differing from the value the registry fixes; readers apply the type's fixed semantics regardless | layer record flags; sub-record flags | verifier | certification | `[R-CNT-22]` (R-CNF-05) |
 
 #### 21.4 Tile-scope violations
 
@@ -2815,7 +2824,7 @@ decoding of stored data is unaffected. Readers SHOULD report the
 loss; silent metadata loss defeats the record's purpose. User
 metadata is quarantined (`[R-CNT-25]`): every way its document can
 be unreadable lands here, whatever the containing scope.
-11 conditions.
+10 conditions.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
@@ -2829,7 +2838,6 @@ be unreadable lands here, whatever the containing scope.
 | R8 | A user-metadata document contains a non-finite number, in any form | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R9 | Two members of one object in a user-metadata document carry the same key, identity being the decoded string and not the JSON source bytes (`"a"` and `"\u0061"` are the same key) | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R10 | A user-metadata document key is longer than 255 bytes | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-ENC-12) |
-| R11 | An unknown record type carries MU = 0 | top-level record; layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-15]` (R-CNT-18) |
 
 #### 21.6 Conditions that are not violations
 
@@ -2862,11 +2870,18 @@ reserved-flag rows already set. What belongs here is the reader's
 side of them, and it is unchanged: neither is a reason for a reader
 to reject anything.
 
-A distinct case is **version_major naming a major this reader does
-not implement**: the reader rejects the file (`[R-CNT-07]`), but the
-file can be perfectly conforming under that major. The outcome
-records a reader's capability, not a defect in the bytes, and
-`[R-CNT-07]` asks that the diagnostic distinguish the two.
+Two distinct cases are **conforming files a reader nevertheless
+refuses**. The first is **version_major naming a major this reader
+does not implement**: the reader rejects the file (`[R-CNT-07]`), but
+the file can be perfectly conforming under that major. The second is
+an **experimental-range record type carrying MU = 1** (§10.2,
+§10.3): `[R-CNT-15]` obliges the reader to reject, and `[R-CNF-02]`
+makes the file conforming all the same, since the prohibition on
+publishing experimental values binds a writer's conduct and not the
+bytes. In both the outcome records a reader's capability, not a defect
+in the bytes, and the diagnostic ought to distinguish the two — which
+is why neither is a register row, while a *reserved*-range type, whose
+emission `[R-CNT-15]` does make a violation, is.
 
 #### 21.7 What no check detects
 
@@ -2883,7 +2898,7 @@ Nothing here authenticates, either (§4.5). `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 128 conditions over 234 named
+Every row of §21.2 through §21.5 — 128 conditions over 248 named
 instances — has at least one conformance vector (§24) whose expected
 verdict is that row's outcome, and a row naming instances has one
 vector per instance. A row without a vector is a

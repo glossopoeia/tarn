@@ -136,7 +136,7 @@ VECTORS = [
       "L1", "R-ENC-03", [Patch("layer[bad].dim[0].tile_extent", u64(BIT63))]),
     L("TV-0202", "layer `bad` entry_count = 2^63 (instance: entry_count)",
       "L1", "R-ENC-03", [Patch("layer[bad].entry_count", u64(BIT63))]),
-    # S != 0 obliges a power-of-two A_slab in 1 … 2^62 (`[R-CNT-23]`, L30),
+    # S != 0 obliges a power-of-two A_slab in 1 … 2^62 (`[R-CNT-23]`, L31),
     # so A_slab = 1 is set alongside: not a second defect but the value the
     # slab declaration requires, leaving S's domain as the only violation.
     L("TV-0203", "layer `bad` slab run length S = 2^63 (instance: slab run length S)",
@@ -301,7 +301,7 @@ VECTORS = [
     # -- L16, L17, L18 — the layer record's extent slot --------------------
     # `[R-CNT-13]`. One instance each; the sub-record instance of all three
     # is in SKIPPED. A malformed slot on a layer record is reject-layer, not
-    # reject-file (§7.2), which is what separates these from F34–F36.
+    # reject-file (§7.2), which is what separates these from F33–F35.
     #
     # Half-zero slot: length 0 with a nonzero offset. The file also fails
     # L23's size formula, unavoidably — the formula's subject is a slot that
@@ -345,7 +345,7 @@ VECTORS = [
     # `[R-CNT-16]`, the one row here about a combination rather than a
     # value. Entry 0 is made a sentinel first: `bad`'s stored tile sits at
     # offset 64, which no A >= 512 divides, so any file declaring A over a
-    # stored tile would also violate `[R-SLB-01]`'s invariant (L41). With no
+    # stored tile would also violate `[R-SLB-01]`'s invariant (L42). With no
     # stored tile the alignment and slab invariants are vacuous and the
     # mutual exclusion is the only thing wrong. A sentinel entry is defined
     # behavior (§21.6), not a second defect.
@@ -378,7 +378,7 @@ VECTORS = [
                           Patch("layer[bad].extent_length", u64(0))]),
     # E0 = 0 makes the layer legitimately empty (`[R-GEO-02]`), so
     # entry_count = 0 is the correct count and crc_of_crc_array = 0 is what
-    # `[R-CNT-23]` then requires (L28) — neither is the defect. The defect
+    # `[R-CNT-23]` then requires (L29) — neither is the defect. The defect
     # is the extent slot still claiming a 24-byte region.
     L("TV-0231", "layer `bad` has entry_count = 0 but a nonzero extent slot "
       "(instance: entry_count)",
@@ -389,7 +389,7 @@ VECTORS = [
     # -- L24 — a declared region outside the inline payload ----------------
     # `[R-CNT-18]`. One file per named region. inline_length stays 93 in all
     # four, so the directory's own record sequence still parses with no
-    # residue and the file-scope framing row (F33) stays out of it.
+    # residue and the file-scope framing row (F32) stays out of it.
     L("TV-0232", "layer `bad` name declares 200 bytes, past the 93-byte payload "
       "(instance: leading fixed fields)",
       "L24", "R-CNT-18", [Patch("layer[bad].name", b"\xc8bad")], named=False),
