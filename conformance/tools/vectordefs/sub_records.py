@@ -306,6 +306,12 @@ VECTORS = [
             "sub-record extent slot with extent_length 0 and extent_offset "
             "nonzero", "L16", "R-CNT-13",
             [Patch("layer[sub].sub[0].extent_length", u64(0))]),
+    # The mirror half. (0, 0) means no extent, so it is the pairing that is
+    # invalid and each zeroed half is its own instance.
+    _reject("TV-0928", INERT_SEED,
+            "sub-record extent slot with extent_offset 0 and extent_length "
+            "nonzero", "L16", "R-CNT-13",
+            [Patch("layer[sub].sub[0].extent_offset", u64(0))]),
     _reject("TV-0809", INERT_SEED,
             "sub-record extent at offset 8, inside the front signature block",
             "L17", "R-CNT-13",
@@ -374,6 +380,14 @@ VECTORS = [
            repair=DIR, row="L25", rule="R-CNT-18", outcome="reject-layer",
            scope=_LAYER, detected="layer access",
            must_not_serve=["layer:sub"], serves=["ok"]),
+    # L50's sub-record instance: type 0x0002 is registered at MU = 0, PE = 1
+    # (§7.3), so a stored PE = 0 differs from the registry. `[R-CNT-22]`
+    # makes that the file's defect while conforming readers still apply the
+    # fixed semantics, which is why the detector is the verifier.
+    _certify("TV-0929", INERT_SEED,
+             "sub-record of registered type 0x0002 stores PE = 0 where the "
+             "registry fixes PE = 1", "L50", "R-CNT-22",
+             [Patch("layer[sub].sub[0].flags", u16(0))]),
     _certify("TV-0814", INERT_SEED,
              "sub-record carrying reserved-range type 0x0003", "L26",
              "R-CNT-15",

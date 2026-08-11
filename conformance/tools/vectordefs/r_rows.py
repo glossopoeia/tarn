@@ -205,6 +205,12 @@ F_SKIPPABLE = _skippable() + _frame(b"{}" + b" " * 4)
 F_TWO_FRAMES = _frame(b"{}") + _frame(b"   ")
 F_DICT_ID = _frame(_pad_json(13), dict_id=7)
 F_CHECKSUM = _frame(_pad_json(10), checksum=True)
+# `[R-MTA-09]`'s main clause: encoding 2 stores the document as exactly
+# one frame *occupying the extent's bytes before its terminal CRC*. Here a
+# well-formed 16-byte frame is followed by 7 zero bytes, which begin
+# neither a zstd frame (magic 0xFD2FB528) nor a skippable one
+# (0x184D2A5x) — so this is residue, not F_TWO_FRAMES's second frame.
+F_TRAILING = _frame(_pad_json(7)) + b"\x00" * 7
 
 # R10's key must exceed 255 bytes, which no 23-byte verbatim document can hold;
 # encoding 2 is the only way to reach the row. The key runs as a single RLE
@@ -370,6 +376,14 @@ VECTORS = [
     _v("TV-0519", "zstd document with the content-checksum flag set, layer sub-record extent",
        sub=True, row="R4", rule="R-MTA-09", detected="extent use",
        patches=[ENC[2], _ext(F_CHECKSUM)]),
+    _v("TV-0916", "zstd document with bytes remaining after the frame, "
+       "top-level extent",
+       sub=False, row="R4", rule="R-MTA-09", detected="extent use",
+       patches=[ENC[2], _ext(F_TRAILING)]),
+    _v("TV-0917", "zstd document with bytes remaining after the frame, "
+       "layer sub-record extent",
+       sub=True, row="R4", rule="R-MTA-09", detected="extent use",
+       patches=[ENC[2], _ext(F_TRAILING)]),
 
     # -- R5: ill-formed UTF-8 in a string value -------------------------------
     # A lone 0xFF starts no UTF-8 sequence, so the document is not UTF-8 text at
@@ -381,6 +395,30 @@ VECTORS = [
     _v("TV-0521", "string value containing ill-formed UTF-8, layer sub-record document",
        sub=True, row="R5", rule="R-CNT-25", detected="extent use",
        patches=[ENC[1], _json(b'{"a":"\xff"}')]),
+    # The same ill-formed byte in a *key*. §4.6 sends ill-formed UTF-8 in any
+    # string to the owning scope, and `[R-CNT-25]` quarantines it here.
+    _v("TV-0918", "key containing ill-formed UTF-8, top-level document",
+       sub=False, row="R5", rule="R-CNT-25", detected="extent use",
+       patches=[ENC[1], _json(b'{"\xff":1}')]),
+    _v("TV-0919", "key containing ill-formed UTF-8, layer sub-record document",
+       sub=True, row="R5", rule="R-CNT-25", detected="extent use",
+       patches=[ENC[1], _json(b'{"\xff":1}')]),
+    # `[R-MTA-04]`'s fourth bullet: well-formed UTF-8 *after escape
+    # resolution*. \ud800 is a lone high surrogate, which has no UTF-8
+    # encoding, so the source bytes are valid ASCII and the document is still
+    # unreadable — a case no ill-formed-source vector reaches.
+    _v("TV-0920", "key with an unpaired-surrogate escape, top-level document",
+       sub=False, row="R5", rule="R-CNT-25", detected="extent use",
+       patches=[ENC[1], _json(b'{"\\ud800":1}')]),
+    _v("TV-0921", "key with an unpaired-surrogate escape, layer sub-record document",
+       sub=True, row="R5", rule="R-CNT-25", detected="extent use",
+       patches=[ENC[1], _json(b'{"\\ud800":1}')]),
+    _v("TV-0922", "string value with an unpaired-surrogate escape, top-level document",
+       sub=False, row="R5", rule="R-CNT-25", detected="extent use",
+       patches=[ENC[1], _json(b'{"a":"\\ud800"}')]),
+    _v("TV-0923", "string value with an unpaired-surrogate escape, layer sub-record document",
+       sub=True, row="R5", rule="R-CNT-25", detected="extent use",
+       patches=[ENC[1], _json(b'{"a":"\\ud800"}')]),
 
     # -- R6: keys that break §4.6's name rules --------------------------------
     _v("TV-0522", "empty key, top-level document",

@@ -748,13 +748,15 @@ def check_coverage(spec: Spec, root: Path, report: Report) -> None:
     covered = total_inst - len(gaps)
     pct = covered / total_inst * 100 if total_inst else 100.0
     inst_warn = [f"instances with at least one vector: {covered}/{total_inst} ({pct:.1f}%)"]
-    if gaps:
-        inst_warn.append(f"{len(gaps)} instance(s) owe a vector: "
-                         + "; ".join(gaps[:8]) + (" …" if len(gaps) > 8 else ""))
-    # Gaps warn while the corpus is being completed; staleness always fails.
-    # Flip gaps into `stale` (the failure list) once coverage first reaches
-    # 100%, so the gate can never silently regress afterward.
-    report.add("COV-05", "per-instance coverage", stale, inst_warn)
+    # Coverage reached 252/252 on 2026-08-11, so a gap is now a failure and
+    # not a warning: [R-ERR-02] promises a vector per instance, and once the
+    # corpus delivers that, anything that takes it away is a regression. A
+    # newly added register instance therefore fails the build until its
+    # vector exists, which is the point.
+    failures = list(stale)
+    failures += [f"{g} has no vector ([R-ERR-02] requires one per instance)"
+                 for g in gaps]
+    report.add("COV-05", "per-instance coverage", failures, inst_warn)
 
 
 def repo_root() -> Path:

@@ -386,6 +386,15 @@ VECTORS = [
            breaks_checksums=["trailer.gates"],
            row="F12", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
+    # F3's generation instance. F1 covers a big-endian generation and F13 a
+    # generation of 0; neither puts the field above §4.2's domain. ADR-0058
+    # added the ceiling to `[R-CNT-06]`'s gate list, but no row registers the
+    # ceiling separately, so this is F3's.
+    Vector("TV-0930", "minimal", "F3 generation has bit 63 set", False,
+           patches=[Patch("trailer.generation", u64(0x8000000000000001))],
+           repair=["trailer.crc"],
+           row="F3", rule="R-ENC-03", outcome="reject-file",
+           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0123", "minimal", "F13 generation = 0", False,
            patches=[Patch("trailer.generation")],
            repair=["trailer.crc"],
@@ -552,6 +561,21 @@ VECTORS = [
                           note="inline_length 95 -> 204, so the following "
                                "header would start 8 bytes before the "
                                "sequence end")],
+           repair=["directory.crc", "trailer.crc"],
+           row="F32", rule="R-CNT-12", outcome="reject-file",
+           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
+    # F32's third instance: bytes remaining after the last complete record.
+    # The meta seed's record sequence runs 91..235 and record[0x0002] is
+    # last, so declaring inline_length 0 ends the walk at 234 and leaves the
+    # one byte at 234 over — too few for a 24-byte header, so it is residue
+    # and not a further record. The type moves to §10.2's experimental range
+    # with MU = 0, whose payload is opaque, because inline_length 0 on a
+    # user-metadata record would be F26 instead ([R-MTA-03]); §21.6 makes
+    # that type a defined ignore, so the record contributes no second defect.
+    Vector("TV-0931", "meta",
+           "F32 one byte remains after the last complete record", False,
+           patches=[Patch("record[0x0002].header",
+                          _hdr(_EXPERIMENTAL, 0b10, 0, _M_EO, _M_EL))],
            repair=["directory.crc", "trailer.crc"],
            row="F32", rule="R-CNT-12", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),

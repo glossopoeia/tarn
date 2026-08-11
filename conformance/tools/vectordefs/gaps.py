@@ -83,7 +83,13 @@ VECTORS.append(Vector(
 
 
 SKIPPED = {
-    "L25": ("unreachable. Detecting nesting beyond two needs a sub-record "
+    # Stale key, kept as evidence and re-pointed. This reason was written
+    # against the L25 that existed before ADR-0057 deleted three rows and §21
+    # renumbered contiguously; today's L25 is the reserved-range row TV-0915
+    # covers. The condition described here is the nesting-depth one, which is
+    # why the entry is keyed by its rule now rather than by a row number that
+    # moves under it — the same drift ADR-0049 forbids relying on.
+    "R-CNT-18:nesting": ("unreachable. Detecting nesting beyond two needs a sub-record "
             "whose payload this specification defines as holding records, "
             "and format major 1 registers exactly one such type — 0x0001, "
             "which as a sub-record is its own row (a layer record nested as "

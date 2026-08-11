@@ -136,6 +136,20 @@ VECTORS = [
       "L1", "R-ENC-03", [Patch("layer[bad].dim[0].tile_extent", u64(BIT63))]),
     L("TV-0202", "layer `bad` entry_count = 2^63 (instance: entry_count)",
       "L1", "R-ENC-03", [Patch("layer[bad].entry_count", u64(BIT63))]),
+    # The layer record's own extent slot. Both halves are u64 fields of the
+    # layer record, so `[R-ENC-03]`'s domain gate reaches them exactly as it
+    # reaches the declaration fields above. The breaks are the same two
+    # TV-0224 declares: `checksum_report` recomputes the index chain over
+    # whatever bytes the corrupted slot now names, and §19.2 puts the slot's
+    # validity at layer access, ahead of either.
+    L("TV-0924", "layer `bad` extent_offset = 2^63 "
+      "(instance: layer record extent_offset)",
+      "L1", "R-ENC-03", [Patch("layer[bad].extent_offset", u64(BIT63))],
+      breaks=["index:bad.segment_crcs", "entry:bad[0].wellformed"]),
+    L("TV-0925", "layer `bad` extent_length = 2^63 "
+      "(instance: layer record extent_length)",
+      "L1", "R-ENC-03", [Patch("layer[bad].extent_length", u64(BIT63))],
+      breaks=["index:bad.segment_crcs", "entry:bad[0].wellformed"]),
     # S != 0 obliges a power-of-two A_slab in 1 … 2^62 (`[R-CNT-23]`, L30),
     # so A_slab = 1 is set alongside: not a second defect but the value the
     # slab declaration requires, leaving S's domain as the only violation.
@@ -160,6 +174,16 @@ VECTORS = [
     L("TV-0205", "layer `bad` P = prod Ti = 2^63, the first value past the domain "
       "(instance: P)",
       "L2", "R-ENC-04", [Patch("layer[bad].dim[0].tile_extent", u64(1 << 62))]),
+    # extent_offset + extent_length: both halves in domain at 2^62, their sum
+    # 2^63 out of it. The sum is the quantity §7.2 forms to place the extent
+    # inside the file, so `[R-ENC-04]` bites before any placement row can —
+    # a bound cannot be compared against a sum that has no value.
+    L("TV-0927", "layer `bad` extent slot (2^62, 2^62): both halves in domain, "
+      "their sum 2^63 (instance: extent_offset + extent_length)",
+      "L2", "R-ENC-04",
+      [Patch("layer[bad].extent_offset", u64(1 << 62)),
+       Patch("layer[bad].extent_length", u64(1 << 62))],
+      breaks=["index:bad.segment_crcs", "entry:bad[0].wellformed"]),
     # C·N: planar, C = 4, N = 2^62. Both in domain; their product is not,
     # and it is the addressed-tile count itself, so `[R-CNT-17]`'s
     # comparison is the computation that overflows.
@@ -310,6 +334,13 @@ VECTORS = [
     L("TV-0223", "layer `bad` extent slot is (68, 0), exactly one half zero "
       "(instance: layer record extent slot)",
       "L16", "R-CNT-13", [Patch("layer[bad].extent_length", u64(0))]),
+    # The mirror: offset zero, length nonzero. (0, 0) means no extent
+    # (`[R-CNT-13]`), so it is the *pairing* that is invalid, and each half
+    # is its own instance because the two files differ.
+    L("TV-0926", "layer `bad` extent slot is (0, 24), exactly one half zero "
+      "(instance: layer record extent_offset)",
+      "L16", "R-CNT-13", [Patch("layer[bad].extent_offset", u64(0))],
+      breaks=["index:bad.segment_crcs", "entry:bad[0].wellformed"]),
     # Offset 8 puts the tile index inside the front signature block. The two
     # declared breaks are `checksum_report` recomputing the index chain over
     # the bytes the corrupted slot now names; §19.2 places the slot's

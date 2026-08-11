@@ -270,7 +270,14 @@ def checksum_report(blob: bytes, layers: list[str]) -> dict[str, bool]:
         ty, fl, il, eo, el = struct.unpack("<HHIQQ", blob[p:p + 24])
         if ty == 1 and li < len(layers):
             nm = layers[li]; li += 1
-            if el:
+            # An extent slot a recipe has pointed outside the file cannot be
+            # walked at all. Report the chain as broken rather than raising:
+            # the vector declares exactly these breaks, and §19.2 puts the
+            # slot's own validity at layer access, ahead of any index read.
+            if el and (eo > len(blob) or el > len(blob) or eo + el > len(blob)):
+                out[f"index:{nm}.segment_crcs"] = False
+                out[f"entry:{nm}[0].wellformed"] = False
+            elif el:
                 ec = (el - 4 * (-(-((el // 20) if el else 0) // 65536) or 1)) // 20
                 # recover entry_count exactly from the region size
                 for cand in range(max(0, ec - 2), ec + 3):
@@ -422,6 +429,22 @@ def seed_content(seed: str, layer_name: str) -> dict | None:
 #: in the row's cell, so rewording an instance surfaces the vectors that
 #: need rechecking instead of silently remapping them.
 INSTANCE_OF: dict[str, str] = {
+    'TV-0916': 'bytes remaining after the frame, top-level extent',
+    'TV-0917': 'bytes remaining after the frame, layer sub-record extent',
+    'TV-0918': 'ill-formed source bytes in a key, top-level document',
+    'TV-0919': 'ill-formed source bytes in a key, layer sub-record document',
+    'TV-0920': 'unpaired-surrogate escape in a key, top-level document',
+    'TV-0921': 'unpaired-surrogate escape in a key, layer sub-record document',
+    'TV-0922': 'unpaired-surrogate escape in a string value, top-level document',
+    'TV-0923': 'unpaired-surrogate escape in a string value, layer sub-record document',
+    'TV-0924': 'layer record extent_offset',
+    'TV-0925': 'layer record extent_length',
+    'TV-0926': 'layer record extent_offset',
+    'TV-0927': 'extent_offset + extent_length',
+    'TV-0928': 'sub-record extent_offset',
+    'TV-0929': 'sub-record flags',
+    'TV-0930': 'generation',
+    'TV-0931': 'trailing residue',
     'TV-0003': 'trailer magic',
     'TV-0004': 'dir_offset',
     'TV-0005': 'index_encoding 0',

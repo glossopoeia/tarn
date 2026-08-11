@@ -48371,6 +48371,1287 @@
       ]
     },
     {
+      "id": "TV-0916",
+      "file": "ignore-record/TV-0916.tarn",
+      "title": "zstd document with bytes remaining after the frame, top-level extent",
+      "sha256": "48d2865b0950daca7ff737846ef3fc1a6e0f28116f4130f801cca03bd1ebdbe2",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].inline",
+            "value": "02"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "28b52ffd20073900007b2261223a317d000000000000008a34cc8a"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:file"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R4",
+          "instance": "bytes remaining after the frame, top-level extent",
+          "rule": "R-MTA-09",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "file",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0917",
+      "file": "ignore-record/TV-0917.tarn",
+      "title": "zstd document with bytes remaining after the frame, layer sub-record extent",
+      "sha256": "09c50a148fe1c0b79dcc546cd85eb2f0516155cae51bb67ff24b47c66f684ce5",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "layer[ok].record",
+            "value": "010003007800000028000000000000001800000000000000026f6b0101000100010000000000000000000000000000000000000000000000000002010001790200000000000000020000000000000001780300000000000000030000000000000001740c00040000000001010000000000000034d41709"
+          },
+          {
+            "field": "record[0x0002].inline",
+            "value": "02"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "28b52ffd20073900007b2261223a317d000000000000008a34cc8a"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:layer:ok"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R4",
+          "instance": "bytes remaining after the frame, layer sub-record extent",
+          "rule": "R-MTA-09",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "layer",
+            "layer": "ok",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0918",
+      "file": "ignore-record/TV-0918.tarn",
+      "title": "key containing ill-formed UTF-8, top-level document",
+      "sha256": "e29c389d121066b7e66f8f419ad47a3e1ef0122b5ea7c1e4c4a7ec757fb81cf6",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].inline",
+            "value": "01"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "7b22ff223a317d20202020202020202020202020202020bf4e7a04"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:file"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R5",
+          "instance": "ill-formed source bytes in a key, top-level document",
+          "rule": "R-CNT-25",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "file",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0919",
+      "file": "ignore-record/TV-0919.tarn",
+      "title": "key containing ill-formed UTF-8, layer sub-record document",
+      "sha256": "7bd30aeaeac4a55d67adbf56a8a0888e4d95d59d2d7e64d15c7351ce80ba01c0",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "layer[ok].record",
+            "value": "010003007800000028000000000000001800000000000000026f6b0101000100010000000000000000000000000000000000000000000000000002010001790200000000000000020000000000000001780300000000000000030000000000000001740c00040000000001010000000000000034d41709"
+          },
+          {
+            "field": "record[0x0002].inline",
+            "value": "01"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "7b22ff223a317d20202020202020202020202020202020bf4e7a04"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:layer:ok"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R5",
+          "instance": "ill-formed source bytes in a key, layer sub-record document",
+          "rule": "R-CNT-25",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "layer",
+            "layer": "ok",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0920",
+      "file": "ignore-record/TV-0920.tarn",
+      "title": "key with an unpaired-surrogate escape, top-level document",
+      "sha256": "739847a20ea72cac238b91967678ba39bea48bfd3845bffc56c0c90a83bd33c5",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].inline",
+            "value": "01"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "7b225c7564383030223a317d202020202020202020202069985eab"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:file"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R5",
+          "instance": "unpaired-surrogate escape in a key, top-level document",
+          "rule": "R-CNT-25",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "file",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0921",
+      "file": "ignore-record/TV-0921.tarn",
+      "title": "key with an unpaired-surrogate escape, layer sub-record document",
+      "sha256": "dbbbd92d07f4a231358be39a76891e35f262ac3a88343a54627408a215a757d4",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "layer[ok].record",
+            "value": "010003007800000028000000000000001800000000000000026f6b0101000100010000000000000000000000000000000000000000000000000002010001790200000000000000020000000000000001780300000000000000030000000000000001740c00040000000001010000000000000034d41709"
+          },
+          {
+            "field": "record[0x0002].inline",
+            "value": "01"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "7b225c7564383030223a317d202020202020202020202069985eab"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:layer:ok"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R5",
+          "instance": "unpaired-surrogate escape in a key, layer sub-record document",
+          "rule": "R-CNT-25",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "layer",
+            "layer": "ok",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0922",
+      "file": "ignore-record/TV-0922.tarn",
+      "title": "string value with an unpaired-surrogate escape, top-level document",
+      "sha256": "58cc790ea98e41f8161949ce6be3cbbbbdf562e6149a02367e28fb9ca7f459b5",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].inline",
+            "value": "01"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "7b2261223a225c7564383030227d202020202020202020aacfd1ce"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:file"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R5",
+          "instance": "unpaired-surrogate escape in a string value, top-level document",
+          "rule": "R-CNT-25",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "file",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0923",
+      "file": "ignore-record/TV-0923.tarn",
+      "title": "string value with an unpaired-surrogate escape, layer sub-record document",
+      "sha256": "8b7b148c38272191de4a934e3d55a601a4c91ec59c5889e00086df3c3aab2b47",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "layer[ok].record",
+            "value": "010003007800000028000000000000001800000000000000026f6b0101000100010000000000000000000000000000000000000000000000000002010001790200000000000000020000000000000001780300000000000000030000000000000001740c00040000000001010000000000000034d41709"
+          },
+          {
+            "field": "record[0x0002].inline",
+            "value": "01"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "7b2261223a225c7564383030227d202020202020202020aacfd1ce"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:layer:ok"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R5",
+          "instance": "unpaired-surrogate escape in a string value, layer sub-record document",
+          "rule": "R-CNT-25",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "layer",
+            "layer": "ok",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0924",
+      "file": "reject-layer/TV-0924.tarn",
+      "title": "layer `bad` extent_offset = 2^63 (instance: layer record extent_offset)",
+      "sha256": "c696f29245b50aa0383f48d12a6530db1f251e7122c7a4f1e7754e3928590a85",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "pair",
+        "patches": [
+          {
+            "field": "layer[bad].extent_offset",
+            "value": "0000000000000080"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:bad"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L1",
+          "instance": "layer record extent_offset",
+          "rule": "R-ENC-03",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0925",
+      "file": "reject-layer/TV-0925.tarn",
+      "title": "layer `bad` extent_length = 2^63 (instance: layer record extent_length)",
+      "sha256": "1eb430a2dc1947477bee45204d3bfc14010b79411d8fac455a8e41d1c5ab37f2",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "pair",
+        "patches": [
+          {
+            "field": "layer[bad].extent_length",
+            "value": "0000000000000080"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:bad"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L1",
+          "instance": "layer record extent_length",
+          "rule": "R-ENC-03",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0926",
+      "file": "reject-layer/TV-0926.tarn",
+      "title": "layer `bad` extent slot is (0, 24), exactly one half zero (instance: layer record extent_offset)",
+      "sha256": "a86083dc329f50a6cb9c9ca8b56062b6687466a14499ecd33744dc02db2163ad",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "pair",
+        "patches": [
+          {
+            "field": "layer[bad].extent_offset",
+            "value": "0000000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:bad"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L16",
+          "instance": "layer record extent_offset",
+          "rule": "R-CNT-13",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0927",
+      "file": "reject-layer/TV-0927.tarn",
+      "title": "layer `bad` extent slot (2^62, 2^62): both halves in domain, their sum 2^63 (instance: extent_offset + extent_length)",
+      "sha256": "5c997e916ec4e4b52cb956b666ceeb44bd67388dc6a277738683e892e4b1d7f6",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "pair",
+        "patches": [
+          {
+            "field": "layer[bad].extent_offset",
+            "value": "0000000000000040"
+          },
+          {
+            "field": "layer[bad].extent_length",
+            "value": "0000000000000040"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:bad"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L2",
+          "instance": "extent_offset + extent_length",
+          "rule": "R-ENC-04",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0928",
+      "file": "reject-layer/TV-0928.tarn",
+      "title": "sub-record extent slot with extent_offset 0 and extent_length nonzero",
+      "sha256": "b6b7770be8bdf56ac49e9c0685183c5d54159ccf108d3c01b7c0429a2d988764",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].extent_offset",
+            "value": "0000000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L16",
+          "instance": "sub-record extent_offset",
+          "rule": "R-CNT-13",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0929",
+      "file": "reject-layer/TV-0929.tarn",
+      "title": "sub-record of registered type 0x0002 stores PE = 0 where the registry fixes PE = 1",
+      "sha256": "5eb008eac57405121dc3472baa319cb99864bad268cd02519eacd0d8dcd7a319",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].flags",
+            "value": "0000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "sub",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x07",
+                  "0x07",
+                  "0x07",
+                  "0x07"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L50",
+          "instance": "sub-record flags",
+          "rule": "R-CNT-22",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0930",
+      "file": "reject-file/TV-0930.tarn",
+      "title": "F3 generation has bit 63 set",
+      "sha256": "770ddf067cf7ffecc0a876bf99098682b7b487bd00f104bfd36f8e11bdfca417",
+      "size": 128,
+      "conforming": false,
+      "derivation": {
+        "seed": "minimal",
+        "patches": [
+          {
+            "field": "trailer.generation",
+            "value": "0100000000000080"
+          }
+        ],
+        "repair": [
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "file"
+        ],
+        "may_escalate_to": "file"
+      },
+      "violations": [
+        {
+          "row": "F3",
+          "instance": "generation",
+          "rule": "R-ENC-03",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file"
+          },
+          "detector": "reader",
+          "detected": "open"
+        }
+      ]
+    },
+    {
+      "id": "TV-0931",
+      "file": "reject-file/TV-0931.tarn",
+      "title": "F32 one byte remains after the last complete record",
+      "sha256": "1f758fce68017b18dab9980bf82c7bb92aaec52721a7f75a9ad2c2f166e151e7",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].header",
+            "value": "018002000000000040000000000000001b00000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "file"
+        ],
+        "may_escalate_to": "file"
+      },
+      "violations": [
+        {
+          "row": "F32",
+          "instance": "trailing residue",
+          "rule": "R-CNT-12",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file"
+          },
+          "detector": "reader",
+          "detected": "open"
+        }
+      ]
+    },
+    {
       "id": "TV-0950",
       "file": "reject-layer/TV-0950.tarn",
       "title": "L19 stored-tile extents: entry[1] redirected onto entry[0]'s extent",
