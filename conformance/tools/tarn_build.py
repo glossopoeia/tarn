@@ -100,6 +100,8 @@ class Layer:
     slab_alignment: int = 0
     #: one entry per addressed tile, in disk-ordinal order; None = sentinel
     tiles: list[bytes | None] | None = None
+    #: §7.4's trailing sub-record sequence, layer scope by containment
+    sub_records: list = field(default_factory=list)
 
     # -- §11.2 grid arithmetic ---------------------------------------------
     @property
@@ -227,6 +229,20 @@ def build_with_layout(layers: list[Layer], records: list[Record] | None = None,
             layout[f"layer[{nm}].index_encoding"] = (q, 1); q += 1
             layout[f"layer[{nm}].entry_count"] = (q, 8); q += 8
             layout[f"layer[{nm}].crc_of_crc_array"] = (q, 4); q += 4
+            si = 0
+            while q + 24 <= p + 24 + il:
+                sty, sfl, sil, seo, sel = struct.unpack("<HHIQQ", blob[q:q + 24])
+                layout[f"layer[{nm}].sub[{si}].header"] = (q, 24)
+                layout[f"layer[{nm}].sub[{si}].type"] = (q, 2)
+                layout[f"layer[{nm}].sub[{si}].flags"] = (q + 2, 2)
+                layout[f"layer[{nm}].sub[{si}].inline_length"] = (q + 4, 4)
+                layout[f"layer[{nm}].sub[{si}].extent_offset"] = (q + 8, 8)
+                layout[f"layer[{nm}].sub[{si}].extent_length"] = (q + 16, 8)
+                if sil:
+                    layout[f"layer[{nm}].sub[{si}].inline"] = (q + 24, sil)
+                if sel:
+                    layout[f"layer[{nm}].sub[{si}].extent"] = (seo, sel)
+                q += 24 + sil; si += 1
             # index entries, in disk-ordinal order
             for k in range(layers[li].entry_count):
                 layout[f"layer[{nm}].entry[{k}]"] = (eo + 20 * k, 20)
@@ -280,6 +296,15 @@ def build(layers: list[Layer], records: list[Record] | None = None,
             out += region
             layer_entries.append(seg_crcs)
 
+    sub_slots: dict[int, tuple[int, int]] = {}
+    for layer in layers:
+        for sub in layer.sub_records:
+            if sub.extent is None:
+                sub_slots[id(sub)] = (0, 0)
+            else:
+                sub_slots[id(sub)] = (len(out), len(sub.extent))
+                out += sub.extent
+
     record_slots: list[tuple[int, int]] = []
     for rec in records:
         if rec.extent is None:
@@ -303,6 +328,10 @@ def build(layers: list[Layer], records: list[Record] | None = None,
             inline += ch.encoded()
         inline += (u8(1) + u64(layer.entry_count)
                    + u32(crc32c(seg) if layer.entry_count else 0))
+        for sub in layer.sub_records:
+            inline += (u16(sub.type) + u16(sub.flags) + u32(len(sub.inline))
+                       + u64(sub_slots[id(sub)][0]) + u64(sub_slots[id(sub)][1])
+                       + sub.inline)
         seq += u16(1) + u16(0b11) + u32(len(inline)) + u64(off) + u64(ln) + inline
     for rec, (off, ln) in zip(records, record_slots):
         seq += (u16(rec.type) + u16(rec.flags) + u32(len(rec.inline))

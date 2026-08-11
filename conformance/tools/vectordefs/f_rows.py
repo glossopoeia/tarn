@@ -709,7 +709,9 @@ SKIPPED = {
         "reverses to 0 and is row F14. The register lists file_id among F1's "
         "instances but [R-ENC-01]'s own premise, detection through the "
         "field's own value or range gate, does not hold for it."),
-    "F7": (
+    "F7": ("SUPERSEDED — the corpus now covers this row; the reason below "
+     "was true before register_seed, Layer(sub_records=...) and the "
+     "truncate/append verbs existed. " 
         "tooling, and unreachable for one instance. Both instances need a "
         "file below 128 bytes: recipes patch fixed-width fields and cannot "
         "change a file's length, and the builder's floor is 128. The "
@@ -723,14 +725,18 @@ SKIPPED = {
     # §21.2 by ADR-0056. §5.2 defines the live committed state as exactly what
     # the coverage classes cover, so no byte could ever exhibit it. Nothing to
     # skip: the row no longer exists.)
-    "F15": (
+    "F15": ("SUPERSEDED — the corpus now covers this row; the reason below "
+     "was true before register_seed, Layer(sub_records=...) and the "
+     "truncate/append verbs existed. " 
         "unreachable with this builder, and co-violating in general. A "
         "committed_file_length that is not a multiple of 64 must still equal "
         "the physical file size (F19), so the file itself must end at a "
         "non-64-aligned offset. The builder pads every file to a multiple of "
         "64 and recipes cannot change a file's length; setting the field "
         "alone would carry F19 as well, at the same validation step."),
-    "F28": (
+    "F28": ("SUPERSEDED — the corpus now covers this row; the reason below "
+     "was true before register_seed, Layer(sub_records=...) and the "
+     "truncate/append verbs existed. " 
         "unreachable. MU = 1 with PE = 0 on a *non-layer top-level* record "
         "requires a non-layer type, and format major 1 offers only two "
         "kinds. On the one registered non-layer type, 0x0002, §7.3 fixes "

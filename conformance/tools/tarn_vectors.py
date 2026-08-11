@@ -95,6 +95,23 @@ def seed_meta():
 SEEDS = {"minimal": seed_minimal, "pair": seed_pair, "sparse": seed_sparse,
          "planar": seed_planar, "meta": seed_meta}
 
+def register_seed(name: str, fn, layers: list[str] | None = None) -> str:
+    """Let a vectordef module contribute its own seed.
+
+    Modules are exec'd by load_vectors(), so `from tarn_vectors import ...`
+    inside one resolves to whichever module object is live — which is
+    `__main__` when this file runs as a script. Registering through this
+    function rather than mutating SEEDS directly means a module reaches the
+    dictionaries apply_recipe() and verify() actually read, whichever that is.
+    """
+    for mod in (sys.modules.get("tarn_vectors"), sys.modules.get("__main__")):
+        if mod is not None and hasattr(mod, "SEEDS"):
+            mod.SEEDS[name] = fn
+            if layers is not None:
+                mod.LAYERS[name] = layers
+    return name
+
+
 _LAYER_CACHE: dict[str, list] = {}
 
 
@@ -202,6 +219,12 @@ def apply_recipe(v: Vector) -> bytes:
                 buf[arr + 4 * s:arr + 4 * s + 4] = struct.pack("<I", crc32c(bytes(buf[lo:hi])))
             co, cw = layout[f"layer[{nm}].crc_of_crc_array"]
             buf[co:co + cw] = struct.pack("<I", crc32c(bytes(buf[arr:arr + 4 * nseg])))
+        elif what.startswith("truncate:"):
+            # §9.4/[R-LIF-05]: a physical length below committed_file_length.
+            buf = buf[:int(what.split(":", 1)[1])]
+        elif what.startswith("append:"):
+            # [R-LIF-05]/F40: bytes past a completed commit, never truncated.
+            buf += bytes.fromhex(what.split(":", 1)[1])
         else:
             raise KeyError(f"{v.id}: unknown repair {what!r}")
     return bytes(buf)
@@ -223,6 +246,9 @@ def checksum_report(blob: bytes, layers: list[str]) -> dict[str, bool]:
     """
     out: dict[str, bool] = {}
     F = len(blob)
+    if F < 128:
+        out["file.minimum_length"] = False   # [R-CNT-27]
+        return out
     t = F - 64
     out["trailer.crc"] = crc32c(blob[t:t + 60]) == struct.unpack("<I", blob[t + 60:t + 64])[0]
     d0, dl = struct.unpack("<QQ", blob[t + 24:t + 40])
@@ -292,12 +318,25 @@ CONTESTED = {
     "TV-0538": ("the register row it claimed no longer exists (ADR-0056); the "
                 "condition is §21.6's defined behavior, shipped as TV-0636"),
     "TV-0539": ("as TV-0538, sub-record instance of the deleted row"),
-    "TV-0401": "claims T3 but keeps codec 1, where [R-COD-04]'s entry-length check (T14) fires first",
-    "TV-0402": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
-    "TV-0403": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
-    "TV-0404": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
-    "TV-0405": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
-    "TV-0406": "claims T3 but keeps codec 1; T14 is detected strictly earlier",
+    # Rows whose condition, by the governing rule's own text, cannot be
+    # witnessed independently of a neighbouring row. Not construction errors —
+    # register findings, quarantined pending a maintainer decision.
+    "TV-0903": ("claims F40, but the row's own condition is that the tail is "
+                "not a valid trailer, which is F10 — and any file with bytes "
+                "past a completed commit exhibits F10 first. Reader-"
+                "indistinguishable from TV-0003 and TV-0120."),
+    "TV-0913": ("claims L45, but [R-SLB-04]'s condition is that [R-SLB-03]'s "
+                "invariants 'were not re-established', so L45 is a subset of "
+                "L43 union L44. This file is an L43 file; TV-0912 already "
+                "claims L43."),
+    "TV-0914": ("claims L45; this file is an L44 file, and TV-0297 already "
+                "claims L44. Same containment as TV-0913."),
+    "TV-0401": "superseded by codec_rows' codec-2 T3 vectors, which fire [R-SER-07] and nothing earlier",
+    "TV-0402": "superseded by codec_rows' codec-2 T3 vectors, which fire [R-SER-07] and nothing earlier",
+    "TV-0403": "superseded by codec_rows' codec-2 T3 vectors, which fire [R-SER-07] and nothing earlier",
+    "TV-0404": "superseded by codec_rows' codec-2 T3 vectors, which fire [R-SER-07] and nothing earlier",
+    "TV-0405": "superseded by codec_rows' codec-2 T3 vectors, which fire [R-SER-07] and nothing earlier",
+    "TV-0406": "superseded by codec_rows' codec-2 T3 vectors, which fire [R-SER-07] and nothing earlier",
 }
 
 
@@ -417,7 +456,8 @@ def manifest(built: dict[str, bytes]) -> dict:
     }
 
 
-LAYERS = {"minimal": [], "pair": ["ok", "bad"]}
+LAYERS = {"minimal": [], "pair": ["ok", "bad"], "sparse": ["ok", "sparse"],
+          "planar": ["planar", "ok"], "meta": ["ok"]}
 
 
 def verify(built: dict[str, bytes]) -> list[str]:

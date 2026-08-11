@@ -43768,6 +43768,4475 @@
           }
         ]
       }
+    },
+    {
+      "id": "TV-0700",
+      "file": "reject-tile/TV-0700.tarn",
+      "title": "T3 interleaved P\u00b7Q, payload longer: deflate stream decoding to 13 bytes against decoded size 12",
+      "sha256": "bd17bcbe3297bff42bffef36daecdad0c931f75dd7a2fec4bd5a12fd9a0aba68",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0700",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T3",
+          "rule": "R-SER-07",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0701",
+      "file": "reject-tile/TV-0701.tarn",
+      "title": "T3 interleaved P\u00b7Q, payload shorter: deflate stream decoding to 11 bytes against decoded size 12",
+      "sha256": "d9b2577be32545c6d830e23965688e16e2d7ba47687d8463798cdfaaac7c07ab",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0701",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T3",
+          "rule": "R-SER-07",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0702",
+      "file": "reject-tile/TV-0702.tarn",
+      "title": "T3 planar numeric P\u00b7B\u1d9c, payload longer: deflate stream decoding to 17 bytes against decoded size 16",
+      "sha256": "e5f8f50ee8b38cd3206ab7b793059d74000619218b46f904b318fe546e526f46",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0702",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T3",
+          "rule": "R-SER-07",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0703",
+      "file": "reject-tile/TV-0703.tarn",
+      "title": "T3 planar numeric P\u00b7B\u1d9c, payload shorter: deflate stream decoding to 15 bytes against decoded size 16",
+      "sha256": "aa8c199a19b6603eb169b1b250833252d808588c3134d802e997e1ac20d3a402",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0703",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T3",
+          "rule": "R-SER-07",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0704",
+      "file": "reject-tile/TV-0704.tarn",
+      "title": "T3 packed planar bool \u2308P/8\u2309, payload longer: deflate stream decoding to 3 bytes against decoded size 2",
+      "sha256": "feca8fe0a593cac00d7f9e394cccc4b07d2eef2a7924374feeee270c93cfac26",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0704",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T3",
+          "rule": "R-SER-07",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0705",
+      "file": "reject-tile/TV-0705.tarn",
+      "title": "T3 packed planar bool \u2308P/8\u2309, payload shorter: deflate stream decoding to 1 byte against decoded size 2",
+      "sha256": "38e0859eba7c2d6ad1eadfd1517bc7cb596fe0767cd6ceb3934183752605bf79",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0705",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T3",
+          "rule": "R-SER-07",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0706",
+      "file": "reject-tile/TV-0706.tarn",
+      "title": "T4 interleaved bool fill byte: padding ordinal 2 carries 0x01 where the channel's fill byte is 0x00",
+      "sha256": "26dfe1d5e9d06de2d23ef65adb9019e0108b10ced2592fe4a6f92e0a161c7b0f",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0706",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "bad",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                1,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "m",
+                "type": "bool",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x00",
+                  "0x01",
+                  "0x01",
+                  "0x00"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T4",
+          "rule": "R-SER-05",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0707",
+      "file": "reject-tile/TV-0707.tarn",
+      "title": "T13 deflate stream carrying a previous tile's history window: match distance 7 with one byte produced",
+      "sha256": "564c3336b1087be264b647abb734fa48754bf4e4314e4172f27e67e99189038f",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0707",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T13",
+          "rule": "R-COD-02",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0708",
+      "file": "reject-tile/TV-0708.tarn",
+      "title": "T13 lz4 block whose match offset 1000 reaches before its own output start (20 bytes produced)",
+      "sha256": "11351794c09e49f0c4fefc99e50dc41a406b530112ab49b43b5cbffa301ad603",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0708",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T13",
+          "rule": "R-COD-02",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0709",
+      "file": "reject-tile/TV-0709.tarn",
+      "title": "T15 codec 2 with a zlib RFC 1950 wrapper (CMF/FLG header, trailing Adler-32)",
+      "sha256": "27693bf04aeb1ae396466d9187b1cf25821392b633f1fa5a9f0346afad0b9046",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0709",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T15",
+          "rule": "R-COD-05",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0710",
+      "file": "reject-tile/TV-0710.tarn",
+      "title": "T15 codec 2 with a gzip RFC 1952 member (1F 8B, trailing CRC32 and ISIZE)",
+      "sha256": "b024d4f0ebe5c7c092669d6862110b2610edef0af0190376c65e8eb20bd676a5",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0710",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T15",
+          "rule": "R-COD-05",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0711",
+      "file": "reject-tile/TV-0711.tarn",
+      "title": "T16 codec 2 with two DEFLATE streams: an empty second stream after the first BFINAL block",
+      "sha256": "24def45246ec19136df38d95390656aed2a747cd38a3526c02b2b3775efdfd1b",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0711",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T16",
+          "rule": "R-COD-05",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0712",
+      "file": "reject-tile/TV-0712.tarn",
+      "title": "T18 a second concatenated compressed frame (the second produces no output, so the extent still decodes to 4 bytes)",
+      "sha256": "33beaaa322983e393567f421bb17760eab024cfc12b0bdfd357ac78fcedfff3b",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0712",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T18",
+          "rule": "R-COD-06",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0713",
+      "file": "reject-tile/TV-0713.tarn",
+      "title": "T18 a skippable frame before the frame (magic 0x184D2A50)",
+      "sha256": "ad328a4bc5563fcf102f17b861d407da4ccee58d40ed46508f041051a0368f9c",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0713",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T18",
+          "rule": "R-COD-06",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0714",
+      "file": "reject-tile/TV-0714.tarn",
+      "title": "T18 a skippable frame after the frame",
+      "sha256": "8992ffa053544d4a32e0f40d8c54f8cb0da501887606bf2fe68a70fc63ba44fa",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0714",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T18",
+          "rule": "R-COD-06",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0715",
+      "file": "reject-tile/TV-0715.tarn",
+      "title": "T18 a skippable frame between two frames",
+      "sha256": "84d91654f1e1beb8cb3ec414552f104793e1928fbec92dddd06d5ca517b0d663",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0715",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T18",
+          "rule": "R-COD-06",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0716",
+      "file": "reject-tile/TV-0716.tarn",
+      "title": "T19 codec 3 and the frame header carries Dictionary_ID 1",
+      "sha256": "5a2e711935c39bae7ed703ea65ceac452b34c22018dd8a1dc281774e4fd19199",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0716",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T19",
+          "rule": "R-COD-06",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0717",
+      "file": "reject-tile/TV-0717.tarn",
+      "title": "T20 codec 3 and the frame header sets Content_Checksum_flag (the checksum itself is correct)",
+      "sha256": "81c1d27d79b4ec21bc0ceec1f8a991353181b5ce5ad35c4abd6b0c3113b96aa6",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0717",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T20",
+          "rule": "R-COD-06",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0718",
+      "file": "reject-tile/TV-0718.tarn",
+      "title": "T21 codec 3 and the frame declares Window_Size 1024 against a decoded size of 4",
+      "sha256": "6854d13b520c47cd3839185df4816b924b9c382159f4e5faa8caa21397410d0d",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0718",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T21",
+          "rule": "R-COD-06",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0719",
+      "file": "reject-tile/TV-0719.tarn",
+      "title": "T22 codec 3 and Frame_Content_Size 3 against a decoded size of 4",
+      "sha256": "a98226d5a8fe9b14ffe3ef6bf504136dd1d801fd50f8616df45db0706e970331",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0719",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T22",
+          "rule": "R-COD-06",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0720",
+      "file": "reject-tile/TV-0720.tarn",
+      "title": "T23 codec 4 and the stored bytes are an LZ4 frame (magic 04 22 4D 18) instead of one raw block",
+      "sha256": "552ef41933cb5677527e678765fa8ed93c37d14f5a6317d60dcb76a0d379c7c8",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0720",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T23",
+          "rule": "R-COD-07",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0721",
+      "file": "reject-tile/TV-0721.tarn",
+      "title": "T24 codec 3 and four bytes remain in the stored extent after the frame ends",
+      "sha256": "969b4f26e5cec9e555392ebe681cb1a8847e48d8e1952520a76c534a4818b9a3",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0721",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T24",
+          "rule": "R-COD-08",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0722",
+      "file": "reject-tile/TV-0722.tarn",
+      "title": "T25 deflate stream whose first block declares reserved block type 3",
+      "sha256": "f33a19f56b81b9252155034508fabefcb7fdc84e4978f72c209c5a751b35611d",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0722",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T25",
+          "rule": "R-COD-08",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0723",
+      "file": "reject-tile/TV-0723.tarn",
+      "title": "T25 corrupt zstd block header: a conforming frame header over a block declaring reserved Block_Type 3",
+      "sha256": "0ade617e3def8f8ded24df38e3800306d40ab628e42473ca277ca5107c84dacb",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0723",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "tile:bad:0"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T25",
+          "rule": "R-COD-08",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "reader",
+          "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0724",
+      "file": "reject-tile/TV-0724.tarn",
+      "title": "T26 planar numeric: shuffled at stride 4 where the mandated stride is the uint16 channel's element size 2",
+      "sha256": "0e19c6796058b62913d751cf6e07bacb58036570807b29a1889b0f666e856f51",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0724",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T26",
+          "rule": "R-COD-10",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0725",
+      "file": "reject-tile/TV-0725.tarn",
+      "title": "T26 interleaved: shuffled at stride 2 where the mandated stride is the sample stride Q = 3",
+      "sha256": "4a93f58c3f3a5c23466577eda14f6798d9dc1b46d8095f1cd80be53b87166477",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0725",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T26",
+          "rule": "R-COD-10",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0726",
+      "file": "reject-tile/TV-0726.tarn",
+      "title": "T26 packed planar bool: shuffled at stride 2 where the mandated stride is the identity s = 1",
+      "sha256": "81a69cb4a6099fbe8418ae0dfe13d6326c14928d4004fecc2cf758e28e034ff2",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "codec:TV-0726",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "T26",
+          "rule": "R-COD-10",
+          "outcome": "reject-tile",
+          "scope": {
+            "kind": "tile",
+            "layer": "bad",
+            "disk_ordinal": 0
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0800",
+      "file": "conforming/TV-0800.tarn",
+      "title": "layer `sub` carries a conforming user-metadata sub-record",
+      "sha256": "f75ebb2f92bdaa8fce3b2f4468c97e8911ae25e3ad44442b4a8e6c23ffe05d7c",
+      "size": 448,
+      "conforming": true,
+      "derivation": {
+        "seed": "sub_umeta",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "sub",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x07",
+                  "0x07",
+                  "0x07",
+                  "0x07"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "TV-0801",
+      "file": "conforming/TV-0801.tarn",
+      "title": "layer `sub` carries a sub-record of an experimental type with MU = 0 \u2014 \u00a721.6's defined ignore",
+      "sha256": "6457cef39dc3453062998c53051079317698d1b98bd36804adaf59857ef5c884",
+      "size": 512,
+      "conforming": true,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "sub",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x07",
+                  "0x07",
+                  "0x07",
+                  "0x07"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "TV-0802",
+      "file": "reject-layer/TV-0802.tarn",
+      "title": "user-metadata sub-record with extent slot (0, 0)",
+      "sha256": "436b6b438fc872b0b682ee56cd62c98d6422e049f07be64b2b8d5d4f8c1115b3",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_umeta",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].extent_offset",
+            "value": "0000000000000000"
+          },
+          {
+            "field": "layer[sub].sub[0].extent_length",
+            "value": "0000000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L11",
+          "rule": "R-CNT-25",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0803",
+      "file": "reject-layer/TV-0803.tarn",
+      "title": "user-metadata sub-record with extent_length 4, one byte short of a document plus its terminal CRC",
+      "sha256": "7207882f5e060d427c4aee69b28937e0b051da54d172f3bea31c11c52183783b",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_umeta",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].extent_length",
+            "value": "0400000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L12",
+          "rule": "R-CNT-25",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0804",
+      "file": "reject-layer/TV-0804.tarn",
+      "title": "user-metadata sub-record with inline_length 2",
+      "sha256": "38d882f600ca1fc83b7d715f556d62720c2631fdc320e8110d1920390e8a7c1d",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_umeta_wide",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L13",
+          "rule": "R-MTA-03",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0805",
+      "file": "reject-layer/TV-0805.tarn",
+      "title": "sub-record of type 0x0000",
+      "sha256": "807784e4149b56c1e0d10cf3934bd6aecb54d23129ea494a413c6ccb03f12e4f",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_umeta",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].type",
+            "value": "0000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L14",
+          "rule": "R-CNT-12",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0806",
+      "file": "reject-layer/TV-0806.tarn",
+      "title": "L15 trailing residue: one complete sub-record, then 10 bytes the sequence cannot parse",
+      "sha256": "996789604031ef0aea6ba2b5a8c40b834f0a22d8910445af8cfac5c83d1bc3aa",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_residue",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L15",
+          "rule": "R-CNT-12",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0807",
+      "file": "reject-layer/TV-0807.tarn",
+      "title": "L15 sub-record inline_length: the header parses, its declared payload runs past the layer record's inline payload",
+      "sha256": "b5285f616cc29fa78319e5bb348a2e333a956ac8ce5f2f8ee0be439effce43d7",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].inline_length",
+            "value": "40000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L15",
+          "rule": "R-CNT-12",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0808",
+      "file": "reject-layer/TV-0808.tarn",
+      "title": "sub-record extent slot with extent_length 0 and extent_offset nonzero",
+      "sha256": "ba978c990c408efee1be23c92f4df8cf2700bd4cc8882dbe2d9fb60b9282ecab",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].extent_length",
+            "value": "0000000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L16",
+          "rule": "R-CNT-13",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0809",
+      "file": "reject-layer/TV-0809.tarn",
+      "title": "sub-record extent at offset 8, inside the front signature block",
+      "sha256": "ae53316870239f890130137f0dd43cdbe771975acf18236d0cf8c2f51a65dda4",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].extent_offset",
+            "value": "0800000000000000"
+          },
+          {
+            "field": "layer[sub].sub[0].extent_length",
+            "value": "0800000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L17",
+          "rule": "R-CNT-13",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0810",
+      "file": "reject-layer/TV-0810.tarn",
+      "title": "sub-record extent begins at F - 64, on the live trailer",
+      "sha256": "18213efd79cd72d470572749a10f28b57b995f427116e5b31a48e2fd78aaac3d",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].extent_offset",
+            "value": "c001000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L18",
+          "rule": "R-CNT-13",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0811",
+      "file": "reject-layer/TV-0811.tarn",
+      "title": "sub-record extent covers layer `sub`'s own tile-index region",
+      "sha256": "38f7f3beff55adee7fa7095a386352a6c9126349b25f19f35ddbdab8d5ab526f",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].extent_offset",
+            "value": "4400000000000000"
+          },
+          {
+            "field": "layer[sub].sub[0].extent_length",
+            "value": "1800000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "sub",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x07",
+                  "0x07",
+                  "0x07",
+                  "0x07"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L19",
+          "rule": "R-CNT-13",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0812",
+      "file": "reject-layer/TV-0812.tarn",
+      "title": "two user-metadata sub-records on one layer record",
+      "sha256": "4b8885df5288ea89585bc34dbea224e5444fd8e833f1007c583995120dae27b1",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_umeta_two",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L20",
+          "rule": "R-CNT-14",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0813",
+      "file": "reject-layer/TV-0813.tarn",
+      "title": "sub-record of an unassigned type with MU = 1",
+      "sha256": "7c4458801ea21b60d881d8a77eeea8743f2e2a65c55726aee0e8e63c23511980",
+      "size": 512,
+      "conforming": true,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].flags",
+            "value": "0300"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L26",
+          "rule": "R-CNT-18",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0814",
+      "file": "reject-layer/TV-0814.tarn",
+      "title": "sub-record carrying reserved-range type 0x0003",
+      "sha256": "0c2f0266eed0bc6669f7c3e910c1b8a4325ce2d092289705d77e1f5d8c7b0b2a",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].type",
+            "value": "0300"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "sub",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x07",
+                  "0x07",
+                  "0x07",
+                  "0x07"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L27",
+          "rule": "R-CNT-15",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0815",
+      "file": "reject-layer/TV-0815.tarn",
+      "title": "a record of type 0x0001 in the sub-record sequence",
+      "sha256": "a1c137c96439e9d632ecafbe0402601674f6686a912109b7b4e7042bde40bd80",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_nested_layer",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L28",
+          "rule": "R-CNT-18",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0816",
+      "file": "reject-layer/TV-0816.tarn",
+      "title": "sub-record reserved flag bit 2 set",
+      "sha256": "09306928d5be84f6f0c4f2eb2e9fba333c36d8af266da9e65ef2915750769ccc",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_umeta",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].flags",
+            "value": "0600"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "sub",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x07",
+                  "0x07",
+                  "0x07",
+                  "0x07"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L50",
+          "rule": "R-CNT-12",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0817",
+      "file": "reject-layer/TV-0817.tarn",
+      "title": "sub-record user-metadata document with unsorted members",
+      "sha256": "10f97b079f6b82e7da5f663201e788d3ee23089572d64c94a642c0527d5ac8c1",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_umeta",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].extent",
+            "value": "7b22622e74776f223a322c22612e6f6e65223a317d4b628d45"
+          }
+        ],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "sub",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x07",
+                  "0x07",
+                  "0x07",
+                  "0x07"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L51",
+          "rule": "R-MTA-05",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0900",
+      "file": "reject-file/TV-0900.tarn",
+      "title": "F7 physical file size 64, below the 128-byte minimum (instance: F, the physical file size)",
+      "sha256": "7c153d6dbffd0c48858549686adf0a9c11b72a5acfe284cdd748a8354d321aaa",
+      "size": 64,
+      "conforming": false,
+      "derivation": {
+        "seed": "minimal",
+        "patches": [],
+        "repair": [
+          "truncate:64"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "file"
+        ],
+        "may_escalate_to": "file"
+      },
+      "violations": [
+        {
+          "row": "F7",
+          "rule": "R-CNT-27",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file",
+            "instance": "F (physical file size)",
+            "note": "F19 and F10 are true of these bytes but unreachable: \u00a719.1 obtains F at step 1 and fetches a trailer at step 2, and this file has no step 2"
+          },
+          "detector": "reader",
+          "detected": "open"
+        }
+      ]
+    },
+    {
+      "id": "TV-0901",
+      "file": "reject-file/TV-0901.tarn",
+      "title": "F7 trailer committed_file_length 64, below the 128-byte minimum (instance: committed_file_length)",
+      "sha256": "a5156bd0d89bdca5a2b385928a4834b590308a1f53381c469f3f5d2ff2ec2902",
+      "size": 128,
+      "conforming": false,
+      "derivation": {
+        "seed": "minimal",
+        "patches": [
+          {
+            "field": "trailer.committed_file_length",
+            "value": "4000000000000000"
+          }
+        ],
+        "repair": [
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "file"
+        ],
+        "may_escalate_to": "file"
+      },
+      "violations": [
+        {
+          "row": "F7",
+          "rule": "R-CNT-27",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file",
+            "instance": "committed_file_length",
+            "co_violates": [
+              "F19 \u2014 committed_file_length \u2260 F, unavoidable for this instance"
+            ]
+          },
+          "detector": "reader",
+          "detected": "open"
+        }
+      ]
+    },
+    {
+      "id": "TV-0902",
+      "file": "reject-file/TV-0902.tarn",
+      "title": "F15 committed_file_length 200, equal to the physical size but not a multiple of 64: the trailer begins at 136",
+      "sha256": "d1ee36ec901c20d256d5dfa22087a044299485a8e704d4aef027224755fcc0ea",
+      "size": 200,
+      "conforming": false,
+      "derivation": {
+        "seed": "minimal",
+        "patches": [
+          {
+            "field": "trailer",
+            "value": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "repair": [
+          "append:00000000000000008a4e5241540d0a1a0100000000000000010000000000000010000000000000000400000000000000c800000000000000efcdab896745230100000000360639b2"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "file"
+        ],
+        "may_escalate_to": "file"
+      },
+      "violations": [
+        {
+          "row": "F15",
+          "rule": "R-CNT-06",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file",
+            "instance": "committed_file_length"
+          },
+          "detector": "reader",
+          "detected": "open"
+        }
+      ]
+    },
+    {
+      "id": "TV-0904",
+      "file": "reject-file/TV-0904.tarn",
+      "title": "F28 the user-metadata record carries MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0",
+      "sha256": "e60f762900908c626d09eff02440909ea6297f8a1630aa89ac59ce5368d19359",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].header",
+            "value": "020001000100000040000000000000001b00000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "F28",
+          "rule": "R-CNT-12",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file",
+            "co_violates": [
+              "F31 (flags bit 0) \u2014 \u00a77.3 fixes MU = 0 for type 0x0002",
+              "F31 (flags bit 1) \u2014 \u00a77.3 fixes PE = 1 for type 0x0002"
+            ]
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0905",
+      "file": "reject-file/TV-0905.tarn",
+      "title": "F39 top-level record of reserved type 0x0003 with MU = 0",
+      "sha256": "7b51f32b0a68b89aa8b3359e0a0dce2c619e7585acc56dd1269640a19d93f6c0",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].header",
+            "value": "030002000100000040000000000000001b00000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "F39",
+          "rule": "R-CNT-15",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0906",
+      "file": "reject-file/TV-0906.tarn",
+      "title": "F36 layer `host`'s sub-record extent covers layer `ok`'s stored tile (instance: sub-record extents)",
+      "sha256": "0245f056bbdd9ca776fbd8466850c78743f7ed1661a3bdf7e6b1067b45a6d671",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "subrec",
+        "patches": [
+          {
+            "field": "layer[host].sub[0].extent_offset",
+            "value": "1000000000000000"
+          },
+          {
+            "field": "layer[host].sub[0].extent_length",
+            "value": "1800000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "host",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x01",
+                  "0x02",
+                  "0x03",
+                  "0x04"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "F36",
+          "rule": "R-CNT-13",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file",
+            "instance": "sub-record extents"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0907",
+      "file": "reject-layer/TV-0907.tarn",
+      "title": "L1 layer `host` sub-record extent_offset = 2^63 (instance: extent_offset, sub-record slot)",
+      "sha256": "5e8db88cb01fe9d9bdd3dd1e0b342f0f969927c23c57bbac6e1a5cd8d54aef82",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "subrec",
+        "patches": [
+          {
+            "field": "layer[host].sub[0].extent_offset",
+            "value": "0000000000000080"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:host"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L1",
+          "rule": "R-ENC-03",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "host",
+            "instance": "extent_offset (sub-record slot)"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0908",
+      "file": "reject-layer/TV-0908.tarn",
+      "title": "L1 layer `host` sub-record extent_length = 2^63 (instance: extent_length, sub-record slot)",
+      "sha256": "c8863f049c22cd7fcc6a144694979863a57efaaf2f28650e6ae4f6dad22e944c",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "subrec",
+        "patches": [
+          {
+            "field": "layer[host].sub[0].extent_length",
+            "value": "0000000000000080"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:host"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L1",
+          "rule": "R-ENC-03",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "host",
+            "instance": "extent_length (sub-record slot)"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0909",
+      "file": "reject-layer/TV-0909.tarn",
+      "title": "L2 layer `slab` T\u2081 = 2^62 with N = 3: N\u00b7P = 3\u00b72^62 (instance: N\u00b7P)",
+      "sha256": "98cab8be05692b735e26ebe625eee80db3bc39a695892578f39a51c94a59564c",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "slabrun",
+        "patches": [
+          {
+            "field": "layer[slab].dim[1].tile_extent",
+            "value": "0000000000000040"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:slab"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L2",
+          "rule": "R-ENC-04",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "slab",
+            "instance": "N\u00b7P"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0911",
+      "file": "reject-layer/TV-0911.tarn",
+      "title": "L34 layer `bad` declares channel count C = 0 (instance: channel count C)",
+      "sha256": "b2dbcb5e88d4df189270a1ab48f9e0929425469dfbad348c0ce8ca0ee16f6a45",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "pair",
+        "patches": [
+          {
+            "field": "layer[bad].entry[0]",
+            "value": "ffffffffffffffffffffffffffffffff00000000"
+          },
+          {
+            "field": "layer[bad].record",
+            "value": "010003005d000000440000000000000018000000000000000362616401010001000100000000000000000000000000000000000000000000000000020000077979797979797902000000000000000200000000000000017802000000000000000200000000000000010100000000000000b2ce6464"
+          }
+        ],
+        "repair": [
+          "index:bad",
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:bad"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L34",
+          "rule": "R-GEO-01",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad",
+            "instance": "channel count C"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0912",
+      "file": "reject-layer/TV-0912.tarn",
+      "title": "L43 layer `slab` run 0: ordinals 1 and 2 exchange offsets, so ordinal 1 begins 4 bytes past the previous stored tile's end",
+      "sha256": "97b1cf9fa98454a1780a7d4510a6f1c3c74cd2cac1700cb31f78e91f20488ffb",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "slabrun",
+        "patches": [
+          {
+            "field": "layer[slab].entry[1].offset",
+            "value": "1800000000000000"
+          },
+          {
+            "field": "layer[slab].entry[2].offset",
+            "value": "1400000000000000"
+          }
+        ],
+        "repair": [
+          "index:slab",
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "slab",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                3,
+                4
+              ],
+              "tile_extents": [
+                1,
+                4
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x0A",
+                  "0x0B",
+                  "0x0C",
+                  "0x0D"
+                ]
+              },
+              {
+                "disk_ordinal": 1,
+                "stored": true,
+                "values": [
+                  "0x1A",
+                  "0x1B",
+                  "0x1C",
+                  "0x1D"
+                ]
+              },
+              {
+                "disk_ordinal": 2,
+                "stored": true,
+                "values": [
+                  "0x1A",
+                  "0x1B",
+                  "0x1C",
+                  "0x1D"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L43",
+          "rule": "R-SLB-03",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "slab"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0950",
+      "file": "reject-layer/TV-0950.tarn",
+      "title": "L19 stored-tile extents: entry[1] redirected onto entry[0]'s extent",
+      "sha256": "01385a25d6320d16b7fccfb4aec90213c49f52d2a5fbaf4c2ba00361c95bd4d9",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "two_tiles",
+        "patches": [
+          {
+            "field": "layer[two].entry[1].offset",
+            "value": "4000000000000000"
+          }
+        ],
+        "repair": [
+          "index:two",
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:two"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L19",
+          "rule": "R-CNT-13",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "two",
+            "instance": "stored-tile extents"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0951",
+      "file": "reject-layer/TV-0951.tarn",
+      "title": "L49 layer record flags MU = 1 with PE = 0",
+      "sha256": "ec76f729847b22745363c6dda28debaca41ce4d9a93ec05103cd321990925bb1",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "pair",
+        "patches": [
+          {
+            "field": "layer[bad].flags",
+            "value": "0100"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L49",
+          "rule": "R-CNT-12",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad",
+            "co_violates": [
+              "L52"
+            ]
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
     }
   ]
 }
