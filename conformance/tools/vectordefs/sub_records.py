@@ -15,16 +15,16 @@ are registered (§7.3): 0x0001 (layer) and 0x0002 (user metadata). A recipe
 that needs a sub-record with *no* content rules of its own uses an
 experimental-range type (>= 0x8000, §10.2) with MU = 0 — §21.6 makes such a
 record a defined ignore, so the file carries no defect but the one the vector
-names. A reserved-range type would itself be L27, and 0x0002 would drag §18's
+names. A reserved-range type would itself be L26, and 0x0002 would drag §18's
 document rules in. This is why L16, L17, L18 and L19 sit on an inert
 sub-record while L11, L12 and L13 sit on a user-metadata one: those three rows
 *are* §18's rules.
 
 **Registry-fixed flags are not free.** §7.3 fixes MU/PE per registered type,
-and L52 makes a stored bit differing from the registry a violation. So the
+and L50 makes a stored bit differing from the registry a violation. So the
 user-metadata sub-records here carry flags 0b10 (MU = 0, PE = 1) and the
 nested layer record carries 0b11, and only reserved bit 2 — which the registry
-does not fix — is available to a flags recipe (L50).
+does not fix — is available to a flags recipe (L48).
 
 **Some shapes cannot be reached by patching.** A recipe overwrites a field at
 its stored width; it cannot add a sub-record, lengthen one, or leave a partial
@@ -81,7 +81,7 @@ def _umeta(doc: bytes) -> bytes:
 
 #: Members in ascending order of their keys' UTF-8 bytes, as [R-MTA-05] wants.
 DOC_SORTED = b'{"a.one":1,"b.two":2}'
-#: The same members, same length, out of order — L51's whole condition.
+#: The same members, same length, out of order — L49's whole condition.
 DOC_UNSORTED = b'{"b.two":2,"a.one":1}'
 assert len(DOC_SORTED) == len(DOC_UNSORTED)
 
@@ -126,7 +126,7 @@ def _seed_inert():
 
 
 def _seed_nested_layer():
-    """L28: a record of type 0x0001 in the sub-record sequence.
+    """L27: a record of type 0x0001 in the sub-record sequence.
 
     It is emptied of everything a reader might trip over first — inline_length
     0, extent slot (0, 0), the registry's own MU = 1 / PE = 1 — so the type's
@@ -338,12 +338,12 @@ VECTORS = [
             "R-CNT-14"),
 
     # ----------------------------------------------------------------------
-    # L26-L28 — what a type value means where §7.3 does not scope it.
+    # L25-L27 — what a type value means where §7.3 does not scope it.
     # ----------------------------------------------------------------------
     # An *experimental*-range type, not a reserved one: [R-CNF-02] keeps the
     # bytes conforming (§10.3's prohibition binds the writer, not the file),
-    # so this vector carries L26 and nothing else. A reserved-range type would
-    # add L27, and §21.6 records the resulting pair — a conforming file a
+    # so this vector carries L25 and nothing else. A reserved-range type would
+    # add L26, and §21.6 records the resulting pair — a conforming file a
     # reader must nevertheless refuse — as the reason the file-scope twin of
     # this case is not a register row at all.
     Vector("TV-0813", INERT_SEED,
@@ -351,29 +351,29 @@ VECTORS = [
            patches=[Patch("layer[sub].sub[0].flags", u16(_MU | _PE),
                           note="§10.2's experimental range, so the bytes stay "
                                "conforming while the reader must refuse")],
-           repair=DIR, row="L26", rule="R-CNT-18", outcome="reject-layer",
+           repair=DIR, row="L25", rule="R-CNT-18", outcome="reject-layer",
            scope=_LAYER, detected="layer access",
            must_not_serve=["layer:sub"], serves=["ok"]),
     _certify("TV-0814", INERT_SEED,
-             "sub-record carrying reserved-range type 0x0003", "L27",
+             "sub-record carrying reserved-range type 0x0003", "L26",
              "R-CNT-15",
              [Patch("layer[sub].sub[0].type", u16(RESERVED),
                     note="MU stays 0, so a reader ignores the record (§21.6) "
                          "and only the emission is the violation")]),
     _reject("TV-0815", NESTED,
-            "a record of type 0x0001 in the sub-record sequence", "L28",
+            "a record of type 0x0001 in the sub-record sequence", "L27",
             "R-CNT-18"),
 
     # ----------------------------------------------------------------------
-    # L50-L51 — nonconforming files whose every reader behavior is unchanged.
+    # L48-L49 — nonconforming files whose every reader behavior is unchanged.
     # ----------------------------------------------------------------------
     _certify("TV-0816", UMETA,
-             "sub-record reserved flag bit 2 set", "L50", "R-CNT-12",
+             "sub-record reserved flag bit 2 set", "L48", "R-CNT-12",
              [Patch("layer[sub].sub[0].flags", u16(_PE | 0b100),
                     note="bits 0 and 1 keep §7.3's registered values, so the "
-                         "file does not also carry L52")]),
+                         "file does not also carry L50")]),
     _certify("TV-0817", UMETA,
-             "sub-record user-metadata document with unsorted members", "L51",
+             "sub-record user-metadata document with unsorted members", "L49",
              "R-MTA-05",
              [Patch("layer[sub].sub[0].extent", _umeta(DOC_UNSORTED),
                     note="same members, same bytes, descending key order")],
@@ -393,20 +393,20 @@ SKIPPED = {
         "payload is one byte ([R-MTA-03]), and for an unassigned type the "
         "payload is opaque: with MU = 0 §21.6 makes the record a defined "
         "ignore no reader looks inside, and with MU = 1 the reader rejects "
-        "the layer at L26, before any payload is parsed. So every file "
+        "the layer at L25, before any payload is parsed. So every file "
         "exhibiting L25 is a file whose sub-record has type 0x0001 — which is "
-        "L28, detected by the type alone and therefore strictly earlier in "
-        "any reader's walk. TV-0816 is that file. L25 has no instance L28 "
+        "L27, detected by the type alone and therefore strictly earlier in "
+        "any reader's walk. TV-0816 is that file. L25 has no instance L27 "
         "does not already carry."),
-    "L49:sub-record": (
+    "L47:sub-record": (
         "unreachable, for the reason §21.2's F28 is unreachable at file "
         "scope. MU = 1 with PE = 0 on a sub-record needs a type: on 0x0002 "
         "§7.3 fixes MU = 0 and PE = 1, so both stored bits differ from the "
-        "registry and the file also carries L52; on 0x0001 the type's mere "
-        "placement is L28; on any unassigned type MU = 1 is L26, which a "
+        "registry and the file also carries L50; on 0x0001 the type's mere "
+        "placement is L27; on any unassigned type MU = 1 is L25, which a "
         "reader detects at layer access, ahead of the certification this row "
-        "is detected at. No file carries L49's sub-record half alone. The "
+        "is detected at. No file carries L47's sub-record half alone. The "
         "layer-record half is unreachable too — §7.3 fixes PE = 1 for type "
-        "0x0001, so clearing it is L52 — which is why the row has no vector "
+        "0x0001, so clearing it is L50 — which is why the row has no vector "
         "in either container."),
 }

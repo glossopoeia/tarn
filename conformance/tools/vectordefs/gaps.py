@@ -66,18 +66,18 @@ VECTORS[0].patches[0].value = _fix_offset()
 
 VECTORS.append(Vector(
     "TV-0951", "pair",
-    "L49 layer record flags MU = 1 with PE = 0", False,
+    "L47 layer record flags MU = 1 with PE = 0", False,
     # §7.2: "Writers MUST NOT emit the combination MU = 1 with PE = 0; a
     # reader or updater encountering it MUST treat the record as PE = 1".
     # Type 0x0001's registry-fixed flags are MU = 1, PE = 1 (§7.3), so
     # clearing PE necessarily also makes the stored bits differ from the
-    # registry — L52. Both are verifier rows at the same scope and tier, so
+    # registry — L50. Both are verifier rows at the same scope and tier, so
     # neither masks the other; the co-violation is declared rather than
-    # hidden, since no file can carry L49 on a layer record without it.
+    # hidden, since no file can carry L47 on a layer record without it.
     patches=[Patch("layer[bad].flags", struct.pack("<H", 0b01))],
     repair=["directory.crc", "trailer.crc"],
-    row="L49", rule="R-CNT-12", outcome="reject-layer",
-    scope={"kind": "layer", "name": "bad", "co_violates": ["L52"]},
+    row="L47", rule="R-CNT-12", outcome="reject-layer",
+    scope={"kind": "layer", "name": "bad", "co_violates": ["L50"]},
     detector="verifier", detected="certification",
     must_not_serve=[], serves=["ok"]))
 

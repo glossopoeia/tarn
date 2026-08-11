@@ -321,16 +321,16 @@ CONTESTED = {
     # Rows whose condition, by the governing rule's own text, cannot be
     # witnessed independently of a neighbouring row. Not construction errors —
     # register findings, quarantined pending a maintainer decision.
-    "TV-0903": ("claims F40, but the row's own condition is that the tail is "
-                "not a valid trailer, which is F10 — and any file with bytes "
-                "past a completed commit exhibits F10 first. Reader-"
-                "indistinguishable from TV-0003 and TV-0120."),
-    "TV-0913": ("claims L45, but [R-SLB-04]'s condition is that [R-SLB-03]'s "
-                "invariants 'were not re-established', so L45 is a subset of "
-                "L43 union L44. This file is an L43 file; TV-0912 already "
-                "claims L43."),
-    "TV-0914": ("claims L45; this file is an L44 file, and TV-0297 already "
-                "claims L44. Same containment as TV-0913."),
+    # Resolved by ADR-0057: all three rows were deleted. Each named a cause
+    # or a writer obligation rather than a state a reader or verifier can
+    # distinguish, and each is now a note beside its rule.
+    "TV-0903": ("the row it claimed was deleted (ADR-0057): residue past a "
+                "commit is observed as a trailer-gate failure, which §21.2 "
+                "already registers"),
+    "TV-0913": ("the row it claimed was deleted (ADR-0057); this is a "
+                "slab-packing file, which §21.3 registers in its own right"),
+    "TV-0914": ("the row it claimed was deleted (ADR-0057); this is a "
+                "slab-alignment file, likewise registered"),
     "TV-0401": "superseded by codec_rows' codec-2 T3 vectors, which fire [R-SER-07] and nothing earlier",
     "TV-0402": "superseded by codec_rows' codec-2 T3 vectors, which fire [R-SER-07] and nothing earlier",
     "TV-0403": "superseded by codec_rows' codec-2 T3 vectors, which fire [R-SER-07] and nothing earlier",

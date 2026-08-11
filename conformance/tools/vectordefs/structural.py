@@ -13,7 +13,7 @@ had:
     as a tooling skip.
   * **`register_seed`.** A vectordef may contribute the file shape its rows
     need. Two are registered below: a layer with three packed tiles under a
-    slab declaration (L43, L45, L2's N·P), and a layer carrying a §7.4
+    slab declaration (L42, L45, L2's N·P), and a layer carrying a §7.4
     sub-record (F36, L1).
   * **`Layer(sub_records=[...])`.** The sub-record instances of F36 and L1 name
     a container no seed carried.
@@ -170,7 +170,7 @@ def _hdr(ty, flags, il=_M_IL, eo=_M_EO, el=_M_EL) -> bytes:
 
 
 # --------------------------------------------------------------------------
-# L34's channel-count instance: layer `bad` of `pair` rebuilt with C = 0.
+# L33's channel-count instance: layer `bad` of `pair` rebuilt with C = 0.
 #
 # Setting the field alone frees the 6 bytes of the one channel entry, and
 # §7.4's exact parse then finds 6 bytes of residue before index_encoding —
@@ -221,14 +221,14 @@ def _slab_vec(vid, title, patches, row, generation=None, serves=("ok",),
         patches = list(patches) + [Patch("trailer.generation", u64(generation),
                                          "the commit this row ranges over")]
         scope["co_violates"] = [
-            ("L43" if instance == "S" else "L44") +
+            ("L42" if instance == "S" else "L43") +
             " — unavoidable: [R-SLB-04]'s 'the invariants were not "
             "re-established' *is* [R-SLB-03]'s invariant failing, and "
             "[R-LIF-08] confines a verifier to the live state. See "
             "SPEC_FINDINGS['L45']."]
     return Vector(vid, "slabrun", title, False, patches=list(patches),
                   repair=["index:slab"] + REPAIR_DIR,
-                  row=row, rule="R-SLB-03" if row == "L43" else "R-SLB-04",
+                  row=row, rule="R-SLB-03" if row == "L42" else "R-SLB-04",
                   outcome="reject-layer", scope=scope,
                   detector="verifier", detected="certification",
                   must_not_serve=[], serves=list(serves))
@@ -460,7 +460,7 @@ VECTORS = [
     # earlier skip reason imagined does not exist.)
 
     # ==================================================================
-    # L34 `[R-GEO-01]` — the geometry floor's channel-count instance.
+    # L33 `[R-GEO-01]` — the geometry floor's channel-count instance.
     # ==================================================================
     # See _bad_c0() above for why this is a whole-record patch. The tile
     # is sentinelled because Q is the sum over zero channels, so the
@@ -469,7 +469,7 @@ VECTORS = [
     # its former payload becomes slack. entry_count stays 1, which is
     # what the unchanged geometry derives, so L22 and L23 stay clean.
     Vector("TV-0911", "pair",
-           "L34 layer `bad` declares channel count C = 0 (instance: channel "
+           "L33 layer `bad` declares channel count C = 0 (instance: channel "
            "count C)", False,
            patches=[Patch("layer[bad].entry[0]", SENTINEL,
                           "Q = 0 with C = 0, so no stored tile can have the "
@@ -479,13 +479,13 @@ VECTORS = [
                           "so §7.4's parse still ends exactly at "
                           "index_encoding")],
            repair=["index:bad"] + REPAIR_DIR,
-           row="L34", rule="R-GEO-01", outcome="reject-layer",
+           row="L33", rule="R-GEO-01", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad", "instance": "channel count C"},
            detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
     # ==================================================================
-    # L43 `[R-SLB-03]` — a stored tile inside a run not packed against
+    # L42 `[R-SLB-03]` — a stored tile inside a run not packed against
     # the previous stored tile.
     # ==================================================================
     # The row names three alternatives — gap, overlap, out-of-ordinal
@@ -496,13 +496,13 @@ VECTORS = [
     # against the bytes they now address and the layer's decoded content
     # is unchanged — which is why this file still records what layer
     # `slab` serves. Run 0's first stored tile is still ordinal 0 at 16,
-    # a multiple of A_slab = 16, so L44 stays clean.
+    # a multiple of A_slab = 16, so L43 stays clean.
     _slab_vec("TV-0912",
-              "L43 layer `slab` run 0: ordinals 1 and 2 exchange offsets, so "
+              "L42 layer `slab` run 0: ordinals 1 and 2 exchange offsets, so "
               "ordinal 1 begins 4 bytes past the previous stored tile's end",
               [Patch("layer[slab].entry[1].offset", u64(24)),
                Patch("layer[slab].entry[2].offset", u64(20))],
-              "L43", serves=("ok", "slab")),
+              "L42", serves=("ok", "slab")),
 
     # ==================================================================
     # L45 `[R-SLB-04]` — a slab declaration carried across a commit that
@@ -547,10 +547,10 @@ VECTORS = [
 #: §21.8 asks for at least one vector per instance; a second construction
 #: under a second id would put two files in the corpus claiming one row.
 COVERED_ELSEWHERE = {
-    "L44": "TV-0297 (vectordefs/l_rows_b.py) — seed `pair`'s layer `bad` "
+    "L43": "TV-0297 (vectordefs/l_rows_b.py) — seed `pair`'s layer `bad` "
            "declares S = 1 and A_slab = 512 over a stored tile at offset 64. "
            "Verified: 64 mod 512 = 64, the run holds exactly one stored tile "
-           "so L43's packing rule has no second tile to relate, and both "
+           "so L42's packing rule has no second tile to relate, and both "
            "declarations are legal. The row is closed.",
 }
 
@@ -621,10 +621,10 @@ SPEC_FINDINGS = {
         "convention should say what to do with a field whose value another "
         "row pins to a second field."),
     "L45": (
-        "L45 has no manifestation a verifier can distinguish from L43 or "
-        "L44. [R-SLB-04]'s condition is 'the invariants were not "
+        "L45 has no manifestation a verifier can distinguish from L42 or "
+        "L43. [R-SLB-04]'s condition is 'the invariants were not "
         "re-established', and those invariants are exactly [R-SLB-03]'s — "
-        "so every L45 file is an L43 or L44 file. [R-LIF-08] then confines a "
+        "so every L45 file is an L42 or L43 file. [R-LIF-08] then confines a "
         "verifier to the live state, and §9.3 keeps no record of what a "
         "commit changed, so the generation counter is the only in-file trace "
         "of the history the row ranges over. TV-0913 and TV-0914 carry "
