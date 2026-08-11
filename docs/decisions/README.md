@@ -64,6 +64,20 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0046](0046-corpus-is-derivative.md) | The conformance corpus is derivative evidence | Accepted |
 | [0047](0047-reproducible-writer-profile.md) | A non-normative reproducible-writer profile | Accepted (resolves Q-I1) |
 | [0048](0048-live-state-coverage.md) | Coverage certifies the live state; slack is counted, not modelled | Accepted (supersedes ADR-0030's history-wide coverage) |
+| [0049](0049-register-repair-and-instance-identity.md) | Repair the error register and fix what an instance is | Accepted (§21.8's count disagreed with its own table) |
+| [0050](0050-specification-checking-tooling.md) | Tooling that checks the specification against itself | Accepted (scopes the only code AGENTS.md permits) |
+| [0051](0051-interleaved-boolean-byte-interpretation.md) | Define what a reader returns for a nonconforming boolean byte | Accepted (addresses the UB, not the constraint; amends ADR-0038) |
+| [0052](0052-remote-open-probe-scope.md) | The remote-open prober, and where tooling stops being a reader | Accepted (instrument for gate G4) |
+| [0053](0053-corpus-layout-identity-and-isolation.md) | Corpus layout, vector identity, and one defect per vector | Accepted (gate G5 structure) |
+| [0054](0054-vector-manifest-and-expectation-model.md) | The manifest schema and what a vector expects of a reader | Accepted (gate G5 schema) |
+| [0055](0055-coverage-as-a-measured-gate.md) | Coverage is measured against the register, and reported | Accepted (binds G5 to instances, not rows) |
+| [0056](0056-register-repair-from-the-corpus.md) | Five register defects the corpus found | Accepted (resolves the R11 range contradiction) |
+| [0057](0057-rows-without-a-witness.md) | Three rows that name a cause rather than a state | Accepted (deletes F40, L45, L25) |
+| [0058](0058-eight-silences-round-six-found.md) | Eight places the rules were silent | Accepted (closes round 6's five byte-level defects) |
+| [0059](0059-metadata-encoding-2-is-core.md) | Metadata encoding 2 is core | Accepted (reconciles §1's promise with §18.2) |
+| [0060](0060-a-layer-rejection-is-prospective.md) | A layer rejection is prospective | Accepted (ratifies §2.4; reads out ADR-0040) |
+| [0061](0061-persistence-governs-every-record-type.md) | Persistence governs every record type, implemented or not | Accepted (closes a §20.4 seam left by ADR-0041) |
+| [0062](0062-a-verifier-may-stop-but-unexamined-is-not-clean.md) | A verifier may stop, but unexamined is not clean | Accepted (adds a verifier reporting obligation) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

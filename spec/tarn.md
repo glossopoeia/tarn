@@ -149,11 +149,11 @@ Conformance is defined for five classes.
   values exceeds the minimum guarantees of §21's limits table (§21.6's
   closing paragraph names those two exceptions),
   and MUST handle every codec and filter that §17 designates as core,
-  both channel layouts (§14), and every sample type that §12 designates
-  as core.
+  both channel layouts (§14), every sample type that §12 designates
+  as core, and every user-metadata encoding §18.2 assigns.
   There are no subset profiles: software that declines to support a core
-  codec, a core filter, either channel layout, or a core sample type is
-  not a conforming
+  codec, a core filter, either channel layout, a core sample type, or an
+  assigned user-metadata encoding is not a conforming
   reader, even if it reads all other conforming files correctly.
   `[R-CNF-03]` A reader MUST detect the violations enumerated in the
   error register (§21) and apply the outcome class this specification
@@ -182,6 +182,11 @@ Conformance is defined for five classes.
   declines to decode a user-metadata document (`[R-MTA-09]`).
   *Cannot establish* is not a finding that the file is nonconforming,
   and a verifier MUST NOT certify a file it reports that way.
+  A verifier MAY stop at the first violation it finds; one that does
+  MUST report each scope it did not examine as *unexamined*, which is
+  not a finding that the scope is clean. *Unexamined* is neither a
+  verdict nor *cannot establish* — it constrains the report, not the
+  verdict.
   `[R-CNF-11]`
 
 #### 2.4 Outcome classes and owning scope
@@ -2197,9 +2202,12 @@ A record whose inline_length is not 1 is a validity error at the
 record's containing scope — the payload is a fixed structure
 (`[R-ENC-07]`), not a growable one. Field values: 0 is invalid;
 1 = none and 2 = zstd are assigned; 3 through 0x7F are reserved;
-values ≥ 0x80 are the experimental range (§10). An encoding this
-specification does not assign, or one the reader does not
-implement, is ignore-record (`[R-CNT-25]`). `[R-MTA-03]`
+values ≥ 0x80 are the experimental range (§10). Both assigned
+encodings are core: a conforming reader MUST be able to decode
+encoding 2, whose decoder `[R-COD-11]` already requires of it for
+codec 3 (`[R-CNF-03]`). An encoding a reader does not implement is
+therefore one this specification does not assign, and is
+ignore-record (`[R-CNT-25]`). `[R-MTA-03]`
 
 Encoding 1 stores the document verbatim. Encoding 2 stores it as
 exactly one RFC 8878 compressed frame occupying the extent's bytes
@@ -2680,9 +2688,13 @@ record it retains and does not logically modify, whether or not it
 implements the record's type; a record it modifies is new output
 under its writer obligations (`[R-CNF-05]`). `[R-WRT-05]`
 
-For record types the updater does not implement, the stored flags
-govern (`[R-CNT-15]`; MU = 1 with PE = 0 is read as PE = 1,
-`[R-CNT-12]`):
+Persistence governs every record type; only the authoritative source
+of the flags differs. For a type §7.3 registers, the registry's fixed
+flags govern rather than the stored ones (`[R-CNT-22]`) — both
+registered types carry PE = 1, so neither can be dropped. For any
+other type, the stored flags govern (`[R-CNT-15]`; MU = 1 with
+PE = 0 is read as PE = 1, `[R-CNT-12]`). Implementing a record's type
+confers understanding of it, not permission to drop it:
 
 | Stored flags | Updater obligation |
 |---|---|

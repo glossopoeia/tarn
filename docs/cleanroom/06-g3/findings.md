@@ -142,17 +142,34 @@ unchanged.
   `generation` instance is unconstructible: a `generation` of 128 stored
   big-endian reads back as 2⁶³, which `[R-CNT-06]`'s gate now rejects,
   so the instance is exactly what that row describes.
-- Four are design decisions wearing editorial clothes: whether metadata
+- Four were design decisions wearing editorial clothes: whether metadata
   encoding 2 is core; whether a reject-layer outcome is prospective or
   retroactive; whether an appender may drop a record of a type it *does*
   implement; and whether a verifier may stop at the first violation.
-  Each changes what an implementation must do, so each wants an ADR
-  rather than a redraft.
+  Each changes what an implementation must do, so each took an ADR
+  rather than a redraft — **ADRs 0059, 0060, 0061 and 0062**, now all
+  Accepted and propagated into §2.3, §18.2 and §20.4.
 
 That the drafting agents refused four edits on exactly this ground is
 the useful result. The instruction was *if this would change what a file
 may contain or what a reader must reject, stop* — and the boundary held
 where it mattered.
+
+Three of the four turned out to be settled by rules already in force,
+and only needed saying: PE governs a record's survival whether or not
+an updater implements the type (`[R-CNT-22]` had already made the
+registry authoritative), a layer rejection is prospective because
+`[R-RDR-03]` validates the whole layer record before the first access,
+and metadata encoding 2 costs a reader nothing because `[R-COD-11]`
+already obliges it to carry a zstd decoder for codec 3. Only the
+verifier's reporting obligation was genuinely open.
+
+One of them was also already in the text. §2.4's prospective clause
+landed in the editorial pass of `d29d9d7`, drafted by that section's
+owner while a second agent escalated the identical finding. Both were
+right, and the sequence is the defect: normative text reached `main` one
+commit ahead of the ADR authorizing it. ADR-0060 ratifies rather than
+introduces, and records the inversion.
 
 One correction to the round's own reporting, recorded because the error
 was mine: I judged the §9.6/§9.7 generation-enumeration contradiction
