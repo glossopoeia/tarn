@@ -429,8 +429,11 @@ Writers SHOULD emit names in Unicode Normalization Form C; a writer that
 does not risks visually identical but byte-distinct names coexisting,
 which conforming readers will treat as distinct. `[R-ENC-14]`
 
-Names are unique within their scope: layer names within a file,
-dimension names and channel names within their layer. Writers MUST NOT
+Names are unique within their scope: layer names among a file's
+layers, dimension names among a layer's dimensions, and channel names
+among a layer's channels. The last two are separate namespaces, so a
+dimension and a channel of one layer are permitted to share a name —
+the ordinary way to name a channel after the axis it samples. Writers MUST NOT
 emit duplicates; a reader MUST treat a duplicate name as a validity
 error at the owning scope — a duplicate layer name is a file-scope error
 (reject-file); a duplicate dimension or channel name is a layer-scope
@@ -574,15 +577,28 @@ Bytes [0, 16) of every file, constant in every format major version:
 | 0 | 8 | `89 54 41 52 4E 0D 0A 1A` (`\x89`, "TARN", CR, LF, ctrl-Z) | structural |
 | 8 | 8 | zero | structural (reserved) |
 
-Writers MUST emit exactly these 16 bytes. A **local reader** — one
-whose transport serves any byte range at no per-range round trip, a
-local file or a memory mapping being the ordinary cases — or a content
-sniffer MUST verify the full block by byte equality before other
-processing and MUST treat any mismatch as reject-file. A **remote
-reader**, one whose transport charges a round trip per range (§6.4),
-MAY defer or omit this check (its open path is anchored at the trailer,
-§6.2, and the two-request accounting of §6.4 does not include the front
-block). `[R-CNT-04]`
+Writers MUST emit exactly these 16 bytes.
+
+A **local reader** is one whose transport serves any byte range at no
+per-range round trip — a local file or a memory mapping being the
+ordinary cases — and a **remote reader** one whose transport charges a
+round trip per range (§6.4). That distinction governs the request
+accounting of §6.4 and nothing else; the obligation over the front
+block turns on residency instead, because a transport can be classified
+either way at the margin while residency is decidable at any reader's
+own open path.
+
+A reader whose open leaves bytes
+[0, 16) **resident** — a local file, a memory mapping, a speculative
+suffix window that reached offset 0, or any transport already holding
+them — and a content sniffer MUST verify the full block by byte
+equality before other processing, and MUST treat any mismatch as
+reject-file. A reader that would have to issue a further range request
+to obtain those bytes MAY defer or omit the check: its open path is
+anchored at the trailer (§6.2), and the two-request accounting of §6.4
+does not include the front block. The test is residency, not transport,
+so an implementation decides it at its own open path without having to
+classify the network underneath it. `[R-CNT-04]`
 
 > **Rationale.** The signature is engineered against transport
 > corruption: the high-bit byte catches 7-bit stripping, CR LF catches
@@ -633,8 +649,8 @@ MUST validate all of the following before acting on the fields
 involved: the flag gates (§6.3); committed_file_length equals the file
 size (for a remote reader, the size reported by its transport) and is
 a multiple of 64; dir_offset ≥ 16; dir_length ≥ 4; dir_offset +
-dir_length ≤ F − 64; generation ≥ 1; file_id ≠ 0; reserved bytes
-zero. Any failure is reject-file. The owning scope of the front
+dir_length ≤ F − 64; 1 ≤ generation ≤ 2⁶³ − 1; file_id ≠ 0; reserved
+bytes zero. Any failure is reject-file. The owning scope of the front
 signature block and the trailer is the file. `[R-CNT-06]`
 
 > **Note.** A payload byte-string that mimics a trailer and happens to
@@ -1994,6 +2010,16 @@ a validity error at tile scope, and a reader MUST NOT allocate or
 size any buffer from it — the decoded size comes from the layer's
 declarations alone (§14, `[R-SER-07]`). `[R-COD-06]`
 
+> **Note.** RFC 8878 derives a frame's Window_Size two ways, and for a
+> tile this rule they agree: with Single_Segment_Flag set there is no
+> Window_Descriptor and Window_Size is the frame content size, which
+> this requirement already obliges to equal the decoded size; without
+> it, the Window_Descriptor cannot express less than 1 KiB. A tile
+> whose decoded size is below 1 KiB — §14.2's worked examples give 18
+> and 30 bytes, §14.3's gives 2 — is therefore encodable under codec 3
+> only as a single-segment frame, and no conforming file turns on which
+> derivation a reader implements.
+
 > **Note.** Whole-buffer zstd decoders that tolerate concatenated
 > or skippable frames do not by themselves enforce the
 > exactly-one-frame rule: an implementation confirms that the
@@ -2007,9 +2033,10 @@ the LZ4 Block Format Description (lz4_Block_format.md, version
 1.0; Appendix F pins the exact revision), decoded with the stored
 length as the input size and the decoded size as the output
 capacity. The LZ4 frame format is not used. Writers MUST NOT
-declare this codec for a layer whose tiles' decoded size exceeds
-0x7E000000 bytes — the block format's practical interoperability
-bound — and a reader MUST treat such a declaration as a validity
+declare this codec for a layer any of whose addressed tiles' decoded
+size exceeds 0x7E000000 bytes — the block format's practical
+interoperability bound; in a planar layer each channel's plane carries
+its own decoded size (§14.2, §14.3), and the largest governs — and a reader MUST treat such a declaration as a validity
 error at layer scope, checkable from declarations alone.
 `[R-COD-07]`
 
@@ -2173,8 +2200,8 @@ asks for:
 
 `[R-MTA-04]`
 
-Writers MUST serialize object members in ascending order of their
-keys' UTF-8 bytes. This makes one writer's output reproducible for
+Writers MUST serialize object members, at every nesting depth, in
+ascending order of their keys' UTF-8 bytes. This makes one writer's output reproducible for
 identical content; it does not make two writers' output identical,
 and this specification promises no byte-identity here or anywhere
 else (`[R-CNF-05]`) — an application needing content-addressed
@@ -2265,11 +2292,11 @@ A conforming reader opens a file by these steps, in order:
    (`[R-CNT-10]`). These steps are ordered by dependency, not by
    I/O: a remote reader's suffix range for step 2 carries F in its
    own response, so steps 1 and 2 cost one request between them
-   (§6.4), and a local reader obtains F without any. A local reader
-   MUST verify the front signature
-   block by byte equality before other processing (mismatch:
-   reject-file); a remote reader MAY defer or omit that check
-   (`[R-CNT-04]`).
+   (§6.4), and a local reader obtains F without any. A reader
+   holding bytes [0, 16) once this step completes MUST verify the
+   front signature block by byte equality before other processing
+   (mismatch: reject-file); one that would have to fetch them MAY
+   defer or omit the check (`[R-CNT-04]`).
 2. **Trailer.** Fetch bytes [F − 64, F) and validate them in
    §6.2's fixed order — magic, trailer CRC, version gate, then the
    remaining field gates (`[R-CNT-06]`, `[R-CNT-07]`,
@@ -2286,7 +2313,12 @@ A conforming reader opens a file by these steps, in order:
    the resident bytes and F — and build the layer table: each
    layer record's name, parsed and checked per §4.6
    (`[R-ENC-12]`). A duplicate layer name is a validity error at
-   file scope, here, at open (`[R-ENC-15]`, §19.2).
+   file scope, here, at open (`[R-ENC-15]`, §19.2). Uniqueness is
+   decided first, and over the raw name bytes whether or not each
+   name is itself well-formed — `[R-ENC-12]` makes name comparison a
+   byte comparison, which needs no valid name — so two layers whose
+   name fields are byte-identical are a duplicate even when neither
+   name is valid.
 
 Completing these steps is **the open**. It consumes the trailer
 and directory only — no extent slot's content, no tile index, no
@@ -2302,8 +2334,8 @@ detector is the verifier (§2.4, `[R-CNF-12]`) imposes no reader
 obligation — no later than the reader's first reliance on the
 structure that carries it:
 
-- **at open:** the front signature block (local readers,
-  `[R-CNT-04]`), the trailer, the directory region and its record
+- **at open:** the front signature block, for a reader holding it
+  (`[R-CNT-04]`), the trailer, the directory region and its record
   walk, and the layer-name namespace (§19.1's steps);
 - **at first access to a layer:** the full validation of that
   layer's record (§19.3), before any use of the layer's
@@ -2799,7 +2831,7 @@ layer unaffected. 50 conditions.
 | L42 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels are transparent) | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
 | L43 | A slab run's first stored tile's offset is not a multiple of A_slab | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
 | L44 | Layer record's codec is a value other than 1 … 4 — 0, reserved 5–0x7FFF, or experimental ≥ 0x8000 | codec 0; reserved 5-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-03]` (R-CNT-23) |
-| L45 | Codec 4 (lz4) declared on a layer whose per-tile decoded size exceeds 0x7E000000 bytes | — | reader | layer access | `[R-COD-07]` |
+| L45 | Codec 4 (lz4) declared on a layer any of whose addressed tiles' decoded size exceeds 0x7E000000 bytes — in a planar layer the largest channel plane governs | — | reader | layer access | `[R-COD-07]` |
 | L46 | Layer record's filter is a value other than 1 or 2 — 0, reserved 3–0x7FFF, or experimental ≥ 0x8000 | filter 0; reserved 3-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-09]` (R-CNT-23) |
 | L47 | A layer record's or sub-record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0 | — | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
 | L48 | Any of a layer record's or sub-record's reserved flag bits 2-15 is set | flags bits 2-15 | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
@@ -2851,7 +2883,7 @@ be unreadable lands here, whatever the containing scope.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
-| R1 | A user-metadata record declares a document encoding of 0, or any value other than 1 (none) or 2 (zstd) | encoding 0, top-level record; encoding 0, layer sub-record; reserved 3–0x7F, top-level record; reserved 3–0x7F, layer sub-record; experimental ≥ 0x80, top-level record; experimental ≥ 0x80, layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-25]` |
+| R1 | A user-metadata record declares a document encoding of 0, or a reserved-range value (3-0x7F) | encoding 0, top-level record; encoding 0, layer sub-record; reserved 3–0x7F, top-level record; reserved 3–0x7F, layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-25]` |
 | R2 | A user-metadata extent's final 4 bytes do not equal the CRC-32C of the preceding bytes | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-20]` (R-CNT-25) |
 | R3 | A user-metadata document's stored bytes fail to decode under its declared encoding | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
 | R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 carries over from `[R-COD-06]`; unlike R3, the constraint is broken whether or not the bytes decode | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
@@ -2878,6 +2910,7 @@ of them as a failure is the nonconforming party.
 | version_minor is higher than this text defines | Accepted; minors never gate | `[R-CNT-07]` |
 | Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded structures | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier; only compaction reclaims it | `[R-CNT-21]` |
 | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
+| A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]` |
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
 | A payload contains a byte string that mimics a trailer | Inert: nothing enumerates slack, and a recovery tool re-verifies its output whole (§9.6) | `[R-LIF-06]` |
 | Under a compressing codec (2–4), a stored tile's decoded size differs from its stored length | Expected: codecs compress, and can expand — codec 1's equality is `[R-COD-04]`'s subject | `[R-COD-08]` |
@@ -2921,7 +2954,7 @@ Nothing here authenticates, either (§4.5). `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 125 conditions over 244 named
+Every row of §21.2 through §21.5 — 125 conditions over 242 named
 instances — has at least one conformance vector (§24) whose expected
 verdict is that row's outcome, and a row naming instances has one
 vector per instance. A row without a vector is a
@@ -3239,7 +3272,9 @@ contains no layers, which §21.6 records as valid.
 A remote reader opens this file in §6.4's two requests: the final 64
 bytes, validated per §6.2; then [16, 20), whose CRC it verifies. A
 local reader additionally verifies bytes [0, 16) by equality first,
-which `[R-CNT-04]` requires of it. That is §19.1's four-step open
+which `[R-CNT-04]` requires of any reader holding them — as a remote
+reader does too whenever it speculates a suffix window, since this
+file is 128 bytes and any such window reaches offset 0. That is §19.1's four-step open
 applied to this file; the layer table is empty, and there is nothing
 further to read.
 

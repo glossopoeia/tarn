@@ -83,7 +83,7 @@ where **the rule itself is silent**: a namespace, a nesting depth, a
 quantifier over channels, an ordering of two checks, a reader class with
 an undetermined middle.
 
-### The five
+### The five — all resolved by ADR-0058
 
 1. **§18.2 `[R-MTA-05]` does not say at what nesting depth the
    ascending-key sort binds.** The cleanest defect of the round: two
@@ -109,11 +109,15 @@ an undetermined middle.
    identical case — `[R-CNF-02]` makes conduct bind the actor and not the
    bytes.
 
-Three more carried 2-of-3 support and want a decision either way:
-`[R-COD-06]`'s *"declared window size"* against RFC 8878's two
-derivations; the ordering of the layer-name uniqueness check against
-ill-formed names; and `generation`'s 2⁶³−1 ceiling, asserted by §6.2's
-table and enforced by no rule.
+All five are now fixed (ADR-0058), each by a clause rather than a
+redesign. Three more carried 2-of-3 support and were taken at the same
+time:
+the ordering of the layer-name uniqueness check against ill-formed names
+(uniqueness first, over raw bytes) and `generation`'s 2⁶³−1 ceiling (now
+in `[R-CNT-06]`'s gate list). The third — `[R-COD-06]`'s *"declared
+window size"* — turned out to need no decision: RFC 8878's two
+derivations agree on every tile, so it took a Note rather than a rule.
+Two of three passes over-called it byte-level.
 
 ### Everything else
 

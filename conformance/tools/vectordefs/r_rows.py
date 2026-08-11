@@ -250,7 +250,10 @@ def _v(vid, title, *, sub, row, rule, detected, patches, conforming=False,
         vid, "meta", title, conforming,
         patches=ps,
         repair=["directory.crc", "trailer.crc"] if needs_dir else [],
-        row=row, rule=rule, outcome="ignore-record",
+        row=row, rule=rule,
+        # §21.5's outcome. A vector naming no row is a §21.6 positive vector
+        # and carries none, which is what puts it under conforming/.
+        outcome="ignore-record" if row else None,
         scope=scope or (SUB if sub else TOP),
         detected=detected,
         must_not_serve=must_not_serve or (NOT_SUB if sub else NOT_TOP),
@@ -286,12 +289,21 @@ VECTORS = [
     # §7.3 states outright for an experimental record type. The reader outcome
     # is unchanged; only the `conforming` axis differs, which §24 makes
     # independent of the outcome axis. See the findings note on R1.
-    _v("TV-0504", "user-metadata encoding 0x80 (experimental), top-level record",
-       sub=False, row="R1", rule="R-CNT-25", detected="open", conforming=True,
+    # ADR-0058 narrowed R1 to the reserved range and gave the experimental
+    # case a §21.6 row of its own: the record is ignored and the FILE IS
+    # CONFORMING, since §10.3's prohibition binds a writer's conduct and not
+    # the bytes ([R-CNF-02]). These two therefore name no register row — they
+    # are positive vectors for §21.6's defined behavior.
+    _v("TV-0504", "user-metadata encoding 0x80 (experimental), top-level record "
+       "— ignored, and the file is conforming (§21.6)",
+       sub=False, row=None, rule=None, detected=None, conforming=True,
+       must_not_serve=[],
        patches=[Patch("record[0x0002].inline", b"\x80",
                       note="experimental range ≥ 0x80, §10.2/§10.3")]),
-    _v("TV-0505", "user-metadata encoding 0x80 (experimental), layer sub-record",
-       sub=True, row="R1", rule="R-CNT-25", detected="layer access", conforming=True,
+    _v("TV-0505", "user-metadata encoding 0x80 (experimental), layer sub-record "
+       "— ignored, and the file is conforming (§21.6)",
+       sub=True, row=None, rule=None, detected=None, conforming=True,
+       must_not_serve=[],
        patches=[Patch("record[0x0002].inline", b"\x80")]),
 
     # -- R2: the extent's terminal CRC does not cover its bytes ---------------

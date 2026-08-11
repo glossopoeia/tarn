@@ -10814,8 +10814,8 @@
     },
     {
       "id": "TV-0504",
-      "file": "ignore-record/TV-0504.tarn",
-      "title": "user-metadata encoding 0x80 (experimental), top-level record",
+      "file": "conforming/TV-0504.tarn",
+      "title": "user-metadata encoding 0x80 (experimental), top-level record \u2014 ignored, and the file is conforming (\u00a721.6)",
       "sha256": "fdb06b34132075ec94bbbcb52e096e878b0603c21ac23d6e63ea883fc3f250fe",
       "size": 320,
       "conforming": true,
@@ -10833,10 +10833,6 @@
         ]
       },
       "expect": {
-        "must_not_serve": [
-          "metadata:file"
-        ],
-        "may_escalate_to": "file",
         "serves": [
           {
             "layer": "ok",
@@ -10875,26 +10871,12 @@
             ]
           }
         ]
-      },
-      "violations": [
-        {
-          "row": "R1",
-          "rule": "R-CNT-25",
-          "outcome": "ignore-record",
-          "scope": {
-            "kind": "record",
-            "container": "file",
-            "record_type": "0x0002"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
+      }
     },
     {
       "id": "TV-0505",
-      "file": "ignore-record/TV-0505.tarn",
-      "title": "user-metadata encoding 0x80 (experimental), layer sub-record",
+      "file": "conforming/TV-0505.tarn",
+      "title": "user-metadata encoding 0x80 (experimental), layer sub-record \u2014 ignored, and the file is conforming (\u00a721.6)",
       "sha256": "454a99a938c5c7682cc0277115790fffef1bd45cda61bffe86a622109d87829b",
       "size": 320,
       "conforming": true,
@@ -10916,10 +10898,6 @@
         ]
       },
       "expect": {
-        "must_not_serve": [
-          "metadata:layer:ok"
-        ],
-        "may_escalate_to": "file",
         "serves": [
           {
             "layer": "ok",
@@ -10958,22 +10936,7 @@
             ]
           }
         ]
-      },
-      "violations": [
-        {
-          "row": "R1",
-          "rule": "R-CNT-25",
-          "outcome": "ignore-record",
-          "scope": {
-            "kind": "record",
-            "container": "layer",
-            "layer": "ok",
-            "record_type": "0x0002"
-          },
-          "detector": "reader",
-          "detected": "layer access"
-        }
-      ]
+      }
     },
     {
       "id": "TV-0506",

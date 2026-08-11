@@ -679,11 +679,23 @@ def check_coverage(spec: Spec, root: Path, report: Report) -> None:
         f"named instances in the register: {total_inst}; vectors so far: {len(vectors)}",
     ]
     per_class = defaultdict(int)
+    malformed = []
     for v in vectors:
-        per_class["conforming" if v["conforming"] else
-                  (v["violations"][0]["outcome"] if v.get("violations") else "?")] += 1
-    warnings.append("by class: " + ", ".join(f"{k} {n}" for k, n in sorted(per_class.items())))
-    report.add("COV-03", "register coverage", [], warnings)
+        if v["conforming"]:
+            per_class["conforming"] += 1
+            continue
+        viol = (v.get("violations") or [{}])[0]
+        outcome = viol.get("outcome")
+        if not outcome:
+            # A nonconforming vector with no outcome names no scope a reader
+            # must refuse, so the manifest says nothing testable about it.
+            malformed.append(f"{v['id']} is nonconforming but records no outcome")
+            per_class["(no outcome)"] += 1
+        else:
+            per_class[outcome] += 1
+    warnings.append("by class: "
+                    + ", ".join(f"{k} {n}" for k, n in sorted(per_class.items())))
+    report.add("COV-03", "register coverage", malformed, warnings)
 
 
 def repo_root() -> Path:
