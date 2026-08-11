@@ -181,7 +181,54 @@ named instances, and no vector is owed. Registering it instead would
 have cost 2 conditions, 4 instances and 4 vectors to detect a condition
 no reader can observe.
 
-The remaining 42 are undispositioned. They are not the same shape as earlier
+**The tail: 37 edits landed, 14 were refused.** Six section owners drafted
+51 exact anchor/replacement pairs across the remaining 39 defects; an
+adversarial reviewer per group checked each anchor mechanically and each
+replacement for normative drift. Thirty-seven applied with zero anchor
+misses. **Fourteen were rejected, every one for normative drift** — a
+verifier-decline-to-verdict mapping the document never makes, a flat
+`MUST` converted into a default with an opt-out, a reader obligation
+inserted into a declarative sentence that carries none, a Class column
+added to a table §7.4 makes normative. That boundary is the round's
+second useful result: the instruction was *if this would change what a
+file may contain or what a reader must reject, stop*, and it held
+fourteen times.
+
+Counting by defect: **24 cleared outright**, 2 partly cleared with the
+rest escalated, 4 judged to need no change with reasons recorded, 2
+unanimously refuted at triage. **Thirteen now want a maintainer
+decision** — 7 escalated by their drafter, 6 more where the reviewer
+refused the only drafted repair as normative.
+
+### The register grew, and the growth exposed a measurement gap
+
+`instance-arithmetic-applied-inconsistently` was confirmed by all three
+passes: §21.1 states the instance arithmetic multiplicatively — *"a
+condition applying to two alternatives in two containers has four"* —
+and five cells did not follow it. Repairing them moves the register from
+**242 to 252 instances** (L1 +2, L16 +2, R4 +2, R5 +6, L2 −2). The
+condition count is unchanged at 125; no row was added or removed. §21.8
+now reads 252 and the mechanical recount agrees.
+
+That exposed something larger. §21.8's `[R-ERR-02]` requires *"one vector
+per instance"*, but `COV-03` computes **row** coverage — its docstring
+claims instances while its code counts `covered_rows` — and the corpus
+manifest has no instance field at all: a violation entry carries `row`,
+`rule`, `outcome`, `scope`, `detector`, `detected`, and nothing naming
+which instance the vector exercises. So G5's reported 125/125 at 100% is
+a true statement about rows and was never a measurement of the criterion
+`[R-ERR-02]` actually states.
+
+Comparing vector counts to instance counts per row — a lower bound,
+since several vectors on one row may all exercise the same instance —
+gives a shortfall of **16 across 8 rows**: L1 −2, L2 −1, L16 −2, R4 −2,
+R5 −6 from this repair, and F3 −1, F32 −1, L50 −1 that predate it and
+were hidden by row-level counting. The four pre-existing ones are the
+sharper finding: they were there before round 7 touched anything.
+
+Closing this needs a manifest field and a real instance-coverage check,
+which is an ADR-0054 revisit and a maintainer decision, so no vectors
+were generated here. They are not the same shape as earlier
 rounds' findings: rounds 4 and 5 found propagation failures, round 6
 found silences, and this round found mostly **restatements that stop
 short** — §19's tier lists, §21.7's inventory, §8.1's checksum map, each

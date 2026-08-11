@@ -322,7 +322,10 @@ def check_register(spec: Spec, report: Report) -> None:
     total_rows = len(all_rows)
     total_instances = sum(spec.instance_count(r["instances"]) for r in all_rows)
     flat = re.sub(r"\s+", " ", spec.text)
-    m = re.search(r"(\d+) conditions over ([\d,]+) named instances", flat)
+    # "named" was dropped from §21.8 in round 7: a cell reading "—" names no
+    # instance yet still counts as one, so the word claimed more than the
+    # register delivers. Accept the sentence with or without it.
+    m = re.search(r"(\d+) conditions over ([\d,]+) (?:named )?instances", flat)
     failures = []
     if not m:
         failures.append("§21.8 states no total")
