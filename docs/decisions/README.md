@@ -79,6 +79,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0061](0061-persistence-governs-every-record-type.md) | Persistence governs every record type, implemented or not | Accepted (closes a §20.4 seam left by ADR-0041) |
 | [0062](0062-a-verifier-may-stop-but-unexamined-is-not-clean.md) | A verifier may stop, but unexamined is not clean | Accepted (adds a verifier reporting obligation) |
 | [0063](0063-standardized-key-placement-is-advisory.md) | Standardized key placement and value shape are advisory | Accepted (resolves round 7's register gap by deletion; refines ADR-0045) |
+| [0064](0064-instance-identity-in-the-manifest.md) | A vector names the instance it exercises, by the register's own words | Accepted (makes [R-ERR-02] measurable; corrects two mis-filed vectors) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

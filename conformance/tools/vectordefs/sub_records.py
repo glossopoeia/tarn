@@ -341,16 +341,36 @@ VECTORS = [
     # L25-L27 — what a type value means where §7.3 does not scope it.
     # ----------------------------------------------------------------------
     # An *experimental*-range type, not a reserved one: [R-CNF-02] keeps the
-    # bytes conforming (§10.3's prohibition binds the writer, not the file),
-    # so this vector carries L25 and nothing else. A reserved-range type would
-    # add L26, and §21.6 records the resulting pair — a conforming file a
-    # reader must nevertheless refuse — as the reason the file-scope twin of
-    # this case is not a register row at all.
+    # bytes conforming (§10.3's prohibition binds the writer, not the file).
+    #
+    # The claim that this vector "carries L25" was true of the L25 that
+    # existed when it was written. ADR-0057 deleted three rows and §21
+    # renumbered contiguously, so today's L25 is a different condition —
+    # exactly the drift ADR-0049 forbids deriving vector identity from.
+    #
+    # §21.6's second exception, not L25. L25 is scoped to the *reserved*
+    # range (0x0003-0x7FFF) and this seed's sub-record type is
+    # experimental (>= 0x8000, see this module's header), so the file is
+    # conforming and the refusal is the reader's capability, not a defect
+    # in the bytes. The vector therefore names no register row.
+    # TV-0152 is its file-scope twin. TV-0915 covers L25 proper.
     Vector("TV-0813", INERT_SEED,
-           "sub-record of an unassigned type with MU = 1", True,
+           "a conforming layer a reader must refuse: sub-record of an "
+           "experimental type with MU = 1", True,
            patches=[Patch("layer[sub].sub[0].flags", u16(_MU | _PE),
                           note="§10.2's experimental range, so the bytes stay "
                                "conforming while the reader must refuse")],
+           repair=DIR,
+           must_not_serve=["layer:sub"], serves=["ok"]),
+
+    # L25 proper: the reserved range with MU = 1. Same shape as TV-0814
+    # (reserved type, MU = 0, verifier-only) with the MU bit set, which is
+    # what moves detection to the reader at layer access.
+    Vector("TV-0915", INERT_SEED,
+           "L25 sub-record carrying reserved-range type 0x0003 with "
+           "MUST_UNDERSTAND = 1", False,
+           patches=[Patch("layer[sub].sub[0].type", u16(RESERVED)),
+                    Patch("layer[sub].sub[0].flags", u16(_MU | _PE))],
            repair=DIR, row="L25", rule="R-CNT-18", outcome="reject-layer",
            scope=_LAYER, detected="layer access",
            must_not_serve=["layer:sub"], serves=["ok"]),

@@ -174,11 +174,22 @@ class Spec:
         return out
 
     @staticmethod
-    def instance_count(cell: str) -> int:
-        """§21.1: instances are semicolon-separated; a cell reading — is one."""
+    def instance_list(cell: str) -> list[str]:
+        """§21.1: instances are semicolon-separated; a cell reading — is one.
+
+        The strings are the instances' identity in the corpus manifest
+        (ADR-0064), so they are returned verbatim apart from surrounding
+        whitespace. Matching is exact by design: rewording an instance breaks
+        the coverage check rather than silently remapping its vector to a
+        condition nobody rechecked.
+        """
         if cell.strip() == "—":
-            return 1
-        return len([p for p in cell.split(";") if p.strip()])
+            return ["—"]
+        return [p.strip() for p in cell.split(";") if p.strip()]
+
+    @classmethod
+    def instance_count(cls, cell: str) -> int:
+        return len(cls.instance_list(cell))
 
     def definition_sites(self) -> dict[str, int]:
         """Where each requirement identifier is *defined*.
@@ -701,6 +712,49 @@ def check_coverage(spec: Spec, root: Path, report: Report) -> None:
     warnings.append("by class: "
                     + ", ".join(f"{k} {n}" for k, n in sorted(per_class.items())))
     report.add("COV-03", "register coverage", malformed, warnings)
+
+    # COV-05 -- the criterion [R-ERR-02] actually states: one vector per
+    # INSTANCE, not per row. COV-03 counts rows, which is a weaker claim and
+    # read as 100% while this went unmeasured. Cleanroom round 7 found the gap.
+    #
+    # Identity is the instance's verbatim §21 text (ADR-0064). An entry naming
+    # an instance its row does not list is a hard failure, never a warning: it
+    # means the register was reworded and the vector was never rechecked, which
+    # is exactly the drift a positional index would have hidden.
+    claimed: dict[tuple[str, str], list[str]] = defaultdict(list)
+    stale = []
+    for v in vectors:
+        for viol in v.get("violations", []):
+            rid, inst = viol.get("row"), viol.get("instance")
+            if inst is None:
+                continue                       # un-annotated; counted as a gap below
+            claimed[(rid, inst)].append(v["id"])
+    by_id = {r["id"]: r for rows in spec.rows.values() for r in rows}
+    for (rid, inst), vids in sorted(claimed.items()):
+        row = by_id.get(rid)
+        if row is None:
+            continue                           # COV-02 already reports this
+        if inst not in spec.instance_list(row["instances"]):
+            stale.append(
+                f"{', '.join(vids)} claim{'s' if len(vids) == 1 else ''} {rid} instance "
+                f"{inst!r}, which {rid} no longer lists — the row was reworded")
+
+    gaps = []
+    for rows in spec.rows.values():
+        for r in rows:
+            for inst in spec.instance_list(r["instances"]):
+                if not claimed.get((r["id"], inst)):
+                    gaps.append(f"{r['id']}: {inst}")
+    covered = total_inst - len(gaps)
+    pct = covered / total_inst * 100 if total_inst else 100.0
+    inst_warn = [f"instances with at least one vector: {covered}/{total_inst} ({pct:.1f}%)"]
+    if gaps:
+        inst_warn.append(f"{len(gaps)} instance(s) owe a vector: "
+                         + "; ".join(gaps[:8]) + (" …" if len(gaps) > 8 else ""))
+    # Gaps warn while the corpus is being completed; staleness always fails.
+    # Flip gaps into `stale` (the failure list) once coverage first reaches
+    # 100%, so the gate can never silently regress afterward.
+    report.add("COV-05", "per-instance coverage", stale, inst_warn)
 
 
 def repo_root() -> Path:

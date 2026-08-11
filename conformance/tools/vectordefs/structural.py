@@ -373,6 +373,22 @@ VECTORS = [
            must_not_serve=[], serves=["ok"]),
 
     # ==================================================================
+    # F38 `[R-CNT-15]` — a reserved-range type value with MU = 1.
+    # ==================================================================
+    # As TV-0905 but with MU set, which is what moves detection from the
+    # verifier to the reader at open and the outcome to a refusal of the
+    # whole file. The reserved range is what F38 names; an experimental
+    # type with MU = 1 is §21.6's second exception instead — a conforming
+    # file a reader refuses — and TV-0152 carries that case.
+    Vector("TV-0910", "meta",
+           "F38 top-level record of reserved type 0x0003 with MU = 1", False,
+           patches=[Patch("record[0x0002].header", _hdr(0x0003, 0b11))],
+           repair=REPAIR_DIR,
+           row="F38", rule="R-CNT-15", outcome="reject-file",
+           scope=FILE, detected="open",
+           must_not_serve=["file"]),
+
+    # ==================================================================
     # F36 `[R-CNT-13]` — the sub-record-extent instance of the
     # double-claim row, the last of its seven the corpus can reach.
     # ==================================================================

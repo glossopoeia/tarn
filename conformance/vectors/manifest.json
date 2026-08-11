@@ -135,6 +135,7 @@
       "violations": [
         {
           "row": "F10",
+          "instance": "trailer magic",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -173,6 +174,7 @@
       "violations": [
         {
           "row": "F11",
+          "instance": "dir_offset",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -250,6 +252,7 @@
       "violations": [
         {
           "row": "L32",
+          "instance": "index_encoding 0",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -328,6 +331,7 @@
       "violations": [
         {
           "row": "L34",
+          "instance": "reserved 2-3",
           "rule": "R-GEO-05",
           "outcome": "reject-layer",
           "scope": {
@@ -407,6 +411,7 @@
       "violations": [
         {
           "row": "T10",
+          "instance": "\u2014",
           "rule": "R-IDX-03",
           "outcome": "reject-tile",
           "scope": {
@@ -487,6 +492,7 @@
       "violations": [
         {
           "row": "T1",
+          "instance": "\u2014",
           "rule": "R-CNT-20",
           "outcome": "reject-tile",
           "scope": {
@@ -598,6 +604,7 @@
       "violations": [
         {
           "row": "L48",
+          "instance": "flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -637,6 +644,7 @@
       "violations": [
         {
           "row": "F1",
+          "instance": "trailer version_major",
           "rule": "R-ENC-01",
           "outcome": "reject-file",
           "scope": {
@@ -675,6 +683,7 @@
       "violations": [
         {
           "row": "F1",
+          "instance": "dir_offset",
           "rule": "R-ENC-01",
           "outcome": "reject-file",
           "scope": {
@@ -713,6 +722,7 @@
       "violations": [
         {
           "row": "F1",
+          "instance": "dir_length",
           "rule": "R-ENC-01",
           "outcome": "reject-file",
           "scope": {
@@ -751,6 +761,7 @@
       "violations": [
         {
           "row": "F1",
+          "instance": "committed_file_length",
           "rule": "R-ENC-01",
           "outcome": "reject-file",
           "scope": {
@@ -789,6 +800,7 @@
       "violations": [
         {
           "row": "F1",
+          "instance": "generation",
           "rule": "R-ENC-01",
           "outcome": "reject-file",
           "scope": {
@@ -825,6 +837,7 @@
       "violations": [
         {
           "row": "F2",
+          "instance": "front signature block bytes [0,8)",
           "rule": "R-ENC-02",
           "outcome": "reject-file",
           "scope": {
@@ -863,6 +876,7 @@
       "violations": [
         {
           "row": "F2",
+          "instance": "trailer magic at F-64",
           "rule": "R-ENC-02",
           "outcome": "reject-file",
           "scope": {
@@ -901,6 +915,7 @@
       "violations": [
         {
           "row": "F3",
+          "instance": "dir_offset",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
           "scope": {
@@ -939,6 +954,7 @@
       "violations": [
         {
           "row": "F3",
+          "instance": "dir_length",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
           "scope": {
@@ -977,6 +993,7 @@
       "violations": [
         {
           "row": "F3",
+          "instance": "committed_file_length",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
           "scope": {
@@ -1016,6 +1033,7 @@
       "violations": [
         {
           "row": "F3",
+          "instance": "non-layer top-level record extent_offset",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
           "scope": {
@@ -1055,6 +1073,7 @@
       "violations": [
         {
           "row": "F3",
+          "instance": "extent_length",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
           "scope": {
@@ -1097,6 +1116,7 @@
       "violations": [
         {
           "row": "F4",
+          "instance": "dir_offset + dir_length",
           "rule": "R-ENC-04",
           "outcome": "reject-file",
           "scope": {
@@ -1136,6 +1156,7 @@
       "violations": [
         {
           "row": "F4",
+          "instance": "non-layer top-level record extent_offset + extent_length",
           "rule": "R-ENC-04",
           "outcome": "reject-file",
           "scope": {
@@ -1174,6 +1195,7 @@
       "violations": [
         {
           "row": "F5",
+          "instance": "trailer (e.g. a single u32 written across the version_major and version_minor slots)",
           "rule": "R-ENC-06",
           "outcome": "reject-file",
           "scope": {
@@ -1213,6 +1235,7 @@
       "violations": [
         {
           "row": "F5",
+          "instance": "top-level record header",
           "rule": "R-ENC-06",
           "outcome": "reject-file",
           "scope": {
@@ -1252,6 +1275,7 @@
       "violations": [
         {
           "row": "F6",
+          "instance": "layer record name",
           "rule": "R-ENC-15",
           "outcome": "reject-file",
           "scope": {
@@ -1288,6 +1312,7 @@
       "violations": [
         {
           "row": "F8",
+          "instance": "magic bytes [0,8)",
           "rule": "R-CNT-04",
           "outcome": "reject-file",
           "scope": {
@@ -1324,6 +1349,7 @@
       "violations": [
         {
           "row": "F8",
+          "instance": "reserved bytes [8,16)",
           "rule": "R-CNT-04",
           "outcome": "reject-file",
           "scope": {
@@ -1400,6 +1426,7 @@
       "violations": [
         {
           "row": "F9",
+          "instance": "\u2014",
           "rule": "R-CNT-05",
           "outcome": "reject-file",
           "scope": {
@@ -1438,6 +1465,7 @@
       "violations": [
         {
           "row": "F10",
+          "instance": "trailer magic",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1476,6 +1504,7 @@
       "violations": [
         {
           "row": "F11",
+          "instance": "dir_offset",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1514,6 +1543,7 @@
       "violations": [
         {
           "row": "F12",
+          "instance": "\u2014",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1552,6 +1582,7 @@
       "violations": [
         {
           "row": "F13",
+          "instance": "generation",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1590,6 +1621,7 @@
       "violations": [
         {
           "row": "F14",
+          "instance": "file_id",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1626,6 +1658,7 @@
       "violations": [
         {
           "row": "F16",
+          "instance": "trailer CRC",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1664,6 +1697,7 @@
       "violations": [
         {
           "row": "F17",
+          "instance": "trailer reserved [56,60)",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1702,6 +1736,7 @@
       "violations": [
         {
           "row": "F18",
+          "instance": "dir_length",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1740,6 +1775,7 @@
       "violations": [
         {
           "row": "F19",
+          "instance": "committed_file_length",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1778,6 +1814,7 @@
       "violations": [
         {
           "row": "F20",
+          "instance": "version_major",
           "rule": "R-CNT-07",
           "outcome": "reject-file",
           "scope": {
@@ -1816,6 +1853,7 @@
       "violations": [
         {
           "row": "F21",
+          "instance": "version_major",
           "rule": "R-CNT-07",
           "outcome": "reject-file",
           "scope": {
@@ -1854,6 +1892,7 @@
       "violations": [
         {
           "row": "F22",
+          "instance": "flags bits 0-15",
           "rule": "R-CNT-08",
           "outcome": "reject-file",
           "scope": {
@@ -1890,6 +1929,7 @@
       "violations": [
         {
           "row": "F23",
+          "instance": "directory region CRC",
           "rule": "R-CNT-11",
           "outcome": "reject-file",
           "scope": {
@@ -1929,6 +1969,7 @@
       "violations": [
         {
           "row": "F24",
+          "instance": "\u2014",
           "rule": "R-CNT-25",
           "outcome": "reject-file",
           "scope": {
@@ -1968,6 +2009,7 @@
       "violations": [
         {
           "row": "F25",
+          "instance": "\u2014",
           "rule": "R-CNT-25",
           "outcome": "reject-file",
           "scope": {
@@ -2007,6 +2049,7 @@
       "violations": [
         {
           "row": "F26",
+          "instance": "\u2014",
           "rule": "R-MTA-03",
           "outcome": "reject-file",
           "scope": {
@@ -2046,6 +2089,7 @@
       "violations": [
         {
           "row": "F27",
+          "instance": "type",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
           "scope": {
@@ -2121,6 +2165,7 @@
       "violations": [
         {
           "row": "F29",
+          "instance": "flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
           "scope": {
@@ -2193,6 +2238,7 @@
       "violations": [
         {
           "row": "F30",
+          "instance": "\u2014",
           "rule": "R-MTA-05",
           "outcome": "reject-file",
           "scope": {
@@ -2268,6 +2314,7 @@
       "violations": [
         {
           "row": "F31",
+          "instance": "flags bit 0",
           "rule": "R-CNT-22",
           "outcome": "reject-file",
           "scope": {
@@ -2343,6 +2390,7 @@
       "violations": [
         {
           "row": "F31",
+          "instance": "flags bit 1",
           "rule": "R-CNT-22",
           "outcome": "reject-file",
           "scope": {
@@ -2382,6 +2430,7 @@
       "violations": [
         {
           "row": "F32",
+          "instance": "record header",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
           "scope": {
@@ -2421,6 +2470,7 @@
       "violations": [
         {
           "row": "F32",
+          "instance": "inline_length",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
           "scope": {
@@ -2460,6 +2510,7 @@
       "violations": [
         {
           "row": "F33",
+          "instance": "extent_offset",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
           "scope": {
@@ -2499,6 +2550,7 @@
       "violations": [
         {
           "row": "F33",
+          "instance": "extent_length",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
           "scope": {
@@ -2538,6 +2590,7 @@
       "violations": [
         {
           "row": "F34",
+          "instance": "extent_offset",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
           "scope": {
@@ -2577,6 +2630,7 @@
       "violations": [
         {
           "row": "F35",
+          "instance": "\u2014",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
           "scope": {
@@ -2653,6 +2707,7 @@
       "violations": [
         {
           "row": "F36",
+          "instance": "stored-tile extents",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
           "scope": {
@@ -2728,6 +2783,7 @@
       "violations": [
         {
           "row": "F36",
+          "instance": "tile-index regions",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
           "scope": {
@@ -2803,6 +2859,7 @@
       "violations": [
         {
           "row": "F36",
+          "instance": "record extents",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
           "scope": {
@@ -2878,6 +2935,7 @@
       "violations": [
         {
           "row": "F36",
+          "instance": "directory region",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
           "scope": {
@@ -2924,6 +2982,7 @@
       "violations": [
         {
           "row": "F37",
+          "instance": "type",
           "rule": "R-CNT-14",
           "outcome": "reject-file",
           "scope": {
@@ -2936,11 +2995,11 @@
     },
     {
       "id": "TV-0152",
-      "file": "reject-file/TV-0152.tarn",
-      "title": "F38 top-level record of unassigned type 0x8001 with MUST_UNDERSTAND = 1",
+      "file": "conforming/TV-0152.tarn",
+      "title": "a conforming file a reader must refuse: top-level record of experimental type 0x8001 with MUST_UNDERSTAND = 1",
       "sha256": "50ebb77709ded3d54b5914e60bd47f1d7648f7d04b03a60c9b830c446eb0c689",
       "size": 320,
-      "conforming": false,
+      "conforming": true,
       "derivation": {
         "seed": "meta",
         "patches": [
@@ -2955,23 +3014,9 @@
         ]
       },
       "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F38",
-          "rule": "R-CNT-15",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
+        "serves": [],
+        "opens": true
+      }
     },
     {
       "id": "TV-0200",
@@ -3040,6 +3085,7 @@
       "violations": [
         {
           "row": "L1",
+          "instance": "dimension extent E\u1d62",
           "rule": "R-ENC-03",
           "outcome": "reject-layer",
           "scope": {
@@ -3118,6 +3164,7 @@
       "violations": [
         {
           "row": "L1",
+          "instance": "tile extent T\u1d62",
           "rule": "R-ENC-03",
           "outcome": "reject-layer",
           "scope": {
@@ -3196,6 +3243,7 @@
       "violations": [
         {
           "row": "L1",
+          "instance": "entry_count",
           "rule": "R-ENC-03",
           "outcome": "reject-layer",
           "scope": {
@@ -3278,6 +3326,7 @@
       "violations": [
         {
           "row": "L1",
+          "instance": "slab run length S",
           "rule": "R-ENC-03",
           "outcome": "reject-layer",
           "scope": {
@@ -3360,6 +3409,7 @@
       "violations": [
         {
           "row": "L2",
+          "instance": "N = \u220f\u2308E\u1d62/T\u1d62\u2309",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {
@@ -3438,6 +3488,7 @@
       "violations": [
         {
           "row": "L2",
+          "instance": "P = \u220fT\u1d62",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {
@@ -3516,6 +3567,7 @@
       "violations": [
         {
           "row": "L2",
+          "instance": "C\u00b7N (which dominates the max disk ordinal (C\u22121)\u00b7N + (N\u22121))",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {
@@ -3594,6 +3646,7 @@
       "violations": [
         {
           "row": "L2",
+          "instance": "P\u00b7Q (which dominates V = P\u00b7C)",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {
@@ -3672,6 +3725,7 @@
       "violations": [
         {
           "row": "L2",
+          "instance": "P\u00b7B\u1d9c",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {
@@ -3766,6 +3820,7 @@
       "violations": [
         {
           "row": "L2",
+          "instance": "entry_count \u00d7 20 + \u2308entry_count/2\u00b9\u2076\u2309 \u00d7 4",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {
@@ -3844,6 +3899,7 @@
       "violations": [
         {
           "row": "L3",
+          "instance": "any layer-record inline-payload field",
           "rule": "R-ENC-06",
           "outcome": "reject-layer",
           "scope": {
@@ -3922,6 +3978,7 @@
       "violations": [
         {
           "row": "L4",
+          "instance": "\u2014",
           "rule": "R-ENC-11",
           "outcome": "reject-layer",
           "scope": {
@@ -4001,6 +4058,7 @@
       "violations": [
         {
           "row": "L5",
+          "instance": "channel entry name",
           "rule": "R-ENC-11",
           "outcome": "reject-layer",
           "scope": {
@@ -4079,6 +4137,7 @@
       "violations": [
         {
           "row": "L5",
+          "instance": "dimension entry name",
           "rule": "R-ENC-11",
           "outcome": "reject-layer",
           "scope": {
@@ -4157,6 +4216,7 @@
       "violations": [
         {
           "row": "L6",
+          "instance": "\u2014",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
           "scope": {
@@ -4236,6 +4296,7 @@
       "violations": [
         {
           "row": "L7",
+          "instance": "\u2014",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
           "scope": {
@@ -4315,6 +4376,7 @@
       "violations": [
         {
           "row": "L8",
+          "instance": "dimension entry name",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
           "scope": {
@@ -4393,6 +4455,7 @@
       "violations": [
         {
           "row": "L8",
+          "instance": "channel entry name",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
           "scope": {
@@ -4471,6 +4534,7 @@
       "violations": [
         {
           "row": "L9",
+          "instance": "dimension entry name",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
           "scope": {
@@ -4549,6 +4613,7 @@
       "violations": [
         {
           "row": "L9",
+          "instance": "channel entry name",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
           "scope": {
@@ -4627,6 +4692,7 @@
       "violations": [
         {
           "row": "L10",
+          "instance": "dimension entry name",
           "rule": "R-ENC-15",
           "outcome": "reject-layer",
           "scope": {
@@ -4705,6 +4771,7 @@
       "violations": [
         {
           "row": "L10",
+          "instance": "channel entry name",
           "rule": "R-ENC-15",
           "outcome": "reject-layer",
           "scope": {
@@ -4783,6 +4850,7 @@
       "violations": [
         {
           "row": "L15",
+          "instance": "sub-record header",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -4861,6 +4929,7 @@
       "violations": [
         {
           "row": "L16",
+          "instance": "layer record extent_length",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
           "scope": {
@@ -4939,6 +5008,7 @@
       "violations": [
         {
           "row": "L17",
+          "instance": "layer record extent slot",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
           "scope": {
@@ -5017,6 +5087,7 @@
       "violations": [
         {
           "row": "L18",
+          "instance": "layer record extent slot",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
           "scope": {
@@ -5104,6 +5175,7 @@
       "violations": [
         {
           "row": "L19",
+          "instance": "tile-index region",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
           "scope": {
@@ -5195,6 +5267,7 @@
       "violations": [
         {
           "row": "L21",
+          "instance": "\u2014",
           "rule": "R-CNT-16",
           "outcome": "reject-layer",
           "scope": {
@@ -5273,6 +5346,7 @@
       "violations": [
         {
           "row": "L22",
+          "instance": "\u2014",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
@@ -5351,6 +5425,7 @@
       "violations": [
         {
           "row": "L23",
+          "instance": "extent_length",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
@@ -5433,6 +5508,7 @@
       "violations": [
         {
           "row": "L23",
+          "instance": "extent_offset",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
@@ -5519,6 +5595,7 @@
       "violations": [
         {
           "row": "L23",
+          "instance": "entry_count",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
@@ -5597,6 +5674,7 @@
       "violations": [
         {
           "row": "L24",
+          "instance": "leading fixed fields (name \u2026 C)",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
           "scope": {
@@ -5676,6 +5754,7 @@
       "violations": [
         {
           "row": "L24",
+          "instance": "d dimension entries",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
           "scope": {
@@ -5754,6 +5833,7 @@
       "violations": [
         {
           "row": "L24",
+          "instance": "C channel entries",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
           "scope": {
@@ -5832,6 +5912,7 @@
       "violations": [
         {
           "row": "L24",
+          "instance": "trailing fixed fields (index_encoding, entry_count, crc_of_crc_array)",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
           "scope": {
@@ -5926,6 +6007,7 @@
       "violations": [
         {
           "row": "L28",
+          "instance": "\u2014",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -6004,6 +6086,7 @@
       "violations": [
         {
           "row": "L29",
+          "instance": "\u2014",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -6095,6 +6178,7 @@
       "violations": [
         {
           "row": "L30",
+          "instance": "A_slab = 0",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -6190,6 +6274,7 @@
       "violations": [
         {
           "row": "L30",
+          "instance": "A_slab not a power of two",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -6285,6 +6370,7 @@
       "violations": [
         {
           "row": "L30",
+          "instance": "A_slab above 2^62",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -6376,6 +6462,7 @@
       "violations": [
         {
           "row": "L31",
+          "instance": "\u2014",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -6454,6 +6541,7 @@
       "violations": [
         {
           "row": "L32",
+          "instance": "reserved 2-0x7F",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -6532,6 +6620,7 @@
       "violations": [
         {
           "row": "L32",
+          "instance": "experimental >= 0x80",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -6623,6 +6712,7 @@
       "violations": [
         {
           "row": "L33",
+          "instance": "tile extent T\u1d62",
           "rule": "R-GEO-01",
           "outcome": "reject-layer",
           "scope": {
@@ -6746,6 +6836,7 @@
       "violations": [
         {
           "row": "L33",
+          "instance": "rank d",
           "rule": "R-GEO-01",
           "outcome": "reject-layer",
           "scope": {
@@ -6824,6 +6915,7 @@
       "violations": [
         {
           "row": "L34",
+          "instance": "linearization 0",
           "rule": "R-GEO-05",
           "outcome": "reject-layer",
           "scope": {
@@ -6902,6 +6994,7 @@
       "violations": [
         {
           "row": "L34",
+          "instance": "reserved 4-0x7FFF",
           "rule": "R-GEO-05",
           "outcome": "reject-layer",
           "scope": {
@@ -6980,6 +7073,7 @@
       "violations": [
         {
           "row": "L34",
+          "instance": "experimental >= 0x8000",
           "rule": "R-GEO-05",
           "outcome": "reject-layer",
           "scope": {
@@ -7058,6 +7152,7 @@
       "violations": [
         {
           "row": "L35",
+          "instance": "type 0",
           "rule": "R-TYP-03",
           "outcome": "reject-layer",
           "scope": {
@@ -7136,6 +7231,7 @@
       "violations": [
         {
           "row": "L35",
+          "instance": "reserved 14-19",
           "rule": "R-TYP-03",
           "outcome": "reject-layer",
           "scope": {
@@ -7214,6 +7310,7 @@
       "violations": [
         {
           "row": "L35",
+          "instance": "reserved 20-0x7FFF",
           "rule": "R-TYP-03",
           "outcome": "reject-layer",
           "scope": {
@@ -7292,6 +7389,7 @@
       "violations": [
         {
           "row": "L35",
+          "instance": "experimental >= 0x8000",
           "rule": "R-TYP-03",
           "outcome": "reject-layer",
           "scope": {
@@ -7387,6 +7485,7 @@
       "violations": [
         {
           "row": "L36",
+          "instance": "\u2014",
           "rule": "R-TYP-07",
           "outcome": "reject-layer",
           "scope": {
@@ -7465,6 +7564,7 @@
       "violations": [
         {
           "row": "L37",
+          "instance": "layout 0",
           "rule": "R-SER-06",
           "outcome": "reject-layer",
           "scope": {
@@ -7543,6 +7643,7 @@
       "violations": [
         {
           "row": "L37",
+          "instance": "reserved 3-255",
           "rule": "R-SER-06",
           "outcome": "reject-layer",
           "scope": {
@@ -7621,6 +7722,7 @@
       "violations": [
         {
           "row": "L38",
+          "instance": "\u2014",
           "rule": "R-IDX-04",
           "outcome": "reject-layer",
           "scope": {
@@ -7703,6 +7805,7 @@
       "violations": [
         {
           "row": "L39",
+          "instance": "\u2014",
           "rule": "R-IDX-04",
           "outcome": "reject-layer",
           "scope": {
@@ -7794,6 +7897,7 @@
       "violations": [
         {
           "row": "L40",
+          "instance": "A not a power of two",
           "rule": "R-SLB-01",
           "outcome": "reject-layer",
           "scope": {
@@ -7885,6 +7989,7 @@
       "violations": [
         {
           "row": "L40",
+          "instance": "A below 512",
           "rule": "R-SLB-01",
           "outcome": "reject-layer",
           "scope": {
@@ -7976,6 +8081,7 @@
       "violations": [
         {
           "row": "L40",
+          "instance": "A above 2^62",
           "rule": "R-SLB-01",
           "outcome": "reject-layer",
           "scope": {
@@ -8086,6 +8192,7 @@
       "violations": [
         {
           "row": "L41",
+          "instance": "\u2014",
           "rule": "R-SLB-01",
           "outcome": "reject-layer",
           "scope": {
@@ -8200,6 +8307,7 @@
       "violations": [
         {
           "row": "L43",
+          "instance": "\u2014",
           "rule": "R-SLB-03",
           "outcome": "reject-layer",
           "scope": {
@@ -8278,6 +8386,7 @@
       "violations": [
         {
           "row": "L44",
+          "instance": "codec 0",
           "rule": "R-COD-03",
           "outcome": "reject-layer",
           "scope": {
@@ -8356,6 +8465,7 @@
       "violations": [
         {
           "row": "L44",
+          "instance": "reserved 5-0x7FFF",
           "rule": "R-COD-03",
           "outcome": "reject-layer",
           "scope": {
@@ -8434,6 +8544,7 @@
       "violations": [
         {
           "row": "L44",
+          "instance": "experimental >= 0x8000",
           "rule": "R-COD-03",
           "outcome": "reject-layer",
           "scope": {
@@ -8529,6 +8640,7 @@
       "violations": [
         {
           "row": "L45",
+          "instance": "\u2014",
           "rule": "R-COD-07",
           "outcome": "reject-layer",
           "scope": {
@@ -8607,6 +8719,7 @@
       "violations": [
         {
           "row": "L46",
+          "instance": "filter 0",
           "rule": "R-COD-09",
           "outcome": "reject-layer",
           "scope": {
@@ -8685,6 +8798,7 @@
       "violations": [
         {
           "row": "L46",
+          "instance": "reserved 3-0x7FFF",
           "rule": "R-COD-09",
           "outcome": "reject-layer",
           "scope": {
@@ -8763,6 +8877,7 @@
       "violations": [
         {
           "row": "L46",
+          "instance": "experimental >= 0x8000",
           "rule": "R-COD-09",
           "outcome": "reject-layer",
           "scope": {
@@ -8873,6 +8988,7 @@
       "violations": [
         {
           "row": "L48",
+          "instance": "flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -8983,6 +9099,7 @@
       "violations": [
         {
           "row": "L50",
+          "instance": "layer record flags",
           "rule": "R-CNT-22",
           "outcome": "reject-layer",
           "scope": {
@@ -9093,6 +9210,7 @@
       "violations": [
         {
           "row": "T2",
+          "instance": "\u2014",
           "rule": "R-SER-08",
           "outcome": "reject-tile",
           "scope": {
@@ -9208,6 +9326,7 @@
       "violations": [
         {
           "row": "T4",
+          "instance": "interleaved numeric fill bytes",
           "rule": "R-SER-05",
           "outcome": "reject-tile",
           "scope": {
@@ -9327,6 +9446,7 @@
       "violations": [
         {
           "row": "T4",
+          "instance": "planar numeric plane fill bytes",
           "rule": "R-SER-05",
           "outcome": "reject-tile",
           "scope": {
@@ -9450,6 +9570,7 @@
       "violations": [
         {
           "row": "T4",
+          "instance": "packed planar bool plane fill bit",
           "rule": "R-SER-05",
           "outcome": "reject-tile",
           "scope": {
@@ -9581,6 +9702,7 @@
       "violations": [
         {
           "row": "T5",
+          "instance": "\u2014",
           "rule": "R-SER-05",
           "outcome": "reject-tile",
           "scope": {
@@ -9669,6 +9791,7 @@
       "violations": [
         {
           "row": "T6",
+          "instance": "\u2014",
           "rule": "R-IDX-03",
           "outcome": "reject-tile",
           "scope": {
@@ -9749,6 +9872,7 @@
       "violations": [
         {
           "row": "T7",
+          "instance": "offset",
           "rule": "R-IDX-03",
           "outcome": "reject-tile",
           "scope": {
@@ -9829,6 +9953,7 @@
       "violations": [
         {
           "row": "T7",
+          "instance": "length",
           "rule": "R-IDX-03",
           "outcome": "reject-tile",
           "scope": {
@@ -9909,6 +10034,7 @@
       "violations": [
         {
           "row": "T8",
+          "instance": "\u2014",
           "rule": "R-IDX-03",
           "outcome": "reject-tile",
           "scope": {
@@ -9989,6 +10115,7 @@
       "violations": [
         {
           "row": "T9",
+          "instance": "\u2014",
           "rule": "R-IDX-03",
           "outcome": "reject-tile",
           "scope": {
@@ -10069,6 +10196,7 @@
       "violations": [
         {
           "row": "T11",
+          "instance": "offset",
           "rule": "R-IDX-03",
           "outcome": "reject-tile",
           "scope": {
@@ -10149,6 +10277,7 @@
       "violations": [
         {
           "row": "T11",
+          "instance": "length",
           "rule": "R-IDX-03",
           "outcome": "reject-tile",
           "scope": {
@@ -10233,6 +10362,7 @@
       "violations": [
         {
           "row": "T12",
+          "instance": "\u2014",
           "rule": "R-IDX-03",
           "outcome": "reject-tile",
           "scope": {
@@ -10316,6 +10446,7 @@
       "violations": [
         {
           "row": "T14",
+          "instance": "\u2014",
           "rule": "R-COD-04",
           "outcome": "reject-tile",
           "scope": {
@@ -10395,6 +10526,7 @@
       "violations": [
         {
           "row": "T17",
+          "instance": "\u2014",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -10474,6 +10606,7 @@
       "violations": [
         {
           "row": "T25",
+          "instance": "lz4 match offset 0 or match reaching past produced output",
           "rule": "R-COD-08",
           "outcome": "reject-tile",
           "scope": {
@@ -10553,6 +10686,7 @@
       "violations": [
         {
           "row": "R1",
+          "instance": "encoding 0, top-level record",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -10636,6 +10770,7 @@
       "violations": [
         {
           "row": "R1",
+          "instance": "encoding 0, layer sub-record",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -10716,6 +10851,7 @@
       "violations": [
         {
           "row": "R1",
+          "instance": "reserved 3\u20130x7F, top-level record",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -10799,6 +10935,7 @@
       "violations": [
         {
           "row": "R1",
+          "instance": "reserved 3\u20130x7F, layer sub-record",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -11009,6 +11146,7 @@
       "violations": [
         {
           "row": "R2",
+          "instance": "top-level extent",
           "rule": "R-CNT-20",
           "outcome": "ignore-record",
           "scope": {
@@ -11096,6 +11234,7 @@
       "violations": [
         {
           "row": "R2",
+          "instance": "layer sub-record extent",
           "rule": "R-CNT-20",
           "outcome": "ignore-record",
           "scope": {
@@ -11180,6 +11319,7 @@
       "violations": [
         {
           "row": "R3",
+          "instance": "top-level extent",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -11267,6 +11407,7 @@
       "violations": [
         {
           "row": "R3",
+          "instance": "layer sub-record extent",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -11351,6 +11492,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "missing frame magic, top-level extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -11438,6 +11580,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "missing frame magic, layer sub-record extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -11522,6 +11665,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "a skippable frame, top-level extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -11609,6 +11753,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "a skippable frame, layer sub-record extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -11693,6 +11838,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "a second frame, top-level extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -11780,6 +11926,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "a second frame, layer sub-record extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -11864,6 +12011,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "a nonzero dictionary ID, top-level extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -11951,6 +12099,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "a nonzero dictionary ID, layer sub-record extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -12035,6 +12184,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "the content-checksum flag set, top-level extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -12122,6 +12272,7 @@
       "violations": [
         {
           "row": "R4",
+          "instance": "the content-checksum flag set, layer sub-record extent",
           "rule": "R-MTA-09",
           "outcome": "ignore-record",
           "scope": {
@@ -12206,6 +12357,7 @@
       "violations": [
         {
           "row": "R5",
+          "instance": "ill-formed source bytes in a string value, top-level document",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -12293,6 +12445,7 @@
       "violations": [
         {
           "row": "R5",
+          "instance": "ill-formed source bytes in a string value, layer sub-record document",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -12377,6 +12530,7 @@
       "violations": [
         {
           "row": "R6",
+          "instance": "empty key, top-level document",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -12464,6 +12618,7 @@
       "violations": [
         {
           "row": "R6",
+          "instance": "empty key, layer sub-record document",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -12548,6 +12703,7 @@
       "violations": [
         {
           "row": "R6",
+          "instance": "key with a code point in U+0000\u2013U+001F, top-level document",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -12635,6 +12791,7 @@
       "violations": [
         {
           "row": "R6",
+          "instance": "key with a code point in U+0000\u2013U+001F, layer sub-record document",
           "rule": "R-CNT-25",
           "outcome": "ignore-record",
           "scope": {
@@ -12719,6 +12876,7 @@
       "violations": [
         {
           "row": "R7",
+          "instance": "not well-formed JSON, top-level document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -12806,6 +12964,7 @@
       "violations": [
         {
           "row": "R7",
+          "instance": "not well-formed JSON, layer sub-record document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -12890,6 +13049,7 @@
       "violations": [
         {
           "row": "R7",
+          "instance": "top-level value not an object, top-level document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -12977,6 +13137,7 @@
       "violations": [
         {
           "row": "R7",
+          "instance": "top-level value not an object, layer sub-record document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -13061,6 +13222,7 @@
       "violations": [
         {
           "row": "R7",
+          "instance": "leading U+FEFF, top-level document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -13148,6 +13310,7 @@
       "violations": [
         {
           "row": "R7",
+          "instance": "leading U+FEFF, layer sub-record document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -13232,6 +13395,7 @@
       "violations": [
         {
           "row": "R8",
+          "instance": "top-level document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -13319,6 +13483,7 @@
       "violations": [
         {
           "row": "R8",
+          "instance": "layer sub-record document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -13403,6 +13568,7 @@
       "violations": [
         {
           "row": "R9",
+          "instance": "top-level document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -13490,6 +13656,7 @@
       "violations": [
         {
           "row": "R9",
+          "instance": "layer sub-record document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -13574,6 +13741,7 @@
       "violations": [
         {
           "row": "R10",
+          "instance": "top-level document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -13661,6 +13829,7 @@
       "violations": [
         {
           "row": "R10",
+          "instance": "layer sub-record document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -43791,6 +43960,7 @@
       "violations": [
         {
           "row": "T3",
+          "instance": "interleaved P\u00b7Q, payload longer",
           "rule": "R-SER-07",
           "outcome": "reject-tile",
           "scope": {
@@ -43862,6 +44032,7 @@
       "violations": [
         {
           "row": "T3",
+          "instance": "interleaved P\u00b7Q, payload shorter",
           "rule": "R-SER-07",
           "outcome": "reject-tile",
           "scope": {
@@ -43933,6 +44104,7 @@
       "violations": [
         {
           "row": "T3",
+          "instance": "planar numeric P\u00b7B\u1d9c, payload longer",
           "rule": "R-SER-07",
           "outcome": "reject-tile",
           "scope": {
@@ -44004,6 +44176,7 @@
       "violations": [
         {
           "row": "T3",
+          "instance": "planar numeric P\u00b7B\u1d9c, payload shorter",
           "rule": "R-SER-07",
           "outcome": "reject-tile",
           "scope": {
@@ -44075,6 +44248,7 @@
       "violations": [
         {
           "row": "T3",
+          "instance": "packed planar bool \u2308P/8\u2309, payload longer",
           "rule": "R-SER-07",
           "outcome": "reject-tile",
           "scope": {
@@ -44146,6 +44320,7 @@
       "violations": [
         {
           "row": "T3",
+          "instance": "packed planar bool \u2308P/8\u2309, payload shorter",
           "rule": "R-SER-07",
           "outcome": "reject-tile",
           "scope": {
@@ -44249,6 +44424,7 @@
       "violations": [
         {
           "row": "T4",
+          "instance": "interleaved bool fill byte",
           "rule": "R-SER-05",
           "outcome": "reject-tile",
           "scope": {
@@ -44320,6 +44496,7 @@
       "violations": [
         {
           "row": "T13",
+          "instance": "deflate stream carrying a previous tile's history window",
           "rule": "R-COD-02",
           "outcome": "reject-tile",
           "scope": {
@@ -44391,6 +44568,7 @@
       "violations": [
         {
           "row": "T13",
+          "instance": "lz4 block whose match offset reaches back into a previous tile's output",
           "rule": "R-COD-02",
           "outcome": "reject-tile",
           "scope": {
@@ -44462,6 +44640,7 @@
       "violations": [
         {
           "row": "T15",
+          "instance": "zlib RFC 1950 (CMF/FLG header + trailing Adler-32)",
           "rule": "R-COD-05",
           "outcome": "reject-tile",
           "scope": {
@@ -44533,6 +44712,7 @@
       "violations": [
         {
           "row": "T15",
+          "instance": "gzip RFC 1952 member (1F 8B, trailing CRC32+ISIZE)",
           "rule": "R-COD-05",
           "outcome": "reject-tile",
           "scope": {
@@ -44604,6 +44784,7 @@
       "violations": [
         {
           "row": "T16",
+          "instance": "\u2014",
           "rule": "R-COD-05",
           "outcome": "reject-tile",
           "scope": {
@@ -44675,6 +44856,7 @@
       "violations": [
         {
           "row": "T18",
+          "instance": "a second concatenated compressed frame",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -44746,6 +44928,7 @@
       "violations": [
         {
           "row": "T18",
+          "instance": "a skippable frame before the frame",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -44817,6 +45000,7 @@
       "violations": [
         {
           "row": "T18",
+          "instance": "a skippable frame after the frame",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -44888,6 +45072,7 @@
       "violations": [
         {
           "row": "T18",
+          "instance": "a skippable frame between two frames",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -44959,6 +45144,7 @@
       "violations": [
         {
           "row": "T19",
+          "instance": "\u2014",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -45030,6 +45216,7 @@
       "violations": [
         {
           "row": "T20",
+          "instance": "\u2014",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -45101,6 +45288,7 @@
       "violations": [
         {
           "row": "T21",
+          "instance": "\u2014",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -45172,6 +45360,7 @@
       "violations": [
         {
           "row": "T22",
+          "instance": "\u2014",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -45243,6 +45432,7 @@
       "violations": [
         {
           "row": "T23",
+          "instance": "\u2014",
           "rule": "R-COD-07",
           "outcome": "reject-tile",
           "scope": {
@@ -45314,6 +45504,7 @@
       "violations": [
         {
           "row": "T24",
+          "instance": "any codec",
           "rule": "R-COD-08",
           "outcome": "reject-tile",
           "scope": {
@@ -45385,6 +45576,7 @@
       "violations": [
         {
           "row": "T25",
+          "instance": "deflate block type 3 / invalid Huffman table",
           "rule": "R-COD-08",
           "outcome": "reject-tile",
           "scope": {
@@ -45456,6 +45648,7 @@
       "violations": [
         {
           "row": "T25",
+          "instance": "corrupt zstd block header",
           "rule": "R-COD-08",
           "outcome": "reject-tile",
           "scope": {
@@ -45525,6 +45718,7 @@
       "violations": [
         {
           "row": "T26",
+          "instance": "planar numeric: channel element size",
           "rule": "R-COD-10",
           "outcome": "reject-tile",
           "scope": {
@@ -45594,6 +45788,7 @@
       "violations": [
         {
           "row": "T26",
+          "instance": "interleaved: sample stride Q",
           "rule": "R-COD-10",
           "outcome": "reject-tile",
           "scope": {
@@ -45663,6 +45858,7 @@
       "violations": [
         {
           "row": "T26",
+          "instance": "packed planar bool: identity s = 1",
           "rule": "R-COD-10",
           "outcome": "reject-tile",
           "scope": {
@@ -45920,6 +46116,7 @@
       "violations": [
         {
           "row": "L11",
+          "instance": "\u2014",
           "rule": "R-CNT-25",
           "outcome": "reject-layer",
           "scope": {
@@ -45998,6 +46195,7 @@
       "violations": [
         {
           "row": "L12",
+          "instance": "\u2014",
           "rule": "R-CNT-25",
           "outcome": "reject-layer",
           "scope": {
@@ -46068,6 +46266,7 @@
       "violations": [
         {
           "row": "L13",
+          "instance": "\u2014",
           "rule": "R-MTA-03",
           "outcome": "reject-layer",
           "scope": {
@@ -46146,6 +46345,7 @@
       "violations": [
         {
           "row": "L14",
+          "instance": "\u2014",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -46216,6 +46416,7 @@
       "violations": [
         {
           "row": "L15",
+          "instance": "trailing residue",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -46294,6 +46495,7 @@
       "violations": [
         {
           "row": "L15",
+          "instance": "sub-record inline_length",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -46372,6 +46574,7 @@
       "violations": [
         {
           "row": "L16",
+          "instance": "sub-record extent_length",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
           "scope": {
@@ -46454,6 +46657,7 @@
       "violations": [
         {
           "row": "L17",
+          "instance": "sub-record extent slot",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
           "scope": {
@@ -46532,6 +46736,7 @@
       "violations": [
         {
           "row": "L18",
+          "instance": "sub-record extent slot",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
           "scope": {
@@ -46646,6 +46851,7 @@
       "violations": [
         {
           "row": "L19",
+          "instance": "layer sub-record extents",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
           "scope": {
@@ -46716,6 +46922,7 @@
       "violations": [
         {
           "row": "L20",
+          "instance": "\u2014",
           "rule": "R-CNT-14",
           "outcome": "reject-layer",
           "scope": {
@@ -46729,8 +46936,8 @@
     },
     {
       "id": "TV-0813",
-      "file": "reject-layer/TV-0813.tarn",
-      "title": "sub-record of an unassigned type with MU = 1",
+      "file": "conforming/TV-0813.tarn",
+      "title": "a conforming layer a reader must refuse: sub-record of an experimental type with MU = 1",
       "sha256": "7c4458801ea21b60d881d8a77eeea8743f2e2a65c55726aee0e8e63c23511980",
       "size": 512,
       "conforming": true,
@@ -46748,10 +46955,6 @@
         ]
       },
       "expect": {
-        "must_not_serve": [
-          "layer:sub"
-        ],
-        "may_escalate_to": "file",
         "serves": [
           {
             "layer": "ok",
@@ -46790,20 +46993,7 @@
             ]
           }
         ]
-      },
-      "violations": [
-        {
-          "row": "L25",
-          "rule": "R-CNT-18",
-          "outcome": "reject-layer",
-          "scope": {
-            "kind": "layer",
-            "name": "sub"
-          },
-          "detector": "reader",
-          "detected": "layer access"
-        }
-      ]
+      }
     },
     {
       "id": "TV-0814",
@@ -46904,6 +47094,7 @@
       "violations": [
         {
           "row": "L26",
+          "instance": "\u2014",
           "rule": "R-CNT-15",
           "outcome": "reject-layer",
           "scope": {
@@ -46974,6 +47165,7 @@
       "violations": [
         {
           "row": "L27",
+          "instance": "\u2014",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
           "scope": {
@@ -47084,6 +47276,7 @@
       "violations": [
         {
           "row": "L48",
+          "instance": "flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -47191,6 +47384,7 @@
       "violations": [
         {
           "row": "L49",
+          "instance": "\u2014",
           "rule": "R-MTA-05",
           "outcome": "reject-layer",
           "scope": {
@@ -47225,6 +47419,7 @@
       "violations": [
         {
           "row": "F7",
+          "instance": "F (physical file size)",
           "rule": "R-CNT-27",
           "outcome": "reject-file",
           "scope": {
@@ -47265,6 +47460,7 @@
       "violations": [
         {
           "row": "F7",
+          "instance": "committed_file_length",
           "rule": "R-CNT-27",
           "outcome": "reject-file",
           "scope": {
@@ -47307,6 +47503,7 @@
       "violations": [
         {
           "row": "F15",
+          "instance": "committed_file_length",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -47383,6 +47580,7 @@
       "violations": [
         {
           "row": "F28",
+          "instance": "\u2014",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
           "scope": {
@@ -47462,6 +47660,7 @@
       "violations": [
         {
           "row": "F39",
+          "instance": "\u2014",
           "rule": "R-CNT-15",
           "outcome": "reject-file",
           "scope": {
@@ -47575,6 +47774,7 @@
       "violations": [
         {
           "row": "F36",
+          "instance": "sub-record extents",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
           "scope": {
@@ -47653,6 +47853,7 @@
       "violations": [
         {
           "row": "L1",
+          "instance": "sub-record extent_offset",
           "rule": "R-ENC-03",
           "outcome": "reject-layer",
           "scope": {
@@ -47732,6 +47933,7 @@
       "violations": [
         {
           "row": "L1",
+          "instance": "sub-record extent_length",
           "rule": "R-ENC-03",
           "outcome": "reject-layer",
           "scope": {
@@ -47811,6 +48013,7 @@
       "violations": [
         {
           "row": "L2",
+          "instance": "N\u00b7P",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {
@@ -47820,6 +48023,46 @@
           },
           "detector": "reader",
           "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0910",
+      "file": "reject-file/TV-0910.tarn",
+      "title": "F38 top-level record of reserved type 0x0003 with MU = 1",
+      "sha256": "882de63165a4db7854e768ed0b00d476d69245f348fa9556cec5e3affb343cad",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].header",
+            "value": "030003000100000040000000000000001b00000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "file"
+        ],
+        "may_escalate_to": "file"
+      },
+      "violations": [
+        {
+          "row": "F38",
+          "instance": "\u2014",
+          "rule": "R-CNT-15",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file"
+          },
+          "detector": "reader",
+          "detected": "open"
         }
       ]
     },
@@ -47895,6 +48138,7 @@
       "violations": [
         {
           "row": "L33",
+          "instance": "channel count C",
           "rule": "R-GEO-01",
           "outcome": "reject-layer",
           "scope": {
@@ -48031,6 +48275,7 @@
       "violations": [
         {
           "row": "L42",
+          "instance": "\u2014",
           "rule": "R-SLB-03",
           "outcome": "reject-layer",
           "scope": {
@@ -48039,6 +48284,89 @@
           },
           "detector": "verifier",
           "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0915",
+      "file": "reject-layer/TV-0915.tarn",
+      "title": "L25 sub-record carrying reserved-range type 0x0003 with MUST_UNDERSTAND = 1",
+      "sha256": "403b80581393928f3fb951d2ab1aa6c60a8c36c3bf06c249b17e8020a883a288",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].type",
+            "value": "0300"
+          },
+          {
+            "field": "layer[sub].sub[0].flags",
+            "value": "0300"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L25",
+          "instance": "\u2014",
+          "rule": "R-CNT-18",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
         }
       ]
     },
@@ -48110,6 +48438,7 @@
       "violations": [
         {
           "row": "L19",
+          "instance": "stored-tile extents",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
           "scope": {
@@ -48187,6 +48516,7 @@
       "violations": [
         {
           "row": "L47",
+          "instance": "\u2014",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {

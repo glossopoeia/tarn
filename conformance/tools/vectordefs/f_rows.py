@@ -685,13 +685,20 @@ VECTORS = [
     # the type is from the experimental range rather than the reserved one so
     # that [R-CNT-15]'s reserved-range verifier error is not either.
     # ------------------------------------------------------------------
-    Vector("TV-0152", "meta", "F38 top-level record of unassigned type 0x8001 "
-           "with MUST_UNDERSTAND = 1", False,
+    # §21.6's second exception, not F38. F38 is scoped to the *reserved*
+    # range (0x0003-0x7FFF); 0x8001 is experimental (§10.2), and for an
+    # experimental type with MU = 1 `[R-CNT-15]` obliges the reader to
+    # reject while `[R-CNF-02]` leaves the bytes conforming — §10.3's
+    # prohibition binds a writer's conduct, not the file. So this vector
+    # names no register row and asserts the refusal of a valid file.
+    # TV-0813 is its layer-scope twin. TV-0910 covers F38 proper.
+    Vector("TV-0152", "meta", "a conforming file a reader must refuse: "
+           "top-level record of experimental type 0x8001 with "
+           "MUST_UNDERSTAND = 1", True,
            patches=[Patch("record[0x0002].header",
                           _hdr(_EXPERIMENTAL, 0b11, 1, _M_EO, _M_EL))],
            repair=["directory.crc", "trailer.crc"],
-           row="F38", rule="R-CNT-15", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
+           must_not_serve=["file"]),
 ]
 
 
