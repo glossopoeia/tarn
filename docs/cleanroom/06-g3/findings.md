@@ -60,17 +60,76 @@ audit figures is what found it.
 
 ## Disposition
 
-Every AMBIGUITY and CONTRADICTION is a spec bug under ADR-0034, to be
-fixed or explicitly deferred with a named owning section. None is
-dispositioned yet — the raw findings are recorded here first so the
-triage can be reviewed against them rather than replacing them.
+Three independent triage passes deduplicated the 85 findings and
+re-judged each against a strict test: *does resolving it change which
+byte sequences a conforming implementation may emit, or must accept or
+reject?* Each pass covered every finding id; 84 of 85 were covered by all
+three.
 
-Before fixing, the set needs deduplication: several findings are the same
-defect seen from different roles (§9.6 vs §9.7 appears three times,
-§17.4's dangling citation three times), and the `byte_level` flag is the
-reporter's own judgement and is over-claimed in places — a finding about
-which register row a verifier names does not change a byte any
-implementation emits or accepts.
+| | |
+|---|---|
+| Distinct defects | **67** (passes reached 68 / 67 / 66) |
+| Consensus status | 55 CONFIRMED · 22 PARTIAL · 8 REFUTED |
+| **Byte-level, unanimous** | **5 defects** |
+| Byte-level with 2-of-3 support | 8 defects |
+
+**The 33 self-flagged byte-level findings reduce to 5 unanimous.** The
+over-claim has one dominant cause, and it is worth recording because it
+will recur: a reporter finds a register row contradicting a rule and
+concludes a verifier's verdict is open — when §21.1's *"where a row and
+the rule it cites diverge, the rule governs"* has already decided it, and
+only the table is wrong. Every surviving byte-level defect is a place
+where **the rule itself is silent**: a namespace, a nesting depth, a
+quantifier over channels, an ordering of two checks, a reader class with
+an undetermined middle.
+
+### The five
+
+1. **§18.2 `[R-MTA-05]` does not say at what nesting depth the
+   ascending-key sort binds.** The cleanest defect of the round: two
+   conforming writers given identical content emit different bytes, and
+   the rule's own stated purpose — *"This makes one writer's output
+   reproducible for identical content"* — is achieved only under the
+   recursive reading. Nesting is not hypothetical; §18.4 registers
+   `tarn.stats` as *"object keyed by channel name, each value an
+   object"*. Fix: three words.
+2. **§4.6 `[R-ENC-15]` does not say whether dimension names and channel
+   names share one namespace.** *"dimension names and channel names
+   within their layer"* — a layer with a dimension `x` and a channel `x`
+   is conforming under one reading and reject-layer under the other.
+3. **§17.2 `[R-COD-07]`'s lz4 cap says "the tiles' decoded size" in the
+   singular**, but §14.2/§14.3 give a planar layer one decoded size per
+   channel, and `[R-SER-09]` guarantees a planar layer may mix types.
+4. **§6.1 `[R-CNT-04]`'s local/remote reader test is economic, not
+   structural**, so a memory mapping over a network filesystem satisfies
+   both definitions and the MUST over bytes [0,16) has no determinate
+   addressee.
+5. **§21.5 row R1 registers experimental-range metadata encodings as
+   violations**, where §21.6 states the opposite principle for the
+   identical case — `[R-CNF-02]` makes conduct bind the actor and not the
+   bytes.
+
+Three more carried 2-of-3 support and want a decision either way:
+`[R-COD-06]`'s *"declared window size"* against RFC 8878's two
+derivations; the ordering of the layer-name uniqueness check against
+ill-formed names; and `generation`'s 2⁶³−1 ceiling, asserted by §6.2's
+table and enforced by no rule.
+
+### Everything else
+
+The remaining ~59 defects are real but not byte-level: stale sentences,
+dangling cross-references, mislabelled figures, register bookkeeping, and
+places where a diagnostic or a verdict label is undefined. Roughly 25 need
+no decision about what the format means at all — a quarter of those are
+figures and captions added in the same session as this round.
+
+One correction to the round's own reporting, recorded because the error
+was mine: I judged the §9.6/§9.7 generation-enumeration contradiction
+byte-level before the triage ran. It is not. Prior generations' bytes are
+slack, and `[R-CNT-21]` says no conformance requirement applies to them —
+so a verifier that enumerated generations would find nothing it could
+reject, and neither reading changes which files are accepted. The
+contradiction is real and still wants fixing; it does not bear on G3.
 
 The per-role transcripts carry the full text of every finding, including
 the permitted readings each agent enumerated and which it picked.
