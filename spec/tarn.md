@@ -2313,13 +2313,16 @@ that key rather than the document.
 | `tarn.axes` | layer | array of one object per dimension, in declared order, each with optional `unit` (string), `origin` (number), and `step` (number) |
 | `tarn.stats` | layer | object keyed by channel name, each value an object with optional `min` and `max` (numbers) |
 
-A writer MUST NOT emit a standardized key outside the scopes its row
-lists, and a reader MUST ignore a standardized key found outside its
-listed scope, or whose value does not match the shape its row gives,
-rather than rejecting the document. A file carrying a standardized
-key outside its listed scope is nonconforming, and a verifier detects
-it (`[R-CNF-11]`); no reader's behavior turns on the violation, since
-a reader ignores the key either way. `[R-MTA-07]`
+A writer SHOULD emit a standardized key only within the scopes its row
+lists, and only with a value of the shape its row gives. A reader MUST
+ignore a standardized key found outside its listed scope, or whose
+value does not match the shape its row gives, rather than rejecting
+the document. Neither placement nor value shape bears on validity: the
+file stays conforming, exactly as it does for an unrecognized
+`tarn.`-prefixed key (§21.6). No reader's behavior turns on either,
+since a reader ignores such a key and reads the rest of the document —
+and enforcing them would put a verifier to work on the content of
+metadata, which §21.7 excludes by design. `[R-MTA-07]`
 
 `tarn.axes` gives the affine mapping from a dimension's integer
 coordinate i to a physical position, `origin + i × step`, in the
@@ -3023,6 +3026,7 @@ of them as a failure is the nonconforming party.
 | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
 | A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]` |
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
+| A standardized key (§18.4) appears outside its listed scope, or carries a value whose shape its row does not give | Conforming: placement and value shape are writer guidance, and a reader ignores the key and reads the rest of the document, exactly as for an unrecognized key above | `[R-MTA-07]` |
 | A payload contains a byte string that mimics a trailer | Inert: nothing enumerates slack, and a recovery tool re-verifies its output whole (§9.6) — which catches any mimic that is not itself a consistent generation; §9.6's second caution covers the rest | `[R-LIF-06]` |
 | Under a compressing codec (2–4), a stored tile's decoded size differs from its stored length | Expected: codecs compress, and can expand — codec 1's equality is `[R-COD-04]`'s subject | `[R-COD-08]` |
 

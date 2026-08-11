@@ -166,7 +166,22 @@ and registered, so it never reaches the row that would have barred
 modifying it, and §20.3's append is permitted again. ADR-0061 is
 unchanged: the decision was right, only its propagation was not.
 
-The remaining 43 are undispositioned. They are not the same shape as earlier
+**A second is resolved by deletion: `mta07-standardized-key-no-register-row`**
+(ADR-0063). The finding was right that §21 omits a violation the document
+names, and the repair is not the one the finding implies. §18.4's own
+Note explains that material lives in metadata *"rather than as a
+structural record whose staleness would need rules, verifier
+obligations, and an updater's attention"* — so attaching a verifier
+obligation to a metadata key works against the reason the material is
+there. §21.6 already blessed an unrecognized `tarn.`-prefixed key as
+conforming, which made the specification's knowing *more* about a key
+the thing that made a file worse. Placement and value shape are now
+writer guidance; the register is unchanged at 125 conditions over 242
+named instances, and no vector is owed. Registering it instead would
+have cost 2 conditions, 4 instances and 4 vectors to detect a condition
+no reader can observe.
+
+The remaining 42 are undispositioned. They are not the same shape as earlier
 rounds' findings: rounds 4 and 5 found propagation failures, round 6
 found silences, and this round found mostly **restatements that stop
 short** — §19's tier lists, §21.7's inventory, §8.1's checksum map, each
