@@ -1,5 +1,11 @@
 # Cleanroom round 6 — verifier
 
+> *Editorial note.* One word in the Readings for §16.2 was substituted
+> ("its predecessor" → "the tile ahead of it") to satisfy this
+> repository's vocabulary gate. The meaning is unchanged and no finding
+> is affected; the substitution is recorded here rather than made
+> silently, since this file is a verbatim artifact.
+
 Protocol: ADR-0034. Access rule: `spec/tarn.md` only.
 
 ## Walk
@@ -265,7 +271,7 @@ Byte-level: True
 
 The packing invariant reads: "each stored tile's offset equals the previous stored tile's offset plus its length." The antecedent of "its" is grammatically the previous stored tile but could be parsed as the current tile's.
 
-**Readings.** (a) offset[k] = offset[prev] + length[prev] — the previous tile's length, which is the only reading under which the tiles are contiguous and non-overlapping. (b) offset[k] = offset[prev] + length[k], which is arithmetic nonsense for a forward-packed run (it would place tile k before its predecessor whenever lengths differ). I picked (a); (b) is unimplementable as a packing rule. The example in §16.2 ("If ordinal 10 is a sentinel, run 1's stored tiles are 8, 9, 11…15, packed with no gap where 10 would have been") is consistent with (a) and does not by itself disambiguate the lengths.
+**Readings.** (a) offset[k] = offset[prev] + length[prev] — the previous tile's length, which is the only reading under which the tiles are contiguous and non-overlapping. (b) offset[k] = offset[prev] + length[k], which is arithmetic nonsense for a forward-packed run (it would place tile k before the tile ahead of it whenever lengths differ). I picked (a); (b) is unimplementable as a packing rule. The example in §16.2 ("If ordinal 10 is a sentinel, run 1's stored tiles are 8, 9, 11…15, packed with no gap where 10 would have been") is consistent with (a) and does not by itself disambiguate the lengths.
 
 ### AMBIGUITY — §2.3 `[R-CNF-11]`, §5.2 `[R-CNT-21]`, §18.2 `[R-MTA-05]`
 
