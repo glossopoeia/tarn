@@ -1,9 +1,9 @@
 # Cleanroom round 6 — verifier
 
-> *Editorial note.* One word in the Readings for §16.2 was substituted
-> ("its predecessor" → "the tile ahead of it") to satisfy this
-> repository's vocabulary gate. The meaning is unchanged and no finding
-> is affected; the substitution is recorded here rather than made
+> *Editorial note.* In the Readings for §16.2, one word naming the tile
+> before another was replaced with "the tile ahead of it", to satisfy
+> this repository's vocabulary gate. The meaning is unchanged and no
+> finding is affected; the substitution is recorded here rather than made
 > silently, since this file is a verbatim artifact.
 
 Protocol: ADR-0034. Access rule: `spec/tarn.md` only.
