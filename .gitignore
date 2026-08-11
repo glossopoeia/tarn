@@ -9,3 +9,7 @@ Thumbs.db
 # Local scratch — never commit working notes
 *.local.md
 scratch/
+
+# Python bytecode — build artifacts of conformance/tools/, never source
+__pycache__/
+*.py[cod]
