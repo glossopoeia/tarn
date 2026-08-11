@@ -152,7 +152,21 @@ matching §21.8 exactly.
 
 ## Disposition
 
-None of the 44 is dispositioned. They are not the same shape as earlier
+**One of the 44 is fixed: `wrt08-mu1-row-forbids-layer-edit`.** The
+table's scope is restored to the types it was always about. Its header
+now keeps ADR-0061's decision — persistence governs every record type,
+the registry's flags are authoritative for a registered one, and
+implementing a type confers understanding rather than permission to drop
+it — and then hands the table itself to *"a type the updater does not
+implement,"* for which §7.3 already says the stored flags are
+authoritative. That restores agreement with the column header the table
+carries (**Stored flags**) and with the MU = 1 cell's own gloss, *"an
+unknown critical record at layer scope."* A layer record is implemented
+and registered, so it never reaches the row that would have barred
+modifying it, and §20.3's append is permitted again. ADR-0061 is
+unchanged: the decision was right, only its propagation was not.
+
+The remaining 43 are undispositioned. They are not the same shape as earlier
 rounds' findings: rounds 4 and 5 found propagation failures, round 6
 found silences, and this round found mostly **restatements that stop
 short** — §19's tier lists, §21.7's inventory, §8.1's checksum map, each

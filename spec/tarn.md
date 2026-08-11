@@ -2691,10 +2691,11 @@ under its writer obligations (`[R-CNF-05]`). `[R-WRT-05]`
 Persistence governs every record type; only the authoritative source
 of the flags differs. For a type §7.3 registers, the registry's fixed
 flags govern rather than the stored ones (`[R-CNT-22]`) — both
-registered types carry PE = 1, so neither can be dropped. For any
-other type, the stored flags govern (`[R-CNT-15]`; MU = 1 with
-PE = 0 is read as PE = 1, `[R-CNT-12]`). Implementing a record's type
-confers understanding of it, not permission to drop it:
+registered types carry PE = 1, so neither can be dropped, and
+implementing a record's type confers understanding of it, not
+permission to drop it. For a type the updater does not implement, the
+stored flags are authoritative (§7.3, `[R-CNT-15]`; MU = 1 with
+PE = 0 is read as PE = 1, `[R-CNT-12]`), and carry these obligations:
 
 | Stored flags | Updater obligation |
 |---|---|
