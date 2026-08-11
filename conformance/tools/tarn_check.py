@@ -65,6 +65,8 @@ COMPLETENESS_DISPOSITIONED = {
     "R-GEO-03": "grid arithmetic; the layer-scope overflow row is its row and cites it",
     "R-MTA-02": "binds reader conduct — metadata is never structural; no file exhibits it",
     "R-VEC-04": "constrains how the corpus is built, not what a file may contain",
+    "R-LIF-08": "the verifier's coverage procedure; the violations it finds are the overlap rows'",
+    "R-SLB-04": "a writer obligation whose detection it delegates to [R-SLB-03]; ADR-0057 deleted its row",
 }
 
 # AGENTS.md rule 5: BCP 14 keywords appear in ALL CAPS only. The verb forms

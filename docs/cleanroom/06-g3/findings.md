@@ -119,13 +119,40 @@ window size"* — turned out to need no decision: RFC 8878's two
 derivations agree on every tile, so it took a Note rather than a rule.
 Two of three passes over-called it byte-level.
 
-### Everything else
+### Everything else — 49 of 56 cleared
 
-The remaining ~59 defects are real but not byte-level: stale sentences,
-dangling cross-references, mislabelled figures, register bookkeeping, and
-places where a diagnostic or a verdict label is undefined. Roughly 25 need
-no decision about what the format means at all — a quarter of those are
-figures and captions added in the same session as this round.
+The editorial tail deduplicated to **56 defects**, 37 of them agreed by
+all three triage passes. Fifty-four edits landed: stale sentences,
+dangling cross-references, figure labels that contradicted their own
+section, register rows that restated their rule too broadly, and four
+places where a verdict or a diagnostic had no name.
+
+Three of the four §21 edits move instance counts — one row gains the
+`generation` upper bound, one gains the trailing-residue instance its
+layer-scope twin already carried, and one loses two instances that no
+file can exhibit at certification because the bounds rows catch them at
+open. They net to zero, so the register stands at **125 conditions over
+242 named instances** and the corpus's 125/125 row coverage is
+unchanged.
+
+**Seven remain open, none of them editorial after all:**
+
+- Three were declined on the merits — a drafter read the text and found
+  no defect. The clearest is the claim that the endianness row's
+  `generation` instance is unconstructible: a `generation` of 128 stored
+  big-endian reads back as 2⁶³, which `[R-CNT-06]`'s gate now rejects,
+  so the instance is exactly what that row describes.
+- Four are design decisions wearing editorial clothes: whether metadata
+  encoding 2 is core; whether a reject-layer outcome is prospective or
+  retroactive; whether an appender may drop a record of a type it *does*
+  implement; and whether a verifier may stop at the first violation.
+  Each changes what an implementation must do, so each wants an ADR
+  rather than a redraft.
+
+That the drafting agents refused four edits on exactly this ground is
+the useful result. The instruction was *if this would change what a file
+may contain or what a reader must reject, stop* — and the boundary held
+where it mattered.
 
 One correction to the round's own reporting, recorded because the error
 was mine: I judged the §9.6/§9.7 generation-enumeration contradiction
