@@ -759,6 +759,19 @@ VECTORS = [
 # --------------------------------------------------------------------------
 
 SKIPPED = {
+    # §21.9, the directory-region row ADR-0065 added. Joins the five
+    # §21.9 guarantees already skipped below on the same ground: the
+    # at-bound file is real but its size makes it unshippable. A 16 MiB
+    # directory is about 16.8 MB of vector, roughly four times the whole
+    # 4.2 MB corpus, and it exercises no condition a smaller file cannot —
+    # exceeding a §21.9 guarantee leaves the file conforming (`[R-ERR-04]`),
+    # so there is no register row and no outcome to assert.
+    "§21.9/size of the directory region = 16 MiB":
+        "An at-bound vector is ~16.8 MB, about 4x the entire corpus, and "
+        "asserts nothing a smaller file does not: a file exceeding a §21.9 "
+        "guarantee remains conforming (`[R-ERR-04]`), so the row carries no "
+        "outcome and no register condition. The guarantee bounds what a "
+        "reader may decline, not what a file may contain.",
     # §21.6, row 2.
     "§21.6/coordinate outside the layer's extents":
         "The condition is a property of a *request*, not of a file: the "

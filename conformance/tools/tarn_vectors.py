@@ -466,7 +466,7 @@ INSTANCE_OF: dict[str, str] = {
     'TV-0111': 'extent_length',
     'TV-0112': 'dir_offset + dir_length',
     'TV-0113': 'non-layer top-level record extent_offset + extent_length',
-    'TV-0114': 'trailer (e.g. a single u32 written across the version_major and version_minor slots)',
+    'TV-0114': 'trailer (e.g. version_major and version_minor each written as u32)',
     'TV-0115': 'top-level record header',
     'TV-0116': 'layer record name',
     'TV-0117': 'magic bytes [0,8)',

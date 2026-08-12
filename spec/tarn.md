@@ -46,9 +46,10 @@ The design pillars, each paid for elsewhere in this document:
   the tile's own bytes (§19.4) — the array being the only term that
   grows with the layer, which is what §21.9's tile-count guarantee is
   sized against.
-- **Integrity by default.** Every structure is checksummed, and
-  verification is a reader obligation with no flag that disables it
-  (§8). Corruption is detected at the finest scope it damages, so one
+- **Integrity by default.** Every structure whose contents this
+  specification defines is checksummed, and verification is a reader
+  obligation with no flag that disables it (§8). Corruption is
+  detected at the finest scope it damages, so one
   bad tile does not condemn a file.
 - **Append without rewriting.** A commit appends payloads, a complete
   directory, and a trailer, in that order; committed bytes are never
@@ -184,10 +185,21 @@ Conformance is defined for five classes.
   requirement is one it is unable to check, as when the file names a
   format major version it does not implement, when a record carries
   MUST_UNDERSTAND = 1 with a type it does not implement (§21.6), when
-  it cannot execute a codec or filter (`[R-COD-11]`), or when it
-  declines to decode a user-metadata document (`[R-MTA-09]`).
+  it cannot execute a codec or filter (`[R-COD-11]`), when it
+  declines a layer's or a tile's decode on resource grounds and so
+  cannot check §14's decoded-content obligations (`[R-ERR-04]`,
+  `[R-SER-05]`, `[R-SER-08]`), or when it declines to decode a
+  user-metadata document (`[R-MTA-09]`).
   *Cannot establish* is not a finding that the file is nonconforming,
-  and a verifier MUST NOT certify a file it reports that way.
+  and a verifier MUST NOT certify a file it reports that way. An
+  established violation takes priority: a verifier that has
+  established any violation reports *nonconforming*, however many
+  requirements it was unable to check, and *cannot establish* is
+  available only to a traversal that established no violation. A
+  verifier MUST report each requirement it was unable to check,
+  naming the requirement and the ground, whichever of the three
+  verdicts it reports; that per-requirement report constrains the
+  report and not the verdict, as *unexamined* does below.
   A verifier MAY stop at the first violation it finds; one that does
   MUST report each scope it did not examine as *unexamined*, which is
   not a finding that the scope is clean. *Unexamined* is neither a
@@ -296,8 +308,9 @@ these meanings.
   everything else in a generation is reached: a sequence of records
   (§7), including every layer record, followed by its checksum, located
   from the trailer. Each commit appends a *complete* directory — never
-  a delta — so a file contains one directory per generation;
-  unqualified, *the directory* means the live generation's.
+  a delta (§9.2) — so a conforming commit adds one directory per
+  generation; unqualified, *the directory* means the live
+  generation's.
 - **trailer** — the fixed-size 64-byte structure that commits a
   generation (§6); each commit appends one, and the *live* trailer
   occupies the final 64 bytes of the file.
@@ -417,10 +430,12 @@ seek, fetch, or select behavior; comparing a field against a constant
 for validation is not acting on it, and an explicit validation order
 (§6.2) governs where one is stated. `[R-ENC-10]` Every field of every
 structure is covered by exactly one checksum, excepting the front
-signature block (a constant whose check is equality, §6) and the
+signature block (a constant whose check is equality, §6), the
 terminal checksum fields of §8.1's map — the trailer, directory-
 region, and user-metadata checksum fields — which are verified by
-comparison and covered by no further checksum. Interior checksum
+comparison and covered by no further checksum, and the extent of a
+record of a type this specification has not assigned, which §8.1's
+map covers by no checksum at all. Interior checksum
 fields — each segment CRC array, each tile-index entry's crc field,
 and each layer record's crc_of_crc_array — are both
 comparison-verified and covered by
@@ -505,11 +520,12 @@ what a reader does when it contradicts the data it describes.
 A TARN file is written generation by generation (§9). Byte 0 begins the
 constant 16-byte **front signature block** (§6.1). The final 64 bytes of
 the file are the live **trailer** (§6.2). Between them lie the
-structures of every generation — stored-tile payloads, tile-index
-regions, record extents (§5.2), each generation's directory, and each
-prior generation's trailer — appended generation by generation, with
-slack (§5.2) wherever a commit left a gap; within each generation the
-directory, pre-trailer pad, and trailer come last (§6.2, §9.2). The file size of a conforming file
+structures the file's commits appended — stored-tile payloads,
+tile-index regions, record extents (§5.2), the directory each commit
+appended, and each prior generation's trailer — with slack (§5.2)
+wherever a commit left a gap; a commit appends its own directory,
+pre-trailer pad, and trailer last, in that order (§6.2,
+`[R-LIF-02]` steps 3 and 5). The file size of a conforming file
 equals the live trailer's committed file length F, and F is a multiple
 of 64 (§6.2). `[R-CNT-01]`
 
@@ -548,10 +564,11 @@ scope. `[R-CNT-27]`
 > never moved: a layer the commit does not touch keeps its extent slot
 > pointing where it always pointed (§20.3, `[R-WRT-05]`), so a commit
 > that touches no layer re-emits the directory, the pad and the trailer
-> alone. A commit that changes a layer's stored-tile set, index
-> content, or index placement re-emits that layer's whole tile-index
-> region as well (§20.3, `[R-WRT-04]`) — the commit that added layer B
-> here did exactly that.
+> alone. A commit that changes a layer's stored-tile set or index
+> content re-emits that layer's whole tile-index region as well, at a
+> new placement (§20.3, `[R-WRT-04]`) — the commit that added layer B
+> here did exactly that. A commit never relocates a live index region
+> otherwise; that is compaction's operation (§20.5, `[R-WRT-07]`).
 >
 > This is what tail-anchored discovery buys. Because the structures that
 > must change on every commit are the last ones in the file, a commit
@@ -576,10 +593,14 @@ superseded. Slack has no internal structure this specification
 defines, its content is unconstrained, and no conformance requirement
 applies to it. A reader MUST NOT interpret it (§9.5); a verifier MUST
 report the total number of slack bytes, since that number is what
-tells an operator to compact; where a scope-level rejection stops the
-walk of §9.7 from enumerating a region's claimants, the verifier MUST
-report the total as partial and name the regions it could not walk.
-Only compaction (§20.5) reclaims it.
+tells an operator to compact. Where the walk of §9.7 does not
+enumerate every region's claimants — whether because a scope-level
+rejection stops it, or because the verifier elected under `[R-CNF-11]`
+to stop at the first violation — the verifier MUST report the total
+as partial. A partial total counts only the bytes no claimant claims
+within the regions the verifier did walk, and a verifier reporting one
+MUST also name the regions it did not walk and report their byte
+extent. Only compaction (§20.5) reclaims it.
 `[R-CNT-21]` Slack that holds superseded data is a privacy
 consideration (§23).
 
@@ -600,11 +621,13 @@ slack content either way. `[R-CNT-03]`
 
 > **Note.** Of this rule's two halves, only disjointness is testable.
 > The live committed state is *defined* as the front block plus what
-> the coverage walk reaches, and `[R-LIF-08]` makes every byte the walk
-> misses slack — so "belongs to no class" describes nothing, and a
-> register row for it would be a row no file could exhibit. What
-> remains, and what a verifier actually checks, is that no two
-> claimants overlap.
+> a complete coverage walk reaches, and `[R-LIF-08]` makes every byte
+> that walk misses slack — so "belongs to no class" describes nothing,
+> and a register row for it would be a row no file could exhibit. A
+> partial total (`[R-CNT-21]`) reports what one verifier's incomplete
+> walk left unclaimed, which is a fact about that run and not about
+> the file's live state. What remains, and what a verifier actually
+> checks, is that no two claimants overlap.
 
 > **Note.** Coverage is checked by verifiers, never by readers: a
 > reader's obligations never require walking anything but the live
@@ -732,11 +755,14 @@ ignore lane (bits 16–31). In this specification's text no flag bits
 are defined: a writer creating a file under this text MUST write
 flags = 0, but a set ignore-lane bit is not a file-conformance
 violation — such bits are defined by later minor versions, and files
-carrying them are conforming files this text's readers ignore. An
-updater MUST copy forward unknown ignore-lane bits of the file it
-modifies and MUST NOT clear them; an updater encountering an unknown
-incompat-lane bit is a reader first, and therefore rejects the file
-before modifying anything. `[R-CNT-08]`
+carrying them are conforming files this text's readers ignore. A
+compactor, though its output is a new file, carries the input's
+unknown ignore-lane bits into its output trailer rather than writing
+flags = 0 (§20.5, `[R-WRT-06]`). An updater MUST copy forward
+unknown ignore-lane bits of the file it modifies and MUST NOT clear
+them; an updater encountering an unknown incompat-lane bit is a
+reader first, and therefore rejects the file before modifying
+anything. `[R-CNT-08]`
 
 A writer SHOULD emit the lowest version_minor that defines every
 feature present in the file — for a file expressible under this text,
@@ -990,8 +1016,11 @@ validity error at layer scope, not an unknown type. `[R-CNT-18]`
 
 Every field of every structure is covered by exactly one checksum —
 excepting the equality-checked front signature block and this map's
-terminal checksum fields, per §4.5 — as this map states. All
-checksums are CRC-32C over bytes exactly as stored. `[R-CNT-19]`
+terminal checksum fields, per §4.5, and the extent of a record of a
+type this specification has not assigned, in which this specification
+defines no fields (§4.7) and whose bytes it leaves opaque (§7.2) — as
+this map states. All checksums are CRC-32C over bytes exactly as
+stored. `[R-CNT-19]`
 
 | Structure | Checksum location | Covers |
 |---|---|---|
@@ -1001,6 +1030,7 @@ checksums are CRC-32C over bytes exactly as stored. `[R-CNT-19]`
 | Tile-index region | the per-segment CRC array, itself covered by the layer record's crc_of_crc_array | index entries, per segment (§15) |
 | Stored tile | the crc field of its index entry | the tile's stored bytes |
 | User-metadata extent | final 4 bytes of the extent | the preceding bytes (the encoded bytes exactly as stored, before decoding) |
+| Extent of a record of a type this specification has not assigned | none — the bytes are opaque (§7.2) | — |
 
 #### 8.2 Verification obligations and outcomes
 
@@ -1196,19 +1226,28 @@ A verifier checking `[R-CNT-02]`'s partition walks the live state
 only. From the live trailer it enumerates the live directory and its
 records, each record's extent, and the non-sentinel entries of each
 layer's tile-index region (an entry `[R-IDX-03]` classifies
-reject-tile contributes no stored extent to the walk). A layer
+reject-tile on a *structural* ground contributes no stored extent to
+the walk; one whose stored bytes alone fail its crc keeps its
+extent). A layer
 record's extent slot addresses that layer's tile-index region (§7.4),
 so the region enters the walk once, as that record's extent, and is
 not a second claimant beside it. It checks that these occupy disjoint
 byte ranges, that
 each lies within
-[16, F − 64), and that each verifies against the checksum covering it
-(§8.1). The front signature block at [0, 16) and the live trailer at
-[F − 64, F) are claimed by the walk as well, being members of the live
-committed state (`[R-CNT-02]`); the [16, F − 64) bound above already
+[16, F − 64), and that each verifies against the checksum covering
+it, where §8.1's map states one (§8.1). The front signature block at
+[0, 16) and the live trailer at [F − 64, F) are claimed by the walk as
+well, being members of the live committed state (`[R-CNT-02]`); the
+[16, F − 64) bound above already
 keeps every other claimant disjoint from them. Bytes the walk does not
-reach are slack: the verifier sums
-them and reports the total, and their content is not its concern.
+reach are slack: the verifier sums them and reports the total, and
+their content is not its concern. Where the walk does not complete —
+a scope-level rejection blocks enumeration, or the verifier stops at
+the first violation (`[R-CNF-11]`) — the sum covers only the regions
+walked, and `[R-CNT-21]` governs what such a partial total counts and
+what the verifier reports beside it. An entry `[R-IDX-03]` classifies
+reject-tile does not make the walk incomplete: the walk passes over
+it, and the bytes it nominally addresses fall to slack (§15.3).
 `[R-LIF-08]`
 
 > **Note.** Nothing here enumerates prior commits. A verifier
@@ -1873,22 +1912,28 @@ sentinel value 2⁶⁴ − 1, a reader MUST classify as follows; rows
 marked *verifier* require whole-index or whole-file knowledge and
 bind verifiers, not ordinary readers. The per-entry outcomes below
 govern notwithstanding the general owning-scope mapping of
-`[R-ENC-03]`/`[R-ENC-04]`; an entry these rows classify reject-tile
-contributes no stored extent to the *verifier* rows, which bind
-over well-formed entries' extents only, and none to `[R-LIF-08]`'s
-coverage walk, whose slack total therefore includes whatever bytes
-such an entry nominally addresses. `[R-IDX-03]`
+`[R-ENC-03]`/`[R-ENC-04]`. Six rows are marked *structural*: they
+classify an entry whose own 20 bytes yield no usable extent. Such an
+entry contributes no stored extent to the *verifier* rows, which bind
+over well-formed entries' extents only — `[R-SLB-03]`'s run
+continuity closes over it as it does over a sentinel — and none to
+`[R-LIF-08]`'s coverage walk, whose slack total therefore includes
+whatever bytes such an entry nominally addresses. An entry whose only
+defect is that its stored bytes fail its crc is well-formed: the
+defect lies in the bytes it addresses, not in the entry, so its
+extent stands and it keeps its place in the *verifier* rows, in run
+continuity, and in the coverage walk. `[R-IDX-03]`
 
 | Entry state | Outcome |
 |---|---|
 | offset = S ∧ length = S ∧ crc = 0 | valid sentinel — reads as fill |
-| offset = S ∧ length = S ∧ crc ≠ 0 | reject-tile |
-| offset = S ∧ length ≠ S, or offset ≠ S ∧ length = S | reject-tile |
-| length = 0 (non-sentinel) | reject-tile — absence is spelled sentinel; no codec emits zero bytes |
-| offset < 16 (non-sentinel) | reject-tile — the front block is never payload |
-| offset > 2⁶³ − 1 or length > 2⁶³ − 1 (non-sentinel) | reject-tile (`[R-ENC-03]`) |
-| offset + length overflows, or offset + length > F − 64 (non-sentinel) | reject-tile — the extent would touch the live trailer or beyond |
-| stored bytes fail the entry's crc | reject-tile (§8.2) |
+| offset = S ∧ length = S ∧ crc ≠ 0 | *structural*: reject-tile |
+| offset = S ∧ length ≠ S, or offset ≠ S ∧ length = S | *structural*: reject-tile |
+| length = 0 (non-sentinel) | *structural*: reject-tile — absence is spelled sentinel; no codec emits zero bytes |
+| offset < 16 (non-sentinel) | *structural*: reject-tile — the front block is never payload |
+| offset > 2⁶³ − 1 or length > 2⁶³ − 1 (non-sentinel) | *structural*: reject-tile (`[R-ENC-03]`) |
+| offset + length overflows, or offset + length > F − 64 (non-sentinel) | *structural*: reject-tile — the extent would touch the live trailer or beyond |
+| stored bytes fail the entry's crc | reject-tile (§8.2) — the entry itself is well-formed; its extent stands |
 | two stored extents of the same layer overlap, or a stored extent overlaps its own layer's index region or sub-record extents | *verifier*: reject-layer (§7.2) |
 | a stored extent overlaps any structure outside its own layer | *verifier*: reject-file (§7.2) |
 | alignment or slab invariant violated (§16) | *verifier*: reject-layer |
@@ -1949,7 +1994,8 @@ acquisition order at no cost to conformance (`[R-CNT-13]`). That
 freedom is over *ordering and relative position*, and a byte the live
 state does not claim is slack whatever produced it (§5.2). A writer
 that scatters structures wastes space rather than violating a rule,
-and the verifier's slack total is what surfaces the waste.
+and the verifier's slack total, where its walk completes, is what
+surfaces the waste.
 `[R-SLB-05]`
 
 #### 16.1 Per-tile alignment
@@ -1987,7 +2033,13 @@ tile's offset satisfies offset mod A_slab = 0. The runs themselves
 are not mutually ordered or joined: between runs, placement freedom
 (`[R-SLB-05]`) governs, and the bytes left between them are slack
 (§5.2), which writers SHOULD zero. Sentinel tiles are transparent to run continuity: they
-occupy no bytes and do not break packing. A run with no stored tiles
+occupy no bytes and do not break packing. So are the entries §15.3
+classifies reject-tile on a *structural* ground: they address no
+usable extent, and the run's stored tiles close over them. An entry
+whose only defect is that its stored bytes fail its crc is not
+transparent — its offset and length stand, and the packing relation
+reads them as it does any other stored tile's — so this invariant
+stays decidable from index bytes alone. A run with no stored tiles
 imposes nothing. A verifier MUST
 check these invariants (violation: reject-layer, §15.3); readers are
 not obligated to, and MAY instead detect contiguity arithmetically
@@ -2221,8 +2273,11 @@ undetectable by construction (§21.7). `[R-COD-10]`
 
 The decoded-content obligations of §14 (`[R-SER-05]`,
 `[R-SER-08]`) require decoding. A verifier that cannot execute a
-layer's codec or filter cannot establish the layer's conformance
-and MUST NOT certify the file. For a conforming reader that
+layer's codec or filter cannot establish that layer's conformance
+and MUST NOT certify the file. That inability is not a finding that
+the file is nonconforming, and it fixes the file's verdict as
+*cannot establish* only where the verifier established no violation
+elsewhere (`[R-CNF-11]`). For a conforming reader that
 position arises only at a reserved or experimental value, every
 assigned codec and filter being core: it rejects the layer
 (`[R-COD-03]`, `[R-COD-09]`);
@@ -2281,14 +2336,17 @@ no declared size — a reader instead decodes with a bound of its
 own choosing, no smaller than §21.9's user-metadata guarantee, and
 a document exceeding that bound is ignore-record like any other it
 cannot read. A **verifier** that declines to decode a document
-cannot establish its conformance and MUST NOT certify the file,
-exactly as `[R-COD-11]` requires of a codec it cannot execute; the
-bound is that verifier's capability and not a limit on validity
-(`[R-CNF-10]`), so it MUST report that it cannot establish the
-file's conformance rather than that the file is nonconforming, and
-SHOULD report the bound it applied and the stored length of the
-extent it declined. Any violation here is ignore-record, never the
-tile-scope outcome §17.2 assigns. `[R-MTA-09]`
+cannot establish that document's conformance and MUST NOT certify
+the file, exactly as `[R-COD-11]` requires of a codec it cannot
+execute; the bound is that verifier's capability and not a limit on
+validity (`[R-CNF-10]`), so the decline is not a finding that the
+file is nonconforming and a verifier MUST NOT report it as one. The
+decline is one of the unchecked requirements `[R-CNF-11]` obliges
+the verifier to report, and it fixes the file's verdict as *cannot
+establish* only where the verifier established no violation
+elsewhere; the verifier SHOULD report the bound it applied and the
+stored length of the extent it declined. Any violation here is
+ignore-record, never the tile-scope outcome §17.2 assigns. `[R-MTA-09]`
 
 > **Note.** The 16 MiB figure is a §21.9 minimum guarantee, so the
 > two rules compose here as they do elsewhere. A file whose document
@@ -2469,7 +2527,13 @@ A conforming reader opens a file by these steps, in order:
    resident bytes and F — and build the layer table: each
    layer record's name, parsed and checked per §4.6
    (`[R-ENC-12]`). A duplicate layer name is a validity error at
-   file scope, here, at open (`[R-ENC-15]`, §19.2). Uniqueness is
+   file scope, here, at open (`[R-ENC-15]`, §19.2). The layer-name
+   namespace is built from the name fields a reader can obtain
+   under §7.4's framing: a layer record whose name field does not
+   lie entirely within that record's inline_length yields no name
+   field to compare, so it contributes no name to the namespace and
+   is instead a validity error at layer scope (`[R-CNT-18]`).
+   Uniqueness is
    decided first, and over the raw name bytes whether or not each
    name is itself well-formed — `[R-ENC-12]` makes name comparison a
    byte comparison, which needs no valid name — so two layers whose
@@ -2694,17 +2758,20 @@ An appender MUST, in order:
 4. **Write payloads and indexes** (`[R-LIF-02]` steps 1–2):
    writing begins at exactly F; new stored tiles and record
    extents follow, each byte classified under §5.2. Every layer
-   whose stored-tile set, index content, or index placement this
-   commit changes has its tile-index region re-emitted in full —
-   entry_count entries plus the segment CRC array — with entries
-   for tiles this commit stores or supersedes written to their
-   new state, entries for tiles that become unstored written as
-   the sentinel, entries new to this generation (added tiles,
-   grown extents) emitted per §15, and every other entry
-   byte-identical at its disk-ordinal position (a geometry change
-   renumbers ordinals, `[R-GEO-06]`). A layer whose record alone
-   changes keeps its extent slot, pointing at the existing
-   region. Extents this commit supersedes become slack
+   whose stored-tile set or index content this commit changes has
+   its tile-index region re-emitted in full — entry_count entries
+   plus the segment CRC array — necessarily at a new placement
+   (`[R-LIF-01]`), with entries for tiles this commit stores or
+   supersedes written to their new state, entries for tiles that
+   become unstored written as the sentinel, entries new to this
+   generation (added tiles, grown extents) emitted per §15, and
+   every other entry byte-identical at its disk-ordinal position
+   (a geometry change renumbers ordinals, `[R-GEO-06]`). A layer
+   whose record alone changes keeps its extent slot, pointing at
+   the existing region, as does a layer the commit leaves
+   untouched (`[R-WRT-05]`); relocating a live index region is
+   compaction's operation (§20.5, `[R-WRT-07]`), not an
+   appender's. Extents this commit supersedes become slack
    (`[R-CNT-21]`); a slab declaration is re-established or
    cleared (`[R-SLB-04]`), and an aligned layer's new tiles
    satisfy its invariant or the declaration is cleared
@@ -2721,7 +2788,8 @@ An appender MUST, in order:
 > tile-index region, so editing one sample of a 10⁶-tile layer
 > appends about 20 MB of index and leaves as much slack. Writers doing
 > many small updates SHOULD batch them into one commit, and compact
-> (§20.5) when slack grows — a verifier reports its total (§9.7).
+> (§20.5) when slack grows — a verifier whose walk completes reports
+> its total (§9.7).
 
 > **Example.** Superseding one 100,000-byte stored tile of a
 > 32-tile interleaved layer appends: the new payload (100,000
@@ -2879,8 +2947,8 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
 > (`[R-LIF-06]`) also shorten a file, but neither reclaims any. Slack
 > accumulates a directory, a pad and a trailer per commit, plus a whole
 > index region for each layer a commit touched (§20.3); a verifier
-> reports the total (§9.7), and that total is what tells an operator
-> when to run this.
+> whose walk completes reports the total (§9.7), and that total is
+> what tells an operator when to run this.
 
 A compactor's verification depth follows reliance over
 everything it carries (`[R-WRT-03]`): it relies on every
@@ -2899,10 +2967,11 @@ structure's bytes. `[R-WRT-09]`
 #### 21.1 How to read the register
 
 The register — §21.2 through §21.5 (`[R-ERR-02]`) — enumerates
-every detectable violation this specification names: each row is one malformed condition, with the
-outcome class its scope determines (§2.4), the actor obliged to
-detect it, the point by which detection is due (§19.2), and the
-requirement that defines it. Its **completeness is normative** — a
+every detectable violation this specification names: each row is one
+malformed condition, with the outcome class its scope determines
+(§2.4), the actor obliged to detect it (`[R-CNF-04]`, `[R-CNF-11]`),
+the point by which detection is due (§19.2), and the requirement that
+defines it. Its **completeness is normative** — a
 *detectable* violation this specification names and the register
 omits is a defect in this document, detectability being the gate
 `[R-CNF-07]` already applies and §21.7 the account, by class, of
@@ -2958,8 +3027,8 @@ Outcome: reject-file. 39 conditions.
 | F2 | A signature constant is stored byte-reversed — never to be adapted as a foreign-endian TARN file; the front-block instance binds only a reader holding bytes [0, 16) resident (`[R-CNT-04]`), the trailer-magic instance every reader (`[R-CNT-06]`) | front signature block bytes [0,8); trailer magic at F-64 | reader | open | `[R-ENC-02]` (R-CNT-04, R-CNT-06) |
 | F3 | A u64 offset, length, or count field holds a value above 2^63 - 1 | dir_offset; dir_length; committed_file_length; generation; non-layer top-level record extent_offset; extent_length | reader | open | `[R-ENC-03]` (R-CNT-06, R-CNT-13) |
 | F4 | A sum of a u64 offset and length taken from the file exceeds 2^63 - 1, so the sum wraps | dir_offset + dir_length; non-layer top-level record extent_offset + extent_length | reader | open | `[R-ENC-04]` (R-CNT-06, R-CNT-13) |
-| F5 | A fixed file-scope structure places its fields at widths other than those the spec fixes, with total size unchanged | trailer (e.g. a single u32 written across the version_major and version_minor slots); top-level record header | reader | open | `[R-ENC-06]` (R-CNT-06) |
-| F6 | Two layer records in the live directory carry byte-identical name fields (comparison is raw bytes, no normalization) | layer record name | reader | open | `[R-ENC-15]` (R-ENC-13) |
+| F5 | A fixed file-scope structure places its fields at widths other than those the spec fixes, with total size unchanged, detectable only through the values the fixed-width parse then reads at the shifted offsets; the checks that fire are those values' own value and bounds gates, and this row records the cause rather than a procedure of its own | trailer (e.g. version_major and version_minor each written as u32); top-level record header | reader | open | `[R-ENC-06]` (R-CNT-06) |
+| F6 | Two layer records in the live directory carry byte-identical name fields, both obtainable within their records' inline_length (comparison is raw bytes, no normalization) | layer record name | reader | open | `[R-ENC-15]` (R-ENC-13) |
 | F7 | File size is below the 128-byte minimum, so the front block, directory, pre-trailer pad and trailer cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-27]` (R-CNT-01, R-CNT-06) |
 | F8 | The 16-byte front signature block is not byte-identical to the constant; the obligation binds a reader holding those bytes resident, and a reader that would have to fetch them MAY defer or omit the check (`[R-CNT-04]`) | magic bytes [0,8); reserved bytes [8,16) | reader | open | `[R-CNT-04]` |
 | F9 | A structure occupies bytes between the live directory's end and the live trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
@@ -3003,7 +3072,7 @@ layer unaffected. 50 conditions.
 |---|---|---|---|---|---|
 | L1 | A u64 offset, length, extent, or count field of a layer record holds a value above 2^63 - 1 | layer record extent_offset; layer record extent_length; sub-record extent_offset; sub-record extent_length; dimension extent Eᵢ; tile extent Tᵢ; entry_count; slab run length S | reader | layer access | `[R-ENC-03]` (R-CNT-13, R-CNT-23) |
 | L2 | A declaration-derived sum or product of a layer exceeds 2^63 - 1 although every contributing field is in domain | extent_offset + extent_length; N = ∏⌈Eᵢ/Tᵢ⌉; P = ∏Tᵢ; N·P; C·N (which dominates the max disk ordinal (C−1)·N + (N−1)); P·Q (which dominates V = P·C); P·Bᶜ; entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 | reader | layer access | `[R-ENC-04]` (R-GEO-03, R-CNT-13, R-SER-02, R-SER-07) |
-| L3 | A field of a layer-scope structure is written at a width other than the one this specification fixes (e.g. rank d as u16) | any layer-record inline-payload field | reader | layer access | `[R-ENC-06]` (R-CNT-18) |
+| L3 | A field of a layer-scope structure is written at a width other than the one this specification fixes (e.g. rank d as u16), detectable only through the values the fixed-width parse then reads at the shifted offsets; the checks that fire are those values' own value and region gates, and this row records the cause rather than a procedure of its own | any layer-record inline-payload field | reader | layer access | `[R-ENC-06]` (R-CNT-18) |
 | L4 | A layer record's name bytes are not well-formed UTF-8 | — | reader | open | `[R-ENC-11]` |
 | L5 | A dimension or channel entry's name bytes are not well-formed UTF-8 | dimension entry name; channel entry name | reader | layer access | `[R-ENC-11]` (R-CNT-23) |
 | L6 | A layer record's name has length prefix 0 (empty name) | — | reader | open | `[R-ENC-12]` |
@@ -3042,7 +3111,7 @@ layer unaffected. 50 conditions.
 | L39 | A segment CRC ≠ CRC-32C over that segment's entry bytes as stored, entries [s·2¹⁶, min((s+1)·2¹⁶, entry_count)) — a partial segment covers only its actual bytes, and the all-sentinel constant 0xEECB3BB2 never substitutes for comparison | — | reader | tile use | `[R-IDX-04]` (R-IDX-05, R-CNT-20, R-ENC-10) |
 | L40 | Layer record declares a nonzero alignment A that is not a power of two in 512 … 2^62 | A not a power of two; A below 512; A above 2^62 | reader | layer access | `[R-SLB-01]` (R-CNT-23) |
 | L41 | Alignment A declared and a stored tile's index-entry offset is not a multiple of A | — | verifier | certification | `[R-SLB-01]` (R-IDX-03) |
-| L42 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels are transparent) | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
+| L42 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels and entries §15.3 classifies reject-tile on a structural ground are transparent, an entry failing only its stored bytes' crc is not) | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
 | L43 | A slab run's first stored tile's offset is not a multiple of A_slab | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
 | L44 | Layer record's codec is a value other than 1 … 4 — 0, reserved 5–0x7FFF, or experimental ≥ 0x8000 | codec 0; reserved 5-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-03]` (R-CNT-23) |
 | L45 | Codec 4 (lz4) declared on a layer any of whose addressed tiles' decoded size exceeds 0x7E000000 bytes — in a planar layer the largest channel plane governs | — | reader | layer access | `[R-COD-07]` |
@@ -3125,7 +3194,7 @@ of them as a failure is the nonconforming party.
 | A record type this specification has not assigned, from the experimental range (≥ 0x8000, §10.2), carries MU = 0 | Ignored, and preserved or dropped per its PE bit; a *reserved*-range type is read the same way, but emitting one is a violation (F39, L26) | `[R-CNT-15]`, `[R-WRT-08]` |
 | An ignore-lane flag bit (16–31) is set | Ignored; the file is conforming — such bits are defined by later minor versions | `[R-CNT-08]` |
 | version_minor is higher than this text defines | Accepted; minors never gate | `[R-CNT-07]` |
-| Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded structures | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier; only compaction reclaims it | `[R-CNT-21]` |
+| Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded structures | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier — as a partial total, with the unwalked regions named, where its walk did not complete; only compaction reclaims it | `[R-CNT-21]` |
 | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
 | A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]` |
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
@@ -3204,6 +3273,7 @@ bounds, and a writer MAY rely on that. `[R-ERR-03]`
 | channels per layer, C | 4096 |
 | addressed tiles per layer (entry_count) | 2³² |
 | layers per file | 65,536 |
+| size of the directory region, dir_length | 16 MiB |
 | decoded size of one tile | 256 MiB |
 | decoded size of one user-metadata document | 16 MiB |
 | zstd frame `Window_Size` | 8 MiB |
@@ -3222,7 +3292,13 @@ of intact data. `[R-ERR-04]`
 > follow established array-ecosystem ceilings; 2³² addressed tiles
 > is the point where the segment-CRC array a reader fetches whole
 > before using any entry (§15.4) is still 256 KiB — it reaches 4 MiB
-> at 2³⁶; 65,536 layers is roughly a 12.5 MiB directory; 256 MiB is
+> at 2³⁶; 65,536 layers is roughly a 12.5 MiB directory at the small
+> layer records that figure assumed, and the 16 MiB directory row
+> states that same budget over the region itself, because the
+> region's size is the product of the layer count with each record's
+> channel entries and names rather than the layer count alone, and
+> §19.1's open fetches and CRCs it whole before any other use
+> (`[R-CNT-11]`, `[R-RDR-01]`); 256 MiB is
 > an order of magnitude above the tile sizes §11.3 describes as
 > ordinary, so the guarantee never binds a typical file; 8 MiB is
 > the decoder window support
@@ -3285,17 +3361,25 @@ It bounds nothing outside that — slack is unconstrained and can
 hold anything (§23.1) — so coverage makes bytes reachable by a reader
 accounted for, and makes everything else *countable* rather than
 absent: a verifier reports the slack total (§9.7), which is the number
-that distinguishes a working file from a padded one. Both are verifier-detected: a reader that skips them is
-still conforming, so a pipeline accepting files from untrusted
-sources SHOULD verify rather than merely read; without that, an
+that distinguishes a working file from a padded one — a verifier that
+stopped early reports it only as partial (`[R-CNT-21]`), so the
+distinguishing figure comes from a walk that completes. Both are
+verifier-detected: a reader that skips them is still conforming, so a
+pipeline accepting files from untrusted sources SHOULD verify rather
+than merely read; without that, an
 attacker's smuggled bytes travel unexamined. `[R-SEC-03]`
 
-Two residues are stated rather than defended. Slack is covered by no
+Three residues are stated rather than defended. Slack is covered by no
 checksum (§8.1) and constrained by no rule: corruption confined to it
 is invisible to reader and verifier alike, and is caught only by the
 slack total changing (§9.7) — which is why a writer that zeroes its
 gaps (`[R-CNT-03]`) makes its own files easier to reason about, not
-because conformance turns on it. And a payload can contain a byte string that mimics
+because conformance turns on it. The extent of a record of a type this
+specification has not assigned is covered by no checksum either
+(§8.1), so corruption inside it is equally invisible: §20.4's
+byte-identical re-emission (`[R-WRT-05]`) carries such an extent
+forward unread, and `[R-WRT-08]` bars re-encoding it, so nothing an
+updater does would surface the damage. And a payload can contain a byte string that mimics
 a trailer; recovery tooling that scans backward can land on one, which
 is why recovery output is re-verified as a whole file before being
 trusted (`[R-LIF-06]`) before any use. Under live-state coverage a
@@ -3429,7 +3513,8 @@ which makes it a finding against this document rather than a vector.
 
 Every vector whose recorded outcome is reject-layer or reject-tile is
 built inside a file that also carries an **intact sibling** — another
-layer, or another tile of the same layer — whose decoded content the
+layer, or another tile of the same layer where that layer is one a
+reader is still permitted to serve — whose decoded content the
 manifest records, and a vector's expectation is therefore a pair: the
 scope no reader is permitted to serve, and the content a reader that
 serves anything at all owes. Without the sibling a vector cannot
@@ -3548,7 +3633,7 @@ normative where it is defined; this table is a finding aid.
 | zstd frame magic | `28 B5 2F FD` (0xFD2FB528) | §17.2 |
 | lz4 decoded tile size cap | `0x7E000000` | §17.2 |
 | Reserved metadata key prefix | `tarn.` | §18.3 |
-| Reader minimum guarantees | rank 32 · C 4096 · entry_count 2³² · 65,536 layers · 256 MiB decoded tile · 16 MiB metadata document · 8 MiB zstd window | §21.9 |
+| Reader minimum guarantees | rank 32 · C 4096 · entry_count 2³² · 65,536 layers · 16 MiB directory region · 256 MiB decoded tile · 16 MiB metadata document · 8 MiB zstd window | §21.9 |
 
 ### Appendix C — Registry snapshot (non-normative)
 
@@ -3707,10 +3792,10 @@ requirement or section cited, never this summary.
 
 **Conforming file** — every requirement at every scope holds (§2.4);
 bytes partition into the coverage classes (§5.2, `[R-CNT-02]`); every
-structure's checksum verifies (§8.1); no violation row of §21.2–§21.5
-applies, though §21.6's defined conditions can — an
-experimental-range MU = 0 record being conforming (`[R-CNT-15]`,
-§10.2).
+structure's checksum verifies where §8.1's map states one (§8.1); no
+violation row of §21.2–§21.5 applies, though §21.6's defined
+conditions can — an experimental-range MU = 0 record being conforming
+(`[R-CNT-15]`, §10.2).
 
 **Conforming reader** — validates the trailer in §6.2's order; verifies
 each checksum before acting on what it covers (§4.5, §8.2); detects
@@ -3742,10 +3827,16 @@ record.
 
 **Conforming verifier** — every reader obligation, plus the checks
 readers are exempt from: the live-state coverage partition and the
-slack total (§9.7); extent overlap (§7.2); record flag bits — reserved
+slack total (§9.7) — reported as partial, with the unwalked regions
+named and their byte extent given, where its walk did not complete
+(`[R-CNT-21]`); extent overlap (§7.2); record flag bits — reserved
 bits, MU = 1 with PE = 0, and a registered type's stored bits against
 §7.3's registry (`[R-CNT-12]`, `[R-CNT-22]`);
 alignment and slab invariants (§16); decoded-content obligations —
 padding samples and interleaved boolean bytes (§14.5, §14.2);
-user-metadata member ordering (`[R-MTA-05]`, §18.2); and
-certifies only files with no violation at any scope (§2.4).
+user-metadata member ordering (`[R-MTA-05]`, §18.2); certifies only
+files with no violation at any scope (§2.4); reports *nonconforming*
+whenever it has established a violation, reserving *cannot
+establish* for a traversal that established none; and reports each
+requirement it was unable to check and each scope it did not examine
+(`[R-CNF-11]`).

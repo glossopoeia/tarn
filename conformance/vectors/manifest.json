@@ -1195,7 +1195,7 @@
       "violations": [
         {
           "row": "F5",
-          "instance": "trailer (e.g. a single u32 written across the version_major and version_minor slots)",
+          "instance": "trailer (e.g. version_major and version_minor each written as u32)",
           "rule": "R-ENC-06",
           "outcome": "reject-file",
           "scope": {
