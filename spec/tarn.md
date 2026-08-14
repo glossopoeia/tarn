@@ -182,7 +182,8 @@ Conformance is defined for five classes.
   readers of the files they process and inherit every reader
   obligation. A verifier reports one of three verdicts: *conforming*,
   *nonconforming*, or *cannot establish* — the last where some
-  requirement is one it is unable to check, as when the file names a
+  requirement is one it is unable to check on a capability or
+  resource ground, as when the file names a
   format major version it does not implement, when a record carries
   MUST_UNDERSTAND = 1 with a type it does not implement (§21.6), when
   it cannot execute a codec or filter (`[R-COD-11]`), when it
@@ -196,8 +197,9 @@ Conformance is defined for five classes.
   established any violation reports *nonconforming*, however many
   requirements it was unable to check, and *cannot establish* is
   available only to a traversal that established no violation. A
-  verifier MUST report each requirement it was unable to check,
-  naming the requirement and the ground, whichever of the three
+  verifier MUST report each requirement it was unable to check on a
+  capability or resource ground, naming the requirement and the
+  ground, whichever of the three
   verdicts it reports; that per-requirement report constrains the
   report and not the verdict, as *unexamined* does below.
   A verifier MAY stop at the first violation it finds; one that does
@@ -209,8 +211,8 @@ Conformance is defined for five classes.
 
 #### 2.4 Outcome classes and owning scope
 
-Every detectable violation named by this specification is assigned
-exactly one **reader outcome**: reject-file, reject-layer, reject-tile,
+Every detectable file-conformance violation named by this
+specification is assigned exactly one **reader outcome**: reject-file, reject-layer, reject-tile,
 or ignore-record. `[R-CNF-07]` The same vocabulary is used for defined
 conditions that are not violations (an unknown ancillary record is
 *ignored*, not rejected). **preserve-verbatim** names an updater
@@ -223,7 +225,7 @@ still be one an updater preserves.
 | **reject-layer** | The affected layer's data and metadata are not usable; all other layers are unaffected. A reader MAY still list the file's layers, including the rejected one's name. The outcome is prospective: it bars further service from the layer, and does not retroactively invalidate content already returned under §19.2's validation timing (`[R-RDR-02]`). |
 | **reject-tile** | The affected tile's data is not usable; a read of that tile reports failure. All other tiles, including neighbors in the same layer, are unaffected. |
 | **ignore-record** | The record is skipped as though absent. Decoding of all stored data is unaffected. |
-| **preserve-verbatim** | Binds updaters: the bytes are carried forward unmodified (relocated only as Part I permits). |
+| **preserve-verbatim** | Binds updaters: the bytes are carried forward unmodified (relocated only as Part I permits). §20.4's table states the cases: its MU = 1 and MU = 0 / PE = 1 rows. |
 
 Every structure this specification defines has exactly one **owning
 scope** — file, layer, or tile — stated in the section that defines the
@@ -462,7 +464,9 @@ the outcome is ignore-record. `[R-ENC-11]`
 **Names** — the strings that identify layers, dimensions, channels, and
 user-metadata keys — satisfy three further constraints. Writers MUST NOT
 emit a name that violates any of them; a reader MUST treat such a name
-as a validity error at the owning scope. `[R-ENC-12]` A name is:
+as a validity error at the owning scope — except for a key inside a
+user-metadata document, where `[R-CNT-25]`'s quarantine governs and
+the outcome is ignore-record. `[R-ENC-12]` A name is:
 
 - non-empty;
 - at most 255 bytes of UTF-8 (so every name's length prefix is a single
@@ -502,9 +506,12 @@ alter decoding based on it; each informative field's definition states
 what a reader does when it contradicts the data it describes.
 `[R-ENC-16]`
 
-> **Note.** Layout tables in this document give, per field: byte offset
-> within the structure, size, type, name, taxonomy class, and valid
-> range. Every non-obvious encoding is followed by a worked numeric
+> **Note.** Layout tables for fixed-layout structures give, per field:
+> byte offset within the structure, size, type, name, taxonomy class,
+> and valid range. A packed variable-length payload — the layer
+> record's inline payload (§7.4) — has no fixed offsets to give; its
+> table omits the offset and class columns, and each field's class
+> follows from the definitions above. Every non-obvious encoding is followed by a worked numeric
 > example, and every sentinel or overloaded encoding additionally has a
 > paired conformance vector. All named constants appear once in
 > Appendix B.
@@ -1083,8 +1090,8 @@ durable. `[R-LIF-02]`
 
 On creation there is no prior trailer: the writer first emits the
 front signature block (§6.1) — whose durability the barriers of steps
-4 and 6 cover — then performs steps 2–6 beginning at offset 16, with
-generation 1.
+4 and 6 cover — then performs steps 2–6, writing
+beginning at offset 16, with generation 1.
 
 > **Note.** Step 3 is not discharged by a directory an earlier
 > generation appended: each commit appends its own complete
@@ -1224,8 +1231,8 @@ append is recoverable only by scanning back across its entire length.
 
 A verifier checking `[R-CNT-02]`'s partition walks the live state
 only. From the live trailer it enumerates the live directory and its
-records, each record's extent, and the non-sentinel entries of each
-layer's tile-index region (an entry `[R-IDX-03]` classifies
+records and their sub-records, each record's extent, and the
+non-sentinel entries of each layer's tile-index region (an entry `[R-IDX-03]` classifies
 reject-tile on a *structural* ground contributes no stored extent to
 the walk; one whose stored bytes alone fail its crc keeps its
 extent). A layer
@@ -1246,7 +1253,8 @@ a scope-level rejection blocks enumeration, or the verifier stops at
 the first violation (`[R-CNF-11]`) — the sum covers only the regions
 walked, and `[R-CNT-21]` governs what such a partial total counts and
 what the verifier reports beside it. An entry `[R-IDX-03]` classifies
-reject-tile does not make the walk incomplete: the walk passes over
+reject-tile on a *structural* ground does not make the walk
+incomplete: the walk passes over
 it, and the bytes it nominally addresses fall to slack (§15.3).
 `[R-LIF-08]`
 
@@ -1917,8 +1925,8 @@ classify an entry whose own 20 bytes yield no usable extent. Such an
 entry contributes no stored extent to the *verifier* rows, which bind
 over well-formed entries' extents only — `[R-SLB-03]`'s run
 continuity closes over it as it does over a sentinel — and none to
-`[R-LIF-08]`'s coverage walk, whose slack total therefore includes
-whatever bytes such an entry nominally addresses. An entry whose only
+`[R-LIF-08]`'s coverage walk, so any bytes it nominally addressed
+that no other claimant claims fall to slack. An entry whose only
 defect is that its stored bytes fail its crc is well-formed: the
 defect lies in the bytes it addresses, not in the entry, so its
 extent stands and it keeps its place in the *verifier* rows, in run
@@ -2833,8 +2841,11 @@ An appender MUST, in order:
 > too; retained ones do not move.
 >
 > **(c) A change confined to the directory** — clearing a slab
-> declaration, renaming a layer, changing a channel's fill value. Only
-> the directory is re-emitted. Editing user metadata is not this shape:
+> declaration, renaming a layer, or changing a channel's fill value on
+> a layer with no padding position and no pad bit. Only the directory
+> is re-emitted. A fill change on a layer carrying either additionally
+> requires re-emitting the affected stored tiles, whose content
+> `[R-SER-05]` fixes — which makes it shape (b). Editing user metadata is not this shape:
 > its document lives in an extent (`[R-CNT-25]`), so a new extent is
 > appended and the old one becomes slack, as in (b).
 >
@@ -2866,9 +2877,9 @@ PE = 0 is read as PE = 1, `[R-CNT-12]`), and carry these obligations:
 
 | Stored flags | Updater obligation |
 |---|---|
-| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs: an unknown critical record at layer scope blocks modification of that layer, leaving other layers editable; at file scope it blocks any modification of file-scope structure — adding, removing, or reordering top-level records — while a commit that only changes a layer's own tiles, index, or record remains permitted. |
+| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. Compaction is barred on the same ground (`[R-WRT-06]`). |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
-| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender may drop it only in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, index, or stored tiles; for a top-level record, the file's layer set or another top-level record. Dropping the record is not itself such a change, so a commit whose only effect would be the drop MUST retain it. A compactor may drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender may drop it only in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, index, or stored tiles; for a top-level record, the file's layer set or another *non-layer* top-level record — a commit that only supersedes a layer's tiles is not such a change, though it re-places that layer's index region (§20.3, `[R-WRT-04]`). Dropping the record is not itself such a change, so a commit whose only effect would be the drop MUST retain it. A compactor may drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
 An updater MUST NOT re-encode a record whose type it does not
 implement, and MUST NOT modify one except by relocating its
@@ -2967,13 +2978,13 @@ structure's bytes. `[R-WRT-09]`
 #### 21.1 How to read the register
 
 The register — §21.2 through §21.5 (`[R-ERR-02]`) — enumerates
-every detectable violation this specification names: each row is one
+every detectable file-conformance violation this specification names: each row is one
 malformed condition, with the outcome class its scope determines
 (§2.4), the actor obliged to detect it (`[R-CNF-04]`, `[R-CNF-11]`),
 the point by which detection is due (§19.2), and the requirement that
 defines it. Its **completeness is normative** — a
-*detectable* violation this specification names and the register
-omits is a defect in this document, detectability being the gate
+*detectable* file-conformance violation this specification names and
+the register omits is a defect in this document, detectability being the gate
 `[R-CNF-07]` already applies and §21.7 the account, by class, of
 what fails
 it — but each row *restates* its governing rule, and where a
@@ -3058,7 +3069,7 @@ Outcome: reject-file. 39 conditions.
 | F33 | A non-layer top-level record's extent slot has exactly one half zero (offset 0 with length != 0, or offset != 0 with length 0) | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
 | F34 | A non-layer top-level record's nonzero extent slot has extent_offset in 1-15, placing the extent inside the front signature block | extent_offset | reader | open | `[R-CNT-13]` |
 | F35 | A non-layer top-level record's extent_offset + extent_length exceeds F - 64, so the extent touches or passes the live trailer | — | reader | open | `[R-CNT-13]` |
-| F36 | A byte of the live committed state is claimed by two structures that do not belong to the same layer — across two layers, or a layer structure against another scope's structure; a claimant reaching the front signature block or the live trailer is instead caught at open by the bounds rows F11/F12, F34/F35, L17/L18 and T8/T9 | stored-tile extents; tile-index regions; record extents; sub-record extents; directory region | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03) |
+| F36 | A byte of the live committed state is claimed by two structures that do not belong to the same layer — across two layers, or a layer structure against another scope's structure; a claimant reaching the front signature block or the live trailer is instead caught by the bounds rows F11/F12, F34/F35, L17/L18 and T8/T9, each at its own tier | stored-tile extents; tile-index regions; record extents; sub-record extents; directory region | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03) |
 | F37 | The directory's top-level record sequence contains two or more user-metadata records (type 0x0002) | type | reader | open | `[R-CNT-14]` |
 | F38 | A top-level record has a reserved-range type value (0x0003-0x7FFF, §10.2) with MUST_UNDERSTAND (flags bit 0) set to 1 | — | reader | open | `[R-CNT-15]` |
 | F39 | A top-level record carries a type value from the reserved range 0x0003-0x7FFF, which this specification has not assigned; emitting one is a violation whatever its MU bit | — | verifier | certification | `[R-CNT-15]` |
@@ -3240,7 +3251,10 @@ produces a file that every checksum in §8 certifies. Checksums are
 computed over what the writer wrote. The obligations of §14.5 and
 `[R-SER-08]` narrow this only where content is structurally
 constrained: padding positions, pad bits, and boolean bytes.
-Nothing here authenticates, either (§4.5).
+Nothing here authenticates, either (§4.5). None of these is a
+requirement a verifier is *unable to check* within the meaning of
+`[R-CNF-11]`: no file-level witness exists to check, so nothing about
+the file is left undetermined and the verdict is unaffected.
 
 A second set of obligations is omitted from the register because a
 single file exhibits no witness of their violation. Committed-prefix
@@ -3800,8 +3814,9 @@ conditions can — an experimental-range MU = 0 record being conforming
 **Conforming reader** — validates the trailer in §6.2's order; verifies
 each checksum before acting on what it covers (§4.5, §8.2); detects
 every reader-assigned violation no later than its tier (§19.2);
-implements all four codecs, both filters, both layouts, and all
-thirteen sample types (`[R-CNF-03]`, §2.3); accepts every conforming
+implements all four codecs, both filters, both layouts, all
+thirteen sample types, and both user-metadata encodings
+(`[R-CNF-03]`, §2.3); accepts every conforming
 file within §21.9's minimum guarantees and reports any resource
 refusal as a limit rather than as corruption (`[R-ERR-04]`); applies
 the outcome and scope §21 assigns; never returns padding positions (§11.3) and never returns
@@ -3814,16 +3829,18 @@ fill for every channel (`[R-TYP-06]`, §13.1); fill-encodes edge
 padding and pad bits (`[R-SER-05]`, §14.5); emits interleaved boolean
 values as only 0x00 or 0x01 (`[R-SER-08]`, §14.2); sorts
 user-metadata object members by their keys' UTF-8 bytes
-(`[R-MTA-05]`, §18.2); zeroes the gaps it creates (`[R-CNT-03]`, §5.2); follows the commit protocol
+(`[R-MTA-05]`, §18.2); follows the commit protocol
 including both barriers (§9.2); honors any alignment or slab it
-declares (§16).
+declares (§16). Advisory, and not a conformance condition: a writer
+SHOULD zero the gaps it creates (`[R-CNT-03]`, §5.2).
 
 **Conforming updater** — everything a writer does for the bytes it
 produces, plus: validates the trailer and full directory, and every
 layer it modifies (§20.3); re-emits every retained record
 byte-identically (§20.4); respects unknown records' MU and PE bits
 (§20.4); never modifies a scope governed by an unknown critical
-record.
+record, and rejects outright a file carrying an unimplemented
+top-level MU = 1 record (`[R-CNT-15]`, §20.4).
 
 **Conforming verifier** — every reader obligation, plus the checks
 readers are exempt from: the live-state coverage partition and the
@@ -3832,11 +3849,14 @@ named and their byte extent given, where its walk did not complete
 (`[R-CNT-21]`); extent overlap (§7.2); record flag bits — reserved
 bits, MU = 1 with PE = 0, and a registered type's stored bits against
 §7.3's registry (`[R-CNT-12]`, `[R-CNT-22]`);
+no structure between the live directory's end and the live trailer
+(`[R-CNT-05]`, F9); a reserved-range record or sub-record type value,
+whatever its MU bit (`[R-CNT-15]`, F39, L26);
 alignment and slab invariants (§16); decoded-content obligations —
 padding samples and interleaved boolean bytes (§14.5, §14.2);
 user-metadata member ordering (`[R-MTA-05]`, §18.2); certifies only
 files with no violation at any scope (§2.4); reports *nonconforming*
 whenever it has established a violation, reserving *cannot
 establish* for a traversal that established none; and reports each
-requirement it was unable to check and each scope it did not examine
-(`[R-CNF-11]`).
+requirement it was unable to check on a capability or resource
+ground, and each scope it did not examine (`[R-CNF-11]`).
