@@ -150,13 +150,13 @@ vectors** at 100% row and per-instance coverage.
 
 **Escalated — five maintainer decisions.**
 
-1. **Can a layer ever be deleted?** §20.4's *"both registered types carry
-   PE = 1, so neither can be dropped"* means no defined operation removes a
-   layer record: §20.5 lets a compactor drop only the MU = 0 / PE = 0 row.
-   All three passes agree §20.4 decides it and that the consequence is
-   nowhere stated, while §23.1 and §20.4's own rationale read as though
-   deletion were available. §2.3 also mislocates the obligations in "Part I"
-   when §20.4 is in Part III.
+1. **Can a layer ever be deleted? — decided, ADR-0068: no.** An in-place
+   removal would strand the layer's tiles and index as slack, leaving the
+   file no smaller, so it costs what it appears to save; the sanctioned
+   path is a whole-file rewrite under a fresh file_id, which `[R-LIF-01]`
+   already allows. §20.4 now states the bar, `[R-CNF-06]` cites §20.4
+   rather than "Part I" and drops the unknown-records scoping, Appendix H's
+   updater line is corrected, and §23.1 says which removal it means.
 2. **L50's instance split.** L47 and L48 are done; L50's four-way split is
    held back because one of the four — a layer record whose PE bit differs
    from the registry — is *only* exhibitable as a co-violation of L47, since

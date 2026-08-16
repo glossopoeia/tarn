@@ -179,8 +179,8 @@ Conformance is defined for five classes.
 - **Conforming updater.** A tool that modifies an existing file without
   necessarily understanding all of its content. An updater MUST satisfy
   every writer requirement for the bytes it produces, and additionally
-  MUST honor the preservation obligations of Part I for records it does
-  not understand. `[R-CNF-06]`
+  MUST honor the preservation obligations of §20.4 — which govern every
+  record type, not only those it does not understand. `[R-CNF-06]`
 - **Conforming verifier.** A reader that additionally checks every
   file-level requirement — including those ordinary readers are
   exempted from — and certifies conformance. Verifiers and updaters are
@@ -2886,6 +2886,16 @@ PE = 0 is read as PE = 1, `[R-CNT-12]`), and carry these obligations:
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
 | MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender may drop it only in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, index, or stored tiles; for a top-level record, the file's layer set or another *non-layer* top-level record — a commit that only supersedes a layer's tiles is not such a change, though it re-places that layer's index region (§20.3, `[R-WRT-04]`). Dropping the record is not itself such a change, so a commit whose only effect would be the drop MUST retain it. A compactor may drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
+No commit therefore removes a layer record or a file-scope
+user-metadata record. Both registered types carry PE = 1, and an
+in-place removal would strand that layer's stored tiles and index
+region as slack (§5.2) which only compaction reclaims, leaving the
+file no smaller than before — so the operation would cost what it
+appears to save. A producer that wants a file without a layer writes
+one: a whole-file rewrite under a fresh file_id, which `[R-LIF-01]`
+already sanctions. That is not compaction, which carries every layer
+of its input forward (§20.5).
+
 An updater MUST NOT re-encode a record whose type it does not
 implement, and MUST NOT modify one except by relocating its
 extent and re-pointing its slot under §20.5 — the operation the
@@ -3452,8 +3462,9 @@ file a reader opens later. `[R-SEC-07]`
 
 #### 23.1 Deletion is not erasure
 
-The append-only model (§9.1) means a commit that removes data
-removes only its *reachability*: the superseded bytes remain in the
+The append-only model (§9.1) means a commit that supersedes data —
+the only removal a commit performs, no commit removing a layer at all
+(§20.4) — removes only that data's *reachability*: the superseded bytes remain in the
 file as slack (`[R-CNT-21]`), readable by anyone with the bytes
 and a hex editor, and recoverable by any tool that scans backward for
 an earlier trailer (§9.6). Writers and the tools built on them
@@ -3873,8 +3884,10 @@ SHOULD zero the gaps it creates (`[R-CNT-03]`, §5.2).
 **Conforming updater** — everything a writer does for the bytes it
 produces, plus: validates the trailer and full directory, and every
 layer it modifies (§20.3); re-emits every retained record
-byte-identically (§20.4); respects unknown records' MU and PE bits
-(§20.4); never modifies a scope governed by an unknown critical
+byte-identically (§20.4); respects every record's MU and PE bits, the
+registry's fixed values governing for a registered type (§20.4,
+`[R-CNT-22]`); never removes a layer record or a file-scope
+user-metadata record (§20.4); never modifies a scope governed by an unknown critical
 record, and rejects outright a file carrying an unimplemented
 top-level MU = 1 record (`[R-CNT-15]`, §20.4).
 
