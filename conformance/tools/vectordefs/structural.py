@@ -14,8 +14,8 @@ had:
   * **`register_seed`.** A vectordef may contribute the file shape its rows
     need. Two are registered below: a layer with three packed tiles under a
     slab declaration (L42, L45, L2's N·P), and a layer carrying a §7.4
-    sub-record (F36, L1).
-  * **`Layer(sub_records=[...])`.** The sub-record instances of F36 and L1 name
+    sub-record (F35, L1).
+  * **`Layer(sub_records=[...])`.** The sub-record instances of F35 and L1 name
     a container no seed carried.
 
 Two ordering notes recur.
@@ -330,66 +330,66 @@ VECTORS = [
            detected="open", must_not_serve=["file"]),
 
     # ==================================================================
-    # F28 `[R-CNT-12]` — a non-layer top-level record at MU = 1, PE = 0.
+    # F27 `[R-CNT-12]` — a non-layer top-level record at MU = 1, PE = 0.
     # ==================================================================
     # The previous round recorded this unreachable. It is reachable, and
     # the reason the skip gave is the reason to build it *here*: on type
     # 0x0002 the combination differs from §7.3's registry in both bits, so
-    # the file also carries F31. Both rows are verifier-detected at
+    # the file also carries F30. Both rows are verifier-detected at
     # certification, both are file scope, and [R-CNT-22] has the reader
     # apply the registry's fixed semantics regardless — so no reader-tier
     # check fires at all and nothing is masked. The alternative the skip
     # preferred, an unassigned type, is strictly worse: MU = 1 there is
-    # F38, which a reader rejects at open, ahead of certification.
+    # F37, which a reader rejects at open, ahead of certification.
     Vector("TV-0904", "meta",
-           "F28 the user-metadata record carries MUST_UNDERSTAND = 1 with "
+           "F27 the user-metadata record carries MUST_UNDERSTAND = 1 with "
            "PRESERVE_ON_EDIT = 0", False,
            patches=[Patch("record[0x0002].header", _hdr(0x0002, 0b01),
                           "MU = 1, PE = 0")],
            repair=REPAIR_DIR,
-           row="F28", rule="R-CNT-12", outcome="reject-file",
+           row="F27", rule="R-CNT-12", outcome="reject-file",
            scope=dict(FILE, co_violates=[
-               "F31 (flags bit 0) — §7.3 fixes MU = 0 for type 0x0002",
-               "F31 (flags bit 1) — §7.3 fixes PE = 1 for type 0x0002"]),
+               "F30 (flags bit 0) — §7.3 fixes MU = 0 for type 0x0002",
+               "F30 (flags bit 1) — §7.3 fixes PE = 1 for type 0x0002"]),
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
 
     # ==================================================================
-    # F39 `[R-CNT-15]` — a reserved-range type value at file scope.
+    # F38 `[R-CNT-15]` — a reserved-range type value at file scope.
     # ==================================================================
     # Type 0x0003, the first value of §10.2's reserved range, with MU = 0
-    # so F38 (reserved range *with* MU = 1, reader, open) is absent and
+    # so F37 (reserved range *with* MU = 1, reader, open) is absent and
     # the reader's behavior is §21.6's defined ignore. 0x0003 is not a
-    # type §7.3 registers, so F31 does not apply either; the record's
+    # type §7.3 registers, so F30 does not apply either; the record's
     # extent slot and inline_length are the seed's own, valid and unread.
     # The violation is the emission, and only a verifier sees it.
     Vector("TV-0905", "meta",
-           "F39 top-level record of reserved type 0x0003 with MU = 0", False,
+           "F38 top-level record of reserved type 0x0003 with MU = 0", False,
            patches=[Patch("record[0x0002].header", _hdr(0x0003, 0b10))],
            repair=REPAIR_DIR,
-           row="F39", rule="R-CNT-15", outcome="reject-file",
+           row="F38", rule="R-CNT-15", outcome="reject-file",
            scope=FILE,
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
 
     # ==================================================================
-    # F38 `[R-CNT-15]` — a reserved-range type value with MU = 1.
+    # F37 `[R-CNT-15]` — a reserved-range type value with MU = 1.
     # ==================================================================
     # As TV-0905 but with MU set, which is what moves detection from the
     # verifier to the reader at open and the outcome to a refusal of the
-    # whole file. The reserved range is what F38 names; an experimental
+    # whole file. The reserved range is what F37 names; an experimental
     # type with MU = 1 is §21.6's second exception instead — a conforming
     # file a reader refuses — and TV-0152 carries that case.
     Vector("TV-0910", "meta",
-           "F38 top-level record of reserved type 0x0003 with MU = 1", False,
+           "F37 top-level record of reserved type 0x0003 with MU = 1", False,
            patches=[Patch("record[0x0002].header", _hdr(0x0003, 0b11))],
            repair=REPAIR_DIR,
-           row="F38", rule="R-CNT-15", outcome="reject-file",
+           row="F37", rule="R-CNT-15", outcome="reject-file",
            scope=FILE, detected="open",
            must_not_serve=["file"]),
 
     # ==================================================================
-    # F36 `[R-CNT-13]` — the sub-record-extent instance of the
+    # F35 `[R-CNT-13]` — the sub-record-extent instance of the
     # double-claim row, the last of its seven the corpus can reach.
     # ==================================================================
     # Layer `host`'s sub-record extent is redirected onto layer `ok`'s
@@ -401,12 +401,12 @@ VECTORS = [
     # ignored, so nothing reads the extent. The seed's original 8-byte
     # extent becomes slack.
     Vector("TV-0906", "subrec",
-           "F36 layer `host`'s sub-record extent covers layer `ok`'s stored "
+           "F35 layer `host`'s sub-record extent covers layer `ok`'s stored "
            "tile (instance: sub-record extents)", False,
            patches=[Patch("layer[host].sub[0].extent_offset", u64(_OK_TILE_OFF)),
                     Patch("layer[host].sub[0].extent_length", u64(_OK_TILE_LEN))],
            repair=REPAIR_DIR,
-           row="F36", rule="R-CNT-13", outcome="reject-file",
+           row="F35", rule="R-CNT-13", outcome="reject-file",
            scope=dict(FILE, instance="sub-record extents"),
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok", "host"]),
@@ -574,19 +574,19 @@ COVERED_ELSEWHERE = {
 #: Instances this module leaves open. Every reason below was re-derived
 #: against the seeds and the harness as they now stand, not carried forward.
 SKIPPED = {
-    "F36:trailer": (
+    "F35:trailer": (
         "unreachable, and re-verified against the sub-record slot the new "
         "seed adds. A structure overlapping the live trailer must extend past "
         "F − 64, and every claimant is gated there by a reader rule that "
         "fires strictly before certification: the directory by [R-CNT-06] "
-        "(F12), a top-level record extent by [R-CNT-13] (F35), a layer "
+        "(F12), a top-level record extent by [R-CNT-13] (F34), a layer "
         "record's *or sub-record's* extent by [R-CNT-13] (L18), a tile-index "
         "entry by [R-IDX-03] (T9). Nothing else can claim a byte."),
-    "F36:front signature block": (
+    "F35:front signature block": (
         "unreachable, mirror image, and likewise re-verified for sub-records: "
         "a claimant needs an offset below 16, and every offset is gated at "
         "≥ 16 before certification — dir_offset by [R-CNT-06] (F11), record "
-        "and layer and sub-record extents by [R-CNT-13] (F34, L17), "
+        "and layer and sub-record extents by [R-CNT-13] (F33, L17), "
         "tile-index entries by [R-IDX-03] (T8)."),
 
     "L1:extent_offset (layer record slot)": (
@@ -658,13 +658,13 @@ SPEC_FINDINGS = {
         "fields the fields are not instances; the same ought to be said of "
         "several *expressions* of one quantity, and the row's instance count "
         "should be 8 rather than 10."),
-    "F28": ("SUPERSEDED — the corpus now covers this row; the reason below "
+    "F27": ("SUPERSEDED — the corpus now covers this row; the reason below "
      "was true before register_seed, Layer(sub_records=...) and the "
      "truncate/append verbs existed. " 
-        "F28 is reachable only in company. On the one registered non-layer "
+        "F27 is reachable only in company. On the one registered non-layer "
         "type, MU = 1/PE = 0 differs from §7.3's registry in both bits and so "
-        "is also F31 twice; on any unassigned type MU = 1 is F38 at open. "
-        "TV-0904 takes the first, where every co-violating row shares F28's "
+        "is also F30 twice; on any unassigned type MU = 1 is F37 at open. "
+        "TV-0904 takes the first, where every co-violating row shares F27's "
         "detector, detection point and scope. Worth stating in §21.2 rather "
         "than leaving each corpus author to rediscover."),
 }

@@ -210,8 +210,11 @@ parameters. Each read only files it had itself written.
 
 ## Disposition
 
-All 22 defects are dispositioned: **16 fixed, 3 escalated, 2 deferred, 1
-judged to need no change.**
+All 22 defects are dispositioned: **21 fixed, 1 judged to need no
+change.** The two byte-level defects were decided in
+[ADR-0066](../../decisions/0066-round-eight-reopens-the-updater-table.md);
+the three escalated and two deferred register decisions in
+[ADR-0067](../../decisions/0067-conformance-is-per-major-and-four-register-repairs.md).
 
 **Fixed — 23 edits, zero anchor misses.** Applied one at a time with a
 write after each and an ok/MISS line per anchor. The two byte-level
@@ -237,20 +240,24 @@ defects were decided by the maintainer and are recorded in
 | `s74-no-class-column` | §4.7 | the Note softened to match what §7.4 delivers; the column itself was refused in round 7 as normative drift and is refused again |
 | `creation-offset-16` | §9.2 | wording aligned with step 1; substantively refuted |
 
-**Escalated — three maintainer decisions still open.** F21's registration
-against §21.6's account of the same condition; L2's collapsed instance
-arithmetic; and whether `[R-ENC-06]` gains a tile-scope cause row. All
-three move §21.8's totals and the corpus, so none was applied
-unilaterally. The two byte-level defects were also escalated and have been
-decided — see ADR-0066 and the *Fixed* table above.
+**Escalated, and since decided (ADR-0067).** F21 is dropped: conformance
+is conformance to a stated major, so a file declaring another is one this
+document declines to judge, and F20 already carries `[R-CNT-07]`'s real
+violation. L2's sum instance is split across the two containers L1/L16/L17/L18
+already enumerate. `[R-ENC-06]` gains T27 at tile scope, on F5's and L3's
+model. Removing F21 renumbered F22–F39 to F21–F38 — 148 references, shifted
+in one pass. **The register is now 125 conditions over 253 instances, and the
+corpus 306 vectors** at 100% row and per-instance coverage. Every F-row
+number quoted elsewhere in this document is as round 8 read them, before
+that shift; add one to any above F20 to reach today's §21.2.
 
-**Deferred, with owners.** §21.9's hard-limit list omits the alignment
-bounds and the 128-byte floor, and `[R-VEC-03]` binds corpus construction
-to that enumeration — a short list is a short corpus. Appendix G's
-reproducible-writer profile fixes emission order but not gap extent,
-sub-record order, or the fill default, so two profile-conforming writers
-can still differ. Both want a decision about what the document should
-require, not an edit.
+**Deferred, and since decided (ADR-0067).** §21.9's hard-limit list is
+completed — the alignment bounds, A_slab, the slab run length, the
+directory's floors and the 128-byte file minimum — and its closing *"never
+a number chosen here"* is dropped, since §16.1's 512 floor is exactly that.
+Appendix G now closes gap extent, sub-record order and the fill default;
+the last reaches furthest, because item 6 stores no all-fill tile, so two
+writers defaulting fill differently disagree about which tiles exist.
 
 **No change.** L24's name instance is due at layer access while L4/L6/L7
 place the same field's checks at open. A reader that runs L4/L6/L7 at open

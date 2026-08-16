@@ -440,7 +440,7 @@ INSTANCE_OF: dict[str, str] = {
     'TV-0924': 'layer record extent_offset',
     'TV-0925': 'layer record extent_length',
     'TV-0926': 'layer record extent_offset',
-    'TV-0927': 'extent_offset + extent_length',
+    'TV-0927': 'layer record extent_offset + extent_length',
     'TV-0928': 'sub-record extent_offset',
     'TV-0929': 'sub-record flags',
     'TV-0930': 'generation',
@@ -685,6 +685,7 @@ INSTANCE_OF: dict[str, str] = {
     'TV-0912': '—',
     'TV-0950': 'stored-tile extents',
     'TV-0951': '—',
+    'TV-0953': 'tile-index entry',
 }
 
 def manifest(built: dict[str, bytes]) -> dict:

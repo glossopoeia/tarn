@@ -325,7 +325,7 @@ VECTORS = [
     # -- L16, L17, L18 — the layer record's extent slot --------------------
     # `[R-CNT-13]`. One instance each; the sub-record instance of all three
     # is in SKIPPED. A malformed slot on a layer record is reject-layer, not
-    # reject-file (§7.2), which is what separates these from F33–F35.
+    # reject-file (§7.2), which is what separates these from F32–F34.
     #
     # Half-zero slot: length 0 with a nonzero offset. The file also fails
     # L23's size formula, unavoidably — the formula's subject is a slot that
@@ -420,7 +420,7 @@ VECTORS = [
     # -- L24 — a declared region outside the inline payload ----------------
     # `[R-CNT-18]`. One file per named region. inline_length stays 93 in all
     # four, so the directory's own record sequence still parses with no
-    # residue and the file-scope framing row (F32) stays out of it.
+    # residue and the file-scope framing row (F31) stays out of it.
     L("TV-0232", "layer `bad` name declares 200 bytes, past the 93-byte payload "
       "(instance: leading fixed fields)",
       "L24", "R-CNT-18", [Patch("layer[bad].name", b"\xc8bad")], named=False),

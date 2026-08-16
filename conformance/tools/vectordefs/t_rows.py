@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""§21.4 — tile-scope violations (outcome reject-tile). 26 rows, 45 instances.
+"""§21.4 — tile-scope violations (outcome reject-tile). 27 rows, 46 instances.
 
 Every vector here damages seed `pair`'s layer `bad` and leaves layer `ok`
 untouched, so each file carries the intact sibling [R-VEC-04] requires: without
@@ -215,9 +215,9 @@ VECTORS = [
     # -- T8 -----------------------------------------------------------------
     # NOTE: this condition cannot be isolated. Every offset below 16 addresses
     # bytes of the front signature block, so the entry's declared extent always
-    # overlaps a structure outside its own layer — F36, [R-CNT-13]. That
+    # overlaps a structure outside its own layer — F35, [R-CNT-13]. That
     # co-violation is inherent to the row's text, not to this construction, and
-    # it does not mask: F36's detector is the verifier at certification, which
+    # it does not mask: F35's detector is the verifier at certification, which
     # §19.2 places outside the reader tiers entirely, while §15.3 classifies
     # this entry reject-tile at tile use. Reported as a register finding.
     _reader("TV-0414",
@@ -255,6 +255,22 @@ VECTORS = [
             [Patch("layer[bad].entry[0].offset", u64(1 << 62)),
              Patch("layer[bad].entry[0].length", u64(1 << 62))],
             REPAIR_ENTRY, "T12", "R-IDX-03", WELLFORMED),
+
+    # -- T27 ----------------------------------------------------------------
+    # [R-ENC-06] at its third owning scope. The 20 bytes are written as
+    # offset u32, length u64, crc u64 -- still 20, so [R-ENC-07]'s size gate
+    # cannot see it. A conforming fixed-width parse reads offset from
+    # [0, 8) = u32(64) ++ u32(4) = 0x0000000400000040, length from [8, 16)
+    # = 0, and crc from [16, 20) = 0. Like F5 and L3 this row records the
+    # cause; the checks that fire are the value gates those shifted reads
+    # trip -- length 0 on a non-sentinel entry, and an extent ending past
+    # F - 64.
+    _reader("TV-0953",
+            "T27 `bad` entry 0 written as offset u32, length u64, crc u64 — "
+            "20 bytes still, parsed as offset 0x0000000400000040, length 0",
+            [Patch("layer[bad].entry[0]", u32(64) + u64(4) + u64(0),
+                   note="the widths shift; the total stays 20")],
+            REPAIR_ENTRY, "T27", "R-ENC-06", WELLFORMED),
 
     # -- T14 ----------------------------------------------------------------
     # Codec stays 1, so [R-COD-04]'s equality binds: tile extents (3,2) give

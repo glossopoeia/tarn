@@ -145,7 +145,7 @@ def _with_residue(subs: list, residue: bytes):
     The splice widens the layer record's inline_length and the directory's
     dir_length by the same amount, which keeps the *top-level* sequence parsing
     exactly as before — the residue is inside the layer record, where the row
-    puts it, and not after it, which would be F32 at file scope and would mask
+    puts it, and not after it, which would be F31 at file scope and would mask
     the row. Layer `sub` is emitted last, so nothing after the insertion point
     but the directory CRC, the pre-trailer pad and the trailer moves; all three
     are rebuilt here.
@@ -308,6 +308,15 @@ VECTORS = [
             [Patch("layer[sub].sub[0].extent_length", u64(0))]),
     # The mirror half. (0, 0) means no extent, so it is the pairing that is
     # invalid and each zeroed half is its own instance.
+    # L2's sum instance ranges over both containers §21.1's arithmetic
+    # counts: the layer record's own slot (TV-0927) and a sub-record's.
+    # Both halves in domain, their sum 2^63.
+    _reject("TV-0952", INERT_SEED,
+            "sub-record extent slot (2^62, 2^62): both halves in domain, "
+            "their sum 2^63", "L2", "R-ENC-04",
+            [Patch("layer[sub].sub[0].extent_offset", u64(1 << 62)),
+             Patch("layer[sub].sub[0].extent_length", u64(1 << 62))],
+            instance="sub-record extent_offset + extent_length"),
     _reject("TV-0928", INERT_SEED,
             "sub-record extent slot with extent_offset 0 and extent_length "
             "nonzero", "L16", "R-CNT-13",
@@ -318,7 +327,7 @@ VECTORS = [
             [Patch("layer[sub].sub[0].extent_offset", u64(8)),
              Patch("layer[sub].sub[0].extent_length", u64(8),
                    note="kept inside [0, 16) so the only structure the extent "
-                        "overlaps is the front block, whose F36 instance "
+                        "overlaps is the front block, whose F35 instance "
                         "§21.2 already records as unreachable behind this "
                         "very gate")]),
     _reject("TV-0810", INERT_SEED,
@@ -433,7 +442,7 @@ SKIPPED = {
         "any reader's walk. TV-0816 is that file. L25 has no instance L27 "
         "does not already carry."),
     "L47:sub-record": (
-        "unreachable, for the reason §21.2's F28 is unreachable at file "
+        "unreachable, for the reason §21.2's F27 is unreachable at file "
         "scope. MU = 1 with PE = 0 on a sub-record needs a type: on 0x0002 "
         "§7.3 fixes MU = 0 and PE = 1, so both stored bits differ from the "
         "registry and the file also carries L50; on 0x0001 the type's mere "
