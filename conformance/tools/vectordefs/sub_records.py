@@ -397,6 +397,14 @@ VECTORS = [
              "sub-record of registered type 0x0002 stores PE = 0 where the "
              "registry fixes PE = 1", "L50", "R-CNT-22",
              [Patch("layer[sub].sub[0].flags", u16(0))]),
+    # L47's sub-record instance. The inert sub-record's type is unassigned,
+    # so §7.3 fixes no flags for it and the MU = 1 / PE = 0 combination is
+    # L47 alone -- unlike a layer record, where the registry's MU = 1, PE = 1
+    # makes the same combination co-violate L50.
+    _certify("TV-0954", INERT_SEED,
+             "sub-record of an unassigned type carries MU = 1 with PE = 0",
+             "L47", "R-CNT-12",
+             [Patch("layer[sub].sub[0].flags", u16(0b01))]),
     _certify("TV-0814", INERT_SEED,
              "sub-record carrying reserved-range type 0x0003", "L26",
              "R-CNT-15",

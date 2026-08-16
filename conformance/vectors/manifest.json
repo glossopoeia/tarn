@@ -604,7 +604,7 @@
       "violations": [
         {
           "row": "L48",
-          "instance": "flags bits 2-15",
+          "instance": "layer record flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -613,45 +613,6 @@
           },
           "detector": "verifier",
           "detected": "certification"
-        }
-      ]
-    },
-    {
-      "id": "TV-0100",
-      "file": "reject-file/TV-0100.tarn",
-      "title": "F1 version_major: u16 1 stored big-endian, reading as major 256",
-      "sha256": "43ba4e3150245b580a328c25f34ec297b46624f4c558dbc30dadcefe038c5e14",
-      "size": 128,
-      "conforming": false,
-      "derivation": {
-        "seed": "minimal",
-        "patches": [
-          {
-            "field": "trailer.version_major",
-            "value": "0001"
-          }
-        ],
-        "repair": [
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F1",
-          "instance": "trailer version_major",
-          "rule": "R-ENC-01",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
         }
       ]
     },
@@ -8949,7 +8910,7 @@
       "violations": [
         {
           "row": "L48",
-          "instance": "flags bits 2-15",
+          "instance": "layer record flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -47237,7 +47198,7 @@
       "violations": [
         {
           "row": "L48",
-          "instance": "flags bits 2-15",
+          "instance": "sub-record flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -49758,7 +49719,7 @@
       "violations": [
         {
           "row": "L47",
-          "instance": "\u2014",
+          "instance": "layer record",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
           "scope": {
@@ -49934,6 +49895,117 @@
           },
           "detector": "reader",
           "detected": "tile use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0954",
+      "file": "reject-layer/TV-0954.tarn",
+      "title": "sub-record of an unassigned type carries MU = 1 with PE = 0",
+      "sha256": "1aad681db1cd78621a7e811f21cd0e5a9b995de5f169c362870a8295a5e1146a",
+      "size": 512,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_inert",
+        "patches": [
+          {
+            "field": "layer[sub].sub[0].flags",
+            "value": "0100"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "sub",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x07",
+                  "0x07",
+                  "0x07",
+                  "0x07"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L47",
+          "instance": "sub-record",
+          "rule": "R-CNT-12",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "verifier",
+          "detected": "certification"
         }
       ]
     }

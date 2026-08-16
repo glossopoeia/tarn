@@ -171,13 +171,10 @@ VECTORS = [
     # file is also a file the corresponding range row describes. That is the
     # row's own premise, not a defect in the vector.
     # ------------------------------------------------------------------
-    Vector("TV-0100", "minimal", "F1 version_major: u16 1 stored big-endian, "
-           "reading as major 256", False,
-           patches=[Patch("trailer.version_major", b"\x00\x01",
-                          note="LE 01 00 written 00 01")],
-           repair=["trailer.crc"],
-           row="F1", rule="R-ENC-01", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
+    # TV-0100 retired with F1's version_major instance: a byte-swapped
+    # version_major is byte-identical to a genuine major-N declaration, which
+    # §2.3 declines to judge and §21.6 keeps out of the register. F20 carries
+    # the only version_major condition that is a violation.
     Vector("TV-0101", "minimal", "F1 dir_offset: u64 16 stored big-endian", False,
            patches=[Patch("trailer.dir_offset", bytes(7) + b"\x10")],
            repair=["trailer.crc"],
