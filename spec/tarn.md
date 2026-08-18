@@ -16,8 +16,8 @@ License: CC BY 4.0 (see [LICENSE-SPEC](../LICENSE-SPEC)).
 > **structural** (its value affects how bytes are located or decoded),
 > **semantic** (its value affects what decoded values mean), or
 > **descriptive** (neither — the normative rule is §4.7). Normative requirements carry
-> stable identifiers like `[R-IDX-03]`; test vectors and conformance
-> checklists cite identifiers, never prose positions.
+> stable identifiers like `[R-IDX-03]`, and test vectors cite those
+> identifiers rather than prose positions.
 
 ---
 
@@ -673,9 +673,9 @@ either way at the margin while residency is decidable at any reader's
 own open path.
 
 A reader whose open leaves bytes
-[0, 16) **resident** — a local file, a memory mapping, a speculative
-suffix window that reached offset 0, or any transport already holding
-them — and a content sniffer MUST verify the full block by byte
+[0, 16) **resident** — a local file read whole, a memory mapping, a
+speculative suffix window that reached offset 0, or any transport
+already holding them — and a content sniffer MUST verify the full block by byte
 equality before other processing, and MUST treat any mismatch as
 reject-file. A reader that would have to issue a further range request
 to obtain those bytes MAY defer or omit the check: its open path is
@@ -2351,8 +2351,8 @@ tile's declared decoded size do not apply, because a document has
 no declared size — a reader instead decodes with a bound of its
 own choosing, no smaller than §21.9's user-metadata guarantee, and
 a document exceeding that bound is ignore-record like any other it
-cannot read. A **verifier** that declines to decode a document
-cannot establish that document's conformance and MUST NOT certify
+cannot read. A **verifier** that declines to decode a document on
+the bound above cannot establish that document's conformance and MUST NOT certify
 the file, exactly as `[R-COD-11]` requires of a codec it cannot
 execute; the bound is that verifier's capability and not a limit on
 validity (`[R-CNF-10]`), so the decline is not a finding that the
@@ -2468,7 +2468,8 @@ file stays conforming, exactly as it does for an unrecognized
 `tarn.`-prefixed key (§21.6). No reader's behavior turns on either,
 since a reader ignores such a key and reads the rest of the document —
 and enforcing them would put a verifier to work on the content of
-metadata, which §21.7 excludes by design. `[R-MTA-07]`
+metadata, which §21.6 declares a non-violation rather than a check
+any actor owes. `[R-MTA-07]`
 
 `tarn.axes` gives the affine mapping from a dimension's integer
 coordinate i to a physical position, `origin + i × step`, in the
@@ -2887,7 +2888,7 @@ PE = 0 is read as PE = 1, `[R-CNT-12]`), and carry these obligations:
 |---|---|
 | MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. Compaction is barred on the same ground (`[R-WRT-06]`). |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
-| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender may drop it only in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, index, or stored tiles; for a top-level record, the file's layer set or another *non-layer* top-level record — a commit that only supersedes a layer's tiles is not such a change, though it re-places that layer's index region (§20.3, `[R-WRT-04]`). Dropping the record is not itself such a change, so a commit whose only effect would be the drop MUST retain it. A compactor may drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender may drop it only in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, the entry set of its index, or which of its tiles are stored; for a top-level record, the file's layer set or another *non-layer* top-level record. Superseding a stored tile's bytes is not such a change for either kind — it re-places that layer's index region (§20.3, `[R-WRT-04]`) without altering the scope any record attaches to — so a commit whose only change is a supersede MUST retain the record. Dropping the record is not itself such a change either, so a commit whose only effect would be the drop MUST retain it. A compactor may drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
 No commit therefore removes a layer record or a file-scope
 user-metadata record. Both registered types carry PE = 1, and an
@@ -3126,7 +3127,7 @@ layer unaffected. 49 conditions.
 | L19 | A layer record's sub-record sequence contains more than one user-metadata sub-record (type 0x0002) | — | reader | layer access | `[R-CNT-14]` |
 | L20 | A layer record declares both a per-tile alignment A ≠ 0 and a slab S ≠ 0 | — | reader | layer access | `[R-CNT-16]` |
 | L21 | entry_count does not equal the geometry-derived addressed-tile count (N interleaved, C·N planar) | — | reader | layer access | `[R-CNT-17]` (R-CNT-20) |
-| L22 | Under index_encoding 1, extent_length ≠ entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 — including slot (0,0) with entry_count > 0, or a nonzero slot with entry_count = 0 | extent_offset; extent_length; entry_count | reader | layer access | `[R-CNT-17]` (R-ENC-07, R-CNT-20) |
+| L22 | Under index_encoding 1, extent_length ≠ entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 — including slot (0,0) with entry_count > 0, or a nonzero slot with entry_count = 0 | extent_length against the formula; slot (0,0) with entry_count > 0; a nonzero slot with entry_count = 0 | reader | layer access | `[R-CNT-17]` (R-ENC-07, R-CNT-20) |
 | L23 | A declared region of the layer record's inline payload does not lie entirely within inline_length (overrun or truncation) | leading fixed fields (name … C); d dimension entries; C channel entries; trailing fixed fields (index_encoding, entry_count, crc_of_crc_array) | reader | layer access | `[R-CNT-18]` |
 | L24 | A layer record's sub-record carries a reserved-range type value (0x0003-0x7FFF, §10.2) with MUST_UNDERSTAND (flags bit 0) set to 1 | — | reader | layer access | `[R-CNT-18]` (R-CNT-15) |
 | L25 | A layer record's sub-record carries a type value from the reserved range 0x0003-0x7FFF, which this specification has not assigned; emitting one is a violation whatever its MU bit | — | verifier | certification | `[R-CNT-15]` (R-CNT-18) |
@@ -3176,8 +3177,8 @@ returns fill in place of data (`[R-CNF-09]`). 26 conditions.
 | T12 | A non-sentinel tile-index entry's offset + length exceeds 2⁶³ − 1 although each field alone is in domain | — | reader | tile use | `[R-IDX-03]` (R-ENC-04) |
 | T13 | A stored tile is not independently decodable from its own extent and layer record — the decode needs state or side data outside the extent; the check that detects it is T25's, and this row records the cause rather than a procedure of its own | deflate stream carrying a previous tile's history window; lz4 block whose match offset reaches back into a previous tile's output | reader | tile use | `[R-COD-02]` (R-COD-06, R-COD-08) |
 | T14 | Codec 1 (none) declared and a non-sentinel index entry's length differs from the tile's decoded size | — | reader | tile use | `[R-COD-04]` |
-| T15 | Codec 2 (deflate) and the stored bytes carry a wrapper rather than a raw RFC 1951 DEFLATE stream | zlib RFC 1950 (CMF/FLG header + trailing Adler-32); gzip RFC 1952 member (1F 8B, trailing CRC32+ISIZE) | reader | tile use | `[R-COD-05]` |
-| T16 | Codec 2 (deflate) and the stored extent holds more than one DEFLATE stream — a second stream begins after the BFINAL block | — | reader | tile use | `[R-COD-05]` |
+| T15 | Codec 2 (deflate) and the stored bytes carry a wrapper rather than a raw RFC 1951 DEFLATE stream; the check that detects it is T24's or T25's, and this row records the cause rather than a procedure of its own | zlib RFC 1950 (CMF/FLG header + trailing Adler-32); gzip RFC 1952 member (1F 8B, trailing CRC32+ISIZE) | reader | tile use | `[R-COD-05]` |
+| T16 | Codec 2 (deflate) and the stored extent holds more than one DEFLATE stream — a second stream begins after the BFINAL block; the check that detects it is T24's, and this row records the cause rather than a procedure of its own | — | reader | tile use | `[R-COD-05]` |
 | T17 | Codec 3 (zstd) and the stored bytes do not begin with the compressed-frame magic 28 B5 2F FD | — | reader | tile use | `[R-COD-06]` |
 | T18 | Codec 3 (zstd) and the stored extent holds more than the single compressed frame | a second concatenated compressed frame; a skippable frame before the frame; a skippable frame after the frame; a skippable frame between two frames | reader | tile use | `[R-COD-06]` |
 | T19 | Codec 3 (zstd) and the frame header carries a nonzero Dictionary_ID | — | reader | tile use | `[R-COD-06]` |
@@ -3287,15 +3288,19 @@ immutability and the generation sequence (`[R-LIF-01]`,
 `[R-LIF-03]`) are properties of a file's history, which §9.7 does
 not reconstruct; the ordinal mappings of `[R-GEO-06]` and
 `[R-SER-01]` are satisfied by a structurally valid tile whatever
-values it carries; and `[R-CNT-13]`'s prohibition on an MU = 0
+values it carries; `[R-CNT-13]`'s prohibition on an MU = 0
 record encoding file offsets in its own payload is opaque by
-construction. `[R-ERR-01]`
+construction; and `[R-ENC-06]`'s fixed field widths are not a state a
+file can be in, since the parse is always at the widths this
+specification fixes and a structure written at any other yields
+different values at them, caught by the rows for the fields that hold
+them. `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
 Every row of §21.2 through §21.5 — 121 conditions over 248
 instances — has at least one conformance vector (§24) whose expected
-verdict is that row's outcome, and one vector per instance. A row without a vector is a
+outcome is that row's outcome, and one vector per instance. A row without a vector is a
 gap in the corpus, not a licence to skip the check. `[R-ERR-02]`
 
 #### 21.9 Implementation limits
@@ -3817,8 +3822,9 @@ the file.
    which a creation order is not — record order carries no meaning (`[R-CNT-14]`), so it
    is otherwise free to vary, as is structure placement
    (`[R-LIF-02]` step 2). Each structure begins where the previous one
-   ended, save where a declared alignment forces a gap, and every byte
-   of such a gap is zero — `[R-CNT-03]`'s advice, taken as a requirement
+   ended, save where alignment forces a gap — a
+   declared A or A_slab, or §6.2's 64-byte trailer alignment, the
+   pre-trailer pad included — and every byte of every such gap is zero — `[R-CNT-03]`'s advice, taken as a requirement
    here: order alone does not fix bytes while the space between
    structures is free in either extent or content.
 4. **One generation**, so that the file is the output of a single
@@ -3894,8 +3900,8 @@ produces, plus: validates the trailer and full directory, and every
 layer it modifies (§20.3); re-emits every retained record
 byte-identically (§20.4); respects every record's MU and PE bits, the
 registry's fixed values governing for a registered type (§20.4,
-`[R-CNT-22]`); never removes a layer record or a file-scope
-user-metadata record (§20.4); never modifies a scope governed by an unknown critical
+`[R-CNT-22]`); never removes a layer record, or a
+user-metadata record at either scope (§20.4); never modifies a scope governed by an unknown critical
 record, and rejects outright a file carrying an unimplemented
 top-level MU = 1 record (`[R-CNT-15]`, §20.4).
 

@@ -5033,7 +5033,7 @@
       "violations": [
         {
           "row": "L22",
-          "instance": "extent_length",
+          "instance": "extent_length against the formula",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
@@ -5116,7 +5116,7 @@
       "violations": [
         {
           "row": "L22",
-          "instance": "extent_offset",
+          "instance": "slot (0,0) with entry_count > 0",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
@@ -5203,7 +5203,7 @@
       "violations": [
         {
           "row": "L22",
-          "instance": "entry_count",
+          "instance": "a nonzero slot with entry_count = 0",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
