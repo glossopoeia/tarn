@@ -14,8 +14,8 @@ License: CC BY 4.0 (see [LICENSE-SPEC](../LICENSE-SPEC)).
 > rules, error handling, worked examples. On-disk structures are presented
 > as offset/size/type/name/valid-range tables. Every field is classified as
 > **structural** (its value affects where a byte lies, how it decodes,
-> or whether the file is accepted), **semantic** (it affects what
-> decoded values are), or **descriptive** (neither — §4.7). Normative requirements carry
+> what a decoded value is, or whether the file is accepted) or
+> **descriptive** (none of those — §4.7). Normative requirements carry
 > stable identifiers like `[R-IDX-03]`, and test vectors cite those
 > identifiers rather than prose positions.
 
@@ -508,15 +508,14 @@ Every field this specification defines is classified by what its
 *value* determines, each class being what the one before it is not.
 A field is **structural** if its value determines anything a
 conforming reader or verifier does with the file's bytes — where a
-byte lies, how it decodes, or whether the file, layer or tile is
-accepted at all, which is the sense `[R-CNT-07]`, `[R-MTA-02]` and
-`[R-SEC-06]` already use. It is **semantic** if not, but its value
-determines what decoded values are. It is **descriptive** if
-neither — its value determines nothing a conforming reader does, and
-a reader MUST NOT alter decoding based on it; each descriptive
-field's definition states what a reader does when the field
-contradicts the data it describes. In format major 1 `fill` is the
-only semantic field and `version_minor` the only descriptive one:
+byte lies, how it decodes, what a decoded value is, or whether the
+file, layer or tile is accepted at all, which is the sense
+`[R-CNT-07]`, `[R-MTA-02]` and `[R-SEC-06]` already use. It is
+**descriptive** if it determines none of those: its value determines
+nothing a conforming reader does, and a reader MUST NOT alter
+decoding based on it; each descriptive field's definition states what
+a reader does when the field contradicts the data it describes. In
+format major 1 `version_minor` is the only descriptive field, and
 every other field this specification defines is structural.
 `[R-ENC-16]`
 
@@ -1248,12 +1247,17 @@ append is recoverable only by scanning back across its entire length.
 #### 9.7 Coverage verification
 
 A verifier checking `[R-CNT-02]`'s partition walks the live state
-only. From the live trailer it enumerates the live directory and its
-records and their sub-records, each record's extent, and the
-non-sentinel entries of each layer's tile-index region (an entry `[R-IDX-03]` classifies
-reject-tile on a *structural* ground contributes no stored extent to
-the walk; one whose stored bytes alone fail its crc keeps its
-extent). A layer
+only. From the live trailer it reads the live directory
+and, through its records and their sub-records, reaches the claimants
+`[R-CNT-02]` names: the directory itself, each record's extent, and
+the stored extent of each non-sentinel tile-index entry (an entry
+`[R-IDX-03]` classifies reject-tile on a *structural* ground
+contributes no stored extent to the walk; one whose stored bytes
+alone fail its crc keeps its extent). A record is not a claimant of
+its own — its header and inline payload lie inside the directory
+region, which is the claimant covering them — so reaching a record
+through the directory is traversal, not a second claim on those
+bytes. A layer
 record's extent slot addresses that layer's tile-index region (§7.4),
 so the region enters the walk once, as that record's extent, and is
 not a second claimant beside it. It checks that these occupy disjoint
@@ -1613,8 +1617,10 @@ channel entry, MUST NOT substitute a type-derived default or any
 other value, and MUST return fill bit-exactly as recorded
 (`[R-TYP-04]`). `[R-TYP-06]`
 
-The fill value is semantic (§4.7): it affects what unstored samples
-read as, never how any byte is located or decoded; the field's
+The fill value is structural (§4.7): it fixes what unstored samples
+read as, and a verifier's acceptance of a tile turns on it, since
+`[R-SER-05]` fixes every padding position's content to it — though
+it never affects how any byte is located or decoded; the field's
 length prefix is §7.4's framing, cross-checked against the element
 size (`[R-CNT-23]`).
 
@@ -2781,9 +2787,13 @@ An appender MUST, in order:
    end, anchors every step below.
 2. **Open.** Perform §19.1's open (`[R-RDR-01]`) — the appender is
    a reader here. A violation the open establishes bars the commits
-   its outcome bars and no others: reject-file bars every commit,
-   reject-layer bars a commit that modifies that layer, reject-tile
-   bars reuse of that entry. Against any other structure the appender
+   its outcome bars and no others: reject-file bars every commit, and
+   reject-layer bars a commit that modifies that layer. The open
+   establishes no tile-scope violation — it consumes the trailer and
+   directory only (`[R-RDR-01]`) — and a malformed index entry an
+   appender meets while re-emitting a region is carried forward
+   byte-identically at its disk-ordinal position under step 4, not
+   repaired to a sentinel. Against any other structure the appender
    carries forward, it MUST NOT repair the defect — `[R-LIF-01]`
    freezes the committed prefix — and MUST NOT drop the record
    (§20.4); re-emitting it byte-identically is not authorship, since
@@ -3843,7 +3853,10 @@ the file.
 3. **A total emission order, contiguously.** For each layer in
    ascending layer-name byte order: its stored tiles in disk-ordinal
    order, then its tile-index region; then any record extents in
-   ascending record order; then the directory. Records are ordered by
+   ascending record order — all of them after every layer's tiles and
+   index region, not interleaved with them; then the directory. That
+   order runs over top-level records first, then, within each layer
+   record, its sub-records. Records are ordered by
    type, and within type 0x0001 by layer name; a layer record's
    sub-records are ordered by type, and within a type by their encoded
    bytes compared lexicographically — an order a reader can derive,
@@ -3872,20 +3885,36 @@ the file.
 8. **`version_minor` at the floor** `[R-CNT-26]` states, and
    `flags` = 0.
 9. **User metadata either absent, or serialized by a named JSON
-   writer at a named version.** `[R-MTA-05]`'s sorted keys make one
+   writer at a named version, at a fixed storage encoding (§18.2) —
+   and, where that encoding is 2, by a named zstd implementation at a
+   named version with fixed settings, as item 1 pins a tile codec.** `[R-MTA-05]`'s sorted keys make one
    writer's output reproducible but explicitly do not make two
    writers' output identical — number formatting varies by runtime —
    so this degree of freedom closes the same way item 1 does, by
    pinning the producer.
 
+10. **Names normalized to Unicode Normalization Form C**, which
+   `[R-ENC-14]` states as a SHOULD. A caller-supplied decomposed name
+   is a different name under `[R-ENC-13]` and a different length —
+   §4.6's `température` is 12 bytes in NFC and 13 in NFD — so a writer
+   that does not normalize emits a different layer record, a different
+   `inline_length`, and a different `dir_length`.
+
 Everything else the profile needs is already mandatory — fill-encoded
 edge padding (`[R-SER-05]`) and explicitly recorded fill
-(`[R-TYP-06]`) among them. Four things are not, and the items above
-are where the profile adds them: gap *content*, which `[R-CNT-03]`
-only advises; gap *extent*, which placement freedom (`[R-SLB-05]`)
-leaves open; sub-record order within a layer record's inline payload,
-which `[R-CNT-14]` leaves free; and the fill a writer records when its
-caller chooses none, which `[R-TYP-10]` states as a SHOULD.
+(`[R-TYP-06]`) among them. The items above add what is not, and the
+list is not short: gap *content*, which `[R-CNT-03]` only advises;
+gap *extent*, which placement freedom (`[R-SLB-05]`) leaves open;
+record and sub-record order, which `[R-CNT-14]` leaves free; the fill
+a writer records when its caller chooses none (`[R-TYP-10]`, a
+SHOULD); the sentinel for every all-fill tile, which no rule requires;
+a single generation, which §9 nowhere constrains; the absence or
+fixing of a declared alignment and slab, which §16 leaves to the
+writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
+SHOULD; a derived `file_id`, where §9.3 states only advice; and the
+producer pinning of items 1 and 9. Read the numbered items as the
+list; this paragraph names what they are for, not how many there
+are.
 
 ### Appendix H — Conformance checklists (non-normative)
 
