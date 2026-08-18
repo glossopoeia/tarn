@@ -4737,9 +4737,7 @@
         ]
       },
       "expect": {
-        "must_not_serve": [
-          "layer:bad"
-        ],
+        "must_not_serve": [],
         "may_escalate_to": "file",
         "serves": [
           {
@@ -8778,40 +8776,6 @@
                 ]
               }
             ]
-          },
-          {
-            "layer": "bad",
-            "geometry": {
-              "rank": 2,
-              "extents": [
-                2,
-                2
-              ],
-              "tile_extents": [
-                2,
-                2
-              ]
-            },
-            "layout": "interleaved",
-            "channels": [
-              {
-                "name": "v",
-                "type": "uint8",
-                "fill": "0x00"
-              }
-            ],
-            "tiles": [
-              {
-                "disk_ordinal": 0,
-                "stored": true,
-                "values": [
-                  "0x01",
-                  "0x02",
-                  "0x03",
-                  "0x04"
-                ]
-              }
-            ]
           }
         ]
       },
@@ -8891,40 +8855,6 @@
                   "0xC0000000",
                   "0x00000000",
                   "0x7F800000"
-                ]
-              }
-            ]
-          },
-          {
-            "layer": "bad",
-            "geometry": {
-              "rank": 2,
-              "extents": [
-                2,
-                2
-              ],
-              "tile_extents": [
-                2,
-                2
-              ]
-            },
-            "layout": "interleaved",
-            "channels": [
-              {
-                "name": "v",
-                "type": "uint8",
-                "fill": "0x00"
-              }
-            ],
-            "tiles": [
-              {
-                "disk_ordinal": 0,
-                "stored": true,
-                "values": [
-                  "0x01",
-                  "0x02",
-                  "0x03",
-                  "0x04"
                 ]
               }
             ]
@@ -9011,40 +8941,6 @@
                   "0xC0000000",
                   "0x00000000",
                   "0x7F800000"
-                ]
-              }
-            ]
-          },
-          {
-            "layer": "bad",
-            "geometry": {
-              "rank": 2,
-              "extents": [
-                2,
-                2
-              ],
-              "tile_extents": [
-                2,
-                2
-              ]
-            },
-            "layout": "interleaved",
-            "channels": [
-              {
-                "name": "v",
-                "type": "uint8",
-                "fill": "0x00"
-              }
-            ],
-            "tiles": [
-              {
-                "disk_ordinal": 0,
-                "stored": true,
-                "values": [
-                  "0x01",
-                  "0x02",
-                  "0x03",
-                  "0x04"
                 ]
               }
             ]
@@ -9135,40 +9031,6 @@
                   "0xC0000000",
                   "0x00000000",
                   "0x7F800000"
-                ]
-              }
-            ]
-          },
-          {
-            "layer": "bad",
-            "geometry": {
-              "rank": 2,
-              "extents": [
-                2,
-                2
-              ],
-              "tile_extents": [
-                2,
-                2
-              ]
-            },
-            "layout": "interleaved",
-            "channels": [
-              {
-                "name": "v",
-                "type": "uint8",
-                "fill": "0x00"
-              }
-            ],
-            "tiles": [
-              {
-                "disk_ordinal": 0,
-                "stored": true,
-                "values": [
-                  "0x01",
-                  "0x02",
-                  "0x03",
-                  "0x04"
                 ]
               }
             ]
@@ -9267,40 +9129,6 @@
                   "0xC0000000",
                   "0x00000000",
                   "0x7F800000"
-                ]
-              }
-            ]
-          },
-          {
-            "layer": "bad",
-            "geometry": {
-              "rank": 2,
-              "extents": [
-                2,
-                2
-              ],
-              "tile_extents": [
-                2,
-                2
-              ]
-            },
-            "layout": "interleaved",
-            "channels": [
-              {
-                "name": "v",
-                "type": "uint8",
-                "fill": "0x00"
-              }
-            ],
-            "tiles": [
-              {
-                "disk_ordinal": 0,
-                "stored": true,
-                "values": [
-                  "0x01",
-                  "0x02",
-                  "0x03",
-                  "0x04"
                 ]
               }
             ]
@@ -49281,9 +49109,7 @@
         ]
       },
       "expect": {
-        "must_not_serve": [
-          "layer:two"
-        ],
+        "must_not_serve": [],
         "may_escalate_to": "file",
         "serves": [
           {

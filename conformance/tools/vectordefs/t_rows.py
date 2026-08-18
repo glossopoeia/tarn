@@ -61,7 +61,18 @@ def _verifier(vid, title, patches, row, rule):
                   repair=REPAIR_RECORD,
                   row=row, rule=rule, outcome="reject-tile", scope=TILE,
                   detector="verifier", detected="certification",
-                  must_not_serve=[], serves=["ok", "bad"])
+                  must_not_serve=[],
+                  # `bad` is served — no reader is obliged to screen decoded
+                  # content — but it is NOT listed here when the recipe
+                  # re-declares the layer's geometry, layout or channel type:
+                  # seed_content() derives expected content from the seed, so
+                  # the recorded values would be the pre-patch ones and would
+                  # fail a correct reader. See ADR-0071; the omission is a
+                  # corpus limit, not a claim that the layer is unservable.
+                  serves=(["ok"] if any(
+                      k in p.field for p in patches
+                      for k in (".layout", ".chan[", ".dim[")) else
+                      ["ok", "bad"]))
 
 
 VECTORS = [

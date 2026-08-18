@@ -113,13 +113,26 @@ Register and corpus unchanged at **121 conditions over 248 instances, 300
 vectors** — L22's relabelling kept its count at three and re-annotated its
 three existing vectors, which already built the three alternatives.
 
-The six decisions: the field taxonomy's residual class against `generation`,
-`file_id` and the name fields; *"region"* undefined in `[R-CNT-21]`'s partial
-slack total; the appender's missing counterpart to §20.5's refusal rule;
-§21.9's omitted validity floors; the corpus being normatively keyed to row
-labels no clause promises to keep stable; and `[R-VEC-04]`'s intact-sibling
-pair, which for a verifier-detected row names a scope no reader is obliged to
-refuse.
+**All six decisions are settled in
+[ADR-0071](../../decisions/0071-six-decisions-round-ten-raised.md).** The
+taxonomy's `structural` class is broadened to the sense `[R-CNT-07]`,
+`[R-MTA-02]` and `[R-SEC-06]` already use, leaving `fill` the only semantic
+field and `version_minor` the only descriptive one. The partial slack total
+becomes an upper bound — F less what the walk enumerated — amending ADR-0065,
+since only 12 of 522 slack bytes were provably claimant-free in the worked
+case. §20.3 gains the appender's counterpart in the *proceed* direction, on
+`[R-WRT-05]`'s distinguisher that a record it **modifies** is new output;
+§20.5's third justification is trimmed, the same reasoning cutting against it.
+`[R-ERR-03]` becomes a finding aid rather than an inventory. **COV-06** now
+asserts a vector's recorded rule is its row's governing rule, closing the
+row-label drift COV-05 is blind to on the 50 rows sharing the instance `—`.
+And `[R-VEC-04]`'s pair is qualified to reader-detected rows.
+
+Working those up found **seven vectors that would fail a correct
+implementation**, all repaired: TV-0226 and TV-0950 asserted a reader must
+refuse on a verifier-detected row (`L()` hard-coded it), and TV-0400, TV-0407,
+TV-0408, TV-0409 and TV-0410 recorded expected content from the seed while
+their own patches re-declared the layer.
 
 ## Artifacts
 

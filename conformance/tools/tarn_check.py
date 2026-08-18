@@ -67,6 +67,7 @@ COMPLETENESS_DISPOSITIONED = {
     "R-VEC-04": "constrains how the corpus is built, not what a file may contain",
     "R-LIF-08": "the verifier's coverage procedure; the violations it finds are the overlap rows'",
     "R-SLB-04": "a writer obligation whose detection it delegates to [R-SLB-03]; ADR-0057 deleted its row",
+    "R-WRT-04": "the append procedure; the outcomes its open step names are established by the rows for those conditions, and the step states which commits each bars (ADR-0071)",
     "R-ENC-01": "the encoding is little-endian by definition, so no file is in a 'big-endian' state; [R-ENC-02]'s writer prohibition is conduct ([R-CNF-02]) and the out-of-range value it yields is caught by that field's own row (ADR-0069)",
 }
 
@@ -683,6 +684,31 @@ def check_coverage(spec: Spec, root: Path, report: Report) -> None:
                 failures.append(
                     f"{v['id']} cites register row {viol['row']}, which no longer exists")
     report.add("COV-02", "cited rows exist", failures)
+
+    # COV-06 -- a vector's recorded `rule` must be the governing rule of the
+    # row it cites. Row labels are positional (ADR-0049): striking a row
+    # renumbers every later one, and a vector left pointing at its old label
+    # now names a different condition. COV-05 catches that only when the two
+    # rows' Instances text differs -- and 50 of the register's rows share the
+    # instance `-`, so a fifth of the corpus keys on a token that
+    # discriminates nothing. The governing rule identifier does not renumber
+    # (§2.2), so it is the stable second key that closes the gap. Measured on
+    # the two real renumberings, 15% of re-pointings were silent under COV-05
+    # alone; this check makes them loud (ADR-0071).
+    by_id = {r["id"]: r for rows in spec.rows.values() for r in rows}
+    failures = []
+    for v in vectors:
+        for viol in v.get("violations", []):
+            row = by_id.get(viol["row"])
+            if row is None:
+                continue                      # COV-02 already reported it
+            primary = re.match(r"\s*`\[(R-[A-Z]{3}-\d{2})\]`", row["rule"])
+            if primary and viol.get("rule") and viol["rule"] != primary.group(1):
+                failures.append(
+                    f"{v['id']} cites row {viol['row']} with rule {viol['rule']}, "
+                    f"but that row's governing rule is {primary.group(1)} - "
+                    f"the label may have been renumbered under it")
+    report.add("COV-06", "vector rule matches its row", failures)
 
     # COV-03 -- coverage itself. Reported, never failed: a partial corpus is
     # work in progress, and [R-ERR-02] makes a gap a gap, not a licence.

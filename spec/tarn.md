@@ -13,9 +13,9 @@ License: CC BY 4.0 (see [LICENSE-SPEC](../LICENSE-SPEC)).
 > rubric where applicable: purpose, byte-layout table, writer rules, reader
 > rules, error handling, worked examples. On-disk structures are presented
 > as offset/size/type/name/valid-range tables. Every field is classified as
-> **structural** (its value affects how bytes are located or decoded),
-> **semantic** (its value affects what decoded values mean), or
-> **descriptive** (neither — the normative rule is §4.7). Normative requirements carry
+> **structural** (its value affects where a byte lies, how it decodes,
+> or whether the file is accepted), **semantic** (it affects what
+> decoded values are), or **descriptive** (neither — §4.7). Normative requirements carry
 > stable identifiers like `[R-IDX-03]`, and test vectors cite those
 > identifiers rather than prose positions.
 
@@ -506,20 +506,28 @@ defined by the user-metadata document (§18).
 
 Every field this specification defines is classified by what its
 *value* determines, each class being what the one before it is not.
-A field is **structural** if its value determines how any byte is
-located or decoded; **semantic** if not, but its value determines
-what decoded values mean; and **descriptive** if neither — its value
-determines nothing a conforming reader does, and a reader MUST NOT
-alter decoding based on it. Each descriptive field's definition
-states what a reader does when the field contradicts the data it
-describes. `[R-ENC-16]`
+A field is **structural** if its value determines anything a
+conforming reader or verifier does with the file's bytes — where a
+byte lies, how it decodes, or whether the file, layer or tile is
+accepted at all, which is the sense `[R-CNT-07]`, `[R-MTA-02]` and
+`[R-SEC-06]` already use. It is **semantic** if not, but its value
+determines what decoded values are. It is **descriptive** if
+neither — its value determines nothing a conforming reader does, and
+a reader MUST NOT alter decoding based on it; each descriptive
+field's definition states what a reader does when the field
+contradicts the data it describes. In format major 1 `fill` is the
+only semantic field and `version_minor` the only descriptive one:
+every other field this specification defines is structural.
+`[R-ENC-16]`
 
 > **Note.** Layout tables for fixed-layout structures give, per field:
 > byte offset within the structure, size, type, name, taxonomy class,
 > and valid range. A packed variable-length payload — the layer
 > record's inline payload (§7.4) — has no fixed offsets to give; its
 > table omits the offset and class columns, and each field's class
-> follows from the definitions above. Every non-obvious encoding is followed by a worked numeric
+> follows from the definitions above. A variable-length field's value
+> includes its length prefix, so a name is structural: it determines
+> where the field after it begins. Every non-obvious encoding is followed by a worked numeric
 > example, and every sentinel or overloaded encoding additionally has a
 > paired conformance vector. All named constants appear once in
 > Appendix B.
@@ -612,10 +620,12 @@ tells an operator to compact. Where the walk of §9.7 does not
 enumerate every region's claimants — whether because a scope-level
 rejection stops it, or because the verifier elected under `[R-CNF-11]`
 to stop at the first violation — the verifier MUST report the total
-as partial. A partial total counts only the bytes no claimant claims
-within the regions the verifier did walk, and a verifier reporting one
-MUST also name the regions it did not walk and report their byte
-extent. Only compaction (§20.5) reclaims it.
+as partial. A partial total is F less the bytes claimed by the
+claimants the walk did enumerate — an upper bound on the file's true
+slack, never an under-count — and a verifier reporting one MUST say
+which scope or violation stopped the walk. It is not the file's slack
+total but a bound on it, tightening to the exact total when the walk
+completes. Only compaction (§20.5) reclaims it.
 `[R-CNT-21]` Slack that holds superseded data is a privacy
 consideration (§23).
 
@@ -659,7 +669,7 @@ Bytes [0, 16) of every file, constant in every format major version:
 | Offset | Size | Value | Class |
 |---|---|---|---|
 | 0 | 8 | `89 54 41 52 4E 0D 0A 1A` (`\x89`, "TARN", CR, LF, ctrl-Z) | structural |
-| 8 | 8 | zero | structural (reserved) |
+| 8 | 8 | zero | structural |
 
 Writers MUST emit exactly these 16 bytes.
 
@@ -705,11 +715,11 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 | 8 | 2 | u16 | version_major | structural | 1 (0 invalid; others: §6.3) |
 | 10 | 2 | u16 | version_minor | descriptive | any (see §6.3) |
 | 12 | 4 | u32 | flags | structural | bits 0–15 incompat lane; bits 16–31 ignore lane (§6.3) |
-| 16 | 8 | u64 | generation | semantic | 1 ≤ generation ≤ 2⁶³ − 1 (`[R-ENC-03]`) |
+| 16 | 8 | u64 | generation | structural | 1 ≤ generation ≤ 2⁶³ − 1 (`[R-ENC-03]`) |
 | 24 | 8 | u64 | dir_offset | structural | ≥ 16 |
 | 32 | 8 | u64 | dir_length | structural | ≥ 4; dir_offset + dir_length ≤ F − 64 |
 | 40 | 8 | u64 | committed_file_length | structural | = F; multiple of 64 |
-| 48 | 8 | u64 | file_id | semantic | ≠ 0 |
+| 48 | 8 | u64 | file_id | structural | ≠ 0 |
 | 56 | 4 | bytes | reserved | structural | zero |
 | 60 | 4 | u32 | trailer CRC | structural | CRC-32C over trailer bytes [0, 60) |
 
@@ -1258,9 +1268,9 @@ keeps every other claimant disjoint from them. Bytes the walk does not
 reach are slack: the verifier sums them and reports the total, and
 their content is not its concern. Where the walk does not complete —
 a scope-level rejection blocks enumeration, or the verifier stops at
-the first violation (`[R-CNF-11]`) — the sum covers only the regions
-walked, and `[R-CNT-21]` governs what such a partial total counts and
-what the verifier reports beside it. An entry `[R-IDX-03]` classifies
+the first violation (`[R-CNF-11]`) — the sum is reported as partial, and
+`[R-CNT-21]` governs what such a total counts and what the verifier
+reports beside it. An entry `[R-IDX-03]` classifies
 reject-tile on a *structural* ground does not make the walk
 incomplete: the walk passes over
 it, and the bytes it nominally addresses fall to slack (§15.3).
@@ -2770,7 +2780,17 @@ An appender MUST, in order:
    from it per `[R-LIF-04]` — in which case F, never the physical
    end, anchors every step below.
 2. **Open.** Perform §19.1's open (`[R-RDR-01]`) — the appender is
-   a reader here.
+   a reader here. A violation the open establishes bars the commits
+   its outcome bars and no others: reject-file bars every commit,
+   reject-layer bars a commit that modifies that layer, reject-tile
+   bars reuse of that entry. Against any other structure the appender
+   carries forward, it MUST NOT repair the defect — `[R-LIF-01]`
+   freezes the committed prefix — and MUST NOT drop the record
+   (§20.4); re-emitting it byte-identically is not authorship, since
+   `[R-WRT-05]` makes only *a record it modifies* new output under
+   `[R-CNF-05]`. An appender that carries a violation forward SHOULD
+   report it, and a caller that is not told cannot know the file it
+   extended was already damaged.
 3. **Validate what the commit touches**, per `[R-WRT-03]`.
 4. **Write payloads and indexes** (`[R-LIF-02]` steps 1–2):
    writing begins at exactly F; new stored tiles and record
@@ -2927,8 +2947,7 @@ verification depth is `[R-WRT-09]`'s and reaches no decoded content.
 A compactor MUST refuse to compact when any check `[R-WRT-09]`
 obliges fails, and MUST NOT emit a file carrying a violation it has
 detected: it can neither drop the structure (§20.4, `[R-WRT-07]`),
-nor re-emit it corrected (`[R-WRT-05]`), nor author bytes it knows to
-be nonconforming (`[R-CNF-05]`). It MUST mint a fresh file_id for the output — a new draw under §9.3's
+nor re-emit it corrected (`[R-WRT-05]`). It MUST mint a fresh file_id for the output — a new draw under §9.3's
 randomness advice, not merely a value compared against the input's —
 and generation 1: a
 compacted file is a whole-file rewrite under a new file_id by
@@ -3229,7 +3248,7 @@ of them as a failure is the nonconforming party.
 | A record type this specification has not assigned, from the experimental range (≥ 0x8000, §10.2), carries MU = 0 | Ignored, and preserved or dropped per its PE bit; a *reserved*-range type is read the same way, but emitting one is a violation (F36, L25) | `[R-CNT-15]`, `[R-WRT-08]` |
 | An ignore-lane flag bit (16–31) is set | Ignored; the file is conforming — such bits are defined by later minor versions | `[R-CNT-08]` |
 | version_minor is higher than this text defines | Accepted; minors never gate | `[R-CNT-07]` |
-| Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded structures | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier — as a partial total, with the unwalked regions named, where its walk did not complete; only compaction reclaims it | `[R-CNT-21]` |
+| Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded structures | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier — as a partial total — an upper bound naming what stopped the walk — where its walk did not complete; only compaction reclaims it | `[R-CNT-21]` |
 | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
 | A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]` |
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
@@ -3306,7 +3325,11 @@ gap in the corpus, not a licence to skip the check. `[R-ERR-02]`
 #### 21.9 Implementation limits
 
 Every limit affecting which files are valid, or which files a
-conforming reader accepts, lives here (`[R-CNF-10]`). The table
+conforming reader accepts, lives in this specification and never only
+in an implementation (`[R-CNF-10]`); this section collects the ones an
+implementer most often needs at hand, and is a finding aid rather than
+an inventory — each limit is normative where the structure forcing it
+is defined. The table
 below states **minimum guarantees**, not caps: a conforming reader
 MUST accept any conforming file whose quantities lie within these
 bounds, and a writer MAY rely on that. `[R-ERR-03]`
@@ -3571,9 +3594,14 @@ Every vector whose recorded outcome is reject-layer or reject-tile is
 built inside a file that also carries an **intact sibling** — another
 layer, or another tile of the same layer where that layer is one a
 reader is still permitted to serve — whose decoded content the
-manifest records, and a vector's expectation is therefore a pair: the
-scope no reader is permitted to serve, and the content a reader that
-serves anything at all owes. Without the sibling a vector cannot
+manifest records, and a vector's expectation is therefore a pair.
+Where the row's detector is the reader, that pair is the scope no
+reader is permitted to serve and the content a reader that serves
+anything at all owes. Where it is the verifier, no reader is obliged
+to refuse anything (§21.1), so the pair is the scope at which a
+verifier confines its finding — carried by the entry's own scope and
+detector fields (`[R-VEC-02]`) — and the content a reader owes from
+every scope, the damaged one included. Without the sibling a vector cannot
 distinguish a reader that scopes its refusal from one that rejects
 the file entire, because `[R-CNF-12]` permits the latter for any
 nonconforming file and every vector built from §21's register is
@@ -3907,9 +3935,9 @@ top-level MU = 1 record (`[R-CNT-15]`, §20.4).
 
 **Conforming verifier** — every reader obligation, plus the checks
 readers are exempt from: the live-state coverage partition and the
-slack total (§9.7) — reported as partial, with the unwalked regions
-named and their byte extent given, where its walk did not complete
-(`[R-CNT-21]`); extent overlap (§7.2); record flag bits — reserved
+slack total (§9.7) — reported as partial — an upper bound,
+naming the scope or violation that stopped the walk — where its walk
+did not complete (`[R-CNT-21]`); extent overlap (§7.2); record flag bits — reserved
 bits, MU = 1 with PE = 0, and a registered type's stored bits against
 §7.3's registry (`[R-CNT-12]`, `[R-CNT-22]`);
 no structure between the live directory's end and the live trailer

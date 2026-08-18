@@ -51,7 +51,7 @@ VECTORS = [
         scope={"kind": "layer", "name": "two",
                "instance": "stored-tile extents"},
         detector="verifier", detected="certification",
-        must_not_serve=["layer:two"], serves=["ok"]),
+        must_not_serve=[], serves=["ok"]),
 ]
 
 # The patch above zeroes entry[1].offset, which would be an offset below 16

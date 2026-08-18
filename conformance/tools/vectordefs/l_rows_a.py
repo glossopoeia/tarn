@@ -114,9 +114,22 @@ def L(id_, title, row, rule, patches, *, repair=("directory.crc", "trailer.crc")
     return Vector(id_, "pair", title, False, patches=list(patches),
                   repair=list(repair), row=row, rule=rule,
                   outcome="reject-layer", scope=scope, detector=detector,
-                  detected=detected, must_not_serve=[
-                      "layer:bad" if named else "layer:#1"],
-                  serves=["ok"], breaks_checksums=list(breaks))
+                  detected=detected,
+                  # §21.1: for a verifier-detected row the outcome names the
+                  # scope at which damage is recorded, "not an obligation on
+                  # any reader" — so no reader must refuse, and the layer is
+                  # served. Asserting must_not_serve there fails a correct
+                  # reader (ADR-0071).
+                  must_not_serve=([] if detector == "verifier"
+                                  else ["layer:bad" if named else "layer:#1"]),
+                  # `serves` stays the intact sibling alone: seed_content()
+                  # derives content from the seed, and these vectors redirect
+                  # an extent, so the damaged layer's true decoded content is
+                  # not what the seed says. Recording it would fail a correct
+                  # reader. The gap is stated in ADR-0071 rather than papered
+                  # over with content the corpus cannot compute.
+                  serves=["ok"],
+                  breaks_checksums=list(breaks))
 
 
 VECTORS = [
