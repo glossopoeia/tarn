@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""§21.2 — file-scope violations, outcome reject-file. Rows F1 … F40.
+"""§21.2 — file-scope violations, outcome reject-file.
 
 40 rows over 64 named instances. One vector per instance, except where the
 instance cannot be built as a *distinguishable* file; those are listed in
@@ -10,7 +10,7 @@ Two recurring facts about this section shape the recipes below.
 
 **The trailer is one covering CRC.** Every trailer-field mutation repairs
 `trailer.crc`, or the reader stops at [R-CNT-06]'s CRC step and the vector
-evidences F16 instead of the row it names. Several trailer mutations then
+evidences F14 instead of the row it names. Several trailer mutations then
 fail §6.2's field gates on purpose — those declare `trailer.gates`.
 
 **Record-header fields are not separately addressable.** The builder's
@@ -79,7 +79,7 @@ _EXPERIMENTAL = 0x8001
 
 
 # --------------------------------------------------------------------------
-# F6 — two layer records with byte-identical name fields.
+# F4 — two layer records with byte-identical name fields.
 #
 # The name field is a length prefix plus its bytes, so `ok` occupies 3 bytes
 # and `bad` occupies 4: no fixed-width patch can make them equal on its own.
@@ -103,12 +103,12 @@ def _dup_layer_name_record() -> bytes:
 
 
 # --------------------------------------------------------------------------
-# F25 — a top-level user-metadata record whose inline_length is not 1.
+# F23 — a top-level user-metadata record whose inline_length is not 1.
 #
 # That record is last in the sequence, so changing its inline_length alone
 # leaves a residue or an overrun at the sequence end — [R-CNT-12]'s framing
-# rule, register row F31, detected at the same open step. To carry only
-# F25 the directory is rebuilt so the byte comes from somewhere else: the
+# rule, register row F29, detected at the same open step. To carry only
+# F23 the directory is rebuilt so the byte comes from somewhere else: the
 # layer is renamed `ok` -> `o`, which is a conforming name, and the freed
 # byte goes to the metadata record's inline payload.
 # --------------------------------------------------------------------------
@@ -129,14 +129,14 @@ def _meta_dir_inline_len_2() -> bytes:
 
 
 # --------------------------------------------------------------------------
-# F36 — two user-metadata records in one top-level sequence.
+# F34 — two user-metadata records in one top-level sequence.
 #
 # The seed carries one. A second needs an extent of its own that no other
 # structure claims and whose bytes are a readable document, or the file
 # carries an R2/R7 defect as well. The directory is rebuilt as exactly two
 # metadata records; dir_length shrinks to match and the stale tail is zeroed,
 # so the bytes past the new directory are slack ([R-CNT-21]) and not a
-# structure in the pre-trailer gap ([R-CNT-05], row F9). The seed's layer
+# structure in the pre-trailer gap ([R-CNT-05], row F7). The seed's layer
 # record goes with it — a file with zero layers is conforming ([R-CNT-14]) —
 # which frees its tile-index region to hold the second document.
 # --------------------------------------------------------------------------
@@ -152,7 +152,7 @@ def _f38_directory() -> bytes:
 
 
 # --------------------------------------------------------------------------
-# F9 / F35 — relocating a structure. The tile payload moved onto is written
+# F7 / F33 — relocating a structure. The tile payload moved onto is written
 # nowhere, so the entry's crc field is recomputed over the bytes already
 # there; the entry is otherwise well-formed and both index checksums repair.
 # --------------------------------------------------------------------------
@@ -164,187 +164,121 @@ _T = len(_PAIR_BLOB) - 64                       # pair: F - 64 = 384
 
 
 VECTORS = [
-    # ------------------------------------------------------------------
-    # F1 [R-ENC-01] — a multi-byte field stored big-endian, detectable only
-    # through that field's own value or range gate. Which is to say: every
-    # instance below is *detected* by the gate that owns the field, so each
-    # file is also a file the corresponding range row describes. That is the
-    # row's own premise, not a defect in the vector.
-    # ------------------------------------------------------------------
-    # TV-0100 retired with F1's version_major instance: a byte-swapped
-    # version_major is byte-identical to a genuine major-N declaration, which
-    # §2.3 declines to judge and §21.6 keeps out of the register. F20 carries
-    # the only version_major condition that is a violation.
-    Vector("TV-0101", "minimal", "F1 dir_offset: u64 16 stored big-endian", False,
-           patches=[Patch("trailer.dir_offset", bytes(7) + b"\x10")],
-           repair=["trailer.crc"],
-           breaks_checksums=["trailer.gates"],
-           row="F1", rule="R-ENC-01", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0102", "minimal", "F1 dir_length: u64 4 stored big-endian", False,
-           patches=[Patch("trailer.dir_length", bytes(7) + b"\x04")],
-           repair=["trailer.crc"],
-           breaks_checksums=["trailer.gates"],
-           row="F1", rule="R-ENC-01", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     # Seed `meta` rather than `minimal`: reversing 128 sets bit 63 and the
-    # file would carry F3 as well, while reversing this seed's 320 lands on
+    # file would carry F2 as well, while reversing this seed's 320 lands on
     # 0x4001000000000000 — in [R-ENC-03]'s domain and still a multiple of 64,
-    # so the only gate it fails is the one F1 relies on, "= F".
-    Vector("TV-0103", "meta",
-           "F1 committed_file_length: u64 320 stored big-endian", False,
-           patches=[Patch("trailer.committed_file_length",
-                          bytes(6) + b"\x01\x40")],
-           repair=["trailer.crc"],
-           breaks_checksums=["trailer.gates"],
-           row="F1", rule="R-ENC-01", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     # generation's only gates are >= 1 (§6.2) and <= 2^63 - 1 ([R-ENC-03]),
     # so a byte-reversed generation is detectable only when the true value's
     # low byte sets bit 63 on reversal. 128 is the smallest such value.
-    Vector("TV-0104", "minimal", "F1 generation: u64 128 stored big-endian, "
-           "reading as 2^63", False,
-           patches=[Patch("trailer.generation", bytes(7) + b"\x80")],
-           repair=["trailer.crc"],
-           row="F1", rule="R-ENC-01", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F2 [R-ENC-02] — a signature constant stored byte-reversed.
+    # F1 [R-ENC-02] — a signature constant stored byte-reversed.
     # ------------------------------------------------------------------
     Vector("TV-0105", "minimal",
-           "F2 front signature block bytes [0,8) byte-reversed", False,
+           "F1 front signature block bytes [0,8) byte-reversed", False,
            patches=[Patch("front", FRONT[:8][::-1] + bytes(8))],
-           row="F2", rule="R-ENC-02", outcome="reject-file",
+           row="F1", rule="R-ENC-02", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0106", "minimal", "F2 trailer magic at F-64 byte-reversed", False,
+    Vector("TV-0106", "minimal", "F1 trailer magic at F-64 byte-reversed", False,
            patches=[Patch("trailer.magic", TRAILER_MAGIC[::-1])],
            repair=["trailer.crc"],
-           row="F2", rule="R-ENC-02", outcome="reject-file",
+           row="F1", rule="R-ENC-02", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F3 [R-ENC-03] — a u64 offset or length above 2^63 - 1. §4.2 orders the
-    # field-domain check ahead of the sum check, so these are F3 and not F4
+    # F2 [R-ENC-03] — a u64 offset or length above 2^63 - 1. §4.2 orders the
+    # field-domain check ahead of the sum check, so these are F2 and not F3
     # even where the sum also exceeds the domain. The committed_file_length
     # instance stays a multiple of 64, which is all that can be held constant:
-    # no value above 2^63 - 1 can equal F, so F19's "= F" gate necessarily
+    # no value above 2^63 - 1 can equal F, so F17's "= F" gate necessarily
     # fails too, and that is a property of the row rather than of the vector.
     # ------------------------------------------------------------------
-    Vector("TV-0107", "minimal", "F3 dir_offset has bit 63 set", False,
+    Vector("TV-0107", "minimal", "F2 dir_offset has bit 63 set", False,
            patches=[Patch("trailer.dir_offset", u64(0x8000000000000010))],
            repair=["trailer.crc"],
            breaks_checksums=["trailer.gates"],
-           row="F3", rule="R-ENC-03", outcome="reject-file",
+           row="F2", rule="R-ENC-03", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0108", "minimal", "F3 dir_length has bit 63 set", False,
+    Vector("TV-0108", "minimal", "F2 dir_length has bit 63 set", False,
            patches=[Patch("trailer.dir_length", u64(0x8000000000000004))],
            repair=["trailer.crc"],
            breaks_checksums=["trailer.gates"],
-           row="F3", rule="R-ENC-03", outcome="reject-file",
+           row="F2", rule="R-ENC-03", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0109", "minimal",
-           "F3 committed_file_length has bit 63 set", False,
+           "F2 committed_file_length has bit 63 set", False,
            patches=[Patch("trailer.committed_file_length",
                           u64(0x8000000000000080))],
            repair=["trailer.crc"],
            breaks_checksums=["trailer.gates"],
-           row="F3", rule="R-ENC-03", outcome="reject-file",
+           row="F2", rule="R-ENC-03", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0110", "meta",
-           "F3 non-layer top-level record extent_offset has bit 63 set", False,
+           "F2 non-layer top-level record extent_offset has bit 63 set", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b10, 1, 0x8000000000000040, _M_EL))],
            repair=["directory.crc", "trailer.crc"],
-           row="F3", rule="R-ENC-03", outcome="reject-file",
+           row="F2", rule="R-ENC-03", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0111", "meta",
-           "F3 non-layer top-level record extent_length has bit 63 set", False,
+           "F2 non-layer top-level record extent_length has bit 63 set", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b10, 1, _M_EO, 0x800000000000001B))],
            repair=["directory.crc", "trailer.crc"],
-           row="F3", rule="R-ENC-03", outcome="reject-file",
+           row="F2", rule="R-ENC-03", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F4 [R-ENC-04] — each field in domain, the sum out of it. One vector per
+    # F3 [R-ENC-04] — each field in domain, the sum out of it. One vector per
     # instance: §21.1 counts the sum as one predicate, so the two fields it
     # reads are not separate instances.
     # ------------------------------------------------------------------
     Vector("TV-0112", "minimal",
-           "F4 dir_offset + dir_length exceeds 2^63 - 1, both fields in domain",
+           "F3 dir_offset + dir_length exceeds 2^63 - 1, both fields in domain",
            False,
            patches=[Patch("trailer.dir_offset", u64(0x7FFFFFFFFFFFFFF0)),
                     Patch("trailer.dir_length", u64(0x20))],
            repair=["trailer.crc"],
            breaks_checksums=["trailer.gates"],
-           row="F4", rule="R-ENC-04", outcome="reject-file",
+           row="F3", rule="R-ENC-04", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0113", "meta", "F4 non-layer top-level record extent_offset + "
+    Vector("TV-0113", "meta", "F3 non-layer top-level record extent_offset + "
            "extent_length exceeds 2^63 - 1, both fields in domain", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b10, 1, 0x7FFFFFFFFFFFFFF0, 0x20))],
            repair=["directory.crc", "trailer.crc"],
-           row="F4", rule="R-ENC-04", outcome="reject-file",
+           row="F3", rule="R-ENC-04", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F5 [R-ENC-06] — fields at widths other than the fixed ones, total size
-    # unchanged. The trailer keeps §6.3's permanently-fixed positions (magic
-    # at 0, CRC at 60 over [0,60)) so the file still reaches the field gates,
-    # and it is the *misparse* of the remaining bytes that trips them: a
-    # reader reading each field at its fixed width and offset sees a
-    # committed_file_length and a dir_offset that no longer match the file.
-    # ------------------------------------------------------------------
-    Vector("TV-0114", "minimal", "F5 trailer with version_major and "
-           "version_minor written as u32 each, 64 bytes total", False,
-           patches=[Patch(
-               "trailer",
-               TRAILER_MAGIC + u32(1) + u32(0) + u32(0) + u64(1) + u64(16)
-               + u64(4) + u64(128) + u64(0x0123456789ABCDEF) + bytes(4),
-               note="the 4 reserved bytes give way; CRC stays at offset 60")],
-           repair=["trailer.crc"],
-           breaks_checksums=["trailer.gates"],
-           row="F5", rule="R-ENC-06", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0115", "meta", "F5 top-level record header with inline_length "
-           "written as u64 and extent_length as u32, 24 bytes total", False,
-           patches=[Patch("record[0x0002].header",
-                          u16(0x0002) + u16(0b10) + u64(1) + u64(_M_EO)
-                          + u32(_M_EL))],
-           repair=["directory.crc", "trailer.crc"],
-           row="F5", rule="R-ENC-06", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-
-    # ------------------------------------------------------------------
-    # F6 [R-ENC-15] — duplicate layer names, compared as raw bytes.
+    # F4 [R-ENC-15] — duplicate layer names, compared as raw bytes.
     # ------------------------------------------------------------------
     Vector("TV-0116", "pair",
-           "F6 both layer records carry the name field `ok`", False,
+           "F4 both layer records carry the name field `ok`", False,
            patches=[Patch("layer[bad].record", _dup_layer_name_record(),
                           note="renamed ok; its dimension y renamed yy so the "
                                "record length and inline_length are unchanged")],
            repair=["directory.crc", "trailer.crc"],
-           row="F6", rule="R-ENC-15", outcome="reject-file",
+           row="F4", rule="R-ENC-15", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F8 [R-CNT-04] — the front signature block is not byte-identical to the
-    # constant. Distinct from F2: these are corruptions, not reversals.
+    # F6 [R-CNT-04] — the front signature block is not byte-identical to the
+    # constant. Distinct from F1: these are corruptions, not reversals.
     # ------------------------------------------------------------------
     Vector("TV-0117", "minimal",
-           "F8 front signature magic bytes [0,8): final byte 1A -> 1B", False,
+           "F6 front signature magic bytes [0,8): final byte 1A -> 1B", False,
            patches=[Patch("front", FRONT[:7] + b"\x1b" + bytes(8))],
-           row="F8", rule="R-CNT-04", outcome="reject-file",
+           row="F6", rule="R-CNT-04", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0118", "minimal",
-           "F8 front signature reserved bytes [8,16) are not zero", False,
+           "F6 front signature reserved bytes [8,16) are not zero", False,
            patches=[Patch("front", FRONT[:8] + bytes(7) + b"\x01")],
-           row="F8", rule="R-CNT-04", outcome="reject-file",
+           row="F6", rule="R-CNT-04", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F9 [R-CNT-05] — a structure between the live directory's end and the
+    # F7 [R-CNT-05] — a structure between the live directory's end and the
     # live trailer. Layer `bad`'s stored tile is relocated into the
     # pre-trailer pad, ending exactly at F - 64 so no offset gate fires; its
     # entry crc is recomputed over the zero bytes now standing there, so the
@@ -352,196 +286,196 @@ VECTORS = [
     # file carries is where the extent sits. Readers are unaffected — their
     # check is the dir-bounds rule, per §6.2 — so this is the verifier's.
     # ------------------------------------------------------------------
-    Vector("TV-0119", "pair", "F9 layer `bad`'s stored tile extent lies in "
+    Vector("TV-0119", "pair", "F7 layer `bad`'s stored tile extent lies in "
            "the pre-trailer pad", False,
            patches=[Patch("layer[bad].entry[0]", _entry(_T - 4, 4, _PAIR_BLOB))],
            repair=["index:bad", "directory.crc", "trailer.crc"],
-           row="F9", rule="R-CNT-05", outcome="reject-file",
+           row="F7", rule="R-CNT-05", outcome="reject-file",
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
 
     # ------------------------------------------------------------------
-    # F10-F21 [R-CNT-06]/[R-CNT-07]/[R-CNT-08] — §6.2's trailer gates.
+    # F8-F19 [R-CNT-06]/[R-CNT-07]/[R-CNT-08] — §6.2's trailer gates.
     # ------------------------------------------------------------------
-    Vector("TV-0120", "minimal", "F10 the 8 bytes at F-64 are all zero", False,
+    Vector("TV-0120", "minimal", "F8 the 8 bytes at F-64 are all zero", False,
            patches=[Patch("trailer.magic")],
            repair=["trailer.crc"],
-           row="F10", rule="R-CNT-06", outcome="reject-file",
+           row="F8", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0121", "minimal", "F11 dir_offset = 8, inside the front block",
+    Vector("TV-0121", "minimal", "F9 dir_offset = 8, inside the front block",
            False,
            patches=[Patch("trailer.dir_offset", u64(8))],
            repair=["trailer.crc"],
            breaks_checksums=["trailer.gates"],
-           row="F11", rule="R-CNT-06", outcome="reject-file",
+           row="F9", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0122", "pair", "F12 dir_offset + dir_length = F - 63, one byte "
+    Vector("TV-0122", "pair", "F10 dir_offset + dir_length = F - 63, one byte "
            "into the live trailer", False,
            patches=[Patch("trailer.dir_length", u64(293))],
            repair=["trailer.crc"],
            breaks_checksums=["trailer.gates"],
-           row="F12", rule="R-CNT-06", outcome="reject-file",
+           row="F10", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    # F3's generation instance. F1 covers a big-endian generation and F13 a
+    # F2's generation instance; F11 covers a
     # generation of 0; neither puts the field above §4.2's domain. ADR-0058
     # added the ceiling to `[R-CNT-06]`'s gate list, but no row registers the
-    # ceiling separately, so this is F3's.
-    Vector("TV-0930", "minimal", "F3 generation has bit 63 set", False,
+    # ceiling separately, so this is F2's.
+    Vector("TV-0930", "minimal", "F2 generation has bit 63 set", False,
            patches=[Patch("trailer.generation", u64(0x8000000000000001))],
            repair=["trailer.crc"],
-           row="F3", rule="R-ENC-03", outcome="reject-file",
+           row="F2", rule="R-ENC-03", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0123", "minimal", "F13 generation = 0", False,
+    Vector("TV-0123", "minimal", "F11 generation = 0", False,
            patches=[Patch("trailer.generation")],
            repair=["trailer.crc"],
-           row="F13", rule="R-CNT-06", outcome="reject-file",
+           row="F11", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0124", "minimal", "F14 file_id = 0", False,
+    Vector("TV-0124", "minimal", "F12 file_id = 0", False,
            patches=[Patch("trailer.file_id")],
            repair=["trailer.crc"],
-           row="F14", rule="R-CNT-06", outcome="reject-file",
+           row="F12", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     # trailer.crc is the one trailer field with no repair: breaking it is the
     # point, and §6.2 puts its check ahead of every field gate.
     Vector("TV-0125", "minimal",
-           "F16 the u32 at trailer offset 60 is not the CRC of [0,60)", False,
+           "F14 the u32 at trailer offset 60 is not the CRC of [0,60)", False,
            patches=[Patch("trailer.crc")],
            breaks_checksums=["trailer.crc"],
-           row="F16", rule="R-CNT-06", outcome="reject-file",
+           row="F14", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0126", "minimal",
-           "F17 the 4 reserved bytes at trailer offset 56 are not zero", False,
+           "F15 the 4 reserved bytes at trailer offset 56 are not zero", False,
            patches=[Patch("trailer.reserved", b"\x01\x00\x00\x00")],
            repair=["trailer.crc"],
-           row="F17", rule="R-CNT-06", outcome="reject-file",
+           row="F15", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0127", "minimal",
-           "F18 dir_length = 3, below the terminal CRC's 4 bytes", False,
+           "F16 dir_length = 3, below the terminal CRC's 4 bytes", False,
            patches=[Patch("trailer.dir_length", u64(3))],
            repair=["trailer.crc"],
            breaks_checksums=["trailer.gates"],
-           row="F18", rule="R-CNT-06", outcome="reject-file",
+           row="F16", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     # 192 keeps committed_file_length a multiple of 64 and above the 128-byte
-    # floor, so F19 is the only condition the file carries (not F15, not F7).
+    # floor, so F17 is the only condition the file carries (not F13, not F5).
     Vector("TV-0128", "minimal",
-           "F19 committed_file_length = 192 in a 128-byte file", False,
+           "F17 committed_file_length = 192 in a 128-byte file", False,
            patches=[Patch("trailer.committed_file_length", u64(192))],
            repair=["trailer.crc"],
            breaks_checksums=["trailer.gates"],
-           row="F19", rule="R-CNT-06", outcome="reject-file",
+           row="F17", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0129", "minimal", "F20 version_major = 0", False,
+    Vector("TV-0129", "minimal", "F18 version_major = 0", False,
            patches=[Patch("trailer.version_major")],
            repair=["trailer.crc"],
-           row="F20", rule="R-CNT-07", outcome="reject-file",
+           row="F18", rule="R-CNT-07", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0131", "minimal",
-           "F21 flags bit 0 set, an unimplemented incompat-lane bit", False,
+           "F19 flags bit 0 set, an unimplemented incompat-lane bit", False,
            patches=[Patch("trailer.flags", u32(1))],
            repair=["trailer.crc"],
-           row="F21", rule="R-CNT-08", outcome="reject-file",
+           row="F19", rule="R-CNT-08", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F22 [R-CNT-11] — the directory region's terminal CRC. No repair: the
+    # F20 [R-CNT-11] — the directory region's terminal CRC. No repair: the
     # trailer CRC covers only trailer bytes [0,60), so nothing above it moves.
     # The seed is `pair` because `minimal`'s record sequence is empty and its
     # directory CRC is the CRC of zero bytes, 0x00000000 — zeroing that field
     # would change no byte.
     # ------------------------------------------------------------------
-    Vector("TV-0132", "pair", "F22 the directory region's final 4 bytes are "
+    Vector("TV-0132", "pair", "F20 the directory region's final 4 bytes are "
            "not the CRC of the record sequence", False,
            patches=[Patch("directory.crc", b"\xde\xad\xbe\xef")],
            breaks_checksums=["directory.crc"],
-           row="F22", rule="R-CNT-11", outcome="reject-file",
+           row="F20", rule="R-CNT-11", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F23-F25 [R-CNT-25]/[R-MTA-03] — the user-metadata record's own framing,
+    # F21-F23 [R-CNT-25]/[R-MTA-03] — the user-metadata record's own framing,
     # which precedes the document and so is not under §18.1's quarantine.
     # ------------------------------------------------------------------
-    Vector("TV-0133", "meta", "F23 top-level user-metadata record carries "
+    Vector("TV-0133", "meta", "F21 top-level user-metadata record carries "
            "extent slot (0, 0)", False,
            patches=[Patch("record[0x0002].header", _hdr(0x0002, 0b10, 1, 0, 0))],
            repair=["directory.crc", "trailer.crc"],
-           row="F23", rule="R-CNT-25", outcome="reject-file",
+           row="F21", rule="R-CNT-25", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0134", "meta", "F24 top-level user-metadata record's "
+    Vector("TV-0134", "meta", "F22 top-level user-metadata record's "
            "extent_length is 4, below the terminal CRC's own size", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b10, 1, _M_EO, 4))],
            repair=["directory.crc", "trailer.crc"],
-           row="F24", rule="R-CNT-25", outcome="reject-file",
+           row="F22", rule="R-CNT-25", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0135", "meta", "F25 top-level user-metadata record's "
+    Vector("TV-0135", "meta", "F23 top-level user-metadata record's "
            "inline_length is 2", False,
            patches=[Patch("directory", _meta_dir_inline_len_2(),
                           note="the extra inline byte comes from renaming the "
                                "layer ok -> o, so the sequence still parses "
-                               "with no residue and F31 stays out of the file")],
+                               "with no residue and F29 stays out of the file")],
            repair=["directory.crc", "trailer.crc"],
-           row="F25", rule="R-MTA-03", outcome="reject-file",
+           row="F23", rule="R-MTA-03", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F26-F30 — top-level record type and flags.
+    # F24-F28 — top-level record type and flags.
     # ------------------------------------------------------------------
-    Vector("TV-0136", "meta", "F26 top-level record type = 0x0000", False,
+    Vector("TV-0136", "meta", "F24 top-level record type = 0x0000", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0000, 0b10, 1, _M_EO, _M_EL))],
            repair=["directory.crc", "trailer.crc"],
-           row="F26", rule="R-CNT-12", outcome="reject-file",
+           row="F24", rule="R-CNT-12", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    # MU and PE keep the registry's values, so §7.3's row F30 stays out.
-    Vector("TV-0137", "meta", "F28 non-layer top-level record has reserved "
+    # MU and PE keep the registry's values, so §7.3's row F28 stays out.
+    Vector("TV-0137", "meta", "F26 non-layer top-level record has reserved "
            "flag bit 2 set", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b110, 1, _M_EO, _M_EL))],
            repair=["directory.crc", "trailer.crc"],
-           row="F28", rule="R-CNT-12", outcome="reject-file",
+           row="F26", rule="R-CNT-12", outcome="reject-file",
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
-    Vector("TV-0138", "meta", "F29 top-level user-metadata document's members "
+    Vector("TV-0138", "meta", "F27 top-level user-metadata document's members "
            "are not in ascending key order", False,
            patches=[Patch("record[0x0002].extent",
                           _doc('{"b":1,"a":2}', _M_EL),
                           note="padded with insignificant whitespace to the "
                                "seed's extent length, terminal CRC recomputed")],
-           row="F29", rule="R-MTA-05", outcome="reject-file",
+           row="F27", rule="R-MTA-05", outcome="reject-file",
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
-    Vector("TV-0139", "meta", "F30 registered type 0x0002 stores MU = 1 where "
+    Vector("TV-0139", "meta", "F28 registered type 0x0002 stores MU = 1 where "
            "§7.3 fixes MU = 0 (flags bit 0)", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b11, 1, _M_EO, _M_EL))],
            repair=["directory.crc", "trailer.crc"],
-           row="F30", rule="R-CNT-22", outcome="reject-file",
+           row="F28", rule="R-CNT-22", outcome="reject-file",
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
-    Vector("TV-0140", "meta", "F30 registered type 0x0002 stores PE = 0 where "
+    Vector("TV-0140", "meta", "F28 registered type 0x0002 stores PE = 0 where "
            "§7.3 fixes PE = 1 (flags bit 1)", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b00, 1, _M_EO, _M_EL))],
            repair=["directory.crc", "trailer.crc"],
-           row="F30", rule="R-CNT-22", outcome="reject-file",
+           row="F28", rule="R-CNT-22", outcome="reject-file",
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
 
     # ------------------------------------------------------------------
-    # F31 [R-CNT-12] — a record that does not fit its containing sequence.
+    # F29 [R-CNT-12] — a record that does not fit its containing sequence.
     # Both instances inflate a layer record's inline_length, which is the only
     # framing field a fixed-width patch can reach. The inflated payload also
     # leaves the *layer* record unparsable, a layer-scope condition (§21.3
-    # L24) — but §19.2 puts the directory's record walk at open, strictly
-    # before any layer access, so the file is rejected on F31 first.
+    # L23) — but §19.2 puts the directory's record walk at open, strictly
+    # before any layer access, so the file is rejected on F29 first.
     # ------------------------------------------------------------------
-    Vector("TV-0141", "pair", "F31 the next record's 24-byte header extends "
+    Vector("TV-0141", "pair", "F29 the next record's 24-byte header extends "
            "past the end of the record sequence", False,
            patches=[Patch("layer[ok].record",
                           _PAIR_BLOB[slice(_PAIR["layer[ok].record"][0],
@@ -553,24 +487,24 @@ VECTORS = [
                                "header would start 8 bytes before the "
                                "sequence end")],
            repair=["directory.crc", "trailer.crc"],
-           row="F31", rule="R-CNT-12", outcome="reject-file",
+           row="F29", rule="R-CNT-12", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    # F31's third instance: bytes remaining after the last complete record.
+    # F29's third instance: bytes remaining after the last complete record.
     # The meta seed's record sequence runs 91..235 and record[0x0002] is
     # last, so declaring inline_length 0 ends the walk at 234 and leaves the
     # one byte at 234 over — too few for a 24-byte header, so it is residue
     # and not a further record. The type moves to §10.2's experimental range
     # with MU = 0, whose payload is opaque, because inline_length 0 on a
-    # user-metadata record would be F25 instead ([R-MTA-03]); §21.6 makes
+    # user-metadata record would be F23 instead ([R-MTA-03]); §21.6 makes
     # that type a defined ignore, so the record contributes no second defect.
     Vector("TV-0931", "meta",
-           "F31 one byte remains after the last complete record", False,
+           "F29 one byte remains after the last complete record", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(_EXPERIMENTAL, 0b10, 0, _M_EO, _M_EL))],
            repair=["directory.crc", "trailer.crc"],
-           row="F31", rule="R-CNT-12", outcome="reject-file",
+           row="F29", rule="R-CNT-12", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0142", "pair", "F31 the last record's inline payload extends "
+    Vector("TV-0142", "pair", "F29 the last record's inline payload extends "
            "past the end of the record sequence", False,
            patches=[Patch("layer[bad].record",
                           _PAIR_BLOB[slice(_PAIR["layer[bad].record"][0],
@@ -580,52 +514,52 @@ VECTORS = [
                                        sum(_PAIR["layer[bad].record"])],
                           note="inline_length 93 -> 120; the header still fits")],
            repair=["directory.crc", "trailer.crc"],
-           row="F31", rule="R-CNT-12", outcome="reject-file",
+           row="F29", rule="R-CNT-12", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F32-F34 [R-CNT-13] — the extent slot of a non-layer top-level record.
+    # F30-F32 [R-CNT-13] — the extent slot of a non-layer top-level record.
     # ------------------------------------------------------------------
-    Vector("TV-0143", "meta", "F32 non-layer top-level record extent slot "
+    Vector("TV-0143", "meta", "F30 non-layer top-level record extent slot "
            "(0, 27): offset zero, length nonzero", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b10, 1, 0, _M_EL))],
            repair=["directory.crc", "trailer.crc"],
-           row="F32", rule="R-CNT-13", outcome="reject-file",
+           row="F30", rule="R-CNT-13", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    # An extent_length of 0 on a *user-metadata* record would also be F24
+    # An extent_length of 0 on a *user-metadata* record would also be F22
     # (< 5), so this instance uses an experimental-range record type, for
     # which §18 states no length floor.
-    Vector("TV-0144", "meta", "F32 non-layer top-level record extent slot "
+    Vector("TV-0144", "meta", "F30 non-layer top-level record extent slot "
            "(64, 0): offset nonzero, length zero", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(_EXPERIMENTAL, 0b10, 1, _M_EO, 0))],
            repair=["directory.crc", "trailer.crc"],
-           row="F32", rule="R-CNT-13", outcome="reject-file",
+           row="F30", rule="R-CNT-13", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     # Any extent_offset in 1-15 necessarily overlaps the front signature
-    # block, which is F35's condition at verifier scope. §19.2 reaches this
+    # block, which is F33's condition at verifier scope. §19.2 reaches this
     # one first: the record walk runs at open, certification is outside the
-    # reader tiers entirely, so the reader's verdict is F33's.
-    Vector("TV-0145", "meta", "F33 non-layer top-level record extent_offset = "
+    # reader tiers entirely, so the reader's verdict is F31's.
+    Vector("TV-0145", "meta", "F31 non-layer top-level record extent_offset = "
            "8, inside the front signature block", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b10, 1, 8, 8))],
            repair=["directory.crc", "trailer.crc"],
-           row="F33", rule="R-CNT-13", outcome="reject-file",
+           row="F31", rule="R-CNT-13", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     # Placed after the directory so the extent crosses nothing but the
     # pre-trailer pad and the trailer's first 3 bytes.
-    Vector("TV-0146", "meta", "F34 non-layer top-level record extent ends 3 "
+    Vector("TV-0146", "meta", "F32 non-layer top-level record extent ends 3 "
            "bytes into the live trailer", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(0x0002, 0b10, 1, 239, 20))],
            repair=["directory.crc", "trailer.crc"],
-           row="F34", rule="R-CNT-13", outcome="reject-file",
+           row="F32", rule="R-CNT-13", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F35 [R-CNT-13] — one byte claimed by two structures that do not belong
+    # F33 [R-CNT-13] — one byte claimed by two structures that do not belong
     # to the same layer. Five of the seven named instances are built; the
     # other two are in SKIPPED, both because every offset gate already
     # forbids the bytes they would need.
@@ -635,52 +569,52 @@ VECTORS = [
     # would also have to satisfy §18's document rules, and failing them is
     # R2/R3/R7 — a second, ignore-record defect at extent use.
     # ------------------------------------------------------------------
-    Vector("TV-0147", "pair", "F35 stored-tile extents: layer `bad`'s tile 0 "
+    Vector("TV-0147", "pair", "F33 stored-tile extents: layer `bad`'s tile 0 "
            "extent lies inside layer `ok`'s stored tile", False,
            patches=[Patch("layer[bad].entry[0]", _entry(16, 4, _PAIR_BLOB))],
            repair=["index:bad", "directory.crc", "trailer.crc"],
-           row="F35", rule="R-CNT-13", outcome="reject-file",
+           row="F33", rule="R-CNT-13", outcome="reject-file",
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
-    Vector("TV-0148", "meta", "F35 tile-index regions: a top-level record's "
+    Vector("TV-0148", "meta", "F33 tile-index regions: a top-level record's "
            "extent covers layer `ok`'s tile-index region", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(_EXPERIMENTAL, 0b10, 1,
                                *_META["layer[ok].index_region"]))],
            repair=["directory.crc", "trailer.crc"],
-           row="F35", rule="R-CNT-13", outcome="reject-file",
+           row="F33", rule="R-CNT-13", outcome="reject-file",
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
-    Vector("TV-0149", "meta", "F35 record extents: a top-level record's extent "
+    Vector("TV-0149", "meta", "F33 record extents: a top-level record's extent "
            "covers layer `ok`'s stored tile", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(_EXPERIMENTAL, 0b10, 1, 16, 24))],
            repair=["directory.crc", "trailer.crc"],
-           row="F35", rule="R-CNT-13", outcome="reject-file",
+           row="F33", rule="R-CNT-13", outcome="reject-file",
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
-    Vector("TV-0150", "meta", "F35 directory region: a top-level record's "
+    Vector("TV-0150", "meta", "F33 directory region: a top-level record's "
            "extent covers the first 20 bytes of the directory", False,
            patches=[Patch("record[0x0002].header",
                           _hdr(_EXPERIMENTAL, 0b10, 1,
                                _META["directory"][0], 20))],
            repair=["directory.crc", "trailer.crc"],
-           row="F35", rule="R-CNT-13", outcome="reject-file",
+           row="F33", rule="R-CNT-13", outcome="reject-file",
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
 
     # ------------------------------------------------------------------
-    # F36 [R-CNT-14] — two user-metadata records at file scope. Both records
+    # F34 [R-CNT-14] — two user-metadata records at file scope. Both records
     # are otherwise flawless: inline_length 1, encoding 1, a well-formed
     # sorted document under a correct terminal CRC, and disjoint extents. The
     # directory shrinks to hold exactly the two, so dir_length moves with it
     # and the stale tail is zeroed into slack.
     # ------------------------------------------------------------------
-    Vector("TV-0151", "meta", "F36 the record sequence carries two "
+    Vector("TV-0151", "meta", "F34 the record sequence carries two "
            "user-metadata records (type 0x0002)", False,
            patches=[Patch("layer[ok].index_region", _doc('{"a":1}',
                                                          _F38_DOC_LEN),
@@ -691,22 +625,22 @@ VECTORS = [
                                "zeroed and becomes slack"),
                     Patch("trailer.dir_length", u64(_F38_DIRLEN))],
            repair=["trailer.crc"],
-           row="F36", rule="R-CNT-14", outcome="reject-file",
+           row="F34", rule="R-CNT-14", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
 
     # ------------------------------------------------------------------
-    # F37 [R-CNT-15] — an unassigned type with MU = 1. PE stays 1, so
-    # [R-CNT-12]'s MU=1/PE=0 combination (row F27) is not also present, and
+    # F35 [R-CNT-15] — an unassigned type with MU = 1. PE stays 1, so
+    # [R-CNT-12]'s MU=1/PE=0 combination (row F25) is not also present, and
     # the type is from the experimental range rather than the reserved one so
     # that [R-CNT-15]'s reserved-range verifier error is not either.
     # ------------------------------------------------------------------
-    # §21.6's second exception, not F37. F37 is scoped to the *reserved*
+    # §21.6's second exception, not F35. F35 is scoped to the *reserved*
     # range (0x0003-0x7FFF); 0x8001 is experimental (§10.2), and for an
     # experimental type with MU = 1 `[R-CNT-15]` obliges the reader to
     # reject while `[R-CNF-02]` leaves the bytes conforming — §10.3's
     # prohibition binds a writer's conduct, not the file. So this vector
     # names no register row and asserts the refusal of a valid file.
-    # TV-0813 is its layer-scope twin. TV-0910 covers F37 proper.
+    # TV-0813 is its layer-scope twin. TV-0910 covers F35 proper.
     Vector("TV-0152", "meta", "a conforming file a reader must refuse: "
            "top-level record of experimental type 0x8001 with "
            "MUST_UNDERSTAND = 1", True,
@@ -723,70 +657,62 @@ VECTORS = [
 #: *unreachable* gap is a condition §19.2 places behind an earlier check, and
 #: a *vacuous* gap is a row whose condition no file can satisfy.
 SKIPPED = {
-    "F1:file_id": (
-        "unreachable. §6.2 gates file_id only on != 0, and byte-reversing a "
-        "nonzero u64 yields a nonzero u64. A big-endian file_id is therefore "
-        "indistinguishable from a conforming one — there is no value whose "
-        "reversal a reader may reject, since the only rejectable value, 0, "
-        "reverses to 0 and is row F14. The register lists file_id among F1's "
-        "instances but [R-ENC-01]'s own premise, detection through the "
-        "field's own value or range gate, does not hold for it."),
-    "F7": ("SUPERSEDED — the corpus now covers this row; the reason below "
+    "F5": ("SUPERSEDED — the corpus now covers this row; the reason below "
      "was true before register_seed, Layer(sub_records=...) and the "
      "truncate/append verbs existed. " 
         "tooling, and unreachable for one instance. Both instances need a "
         "file below 128 bytes: recipes patch fixed-width fields and cannot "
         "change a file's length, and the builder's floor is 128. The "
         "committed_file_length instance is additionally unreachable in any "
-        "file: [R-CNT-01] makes every conforming F a multiple of 64 and F19 "
+        "file: [R-CNT-01] makes every conforming F a multiple of 64 and F17 "
         "requires committed_file_length = F, so a committed_file_length "
-        "below 128 always co-violates F19 unless F is itself below 128, "
+        "below 128 always co-violates F17 unless F is itself below 128, "
         "which is the other instance."),
     # (The row this entry was written against — "a byte of the live committed
     # state claimed by no coverage class" — was found vacuous and DELETED from
     # §21.2 by ADR-0056. §5.2 defines the live committed state as exactly what
     # the coverage classes cover, so no byte could ever exhibit it. Nothing to
     # skip: the row no longer exists.)
-    "F15": ("SUPERSEDED — the corpus now covers this row; the reason below "
+    "F13": ("SUPERSEDED — the corpus now covers this row; the reason below "
      "was true before register_seed, Layer(sub_records=...) and the "
      "truncate/append verbs existed. " 
         "unreachable with this builder, and co-violating in general. A "
         "committed_file_length that is not a multiple of 64 must still equal "
-        "the physical file size (F19), so the file itself must end at a "
+        "the physical file size (F17), so the file itself must end at a "
         "non-64-aligned offset. The builder pads every file to a multiple of "
         "64 and recipes cannot change a file's length; setting the field "
-        "alone would carry F19 as well, at the same validation step."),
-    "F27": ("SUPERSEDED — the corpus now covers this row; the reason below "
+        "alone would carry F17 as well, at the same validation step."),
+    "F25": ("SUPERSEDED — the corpus now covers this row; the reason below "
      "was true before register_seed, Layer(sub_records=...) and the "
      "truncate/append verbs existed. " 
         "unreachable. MU = 1 with PE = 0 on a *non-layer top-level* record "
         "requires a non-layer type, and format major 1 offers only two "
         "kinds. On the one registered non-layer type, 0x0002, §7.3 fixes "
         "MU = 0 and PE = 1, so the combination differs from the registry in "
-        "both bits and the file also carries F30 — twice. On any unassigned "
-        "type, MU = 1 is F37, which a reader rejects at open, ahead of "
-        "certification. No file carries F27 alone."),
-    "F35:trailer": (
+        "both bits and the file also carries F28 — twice. On any unassigned "
+        "type, MU = 1 is F35, which a reader rejects at open, ahead of "
+        "certification. No file carries F25 alone."),
+    "F33:trailer": (
         "unreachable. A structure overlapping the live trailer must extend "
         "past F - 64, which every offset gate already forbids at open: "
-        "[R-CNT-06] for the directory (F12), [R-CNT-13] for a record or "
-        "layer extent (F34, L18), [R-IDX-03] for a tile-index entry (T9). "
+        "[R-CNT-06] for the directory (F10), [R-CNT-13] for a record or "
+        "layer extent (F32, L17), [R-IDX-03] for a tile-index entry (T9). "
         "Every such file is rejected before certification, on the row that "
         "owns the gate."),
-    "F35:front signature block": (
+    "F33:front signature block": (
         "unreachable, for the mirror reason. Overlapping the front block "
         "needs a byte below offset 16, and every claimant's offset is gated "
-        "at >= 16 before certification: dir_offset by [R-CNT-06] (F11), "
-        "record and layer extents by [R-CNT-13] (F33, L17), tile-index "
+        "at >= 16 before certification: dir_offset by [R-CNT-06] (F9), "
+        "record and layer extents by [R-CNT-13] (F31, L16), tile-index "
         "entries by [R-IDX-03] (T8)."),
-    "F35:sub-record extents": (
+    "F33:sub-record extents": (
         "tooling. The builder emits no layer sub-records, and introducing "
         "one costs 24 bytes of layer-record inline payload that a "
         "fixed-width recipe has nowhere to take from — every field in the "
         "payload that could shrink is a name, and names shrink by at most a "
         "byte or two. A seed carrying a layer sub-record would close this."),
-    "F37:flags bit 0": (
-        "not a distinguishable file. F37's condition is the conjunction "
+    "F35:flags bit 0": (
+        "not a distinguishable file. F35's condition is the conjunction "
         "'unassigned type AND MU = 1', and §21.1 states that where a "
         "condition is a single predicate over several fields the fields it "
         "reads are not instances, because no two files could differ. The "
@@ -798,7 +724,7 @@ SKIPPED = {
         "than committed_file_length, with the stale tail read in place of "
         "the trailer. Recipes cannot lengthen a file, and without the extra "
         "bytes the condition collapses into whichever trailer row the tail's "
-        "content trips (F10, F16). A recipe verb that appends bytes after "
+        "content trips (F8, F14). A recipe verb that appends bytes after "
         "the trailer, or a seed carrying post-commit residue, would close "
-        "this and F7 together."),
+        "this and F5 together."),
 }

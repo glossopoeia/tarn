@@ -134,7 +134,7 @@
       },
       "violations": [
         {
-          "row": "F10",
+          "row": "F8",
           "instance": "trailer magic",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -173,7 +173,7 @@
       },
       "violations": [
         {
-          "row": "F11",
+          "row": "F9",
           "instance": "dir_offset",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -251,7 +251,7 @@
       },
       "violations": [
         {
-          "row": "L32",
+          "row": "L31",
           "instance": "index_encoding 0",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
@@ -330,7 +330,7 @@
       },
       "violations": [
         {
-          "row": "L34",
+          "row": "L33",
           "instance": "reserved 2-3",
           "rule": "R-GEO-05",
           "outcome": "reject-layer",
@@ -603,7 +603,7 @@
       },
       "violations": [
         {
-          "row": "L48",
+          "row": "L47",
           "instance": "layer record flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
@@ -617,165 +617,9 @@
       ]
     },
     {
-      "id": "TV-0101",
-      "file": "reject-file/TV-0101.tarn",
-      "title": "F1 dir_offset: u64 16 stored big-endian",
-      "sha256": "3322b357b01396227ce3bf787fad36835a7fb56018117d54fbb079edc8dd8f82",
-      "size": 128,
-      "conforming": false,
-      "derivation": {
-        "seed": "minimal",
-        "patches": [
-          {
-            "field": "trailer.dir_offset",
-            "value": "0000000000000010"
-          }
-        ],
-        "repair": [
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F1",
-          "instance": "dir_offset",
-          "rule": "R-ENC-01",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
-    },
-    {
-      "id": "TV-0102",
-      "file": "reject-file/TV-0102.tarn",
-      "title": "F1 dir_length: u64 4 stored big-endian",
-      "sha256": "30240323e2035ad2feedc7e63a4db6142facec856b17c63b842243c0386a9726",
-      "size": 128,
-      "conforming": false,
-      "derivation": {
-        "seed": "minimal",
-        "patches": [
-          {
-            "field": "trailer.dir_length",
-            "value": "0000000000000004"
-          }
-        ],
-        "repair": [
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F1",
-          "instance": "dir_length",
-          "rule": "R-ENC-01",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
-    },
-    {
-      "id": "TV-0103",
-      "file": "reject-file/TV-0103.tarn",
-      "title": "F1 committed_file_length: u64 320 stored big-endian",
-      "sha256": "964dcaa84d60c756c2ffdac7a1823290d404e7a9456956b27abff37ddb7712cc",
-      "size": 320,
-      "conforming": false,
-      "derivation": {
-        "seed": "meta",
-        "patches": [
-          {
-            "field": "trailer.committed_file_length",
-            "value": "0000000000000140"
-          }
-        ],
-        "repair": [
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F1",
-          "instance": "committed_file_length",
-          "rule": "R-ENC-01",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
-    },
-    {
-      "id": "TV-0104",
-      "file": "reject-file/TV-0104.tarn",
-      "title": "F1 generation: u64 128 stored big-endian, reading as 2^63",
-      "sha256": "d3d82bbfd3e81b20b6ccf897c0f17e2307280f1a37950fc31fef2b4ef159a2cd",
-      "size": 128,
-      "conforming": false,
-      "derivation": {
-        "seed": "minimal",
-        "patches": [
-          {
-            "field": "trailer.generation",
-            "value": "0000000000000080"
-          }
-        ],
-        "repair": [
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F1",
-          "instance": "generation",
-          "rule": "R-ENC-01",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
-    },
-    {
       "id": "TV-0105",
       "file": "reject-file/TV-0105.tarn",
-      "title": "F2 front signature block bytes [0,8) byte-reversed",
+      "title": "F1 front signature block bytes [0,8) byte-reversed",
       "sha256": "cee531650507c92a7141c515e30912115a3086a3340afd0737733a27196eb42d",
       "size": 128,
       "conforming": false,
@@ -797,7 +641,7 @@
       },
       "violations": [
         {
-          "row": "F2",
+          "row": "F1",
           "instance": "front signature block bytes [0,8)",
           "rule": "R-ENC-02",
           "outcome": "reject-file",
@@ -812,7 +656,7 @@
     {
       "id": "TV-0106",
       "file": "reject-file/TV-0106.tarn",
-      "title": "F2 trailer magic at F-64 byte-reversed",
+      "title": "F1 trailer magic at F-64 byte-reversed",
       "sha256": "aaed2b4dd290ea739a560d7dacd1d1813417f2347c714460af23d0f6d59428b3",
       "size": 128,
       "conforming": false,
@@ -836,7 +680,7 @@
       },
       "violations": [
         {
-          "row": "F2",
+          "row": "F1",
           "instance": "trailer magic at F-64",
           "rule": "R-ENC-02",
           "outcome": "reject-file",
@@ -851,7 +695,7 @@
     {
       "id": "TV-0107",
       "file": "reject-file/TV-0107.tarn",
-      "title": "F3 dir_offset has bit 63 set",
+      "title": "F2 dir_offset has bit 63 set",
       "sha256": "4df31d1c33b08fb69bb100d5d583ed31557dd7b6a1d23c8827cdc98bd7e39ef6",
       "size": 128,
       "conforming": false,
@@ -875,7 +719,7 @@
       },
       "violations": [
         {
-          "row": "F3",
+          "row": "F2",
           "instance": "dir_offset",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
@@ -890,7 +734,7 @@
     {
       "id": "TV-0108",
       "file": "reject-file/TV-0108.tarn",
-      "title": "F3 dir_length has bit 63 set",
+      "title": "F2 dir_length has bit 63 set",
       "sha256": "cc458a4a70ec82bd029a9d2397bdb71789b1506e7363d166dec457e30f68770d",
       "size": 128,
       "conforming": false,
@@ -914,7 +758,7 @@
       },
       "violations": [
         {
-          "row": "F3",
+          "row": "F2",
           "instance": "dir_length",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
@@ -929,7 +773,7 @@
     {
       "id": "TV-0109",
       "file": "reject-file/TV-0109.tarn",
-      "title": "F3 committed_file_length has bit 63 set",
+      "title": "F2 committed_file_length has bit 63 set",
       "sha256": "3fadd849f6ca6100b72a01fbbcbb14f2327d4195ae32e1a80cae495ac767af42",
       "size": 128,
       "conforming": false,
@@ -953,7 +797,7 @@
       },
       "violations": [
         {
-          "row": "F3",
+          "row": "F2",
           "instance": "committed_file_length",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
@@ -968,7 +812,7 @@
     {
       "id": "TV-0110",
       "file": "reject-file/TV-0110.tarn",
-      "title": "F3 non-layer top-level record extent_offset has bit 63 set",
+      "title": "F2 non-layer top-level record extent_offset has bit 63 set",
       "sha256": "689a66c9f7882109ac53b84ab81b5062b3d9af46d1264337bcfac7f1854fe54d",
       "size": 320,
       "conforming": false,
@@ -993,7 +837,7 @@
       },
       "violations": [
         {
-          "row": "F3",
+          "row": "F2",
           "instance": "non-layer top-level record extent_offset",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
@@ -1008,7 +852,7 @@
     {
       "id": "TV-0111",
       "file": "reject-file/TV-0111.tarn",
-      "title": "F3 non-layer top-level record extent_length has bit 63 set",
+      "title": "F2 non-layer top-level record extent_length has bit 63 set",
       "sha256": "52fb31545f80144935e1d4fe4a55d44fa78cada82f3a8da1f5c993311516986e",
       "size": 320,
       "conforming": false,
@@ -1033,7 +877,7 @@
       },
       "violations": [
         {
-          "row": "F3",
+          "row": "F2",
           "instance": "extent_length",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
@@ -1048,7 +892,7 @@
     {
       "id": "TV-0112",
       "file": "reject-file/TV-0112.tarn",
-      "title": "F4 dir_offset + dir_length exceeds 2^63 - 1, both fields in domain",
+      "title": "F3 dir_offset + dir_length exceeds 2^63 - 1, both fields in domain",
       "sha256": "b61f4e7d9b91ebce3a460d8eab420634f8aca44642cb2505df7dfbc773b62cc4",
       "size": 128,
       "conforming": false,
@@ -1076,7 +920,7 @@
       },
       "violations": [
         {
-          "row": "F4",
+          "row": "F3",
           "instance": "dir_offset + dir_length",
           "rule": "R-ENC-04",
           "outcome": "reject-file",
@@ -1091,7 +935,7 @@
     {
       "id": "TV-0113",
       "file": "reject-file/TV-0113.tarn",
-      "title": "F4 non-layer top-level record extent_offset + extent_length exceeds 2^63 - 1, both fields in domain",
+      "title": "F3 non-layer top-level record extent_offset + extent_length exceeds 2^63 - 1, both fields in domain",
       "sha256": "10886883da14a914509057604299e19a58b54cd6415b44a144380afb0703da17",
       "size": 320,
       "conforming": false,
@@ -1116,7 +960,7 @@
       },
       "violations": [
         {
-          "row": "F4",
+          "row": "F3",
           "instance": "non-layer top-level record extent_offset + extent_length",
           "rule": "R-ENC-04",
           "outcome": "reject-file",
@@ -1129,88 +973,9 @@
       ]
     },
     {
-      "id": "TV-0114",
-      "file": "reject-file/TV-0114.tarn",
-      "title": "F5 trailer with version_major and version_minor written as u32 each, 64 bytes total",
-      "sha256": "609399b5ed7b7d170d3d11781448f8ab9a212f21756e024fa11e35ba92dcc106",
-      "size": 128,
-      "conforming": false,
-      "derivation": {
-        "seed": "minimal",
-        "patches": [
-          {
-            "field": "trailer",
-            "value": "8a4e5241540d0a1a0100000000000000000000000100000000000000100000000000000004000000000000008000000000000000efcdab896745230100000000"
-          }
-        ],
-        "repair": [
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F5",
-          "instance": "trailer (e.g. version_major and version_minor each written as u32)",
-          "rule": "R-ENC-06",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
-    },
-    {
-      "id": "TV-0115",
-      "file": "reject-file/TV-0115.tarn",
-      "title": "F5 top-level record header with inline_length written as u64 and extent_length as u32, 24 bytes total",
-      "sha256": "4f087101e4c3368140b51649a2c9d9e175bb8d98cb5fe657a61f5c53deaee8f1",
-      "size": 320,
-      "conforming": false,
-      "derivation": {
-        "seed": "meta",
-        "patches": [
-          {
-            "field": "record[0x0002].header",
-            "value": "02000200010000000000000040000000000000001b000000"
-          }
-        ],
-        "repair": [
-          "directory.crc",
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F5",
-          "instance": "top-level record header",
-          "rule": "R-ENC-06",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
-    },
-    {
       "id": "TV-0116",
       "file": "reject-file/TV-0116.tarn",
-      "title": "F6 both layer records carry the name field `ok`",
+      "title": "F4 both layer records carry the name field `ok`",
       "sha256": "a691f860fccabacaddefcc9113ac382ec7202ed39c9d3530215ea52b2df27929",
       "size": 448,
       "conforming": false,
@@ -1235,7 +1000,7 @@
       },
       "violations": [
         {
-          "row": "F6",
+          "row": "F4",
           "instance": "layer record name",
           "rule": "R-ENC-15",
           "outcome": "reject-file",
@@ -1250,7 +1015,7 @@
     {
       "id": "TV-0117",
       "file": "reject-file/TV-0117.tarn",
-      "title": "F8 front signature magic bytes [0,8): final byte 1A -> 1B",
+      "title": "F6 front signature magic bytes [0,8): final byte 1A -> 1B",
       "sha256": "514466fa1ae5f6d9548c12ce79129e00b39900eb6eceaf76b998037e0faad044",
       "size": 128,
       "conforming": false,
@@ -1272,7 +1037,7 @@
       },
       "violations": [
         {
-          "row": "F8",
+          "row": "F6",
           "instance": "magic bytes [0,8)",
           "rule": "R-CNT-04",
           "outcome": "reject-file",
@@ -1287,7 +1052,7 @@
     {
       "id": "TV-0118",
       "file": "reject-file/TV-0118.tarn",
-      "title": "F8 front signature reserved bytes [8,16) are not zero",
+      "title": "F6 front signature reserved bytes [8,16) are not zero",
       "sha256": "e428398c8c63a134ef9cc4e66fa35f703ce2eb8020ca7d21d085eade4267216d",
       "size": 128,
       "conforming": false,
@@ -1309,7 +1074,7 @@
       },
       "violations": [
         {
-          "row": "F8",
+          "row": "F6",
           "instance": "reserved bytes [8,16)",
           "rule": "R-CNT-04",
           "outcome": "reject-file",
@@ -1324,7 +1089,7 @@
     {
       "id": "TV-0119",
       "file": "reject-file/TV-0119.tarn",
-      "title": "F9 layer `bad`'s stored tile extent lies in the pre-trailer pad",
+      "title": "F7 layer `bad`'s stored tile extent lies in the pre-trailer pad",
       "sha256": "55a7fe6a22f32b77c26f51eb6940a098c3a894dfd334ea77c6f464fb3813abd4",
       "size": 448,
       "conforming": false,
@@ -1386,7 +1151,7 @@
       },
       "violations": [
         {
-          "row": "F9",
+          "row": "F7",
           "instance": "\u2014",
           "rule": "R-CNT-05",
           "outcome": "reject-file",
@@ -1401,7 +1166,7 @@
     {
       "id": "TV-0120",
       "file": "reject-file/TV-0120.tarn",
-      "title": "F10 the 8 bytes at F-64 are all zero",
+      "title": "F8 the 8 bytes at F-64 are all zero",
       "sha256": "fd0d745fe6e2ebe310d577bcf24a13eb3ac5b7c3e997e9643a8684953b8fa6c9",
       "size": 128,
       "conforming": false,
@@ -1425,7 +1190,7 @@
       },
       "violations": [
         {
-          "row": "F10",
+          "row": "F8",
           "instance": "trailer magic",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -1440,7 +1205,7 @@
     {
       "id": "TV-0121",
       "file": "reject-file/TV-0121.tarn",
-      "title": "F11 dir_offset = 8, inside the front block",
+      "title": "F9 dir_offset = 8, inside the front block",
       "sha256": "368f7e799939d4a234ebe957805d7e12a43b72c03712da75a119672c95ee484d",
       "size": 128,
       "conforming": false,
@@ -1464,7 +1229,7 @@
       },
       "violations": [
         {
-          "row": "F11",
+          "row": "F9",
           "instance": "dir_offset",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -1479,7 +1244,7 @@
     {
       "id": "TV-0122",
       "file": "reject-file/TV-0122.tarn",
-      "title": "F12 dir_offset + dir_length = F - 63, one byte into the live trailer",
+      "title": "F10 dir_offset + dir_length = F - 63, one byte into the live trailer",
       "sha256": "8bd5e7ff458c5f68443eccb57ad35cc862c5d65e4dca04ac25bbd7f1a51210f6",
       "size": 448,
       "conforming": false,
@@ -1503,7 +1268,7 @@
       },
       "violations": [
         {
-          "row": "F12",
+          "row": "F10",
           "instance": "\u2014",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -1518,7 +1283,7 @@
     {
       "id": "TV-0123",
       "file": "reject-file/TV-0123.tarn",
-      "title": "F13 generation = 0",
+      "title": "F11 generation = 0",
       "sha256": "046722fed24064c18dfa092b04941bc09f2e23c64a7c9e05b060743b3086c19b",
       "size": 128,
       "conforming": false,
@@ -1542,7 +1307,7 @@
       },
       "violations": [
         {
-          "row": "F13",
+          "row": "F11",
           "instance": "generation",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -1557,7 +1322,7 @@
     {
       "id": "TV-0124",
       "file": "reject-file/TV-0124.tarn",
-      "title": "F14 file_id = 0",
+      "title": "F12 file_id = 0",
       "sha256": "a7cf670eea9763a9f392132ff2096b71cf84496a3dfcdbed052e81ed928a1c56",
       "size": 128,
       "conforming": false,
@@ -1581,7 +1346,7 @@
       },
       "violations": [
         {
-          "row": "F14",
+          "row": "F12",
           "instance": "file_id",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -1596,7 +1361,7 @@
     {
       "id": "TV-0125",
       "file": "reject-file/TV-0125.tarn",
-      "title": "F16 the u32 at trailer offset 60 is not the CRC of [0,60)",
+      "title": "F14 the u32 at trailer offset 60 is not the CRC of [0,60)",
       "sha256": "37ca5321adffbba11e31bcd4873dbe9a9b9dc80da72b8cffb7f538506b9973db",
       "size": 128,
       "conforming": false,
@@ -1618,7 +1383,7 @@
       },
       "violations": [
         {
-          "row": "F16",
+          "row": "F14",
           "instance": "trailer CRC",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -1633,7 +1398,7 @@
     {
       "id": "TV-0126",
       "file": "reject-file/TV-0126.tarn",
-      "title": "F17 the 4 reserved bytes at trailer offset 56 are not zero",
+      "title": "F15 the 4 reserved bytes at trailer offset 56 are not zero",
       "sha256": "985fe013b74f87e400e04747662c8340024a2bd1173a916508583ee3d14cf054",
       "size": 128,
       "conforming": false,
@@ -1657,7 +1422,7 @@
       },
       "violations": [
         {
-          "row": "F17",
+          "row": "F15",
           "instance": "trailer reserved [56,60)",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -1672,7 +1437,7 @@
     {
       "id": "TV-0127",
       "file": "reject-file/TV-0127.tarn",
-      "title": "F18 dir_length = 3, below the terminal CRC's 4 bytes",
+      "title": "F16 dir_length = 3, below the terminal CRC's 4 bytes",
       "sha256": "f6751cf0407c504989378b9b795ddbb8696341119c25d3514e87af1f1fc873df",
       "size": 128,
       "conforming": false,
@@ -1696,7 +1461,7 @@
       },
       "violations": [
         {
-          "row": "F18",
+          "row": "F16",
           "instance": "dir_length",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -1711,7 +1476,7 @@
     {
       "id": "TV-0128",
       "file": "reject-file/TV-0128.tarn",
-      "title": "F19 committed_file_length = 192 in a 128-byte file",
+      "title": "F17 committed_file_length = 192 in a 128-byte file",
       "sha256": "b7c5b2b276f92a32380bc7855fbb1c45321b0344a8cdc94a60136b82f6864edf",
       "size": 128,
       "conforming": false,
@@ -1735,7 +1500,7 @@
       },
       "violations": [
         {
-          "row": "F19",
+          "row": "F17",
           "instance": "committed_file_length",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -1750,7 +1515,7 @@
     {
       "id": "TV-0129",
       "file": "reject-file/TV-0129.tarn",
-      "title": "F20 version_major = 0",
+      "title": "F18 version_major = 0",
       "sha256": "59d27f4f64f5e4060ea95e32dac55fda18512550cc9c97121204513d9b51a61d",
       "size": 128,
       "conforming": false,
@@ -1774,7 +1539,7 @@
       },
       "violations": [
         {
-          "row": "F20",
+          "row": "F18",
           "instance": "version_major",
           "rule": "R-CNT-07",
           "outcome": "reject-file",
@@ -1789,7 +1554,7 @@
     {
       "id": "TV-0131",
       "file": "reject-file/TV-0131.tarn",
-      "title": "F21 flags bit 0 set, an unimplemented incompat-lane bit",
+      "title": "F19 flags bit 0 set, an unimplemented incompat-lane bit",
       "sha256": "e2a8a628f2bdd4963eee80edb0a63a4349059e8946bffbc2589adae1373b888b",
       "size": 128,
       "conforming": false,
@@ -1813,7 +1578,7 @@
       },
       "violations": [
         {
-          "row": "F21",
+          "row": "F19",
           "instance": "flags bits 0-15",
           "rule": "R-CNT-08",
           "outcome": "reject-file",
@@ -1828,7 +1593,7 @@
     {
       "id": "TV-0132",
       "file": "reject-file/TV-0132.tarn",
-      "title": "F22 the directory region's final 4 bytes are not the CRC of the record sequence",
+      "title": "F20 the directory region's final 4 bytes are not the CRC of the record sequence",
       "sha256": "0234e45da25914f3a7cceb0ea1312e2a9a181ade45b527eaec88de517671d494",
       "size": 448,
       "conforming": false,
@@ -1850,7 +1615,7 @@
       },
       "violations": [
         {
-          "row": "F22",
+          "row": "F20",
           "instance": "directory region CRC",
           "rule": "R-CNT-11",
           "outcome": "reject-file",
@@ -1865,7 +1630,7 @@
     {
       "id": "TV-0133",
       "file": "reject-file/TV-0133.tarn",
-      "title": "F23 top-level user-metadata record carries extent slot (0, 0)",
+      "title": "F21 top-level user-metadata record carries extent slot (0, 0)",
       "sha256": "099d87017f25bf1baee752d75e144cdd76fe57ce79bf88832c9d1e5fb939baf9",
       "size": 320,
       "conforming": false,
@@ -1890,7 +1655,7 @@
       },
       "violations": [
         {
-          "row": "F23",
+          "row": "F21",
           "instance": "\u2014",
           "rule": "R-CNT-25",
           "outcome": "reject-file",
@@ -1905,7 +1670,7 @@
     {
       "id": "TV-0134",
       "file": "reject-file/TV-0134.tarn",
-      "title": "F24 top-level user-metadata record's extent_length is 4, below the terminal CRC's own size",
+      "title": "F22 top-level user-metadata record's extent_length is 4, below the terminal CRC's own size",
       "sha256": "1d934c2b39a08beff09f92a2f3c57a11a304c868dbafbcfac7fa25f50570afbb",
       "size": 320,
       "conforming": false,
@@ -1930,7 +1695,7 @@
       },
       "violations": [
         {
-          "row": "F24",
+          "row": "F22",
           "instance": "\u2014",
           "rule": "R-CNT-25",
           "outcome": "reject-file",
@@ -1945,7 +1710,7 @@
     {
       "id": "TV-0135",
       "file": "reject-file/TV-0135.tarn",
-      "title": "F25 top-level user-metadata record's inline_length is 2",
+      "title": "F23 top-level user-metadata record's inline_length is 2",
       "sha256": "177f2785c370d2e2960fb1ac9b4cdfd1df4d7b5ce9fe0586ad15e23524dd45af",
       "size": 320,
       "conforming": false,
@@ -1970,7 +1735,7 @@
       },
       "violations": [
         {
-          "row": "F25",
+          "row": "F23",
           "instance": "\u2014",
           "rule": "R-MTA-03",
           "outcome": "reject-file",
@@ -1985,7 +1750,7 @@
     {
       "id": "TV-0136",
       "file": "reject-file/TV-0136.tarn",
-      "title": "F26 top-level record type = 0x0000",
+      "title": "F24 top-level record type = 0x0000",
       "sha256": "37820dad6c491ba12ee8f0782202de88cd4c648bc59f3ad9f9d21d266ce6b897",
       "size": 320,
       "conforming": false,
@@ -2010,7 +1775,7 @@
       },
       "violations": [
         {
-          "row": "F26",
+          "row": "F24",
           "instance": "type",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
@@ -2025,7 +1790,7 @@
     {
       "id": "TV-0137",
       "file": "reject-file/TV-0137.tarn",
-      "title": "F28 non-layer top-level record has reserved flag bit 2 set",
+      "title": "F26 non-layer top-level record has reserved flag bit 2 set",
       "sha256": "b24b6d73dd9f7ca41fbab640429a257aa38dd1bcb498b49691c18febfd44c32a",
       "size": 320,
       "conforming": false,
@@ -2086,7 +1851,7 @@
       },
       "violations": [
         {
-          "row": "F28",
+          "row": "F26",
           "instance": "flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
@@ -2101,7 +1866,7 @@
     {
       "id": "TV-0138",
       "file": "reject-file/TV-0138.tarn",
-      "title": "F29 top-level user-metadata document's members are not in ascending key order",
+      "title": "F27 top-level user-metadata document's members are not in ascending key order",
       "sha256": "ee9b4170385d1c5029f41e9d306f1c32716372e580aadb425ede9713d3ca1499",
       "size": 320,
       "conforming": false,
@@ -2159,7 +1924,7 @@
       },
       "violations": [
         {
-          "row": "F29",
+          "row": "F27",
           "instance": "\u2014",
           "rule": "R-MTA-05",
           "outcome": "reject-file",
@@ -2174,7 +1939,7 @@
     {
       "id": "TV-0139",
       "file": "reject-file/TV-0139.tarn",
-      "title": "F30 registered type 0x0002 stores MU = 1 where \u00a77.3 fixes MU = 0 (flags bit 0)",
+      "title": "F28 registered type 0x0002 stores MU = 1 where \u00a77.3 fixes MU = 0 (flags bit 0)",
       "sha256": "1cc6cc98161c299af8bc1a0132ebdfd8b63e9a451bf35fbb68c6e2a3a7a21b05",
       "size": 320,
       "conforming": false,
@@ -2235,7 +2000,7 @@
       },
       "violations": [
         {
-          "row": "F30",
+          "row": "F28",
           "instance": "flags bit 0",
           "rule": "R-CNT-22",
           "outcome": "reject-file",
@@ -2250,7 +2015,7 @@
     {
       "id": "TV-0140",
       "file": "reject-file/TV-0140.tarn",
-      "title": "F30 registered type 0x0002 stores PE = 0 where \u00a77.3 fixes PE = 1 (flags bit 1)",
+      "title": "F28 registered type 0x0002 stores PE = 0 where \u00a77.3 fixes PE = 1 (flags bit 1)",
       "sha256": "6d915f80704a648eb7ed70abdbb25a5088fb6f16d38b93111bfc181329fa085a",
       "size": 320,
       "conforming": false,
@@ -2311,7 +2076,7 @@
       },
       "violations": [
         {
-          "row": "F30",
+          "row": "F28",
           "instance": "flags bit 1",
           "rule": "R-CNT-22",
           "outcome": "reject-file",
@@ -2326,7 +2091,7 @@
     {
       "id": "TV-0141",
       "file": "reject-file/TV-0141.tarn",
-      "title": "F31 the next record's 24-byte header extends past the end of the record sequence",
+      "title": "F29 the next record's 24-byte header extends past the end of the record sequence",
       "sha256": "dbb7144d797e9a131729e67e10f728a3393821fbf4784b00218ca05c9a6a6508",
       "size": 448,
       "conforming": false,
@@ -2351,7 +2116,7 @@
       },
       "violations": [
         {
-          "row": "F31",
+          "row": "F29",
           "instance": "record header",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
@@ -2366,7 +2131,7 @@
     {
       "id": "TV-0142",
       "file": "reject-file/TV-0142.tarn",
-      "title": "F31 the last record's inline payload extends past the end of the record sequence",
+      "title": "F29 the last record's inline payload extends past the end of the record sequence",
       "sha256": "40e462cbd2dc4a12c98a859c303a1a10a0715a16053f5666f842258437d48cb6",
       "size": 448,
       "conforming": false,
@@ -2391,7 +2156,7 @@
       },
       "violations": [
         {
-          "row": "F31",
+          "row": "F29",
           "instance": "inline_length",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
@@ -2406,7 +2171,7 @@
     {
       "id": "TV-0143",
       "file": "reject-file/TV-0143.tarn",
-      "title": "F32 non-layer top-level record extent slot (0, 27): offset zero, length nonzero",
+      "title": "F30 non-layer top-level record extent slot (0, 27): offset zero, length nonzero",
       "sha256": "a975a7dbe4f3eb2ecf7fd5c136b8a818fcfb616c238ca68ab3a02b96038e0807",
       "size": 320,
       "conforming": false,
@@ -2431,7 +2196,7 @@
       },
       "violations": [
         {
-          "row": "F32",
+          "row": "F30",
           "instance": "extent_offset",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
@@ -2446,7 +2211,7 @@
     {
       "id": "TV-0144",
       "file": "reject-file/TV-0144.tarn",
-      "title": "F32 non-layer top-level record extent slot (64, 0): offset nonzero, length zero",
+      "title": "F30 non-layer top-level record extent slot (64, 0): offset nonzero, length zero",
       "sha256": "2a3694438e03372f9d5cbb42919be4d4469fccd603163c3392b9743780ea6824",
       "size": 320,
       "conforming": false,
@@ -2471,7 +2236,7 @@
       },
       "violations": [
         {
-          "row": "F32",
+          "row": "F30",
           "instance": "extent_length",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
@@ -2486,7 +2251,7 @@
     {
       "id": "TV-0145",
       "file": "reject-file/TV-0145.tarn",
-      "title": "F33 non-layer top-level record extent_offset = 8, inside the front signature block",
+      "title": "F31 non-layer top-level record extent_offset = 8, inside the front signature block",
       "sha256": "511d70f4657451e3f4bde45dbdc715baf09fb72c3686df78663ea2ca625c4c96",
       "size": 320,
       "conforming": false,
@@ -2511,7 +2276,7 @@
       },
       "violations": [
         {
-          "row": "F33",
+          "row": "F31",
           "instance": "extent_offset",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
@@ -2526,7 +2291,7 @@
     {
       "id": "TV-0146",
       "file": "reject-file/TV-0146.tarn",
-      "title": "F34 non-layer top-level record extent ends 3 bytes into the live trailer",
+      "title": "F32 non-layer top-level record extent ends 3 bytes into the live trailer",
       "sha256": "7843726176d7c506c2651d6d0e7c11da73127403ed5e68d698064948d1b6fbf2",
       "size": 320,
       "conforming": false,
@@ -2551,7 +2316,7 @@
       },
       "violations": [
         {
-          "row": "F34",
+          "row": "F32",
           "instance": "\u2014",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
@@ -2566,7 +2331,7 @@
     {
       "id": "TV-0147",
       "file": "reject-file/TV-0147.tarn",
-      "title": "F35 stored-tile extents: layer `bad`'s tile 0 extent lies inside layer `ok`'s stored tile",
+      "title": "F33 stored-tile extents: layer `bad`'s tile 0 extent lies inside layer `ok`'s stored tile",
       "sha256": "c40cc71af2353d71a71713edbb50fdcfd9e9219fe1e54a4b77b26bf3de875030",
       "size": 448,
       "conforming": false,
@@ -2628,7 +2393,7 @@
       },
       "violations": [
         {
-          "row": "F35",
+          "row": "F33",
           "instance": "stored-tile extents",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
@@ -2643,7 +2408,7 @@
     {
       "id": "TV-0148",
       "file": "reject-file/TV-0148.tarn",
-      "title": "F35 tile-index regions: a top-level record's extent covers layer `ok`'s tile-index region",
+      "title": "F33 tile-index regions: a top-level record's extent covers layer `ok`'s tile-index region",
       "sha256": "202930c06e10510b28846dc5e0fc0c0c8fd47bc1c3d0f26b0a4bec7ebe469a83",
       "size": 320,
       "conforming": false,
@@ -2704,7 +2469,7 @@
       },
       "violations": [
         {
-          "row": "F35",
+          "row": "F33",
           "instance": "tile-index regions",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
@@ -2719,7 +2484,7 @@
     {
       "id": "TV-0149",
       "file": "reject-file/TV-0149.tarn",
-      "title": "F35 record extents: a top-level record's extent covers layer `ok`'s stored tile",
+      "title": "F33 record extents: a top-level record's extent covers layer `ok`'s stored tile",
       "sha256": "ce805dcc0db0148231452cfca8fa26c8748bbf1a4bcf338eab0d1d655247e773",
       "size": 320,
       "conforming": false,
@@ -2780,7 +2545,7 @@
       },
       "violations": [
         {
-          "row": "F35",
+          "row": "F33",
           "instance": "record extents",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
@@ -2795,7 +2560,7 @@
     {
       "id": "TV-0150",
       "file": "reject-file/TV-0150.tarn",
-      "title": "F35 directory region: a top-level record's extent covers the first 20 bytes of the directory",
+      "title": "F33 directory region: a top-level record's extent covers the first 20 bytes of the directory",
       "sha256": "4a130aec538d3328931e5bf567e18e3392b132334149f5e373267eba84eda8d3",
       "size": 320,
       "conforming": false,
@@ -2856,7 +2621,7 @@
       },
       "violations": [
         {
-          "row": "F35",
+          "row": "F33",
           "instance": "directory region",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
@@ -2871,7 +2636,7 @@
     {
       "id": "TV-0151",
       "file": "reject-file/TV-0151.tarn",
-      "title": "F36 the record sequence carries two user-metadata records (type 0x0002)",
+      "title": "F34 the record sequence carries two user-metadata records (type 0x0002)",
       "sha256": "5a0a4935d03fd2c4fb9eb5be670ce4a1b9a26e36b08c5801118f6f875b15f6c5",
       "size": 320,
       "conforming": false,
@@ -2903,7 +2668,7 @@
       },
       "violations": [
         {
-          "row": "F36",
+          "row": "F34",
           "instance": "type",
           "rule": "R-CNT-14",
           "outcome": "reject-file",
@@ -3755,85 +3520,6 @@
       ]
     },
     {
-      "id": "TV-0210",
-      "file": "reject-layer/TV-0210.tarn",
-      "title": "layer `bad` writes channel count C as u8 instead of u16",
-      "sha256": "069fee4884fd56009c834f686f867875f5fac11cf1cc55b8f4277eea74c37313",
-      "size": 448,
-      "conforming": false,
-      "derivation": {
-        "seed": "pair",
-        "patches": [
-          {
-            "field": "layer[bad].record",
-            "value": "010003005d000000440000000000000018000000000000000362616401010001000100000000000000000000000000000000000000000000000000020102797902000000000000000200000000000000017802000000000000000200000000000000017606000100010100000000000000b2ce6464"
-          }
-        ],
-        "repair": [
-          "directory.crc",
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "layer:bad"
-        ],
-        "may_escalate_to": "file",
-        "serves": [
-          {
-            "layer": "ok",
-            "geometry": {
-              "rank": 2,
-              "extents": [
-                2,
-                3
-              ],
-              "tile_extents": [
-                2,
-                3
-              ]
-            },
-            "layout": "interleaved",
-            "channels": [
-              {
-                "name": "t",
-                "type": "float32",
-                "fill": "0x00000000"
-              }
-            ],
-            "tiles": [
-              {
-                "disk_ordinal": 0,
-                "stored": true,
-                "values": [
-                  "0x3F800000",
-                  "0x80000000",
-                  "0x7FC00001",
-                  "0xC0000000",
-                  "0x00000000",
-                  "0x7F800000"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "violations": [
-        {
-          "row": "L3",
-          "instance": "any layer-record inline-payload field",
-          "rule": "R-ENC-06",
-          "outcome": "reject-layer",
-          "scope": {
-            "kind": "layer",
-            "name": "bad"
-          },
-          "detector": "reader",
-          "detected": "layer access"
-        }
-      ]
-    },
-    {
       "id": "TV-0211",
       "file": "reject-layer/TV-0211.tarn",
       "title": "layer `bad` name is ill-formed UTF-8 (03 62 FF 64)",
@@ -3899,7 +3585,7 @@
       },
       "violations": [
         {
-          "row": "L4",
+          "row": "L3",
           "instance": "\u2014",
           "rule": "R-ENC-11",
           "outcome": "reject-layer",
@@ -3979,7 +3665,7 @@
       },
       "violations": [
         {
-          "row": "L5",
+          "row": "L4",
           "instance": "channel entry name",
           "rule": "R-ENC-11",
           "outcome": "reject-layer",
@@ -4058,7 +3744,7 @@
       },
       "violations": [
         {
-          "row": "L5",
+          "row": "L4",
           "instance": "dimension entry name",
           "rule": "R-ENC-11",
           "outcome": "reject-layer",
@@ -4137,7 +3823,7 @@
       },
       "violations": [
         {
-          "row": "L6",
+          "row": "L5",
           "instance": "\u2014",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
@@ -4217,7 +3903,7 @@
       },
       "violations": [
         {
-          "row": "L7",
+          "row": "L6",
           "instance": "\u2014",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
@@ -4297,7 +3983,7 @@
       },
       "violations": [
         {
-          "row": "L8",
+          "row": "L7",
           "instance": "dimension entry name",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
@@ -4376,7 +4062,7 @@
       },
       "violations": [
         {
-          "row": "L8",
+          "row": "L7",
           "instance": "channel entry name",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
@@ -4455,7 +4141,7 @@
       },
       "violations": [
         {
-          "row": "L9",
+          "row": "L8",
           "instance": "dimension entry name",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
@@ -4534,7 +4220,7 @@
       },
       "violations": [
         {
-          "row": "L9",
+          "row": "L8",
           "instance": "channel entry name",
           "rule": "R-ENC-12",
           "outcome": "reject-layer",
@@ -4613,7 +4299,7 @@
       },
       "violations": [
         {
-          "row": "L10",
+          "row": "L9",
           "instance": "dimension entry name",
           "rule": "R-ENC-15",
           "outcome": "reject-layer",
@@ -4692,7 +4378,7 @@
       },
       "violations": [
         {
-          "row": "L10",
+          "row": "L9",
           "instance": "channel entry name",
           "rule": "R-ENC-15",
           "outcome": "reject-layer",
@@ -4771,7 +4457,7 @@
       },
       "violations": [
         {
-          "row": "L15",
+          "row": "L14",
           "instance": "sub-record header",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
@@ -4850,7 +4536,7 @@
       },
       "violations": [
         {
-          "row": "L16",
+          "row": "L15",
           "instance": "layer record extent_length",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -4929,7 +4615,7 @@
       },
       "violations": [
         {
-          "row": "L17",
+          "row": "L16",
           "instance": "layer record extent slot",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -5008,7 +4694,7 @@
       },
       "violations": [
         {
-          "row": "L18",
+          "row": "L17",
           "instance": "layer record extent slot",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -5096,7 +4782,7 @@
       },
       "violations": [
         {
-          "row": "L19",
+          "row": "L18",
           "instance": "tile-index region",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -5188,7 +4874,7 @@
       },
       "violations": [
         {
-          "row": "L21",
+          "row": "L20",
           "instance": "\u2014",
           "rule": "R-CNT-16",
           "outcome": "reject-layer",
@@ -5267,7 +4953,7 @@
       },
       "violations": [
         {
-          "row": "L22",
+          "row": "L21",
           "instance": "\u2014",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
@@ -5346,7 +5032,7 @@
       },
       "violations": [
         {
-          "row": "L23",
+          "row": "L22",
           "instance": "extent_length",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
@@ -5429,7 +5115,7 @@
       },
       "violations": [
         {
-          "row": "L23",
+          "row": "L22",
           "instance": "extent_offset",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
@@ -5516,7 +5202,7 @@
       },
       "violations": [
         {
-          "row": "L23",
+          "row": "L22",
           "instance": "entry_count",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
@@ -5595,7 +5281,7 @@
       },
       "violations": [
         {
-          "row": "L24",
+          "row": "L23",
           "instance": "leading fixed fields (name \u2026 C)",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
@@ -5675,7 +5361,7 @@
       },
       "violations": [
         {
-          "row": "L24",
+          "row": "L23",
           "instance": "d dimension entries",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
@@ -5754,7 +5440,7 @@
       },
       "violations": [
         {
-          "row": "L24",
+          "row": "L23",
           "instance": "C channel entries",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
@@ -5833,7 +5519,7 @@
       },
       "violations": [
         {
-          "row": "L24",
+          "row": "L23",
           "instance": "trailing fixed fields (index_encoding, entry_count, crc_of_crc_array)",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
@@ -5928,7 +5614,7 @@
       },
       "violations": [
         {
-          "row": "L28",
+          "row": "L27",
           "instance": "\u2014",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
@@ -6007,7 +5693,7 @@
       },
       "violations": [
         {
-          "row": "L29",
+          "row": "L28",
           "instance": "\u2014",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
@@ -6099,7 +5785,7 @@
       },
       "violations": [
         {
-          "row": "L30",
+          "row": "L29",
           "instance": "A_slab = 0",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
@@ -6195,7 +5881,7 @@
       },
       "violations": [
         {
-          "row": "L30",
+          "row": "L29",
           "instance": "A_slab not a power of two",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
@@ -6291,7 +5977,7 @@
       },
       "violations": [
         {
-          "row": "L30",
+          "row": "L29",
           "instance": "A_slab above 2^62",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
@@ -6383,7 +6069,7 @@
       },
       "violations": [
         {
-          "row": "L31",
+          "row": "L30",
           "instance": "\u2014",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
@@ -6462,7 +6148,7 @@
       },
       "violations": [
         {
-          "row": "L32",
+          "row": "L31",
           "instance": "reserved 2-0x7F",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
@@ -6541,7 +6227,7 @@
       },
       "violations": [
         {
-          "row": "L32",
+          "row": "L31",
           "instance": "experimental >= 0x80",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
@@ -6633,7 +6319,7 @@
       },
       "violations": [
         {
-          "row": "L33",
+          "row": "L32",
           "instance": "tile extent T\u1d62",
           "rule": "R-GEO-01",
           "outcome": "reject-layer",
@@ -6757,7 +6443,7 @@
       },
       "violations": [
         {
-          "row": "L33",
+          "row": "L32",
           "instance": "rank d",
           "rule": "R-GEO-01",
           "outcome": "reject-layer",
@@ -6836,7 +6522,7 @@
       },
       "violations": [
         {
-          "row": "L34",
+          "row": "L33",
           "instance": "linearization 0",
           "rule": "R-GEO-05",
           "outcome": "reject-layer",
@@ -6915,7 +6601,7 @@
       },
       "violations": [
         {
-          "row": "L34",
+          "row": "L33",
           "instance": "reserved 4-0x7FFF",
           "rule": "R-GEO-05",
           "outcome": "reject-layer",
@@ -6994,7 +6680,7 @@
       },
       "violations": [
         {
-          "row": "L34",
+          "row": "L33",
           "instance": "experimental >= 0x8000",
           "rule": "R-GEO-05",
           "outcome": "reject-layer",
@@ -7073,7 +6759,7 @@
       },
       "violations": [
         {
-          "row": "L35",
+          "row": "L34",
           "instance": "type 0",
           "rule": "R-TYP-03",
           "outcome": "reject-layer",
@@ -7152,7 +6838,7 @@
       },
       "violations": [
         {
-          "row": "L35",
+          "row": "L34",
           "instance": "reserved 14-19",
           "rule": "R-TYP-03",
           "outcome": "reject-layer",
@@ -7231,7 +6917,7 @@
       },
       "violations": [
         {
-          "row": "L35",
+          "row": "L34",
           "instance": "reserved 20-0x7FFF",
           "rule": "R-TYP-03",
           "outcome": "reject-layer",
@@ -7310,7 +6996,7 @@
       },
       "violations": [
         {
-          "row": "L35",
+          "row": "L34",
           "instance": "experimental >= 0x8000",
           "rule": "R-TYP-03",
           "outcome": "reject-layer",
@@ -7406,7 +7092,7 @@
       },
       "violations": [
         {
-          "row": "L36",
+          "row": "L35",
           "instance": "\u2014",
           "rule": "R-TYP-07",
           "outcome": "reject-layer",
@@ -7485,7 +7171,7 @@
       },
       "violations": [
         {
-          "row": "L37",
+          "row": "L36",
           "instance": "layout 0",
           "rule": "R-SER-06",
           "outcome": "reject-layer",
@@ -7564,7 +7250,7 @@
       },
       "violations": [
         {
-          "row": "L37",
+          "row": "L36",
           "instance": "reserved 3-255",
           "rule": "R-SER-06",
           "outcome": "reject-layer",
@@ -7643,7 +7329,7 @@
       },
       "violations": [
         {
-          "row": "L38",
+          "row": "L37",
           "instance": "\u2014",
           "rule": "R-IDX-04",
           "outcome": "reject-layer",
@@ -7726,7 +7412,7 @@
       },
       "violations": [
         {
-          "row": "L39",
+          "row": "L38",
           "instance": "\u2014",
           "rule": "R-IDX-04",
           "outcome": "reject-layer",
@@ -7818,7 +7504,7 @@
       },
       "violations": [
         {
-          "row": "L40",
+          "row": "L39",
           "instance": "A not a power of two",
           "rule": "R-SLB-01",
           "outcome": "reject-layer",
@@ -7910,7 +7596,7 @@
       },
       "violations": [
         {
-          "row": "L40",
+          "row": "L39",
           "instance": "A below 512",
           "rule": "R-SLB-01",
           "outcome": "reject-layer",
@@ -8002,7 +7688,7 @@
       },
       "violations": [
         {
-          "row": "L40",
+          "row": "L39",
           "instance": "A above 2^62",
           "rule": "R-SLB-01",
           "outcome": "reject-layer",
@@ -8113,7 +7799,7 @@
       },
       "violations": [
         {
-          "row": "L41",
+          "row": "L40",
           "instance": "\u2014",
           "rule": "R-SLB-01",
           "outcome": "reject-layer",
@@ -8228,7 +7914,7 @@
       },
       "violations": [
         {
-          "row": "L43",
+          "row": "L42",
           "instance": "\u2014",
           "rule": "R-SLB-03",
           "outcome": "reject-layer",
@@ -8307,7 +7993,7 @@
       },
       "violations": [
         {
-          "row": "L44",
+          "row": "L43",
           "instance": "codec 0",
           "rule": "R-COD-03",
           "outcome": "reject-layer",
@@ -8386,7 +8072,7 @@
       },
       "violations": [
         {
-          "row": "L44",
+          "row": "L43",
           "instance": "reserved 5-0x7FFF",
           "rule": "R-COD-03",
           "outcome": "reject-layer",
@@ -8465,7 +8151,7 @@
       },
       "violations": [
         {
-          "row": "L44",
+          "row": "L43",
           "instance": "experimental >= 0x8000",
           "rule": "R-COD-03",
           "outcome": "reject-layer",
@@ -8561,7 +8247,7 @@
       },
       "violations": [
         {
-          "row": "L45",
+          "row": "L44",
           "instance": "\u2014",
           "rule": "R-COD-07",
           "outcome": "reject-layer",
@@ -8640,7 +8326,7 @@
       },
       "violations": [
         {
-          "row": "L46",
+          "row": "L45",
           "instance": "filter 0",
           "rule": "R-COD-09",
           "outcome": "reject-layer",
@@ -8719,7 +8405,7 @@
       },
       "violations": [
         {
-          "row": "L46",
+          "row": "L45",
           "instance": "reserved 3-0x7FFF",
           "rule": "R-COD-09",
           "outcome": "reject-layer",
@@ -8798,7 +8484,7 @@
       },
       "violations": [
         {
-          "row": "L46",
+          "row": "L45",
           "instance": "experimental >= 0x8000",
           "rule": "R-COD-09",
           "outcome": "reject-layer",
@@ -8909,7 +8595,7 @@
       },
       "violations": [
         {
-          "row": "L48",
+          "row": "L47",
           "instance": "layer record flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
@@ -9020,8 +8706,8 @@
       },
       "violations": [
         {
-          "row": "L50",
-          "instance": "layer record flags",
+          "row": "L49",
+          "instance": "layer record flags bit 0",
           "rule": "R-CNT-22",
           "outcome": "reject-layer",
           "scope": {
@@ -46037,7 +45723,7 @@
       },
       "violations": [
         {
-          "row": "L11",
+          "row": "L10",
           "instance": "\u2014",
           "rule": "R-CNT-25",
           "outcome": "reject-layer",
@@ -46116,7 +45802,7 @@
       },
       "violations": [
         {
-          "row": "L12",
+          "row": "L11",
           "instance": "\u2014",
           "rule": "R-CNT-25",
           "outcome": "reject-layer",
@@ -46187,7 +45873,7 @@
       },
       "violations": [
         {
-          "row": "L13",
+          "row": "L12",
           "instance": "\u2014",
           "rule": "R-MTA-03",
           "outcome": "reject-layer",
@@ -46266,7 +45952,7 @@
       },
       "violations": [
         {
-          "row": "L14",
+          "row": "L13",
           "instance": "\u2014",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
@@ -46282,7 +45968,7 @@
     {
       "id": "TV-0806",
       "file": "reject-layer/TV-0806.tarn",
-      "title": "L15 trailing residue: one complete sub-record, then 10 bytes the sequence cannot parse",
+      "title": "L14 trailing residue: one complete sub-record, then 10 bytes the sequence cannot parse",
       "sha256": "996789604031ef0aea6ba2b5a8c40b834f0a22d8910445af8cfac5c83d1bc3aa",
       "size": 512,
       "conforming": false,
@@ -46337,7 +46023,7 @@
       },
       "violations": [
         {
-          "row": "L15",
+          "row": "L14",
           "instance": "trailing residue",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
@@ -46353,7 +46039,7 @@
     {
       "id": "TV-0807",
       "file": "reject-layer/TV-0807.tarn",
-      "title": "L15 sub-record inline_length: the header parses, its declared payload runs past the layer record's inline payload",
+      "title": "L14 sub-record inline_length: the header parses, its declared payload runs past the layer record's inline payload",
       "sha256": "b5285f616cc29fa78319e5bb348a2e333a956ac8ce5f2f8ee0be439effce43d7",
       "size": 512,
       "conforming": false,
@@ -46416,7 +46102,7 @@
       },
       "violations": [
         {
-          "row": "L15",
+          "row": "L14",
           "instance": "sub-record inline_length",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
@@ -46495,7 +46181,7 @@
       },
       "violations": [
         {
-          "row": "L16",
+          "row": "L15",
           "instance": "sub-record extent_length",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -46578,7 +46264,7 @@
       },
       "violations": [
         {
-          "row": "L17",
+          "row": "L16",
           "instance": "sub-record extent slot",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -46657,7 +46343,7 @@
       },
       "violations": [
         {
-          "row": "L18",
+          "row": "L17",
           "instance": "sub-record extent slot",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -46772,7 +46458,7 @@
       },
       "violations": [
         {
-          "row": "L19",
+          "row": "L18",
           "instance": "layer sub-record extents",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -46843,7 +46529,7 @@
       },
       "violations": [
         {
-          "row": "L20",
+          "row": "L19",
           "instance": "\u2014",
           "rule": "R-CNT-14",
           "outcome": "reject-layer",
@@ -47015,7 +46701,7 @@
       },
       "violations": [
         {
-          "row": "L26",
+          "row": "L25",
           "instance": "\u2014",
           "rule": "R-CNT-15",
           "outcome": "reject-layer",
@@ -47086,7 +46772,7 @@
       },
       "violations": [
         {
-          "row": "L27",
+          "row": "L26",
           "instance": "\u2014",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
@@ -47197,7 +46883,7 @@
       },
       "violations": [
         {
-          "row": "L48",
+          "row": "L47",
           "instance": "sub-record flags bits 2-15",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
@@ -47305,7 +46991,7 @@
       },
       "violations": [
         {
-          "row": "L49",
+          "row": "L48",
           "instance": "\u2014",
           "rule": "R-MTA-05",
           "outcome": "reject-layer",
@@ -47321,7 +47007,7 @@
     {
       "id": "TV-0900",
       "file": "reject-file/TV-0900.tarn",
-      "title": "F7 physical file size 64, below the 128-byte minimum (instance: F, the physical file size)",
+      "title": "F5 physical file size 64, below the 128-byte minimum (instance: F, the physical file size)",
       "sha256": "7c153d6dbffd0c48858549686adf0a9c11b72a5acfe284cdd748a8354d321aaa",
       "size": 64,
       "conforming": false,
@@ -47340,14 +47026,14 @@
       },
       "violations": [
         {
-          "row": "F7",
+          "row": "F5",
           "instance": "F (physical file size)",
           "rule": "R-CNT-27",
           "outcome": "reject-file",
           "scope": {
             "kind": "file",
             "instance": "F (physical file size)",
-            "note": "F19 and F10 are true of these bytes but unreachable: \u00a719.1 obtains F at step 1 and fetches a trailer at step 2, and this file has no step 2"
+            "note": "F17 and F8 are true of these bytes but unreachable: \u00a719.1 obtains F at step 1 and fetches a trailer at step 2, and this file has no step 2"
           },
           "detector": "reader",
           "detected": "open"
@@ -47357,7 +47043,7 @@
     {
       "id": "TV-0901",
       "file": "reject-file/TV-0901.tarn",
-      "title": "F7 trailer committed_file_length 64, below the 128-byte minimum (instance: committed_file_length)",
+      "title": "F5 trailer committed_file_length 64, below the 128-byte minimum (instance: committed_file_length)",
       "sha256": "a5156bd0d89bdca5a2b385928a4834b590308a1f53381c469f3f5d2ff2ec2902",
       "size": 128,
       "conforming": false,
@@ -47381,7 +47067,7 @@
       },
       "violations": [
         {
-          "row": "F7",
+          "row": "F5",
           "instance": "committed_file_length",
           "rule": "R-CNT-27",
           "outcome": "reject-file",
@@ -47389,7 +47075,7 @@
             "kind": "file",
             "instance": "committed_file_length",
             "co_violates": [
-              "F19 \u2014 committed_file_length \u2260 F, unavoidable for this instance"
+              "F17 \u2014 committed_file_length \u2260 F, unavoidable for this instance"
             ]
           },
           "detector": "reader",
@@ -47400,7 +47086,7 @@
     {
       "id": "TV-0902",
       "file": "reject-file/TV-0902.tarn",
-      "title": "F15 committed_file_length 200, equal to the physical size but not a multiple of 64: the trailer begins at 136",
+      "title": "F13 committed_file_length 200, equal to the physical size but not a multiple of 64: the trailer begins at 136",
       "sha256": "d1ee36ec901c20d256d5dfa22087a044299485a8e704d4aef027224755fcc0ea",
       "size": 200,
       "conforming": false,
@@ -47424,7 +47110,7 @@
       },
       "violations": [
         {
-          "row": "F15",
+          "row": "F13",
           "instance": "committed_file_length",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
@@ -47440,7 +47126,7 @@
     {
       "id": "TV-0904",
       "file": "reject-file/TV-0904.tarn",
-      "title": "F27 the user-metadata record carries MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0",
+      "title": "F25 the user-metadata record carries MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0",
       "sha256": "e60f762900908c626d09eff02440909ea6297f8a1630aa89ac59ce5368d19359",
       "size": 320,
       "conforming": false,
@@ -47501,15 +47187,15 @@
       },
       "violations": [
         {
-          "row": "F27",
+          "row": "F25",
           "instance": "\u2014",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
           "scope": {
             "kind": "file",
             "co_violates": [
-              "F30 (flags bit 0) \u2014 \u00a77.3 fixes MU = 0 for type 0x0002",
-              "F30 (flags bit 1) \u2014 \u00a77.3 fixes PE = 1 for type 0x0002"
+              "F28 (flags bit 0) \u2014 \u00a77.3 fixes MU = 0 for type 0x0002",
+              "F28 (flags bit 1) \u2014 \u00a77.3 fixes PE = 1 for type 0x0002"
             ]
           },
           "detector": "verifier",
@@ -47520,7 +47206,7 @@
     {
       "id": "TV-0905",
       "file": "reject-file/TV-0905.tarn",
-      "title": "F38 top-level record of reserved type 0x0003 with MU = 0",
+      "title": "F36 top-level record of reserved type 0x0003 with MU = 0",
       "sha256": "7b51f32b0a68b89aa8b3359e0a0dce2c619e7585acc56dd1269640a19d93f6c0",
       "size": 320,
       "conforming": false,
@@ -47581,7 +47267,7 @@
       },
       "violations": [
         {
-          "row": "F38",
+          "row": "F36",
           "instance": "\u2014",
           "rule": "R-CNT-15",
           "outcome": "reject-file",
@@ -47596,7 +47282,7 @@
     {
       "id": "TV-0906",
       "file": "reject-file/TV-0906.tarn",
-      "title": "F35 layer `host`'s sub-record extent covers layer `ok`'s stored tile (instance: sub-record extents)",
+      "title": "F33 layer `host`'s sub-record extent covers layer `ok`'s stored tile (instance: sub-record extents)",
       "sha256": "0245f056bbdd9ca776fbd8466850c78743f7ed1661a3bdf7e6b1067b45a6d671",
       "size": 448,
       "conforming": false,
@@ -47695,7 +47381,7 @@
       },
       "violations": [
         {
-          "row": "F35",
+          "row": "F33",
           "instance": "sub-record extents",
           "rule": "R-CNT-13",
           "outcome": "reject-file",
@@ -47951,7 +47637,7 @@
     {
       "id": "TV-0910",
       "file": "reject-file/TV-0910.tarn",
-      "title": "F37 top-level record of reserved type 0x0003 with MU = 1",
+      "title": "F35 top-level record of reserved type 0x0003 with MU = 1",
       "sha256": "882de63165a4db7854e768ed0b00d476d69245f348fa9556cec5e3affb343cad",
       "size": 320,
       "conforming": false,
@@ -47976,7 +47662,7 @@
       },
       "violations": [
         {
-          "row": "F37",
+          "row": "F35",
           "instance": "\u2014",
           "rule": "R-CNT-15",
           "outcome": "reject-file",
@@ -47991,7 +47677,7 @@
     {
       "id": "TV-0911",
       "file": "reject-layer/TV-0911.tarn",
-      "title": "L33 layer `bad` declares channel count C = 0 (instance: channel count C)",
+      "title": "L32 layer `bad` declares channel count C = 0 (instance: channel count C)",
       "sha256": "b2dbcb5e88d4df189270a1ab48f9e0929425469dfbad348c0ce8ca0ee16f6a45",
       "size": 448,
       "conforming": false,
@@ -48059,7 +47745,7 @@
       },
       "violations": [
         {
-          "row": "L33",
+          "row": "L32",
           "instance": "channel count C",
           "rule": "R-GEO-01",
           "outcome": "reject-layer",
@@ -48076,7 +47762,7 @@
     {
       "id": "TV-0912",
       "file": "reject-layer/TV-0912.tarn",
-      "title": "L42 layer `slab` run 0: ordinals 1 and 2 exchange offsets, so ordinal 1 begins 4 bytes past the previous stored tile's end",
+      "title": "L41 layer `slab` run 0: ordinals 1 and 2 exchange offsets, so ordinal 1 begins 4 bytes past the previous stored tile's end",
       "sha256": "97b1cf9fa98454a1780a7d4510a6f1c3c74cd2cac1700cb31f78e91f20488ffb",
       "size": 448,
       "conforming": false,
@@ -48196,7 +47882,7 @@
       },
       "violations": [
         {
-          "row": "L42",
+          "row": "L41",
           "instance": "\u2014",
           "rule": "R-SLB-03",
           "outcome": "reject-layer",
@@ -48212,7 +47898,7 @@
     {
       "id": "TV-0915",
       "file": "reject-layer/TV-0915.tarn",
-      "title": "L25 sub-record carrying reserved-range type 0x0003 with MUST_UNDERSTAND = 1",
+      "title": "L24 sub-record carrying reserved-range type 0x0003 with MUST_UNDERSTAND = 1",
       "sha256": "403b80581393928f3fb951d2ab1aa6c60a8c36c3bf06c249b17e8020a883a288",
       "size": 512,
       "conforming": false,
@@ -48279,7 +47965,7 @@
       },
       "violations": [
         {
-          "row": "L25",
+          "row": "L24",
           "instance": "\u2014",
           "rule": "R-CNT-18",
           "outcome": "reject-layer",
@@ -49208,7 +48894,7 @@
       },
       "violations": [
         {
-          "row": "L16",
+          "row": "L15",
           "instance": "layer record extent_offset",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -49370,7 +49056,7 @@
       },
       "violations": [
         {
-          "row": "L16",
+          "row": "L15",
           "instance": "sub-record extent_offset",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -49387,11 +49073,11 @@
       "id": "TV-0929",
       "file": "reject-layer/TV-0929.tarn",
       "title": "sub-record of registered type 0x0002 stores PE = 0 where the registry fixes PE = 1",
-      "sha256": "5eb008eac57405121dc3472baa319cb99864bad268cd02519eacd0d8dcd7a319",
-      "size": 512,
+      "sha256": "0cfcb0c95e4b38bd5bc41d63291f715cfae3c3b712c35779d8b738e5cdfb30bb",
+      "size": 448,
       "conforming": false,
       "derivation": {
-        "seed": "sub_inert",
+        "seed": "sub_umeta",
         "patches": [
           {
             "field": "layer[sub].sub[0].flags",
@@ -49481,8 +49167,8 @@
       },
       "violations": [
         {
-          "row": "L50",
-          "instance": "sub-record flags",
+          "row": "L49",
+          "instance": "sub-record flags bit 1",
           "rule": "R-CNT-22",
           "outcome": "reject-layer",
           "scope": {
@@ -49497,7 +49183,7 @@
     {
       "id": "TV-0930",
       "file": "reject-file/TV-0930.tarn",
-      "title": "F3 generation has bit 63 set",
+      "title": "F2 generation has bit 63 set",
       "sha256": "770ddf067cf7ffecc0a876bf99098682b7b487bd00f104bfd36f8e11bdfca417",
       "size": 128,
       "conforming": false,
@@ -49521,7 +49207,7 @@
       },
       "violations": [
         {
-          "row": "F3",
+          "row": "F2",
           "instance": "generation",
           "rule": "R-ENC-03",
           "outcome": "reject-file",
@@ -49536,7 +49222,7 @@
     {
       "id": "TV-0931",
       "file": "reject-file/TV-0931.tarn",
-      "title": "F31 one byte remains after the last complete record",
+      "title": "F29 one byte remains after the last complete record",
       "sha256": "1f758fce68017b18dab9980bf82c7bb92aaec52721a7f75a9ad2c2f166e151e7",
       "size": 320,
       "conforming": false,
@@ -49561,7 +49247,7 @@
       },
       "violations": [
         {
-          "row": "F31",
+          "row": "F29",
           "instance": "trailing residue",
           "rule": "R-CNT-12",
           "outcome": "reject-file",
@@ -49576,7 +49262,7 @@
     {
       "id": "TV-0950",
       "file": "reject-layer/TV-0950.tarn",
-      "title": "L19 stored-tile extents: entry[1] redirected onto entry[0]'s extent",
+      "title": "L18 stored-tile extents: entry[1] redirected onto entry[0]'s extent",
       "sha256": "01385a25d6320d16b7fccfb4aec90213c49f52d2a5fbaf4c2ba00361c95bd4d9",
       "size": 448,
       "conforming": false,
@@ -49640,7 +49326,7 @@
       },
       "violations": [
         {
-          "row": "L19",
+          "row": "L18",
           "instance": "stored-tile extents",
           "rule": "R-CNT-13",
           "outcome": "reject-layer",
@@ -49657,7 +49343,7 @@
     {
       "id": "TV-0951",
       "file": "reject-layer/TV-0951.tarn",
-      "title": "L47 layer record flags MU = 1 with PE = 0",
+      "title": "L46 layer record flags MU = 1 with PE = 0",
       "sha256": "ec76f729847b22745363c6dda28debaca41ce4d9a93ec05103cd321990925bb1",
       "size": 448,
       "conforming": false,
@@ -49718,7 +49404,7 @@
       },
       "violations": [
         {
-          "row": "L47",
+          "row": "L46",
           "instance": "layer record",
           "rule": "R-CNT-12",
           "outcome": "reject-layer",
@@ -49726,7 +49412,7 @@
             "kind": "layer",
             "name": "bad",
             "co_violates": [
-              "L50"
+              "L49"
             ]
           },
           "detector": "verifier",
@@ -49818,29 +49504,28 @@
       ]
     },
     {
-      "id": "TV-0953",
-      "file": "reject-tile/TV-0953.tarn",
-      "title": "T27 `bad` entry 0 written as offset u32, length u64, crc u64 \u2014 20 bytes still, parsed as offset 0x0000000400000040, length 0",
-      "sha256": "8bb8082fc7c00f2e3ea862f0e46fadec0619aa19a0e0b007b944f8e7c124eb80",
-      "size": 448,
+      "id": "TV-0954",
+      "file": "reject-layer/TV-0954.tarn",
+      "title": "sub-record of an unassigned type carries MU = 1 with PE = 0",
+      "sha256": "1aad681db1cd78621a7e811f21cd0e5a9b995de5f169c362870a8295a5e1146a",
+      "size": 512,
       "conforming": false,
       "derivation": {
-        "seed": "pair",
+        "seed": "sub_inert",
         "patches": [
           {
-            "field": "layer[bad].entry[0]",
-            "value": "4000000004000000000000000000000000000000"
+            "field": "layer[sub].sub[0].flags",
+            "value": "0100"
           }
         ],
         "repair": [
-          "index:bad",
           "directory.crc",
           "trailer.crc"
         ]
       },
       "expect": {
         "must_not_serve": [
-          "tile:bad:0"
+          "layer:sub"
         ],
         "may_escalate_to": "file",
         "serves": [
@@ -49884,33 +49569,32 @@
       },
       "violations": [
         {
-          "row": "T27",
-          "instance": "tile-index entry",
-          "rule": "R-ENC-06",
-          "outcome": "reject-tile",
+          "row": "L46",
+          "instance": "sub-record",
+          "rule": "R-CNT-12",
+          "outcome": "reject-layer",
           "scope": {
-            "kind": "tile",
-            "layer": "bad",
-            "disk_ordinal": 0
+            "kind": "layer",
+            "name": "sub"
           },
-          "detector": "reader",
-          "detected": "tile use"
+          "detector": "verifier",
+          "detected": "certification"
         }
       ]
     },
     {
-      "id": "TV-0954",
-      "file": "reject-layer/TV-0954.tarn",
-      "title": "sub-record of an unassigned type carries MU = 1 with PE = 0",
-      "sha256": "1aad681db1cd78621a7e811f21cd0e5a9b995de5f169c362870a8295a5e1146a",
-      "size": 512,
+      "id": "TV-0955",
+      "file": "reject-layer/TV-0955.tarn",
+      "title": "sub-record of registered type 0x0002 stores MU = 1 where the registry fixes MU = 0",
+      "sha256": "feb7e886d13a03be2cc2441c5b74ec54b98d8da9448ce3ee050b73fbcc16abdd",
+      "size": 448,
       "conforming": false,
       "derivation": {
-        "seed": "sub_inert",
+        "seed": "sub_umeta",
         "patches": [
           {
             "field": "layer[sub].sub[0].flags",
-            "value": "0100"
+            "value": "0300"
           }
         ],
         "repair": [
@@ -49996,13 +49680,124 @@
       },
       "violations": [
         {
-          "row": "L47",
-          "instance": "sub-record",
-          "rule": "R-CNT-12",
+          "row": "L49",
+          "instance": "sub-record flags bit 0",
+          "rule": "R-CNT-22",
           "outcome": "reject-layer",
           "scope": {
             "kind": "layer",
             "name": "sub"
+          },
+          "detector": "verifier",
+          "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0956",
+      "file": "reject-layer/TV-0956.tarn",
+      "title": "layer `bad` stores flags = 0 where the registry fixes MU = 1, PE = 1 (instance: layer record flags bit 1)",
+      "sha256": "ebfd474f212dd946a50f7be799d6254da6d2786abc8704ab9e4b5687897aa655",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "pair",
+        "patches": [
+          {
+            "field": "layer[bad].flags",
+            "value": "0000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          },
+          {
+            "layer": "bad",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                2
+              ],
+              "tile_extents": [
+                2,
+                2
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "v",
+                "type": "uint8",
+                "fill": "0x00"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x01",
+                  "0x02",
+                  "0x03",
+                  "0x04"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L49",
+          "instance": "layer record flags bit 1",
+          "rule": "R-CNT-22",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad"
           },
           "detector": "verifier",
           "detected": "certification"

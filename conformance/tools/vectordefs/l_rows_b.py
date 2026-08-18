@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""§21.3 rows L25–L50 — the layer record's declaration constraints.
+"""§21.3 rows L24–L49 — the layer record's declaration constraints.
 
 Every vector damages the `pair` seed's `bad` layer and leaves `ok`
 untouched, so each reject-layer file carries the intact sibling
@@ -23,7 +23,7 @@ words that a run with no stored tiles imposes nothing. The tile's
 former bytes become slack, which no requirement constrains
 ([R-CNT-21]).
 
-*Carving.* L33's rank instance shortens the payload's parse: §7.4
+*Carving.* L32's rank instance shortens the payload's parse: §7.4
 requires the payload to parse exactly, the trailing fixed fields
 landing on its end with no residue, so dropping the dimension entries
 leaves bytes over — an independent [R-CNT-18] violation at the same
@@ -31,7 +31,7 @@ scope and tier, which would make the file evidence for neither row.
 That vector therefore rewrites the freed span so the parse still
 lands exactly. `carve` spreads one byte string across consecutive
 named fields, taking every width from the seed's own layout map, so
-the rewrite names fields and never offsets. L33's channel-count
+the rewrite names fields and never offsets. L32's channel-count
 instance needs the same treatment and cannot get it; SKIPPED says why.
 """
 import struct
@@ -102,14 +102,14 @@ _TILE_OFF = struct.unpack("<Q", _field("layer[bad].entry[0].offset"))[0]
 _COCA = struct.unpack("<I", _field("layer[bad].crc_of_crc_array"))[0]
 assert struct.unpack("<Q", _field("layer[bad].entry_count"))[0] == 1
 assert len(_REGION) == 24 and len(_SEGS) == 4      # 1 entry, 1 segment CRC
-assert _TILE_OFF % 512 != 0                        # L41 / L43 depend on it
-assert _COCA ^ 0x5A5A5A5A != 0                     # L38's wrong value is wrong
+assert _TILE_OFF % 512 != 0                        # L40 / L42 depend on it
+assert _COCA ^ 0x5A5A5A5A != 0                     # L37's wrong value is wrong
 
 VECTORS = [
-    # -- L28 · entry_count = 0 with a nonzero crc_of_crc_array ------------
+    # -- L27 · entry_count = 0 with a nonzero crc_of_crc_array ------------
     # §7.4 fixes crc_of_crc_array at 0 when entry_count is 0. Reaching
     # entry_count = 0 legitimately needs the geometry to derive 0 addressed
-    # tiles (else L22) and the extent slot to be (0, 0) (else L23), so the
+    # tiles (else L21) and the extent slot to be (0, 0) (else L22), so the
     # vector empties one dimension — §21.6 records extent 0 as a valid,
     # empty layer — and clears the slot. The index region and the tile it
     # addressed become slack ([R-CNT-21]).
@@ -118,18 +118,18 @@ VECTORS = [
            patches=[Patch("layer[bad].dim[0].extent", u64(0),
                           "E₀ = 0 ⇒ N = 0 addressed tiles (§21.6, valid)"),
                     Patch("layer[bad].entry_count", u64(0),
-                          "matches the derived count, so L22 stays clean"),
+                          "matches the derived count, so L21 stays clean"),
                     Patch("layer[bad].extent_offset", u64(0),
-                          "slot (0,0) is what entry_count 0 requires (L23)"),
+                          "slot (0,0) is what entry_count 0 requires (L22)"),
                     Patch("layer[bad].extent_length", u64(0)),
                     Patch("layer[bad].crc_of_crc_array", u32(0xC0FFEE01),
                           "the defect: nonzero where §7.4 fixes 0")],
            repair=REPAIR_DIR,
-           row="L28", rule="R-CNT-23", outcome="reject-layer",
+           row="L27", rule="R-CNT-23", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L29 · S = 0 with a nonzero A_slab --------------------------------
+    # -- L28 · S = 0 with a nonzero A_slab --------------------------------
     # A_slab is a legal value in itself (4096 is a power of two in
     # 1 … 2^62): the sole defect is that it is declared with no slab.
     Vector("TV-0271", "pair",
@@ -137,11 +137,11 @@ VECTORS = [
            patches=[Patch("layer[bad].slab_alignment", u64(4096),
                           "§7.4: A_slab is 0 when S is 0")],
            repair=REPAIR_DIR,
-           row="L29", rule="R-CNT-23", outcome="reject-layer",
+           row="L28", rule="R-CNT-23", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L30 · S ≠ 0 with an A_slab outside the power-of-two domain -------
+    # -- L29 · S ≠ 0 with an A_slab outside the power-of-two domain -------
     # Three files, one per alternative the condition states. Each declares
     # S = 1, so §16.2's run invariants would bind — the seed's stored tile
     # sits at an offset no such A_slab divides — and each therefore
@@ -150,7 +150,7 @@ VECTORS = [
            "layer `bad` declares S = 1 with A_slab 0 (the included case)", False,
            patches=SENTINEL + [Patch("layer[bad].slab", u64(1))],
            repair=REPAIR_IDX,
-           row="L30", rule="R-CNT-23", outcome="reject-layer",
+           row="L29", rule="R-CNT-23", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0273", "pair",
@@ -158,7 +158,7 @@ VECTORS = [
            patches=SENTINEL + [Patch("layer[bad].slab", u64(1)),
                                Patch("layer[bad].slab_alignment", u64(3))],
            repair=REPAIR_IDX,
-           row="L30", rule="R-CNT-23", outcome="reject-layer",
+           row="L29", rule="R-CNT-23", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0274", "pair",
@@ -168,11 +168,11 @@ VECTORS = [
                                Patch("layer[bad].slab_alignment", u64(1 << 63),
                                      "a power of two, but out of domain")],
            repair=REPAIR_IDX,
-           row="L30", rule="R-CNT-23", outcome="reject-layer",
+           row="L29", rule="R-CNT-23", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L31 · fill length prefix ≠ the type's element size ---------------
+    # -- L30 · fill length prefix ≠ the type's element size ---------------
     # A single predicate over two fields (§21.1: one instance), so either
     # field may carry the change; retyping the channel keeps §7.4's framing
     # intact, where editing the prefix would shift every following field
@@ -184,30 +184,30 @@ VECTORS = [
            patches=SENTINEL + [Patch("layer[bad].chan[0].type", u16(9),
                                      "uint64: element size 8, fill prefix 1")],
            repair=REPAIR_IDX,
-           row="L31", rule="R-CNT-23", outcome="reject-layer",
+           row="L30", rule="R-CNT-23", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L32 · index_encoding other than 1 --------------------------------
+    # -- L31 · index_encoding other than 1 --------------------------------
     # Value 0 is TV-0005; these are the two remaining alternatives §7.4
     # names. [R-CNT-17]'s extent_length identity is stated "under
-    # index_encoding 1", so an invalid encoding drags no L23 with it.
+    # index_encoding 1", so an invalid encoding drags no L22 with it.
     Vector("TV-0276", "pair",
            "layer `bad` declares index_encoding 2 (reserved 2–0x7F)", False,
            patches=[Patch("layer[bad].index_encoding", u8(2))],
            repair=REPAIR_DIR,
-           row="L32", rule="R-CNT-23", outcome="reject-layer",
+           row="L31", rule="R-CNT-23", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0277", "pair",
            "layer `bad` declares index_encoding 0x80 (experimental ≥ 0x80)", False,
            patches=[Patch("layer[bad].index_encoding", u8(0x80))],
            repair=REPAIR_DIR,
-           row="L32", rule="R-CNT-23", outcome="reject-layer",
+           row="L31", rule="R-CNT-23", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L33 · a geometry field whose floor is 1 is 0 ---------------------
+    # -- L32 · a geometry field whose floor is 1 is 0 ---------------------
     # Three instances. T₀ = 0 needs nothing but the byte: the grid count
     # ⌈E₀/T₀⌉ stops being derivable, so [R-CNT-17]'s cross-check cannot be
     # evaluated, let alone violated. The tile is sentinelled because the
@@ -216,7 +216,7 @@ VECTORS = [
            "layer `bad` has tile extent T₀ = 0 (instance: tile extent Tᵢ)", False,
            patches=SENTINEL + [Patch("layer[bad].dim[0].tile_extent", u64(0))],
            repair=REPAIR_IDX,
-           row="L33", rule="R-GEO-01", outcome="reject-layer",
+           row="L32", rule="R-GEO-01", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     # rank 0 erases the dimension entries, so the span must re-parse as
@@ -244,71 +244,71 @@ VECTORS = [
                    + u8(3) + b"ddd" + u16(12) + u8(4) + bytes(4),   # float32
                    "…continued past the second dimension-name island"),
            repair=REPAIR_IDX,
-           row="L33", rule="R-GEO-01", outcome="reject-layer",
+           row="L32", rule="R-GEO-01", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
-    # (No TV-0280: L33's channel-count instance is in SKIPPED below.)
+    # (No TV-0280: L32's channel-count instance is in SKIPPED below.)
 
-    # -- L34 · linearization other than 1 ---------------------------------
+    # -- L33 · linearization other than 1 ---------------------------------
     # Value 2 (reserved 2–3) is TV-0006; these are the other three
     # alternatives [R-GEO-05] names.
     Vector("TV-0281", "pair",
            "layer `bad` declares linearization 0 (invalid)", False,
            patches=[Patch("layer[bad].linearization", u16(0))],
            repair=REPAIR_DIR,
-           row="L34", rule="R-GEO-05", outcome="reject-layer",
+           row="L33", rule="R-GEO-05", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0282", "pair",
            "layer `bad` declares linearization 4 (reserved 4–0x7FFF)", False,
            patches=[Patch("layer[bad].linearization", u16(4))],
            repair=REPAIR_DIR,
-           row="L34", rule="R-GEO-05", outcome="reject-layer",
+           row="L33", rule="R-GEO-05", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0283", "pair",
            "layer `bad` declares linearization 0x8000 (experimental)", False,
            patches=[Patch("layer[bad].linearization", u16(0x8000))],
            repair=REPAIR_DIR,
-           row="L34", rule="R-GEO-05", outcome="reject-layer",
+           row="L33", rule="R-GEO-05", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L35 · channel type outside 1 … 13 --------------------------------
+    # -- L34 · channel type outside 1 … 13 --------------------------------
     # Four alternatives. An unassigned type has no element size, so
-    # neither L31's fill cross-check nor the tile's decoded size can be
+    # neither L30's fill cross-check nor the tile's decoded size can be
     # evaluated: the stored tile stays, contradicting nothing.
     Vector("TV-0284", "pair",
            "layer `bad` channel `v` declares type 0 (invalid)", False,
            patches=[Patch("layer[bad].chan[0].type", u16(0))],
            repair=REPAIR_DIR,
-           row="L35", rule="R-TYP-03", outcome="reject-layer",
+           row="L34", rule="R-TYP-03", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0285", "pair",
            "layer `bad` channel `v` declares type 14 (reserved 14–19)", False,
            patches=[Patch("layer[bad].chan[0].type", u16(14))],
            repair=REPAIR_DIR,
-           row="L35", rule="R-TYP-03", outcome="reject-layer",
+           row="L34", rule="R-TYP-03", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0286", "pair",
            "layer `bad` channel `v` declares type 20 (reserved 20–0x7FFF)", False,
            patches=[Patch("layer[bad].chan[0].type", u16(20))],
            repair=REPAIR_DIR,
-           row="L35", rule="R-TYP-03", outcome="reject-layer",
+           row="L34", rule="R-TYP-03", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0287", "pair",
            "layer `bad` channel `v` declares type 0x8000 (experimental)", False,
            patches=[Patch("layer[bad].chan[0].type", u16(0x8000))],
            repair=REPAIR_DIR,
-           row="L35", rule="R-TYP-03", outcome="reject-layer",
+           row="L34", rule="R-TYP-03", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L36 · a bool channel's fill byte is neither 0x00 nor 0x01 --------
-    # bool's element size is 1, so the fill prefix stays correct and L31
+    # -- L35 · a bool channel's fill byte is neither 0x00 nor 0x01 --------
+    # bool's element size is 1, so the fill prefix stays correct and L30
     # is untouched. The tile is sentinelled: an interleaved bool channel
     # constrains every value byte to 0x00/0x01 ([R-SER-08]), which the
     # seed's payload 01 02 03 04 would break.
@@ -318,11 +318,11 @@ VECTORS = [
                                Patch("layer[bad].chan[0].fill", u8(1) + b"\x02",
                                      "§13.2 admits only 0x00 and 0x01")],
            repair=REPAIR_IDX,
-           row="L36", rule="R-TYP-07", outcome="reject-layer",
+           row="L35", rule="R-TYP-07", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L37 · layout other than 1 or 2 -----------------------------------
+    # -- L36 · layout other than 1 or 2 -----------------------------------
     # Two alternatives. With the layout undecided neither the addressed-
     # tile count (N or C·N) nor the decoded size is derivable, so no
     # second row can be asserted against the file.
@@ -330,18 +330,18 @@ VECTORS = [
            "layer `bad` declares layout 0 (invalid)", False,
            patches=[Patch("layer[bad].layout", u8(0))],
            repair=REPAIR_DIR,
-           row="L37", rule="R-SER-06", outcome="reject-layer",
+           row="L36", rule="R-SER-06", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0290", "pair",
            "layer `bad` declares layout 3 (reserved 3–255)", False,
            patches=[Patch("layer[bad].layout", u8(3))],
            repair=REPAIR_DIR,
-           row="L37", rule="R-SER-06", outcome="reject-layer",
+           row="L36", rule="R-SER-06", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L38 · crc_of_crc_array ≠ CRC over the segment-CRC array ----------
+    # -- L37 · crc_of_crc_array ≠ CRC over the segment-CRC array ----------
     # Repairing the directory and trailer but NOT the index chain is the
     # whole point: `index:bad` would recompute exactly the field the
     # vector is corrupting. Detected at tile use, not layer access, and
@@ -356,11 +356,11 @@ VECTORS = [
                           u32(_COCA ^ 0x5A5A5A5A),
                           "the array is untouched; only its CRC is wrong")],
            repair=REPAIR_DIR,
-           row="L38", rule="R-IDX-04", outcome="reject-layer",
+           row="L37", rule="R-IDX-04", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="tile use",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L39 · a segment CRC ≠ CRC over that segment's entry bytes --------
+    # -- L38 · a segment CRC ≠ CRC over that segment's entry bytes --------
     # The index region is rewritten whole — its 20 entry bytes verbatim,
     # its one segment CRC flipped — and crc_of_crc_array is recomputed
     # over the flipped array by hand, so the chain's outer link still
@@ -376,41 +376,41 @@ VECTORS = [
                     Patch("layer[bad].crc_of_crc_array",
                           u32(crc32c(u32(struct.unpack("<I", _SEGS)[0]
                                          ^ 0x5A5A5A5A))),
-                          "recomputed, so L38 stays intact")],
+                          "recomputed, so L37 stays intact")],
            repair=REPAIR_DIR,
            breaks_checksums=["index:bad.segment_crcs"],
-           row="L39", rule="R-IDX-04", outcome="reject-layer",
+           row="L38", rule="R-IDX-04", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="tile use",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L40 · a nonzero alignment A outside its power-of-two domain ------
+    # -- L39 · a nonzero alignment A outside its power-of-two domain ------
     # Three alternatives: not a power of two, a power of two below the
     # 512 floor, and one above the 2^62 ceiling. Each sentinels the tile,
-    # since a declared A also binds every stored tile's offset (L41) and
+    # since a declared A also binds every stored tile's offset (L40) and
     # the seed's tile is at an offset none of these divides.
     Vector("TV-0293", "pair",
            "layer `bad` declares alignment 1000, not a power of two", False,
            patches=SENTINEL + [Patch("layer[bad].alignment", u64(1000))],
            repair=REPAIR_IDX,
-           row="L40", rule="R-SLB-01", outcome="reject-layer",
+           row="L39", rule="R-SLB-01", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0294", "pair",
            "layer `bad` declares alignment 256, below the 512 floor", False,
            patches=SENTINEL + [Patch("layer[bad].alignment", u64(256))],
            repair=REPAIR_IDX,
-           row="L40", rule="R-SLB-01", outcome="reject-layer",
+           row="L39", rule="R-SLB-01", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0295", "pair",
            "layer `bad` declares alignment 2^63, above the 2^62 ceiling", False,
            patches=SENTINEL + [Patch("layer[bad].alignment", u64(1 << 63))],
            repair=REPAIR_IDX,
-           row="L40", rule="R-SLB-01", outcome="reject-layer",
+           row="L39", rule="R-SLB-01", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L41 · a stored tile's offset is not a multiple of A --------------
+    # -- L40 · a stored tile's offset is not a multiple of A --------------
     # A = 512 is a legal declaration, so the declaration rows stay clean
     # and only the placement is wrong. Verifier-detected: a reader serves
     # the layer unchanged, which is why the file must still serve `bad`.
@@ -420,14 +420,14 @@ VECTORS = [
            patches=[Patch("layer[bad].alignment", u64(512),
                           "legal A; the seed's tile offset is not a multiple")],
            repair=REPAIR_DIR,
-           row="L41", rule="R-SLB-01", outcome="reject-layer",
+           row="L40", rule="R-SLB-01", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok", "bad"]),
 
-    # -- L43 · a slab run's first stored tile is not A_slab-aligned -------
+    # -- L42 · a slab run's first stored tile is not A_slab-aligned -------
     # S = 1 and A_slab = 512 are both legal, and with one addressed tile
-    # the run holds exactly one stored tile: L42's packing rule has no
+    # the run holds exactly one stored tile: L41's packing rule has no
     # second tile to relate, so only the run's first-offset rule fails.
     Vector("TV-0297", "pair",
            "layer `bad` declares S = 1, A_slab 512; run 0 starts unaligned",
@@ -435,37 +435,37 @@ VECTORS = [
            patches=[Patch("layer[bad].slab", u64(1)),
                     Patch("layer[bad].slab_alignment", u64(512))],
            repair=REPAIR_DIR,
-           row="L43", rule="R-SLB-03", outcome="reject-layer",
+           row="L42", rule="R-SLB-03", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok", "bad"]),
 
-    # -- L44 · codec other than 1 … 4 -------------------------------------
+    # -- L43 · codec other than 1 … 4 -------------------------------------
     # Three alternatives. [R-COD-04]'s length equality is codec 1's alone,
     # so the seed's 4-byte stored tile contradicts nothing under an
     # invalid codec, and no stream is ever attempted.
     Vector("TV-0298", "pair", "layer `bad` declares codec 0 (invalid)", False,
            patches=[Patch("layer[bad].codec", u16(0))],
            repair=REPAIR_DIR,
-           row="L44", rule="R-COD-03", outcome="reject-layer",
+           row="L43", rule="R-COD-03", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0299", "pair",
            "layer `bad` declares codec 5 (reserved 5–0x7FFF)", False,
            patches=[Patch("layer[bad].codec", u16(5))],
            repair=REPAIR_DIR,
-           row="L44", rule="R-COD-03", outcome="reject-layer",
+           row="L43", rule="R-COD-03", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0300", "pair",
            "layer `bad` declares codec 0x8000 (experimental)", False,
            patches=[Patch("layer[bad].codec", u16(0x8000))],
            repair=REPAIR_DIR,
-           row="L44", rule="R-COD-03", outcome="reject-layer",
+           row="L43", rule="R-COD-03", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L45 · codec 4 above the lz4 decoded-size bound -------------------
+    # -- L44 · codec 4 above the lz4 decoded-size bound -------------------
     # T₀ = 0x3F000001 with T₁ = 2 puts the decoded size P·Q at
     # 0x7E000002 — two bytes past [R-COD-07]'s 0x7E000000 — while the grid
     # stays 1 × 1, so entry_count = 1 still matches. Sentinelled: no LZ4
@@ -481,56 +481,71 @@ VECTORS = [
                                      u64(0x3F000001),
                                      "P·Q = 0x7E000002 > 0x7E000000")],
            repair=REPAIR_IDX,
-           row="L45", rule="R-COD-07", outcome="reject-layer",
+           row="L44", rule="R-COD-07", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L46 · filter other than 1 or 2 -----------------------------------
+    # -- L45 · filter other than 1 or 2 -----------------------------------
     Vector("TV-0302", "pair", "layer `bad` declares filter 0 (invalid)", False,
            patches=[Patch("layer[bad].filter", u16(0))],
            repair=REPAIR_DIR,
-           row="L46", rule="R-COD-09", outcome="reject-layer",
+           row="L45", rule="R-COD-09", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0303", "pair",
            "layer `bad` declares filter 3 (reserved 3–0x7FFF)", False,
            patches=[Patch("layer[bad].filter", u16(3))],
            repair=REPAIR_DIR,
-           row="L46", rule="R-COD-09", outcome="reject-layer",
+           row="L45", rule="R-COD-09", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0304", "pair",
            "layer `bad` declares filter 0x8000 (experimental)", False,
            patches=[Patch("layer[bad].filter", u16(0x8000))],
            repair=REPAIR_DIR,
-           row="L46", rule="R-COD-09", outcome="reject-layer",
+           row="L45", rule="R-COD-09", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
-    # -- L48 · a reserved flag bit of a layer record is set ---------------
+    # -- L47 · a reserved flag bit of a layer record is set ---------------
     # Bit 2 is TV-0009; this is the top of the reserved lane. MU and PE
-    # keep §7.3's fixed 1/1, so neither L47 nor L50 rides along.
+    # keep §7.3's fixed 1/1, so neither L46 nor L49 rides along.
     Vector("TV-0305", "pair",
            "layer `bad` reserved flag bit 15 set (the lane's top bit)", False,
            patches=[Patch("layer[bad].flags", u16(0b11 | (1 << 15)))],
            repair=REPAIR_DIR,
-           row="L48", rule="R-CNT-12", outcome="reject-layer",
+           row="L47", rule="R-CNT-12", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok", "bad"]),
 
-    # -- L50 · a stored flag bit differs from §7.3's registry -------------
+    # -- L49 · a stored flag bit differs from §7.3's registry -------------
     # Instance: layer record flags. §7.3 fixes type 0x0001 at MU = 1,
     # PE = 1; this file stores MU = 0, PE = 1. Clearing MU rather than PE
-    # is deliberate: MU = 1 with PE = 0 would also be L47's condition,
+    # is deliberate: MU = 1 with PE = 0 would also be L46's condition,
     # and the file would evidence two rows.
+    # L49's other layer-record instance. §7.3 fixes 0x0001 at MU = 1, PE = 1,
+    # so clearing PE alone would also be MU = 1 / PE = 0 — row L46. flags = 0
+    # clears both: MU and PE each differ from the registry, and no other row
+    # fires (L46 needs MU = 1; L47's reserved bits stay clear). It witnesses
+    # the PE-bit instance without dragging L46 in.
+    Vector("TV-0956", "pair",
+           "layer `bad` stores flags = 0 where the registry fixes MU = 1, "
+           "PE = 1 (instance: layer record flags bit 1)", False,
+           patches=[Patch("layer[bad].flags", u16(0),
+                          "§7.3 fixes 0x0001 at MU = 1, PE = 1")],
+           repair=REPAIR_DIR,
+           row="L49", rule="R-CNT-22", outcome="reject-layer",
+           scope={"kind": "layer", "name": "bad"},
+           detector="verifier", detected="certification",
+           must_not_serve=[], serves=["ok", "bad"]),
     Vector("TV-0306", "pair",
            "layer `bad` stores MU = 0 where the registry fixes MU = 1 "
            "(instance: layer record flags)", False,
            patches=[Patch("layer[bad].flags", u16(0b10),
                           "§7.3 fixes 0x0001 at MU = 1, PE = 1")],
            repair=REPAIR_DIR,
-           row="L50", rule="R-CNT-22", outcome="reject-layer",
+           row="L49", rule="R-CNT-22", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok", "bad"]),
@@ -538,14 +553,14 @@ VECTORS = [
 
 
 SKIPPED = {
-    "L25": "Needs a sub-record of an unassigned type with MU = 1 inside the "
+    "L24": "Needs a sub-record of an unassigned type with MU = 1 inside the "
            "layer record's inline payload. A recipe patch replaces a named "
            "field with bytes of the same width; it cannot lengthen the "
            "payload, and no seed carries a layer sub-record. Reachable only "
            "by adding a seed whose layer record has one.",
-    "L27": "Needs a type 0x0001 record nested as a sub-record — same reason "
-           "as L25: no seed carries a sub-record and patches cannot add one.",
-    "L33 (channel count C)": "The rank and tile-extent instances are "
+    "L26": "Needs a type 0x0001 record nested as a sub-record — same reason "
+           "as L24: no seed carries a sub-record and patches cannot add one.",
+    "L32 (channel count C)": "The rank and tile-extent instances are "
            "TV-0279 and TV-0278. C = 0 has no isolable file in this seed: it "
            "frees the 6-byte channel entry, and §7.4's exact parse then "
            "demands the freed bytes be absorbed by the dimension entries — "
@@ -555,34 +570,34 @@ SKIPPED = {
            "or a truncated sub-record, an independent [R-CNT-18] defect at "
            "the same scope and tier. A seed whose layer carries longer "
            "dimension names, or a layout map that named them, would carry it.",
-    "L42": "Needs two stored tiles inside one slab run so the second's "
+    "L41": "Needs two stored tiles inside one slab run so the second's "
            "offset can miss the first's end. Every layer of the `pair` seed "
            "addresses one tile, and raising entry_count would break both "
            "[R-CNT-17] cross-checks (geometry-derived count, and "
            "extent_length = entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4) — two "
            "further layer-scope defects. A seed with a multi-tile layer "
            "would carry it.",
-    "L45": "The condition ranges over a sequence of generations: a commit "
+    "L44": "The condition ranges over a sequence of generations: a commit "
            "changed an affected run and carried the declaration forward "
            "without re-establishing the invariants. A single committed "
-           "generation cannot exhibit it distinguishably from L42/L43 — the "
+           "generation cannot exhibit it distinguishably from L41/L42 — the "
            "superseded generation is slack, which no reader interprets "
            "([R-CNT-21], §9.5). See the summary: the row may have no "
            "single-file witness at all.",
-    "L47": "Not isolable in format major 1. MU = 1 with PE = 0 on a layer "
-           "record is simultaneously L50, since §7.3 fixes type 0x0001 at "
+    "L46": "Not isolable in format major 1. MU = 1 with PE = 0 on a layer "
+           "record is simultaneously L49, since §7.3 fixes type 0x0001 at "
            "MU = 1, PE = 1; on a user-metadata sub-record it is likewise "
-           "L50 (0x0002 is fixed at MU = 0, PE = 1); and on a sub-record of "
-           "an unassigned type, MU = 1 is L25. No file can carry this "
+           "L49 (0x0002 is fixed at MU = 0, PE = 1); and on a sub-record of "
+           "an unassigned type, MU = 1 is L24. No file can carry this "
            "condition alone. See the summary.",
-    "L49": "Needs a user-metadata sub-record of a layer record whose "
+    "L48": "Needs a user-metadata sub-record of a layer record whose "
            "document has unsorted object members. No seed carries a layer "
-           "sub-record, and patches cannot add one (as L25).",
+           "sub-record, and patches cannot add one (as L24).",
 }
 
 #: Rows this module covers in part only.
 PARTIAL = {
-    "L50": "The `layer record flags` instance is TV-0306. The `sub-record "
+    "L49": "The `layer record flags` instance is TV-0306. The `sub-record "
            "flags` instance needs a layer sub-record, which no seed carries "
            "and no patch can add.",
 }

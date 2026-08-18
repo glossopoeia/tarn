@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
-"""§21.3 rows L1–L25: layer-scope violations, outcome reject-layer.
+"""§21.3 rows L1–L24: layer-scope violations, outcome reject-layer.
 
-Encoding domains (L1–L3), name rules (L4–L10), sub-record framing
-(L11–L15, L20, L25), extent slots (L16–L19), and the declaration
-cross-checks that sit between them (L21–L24).
+Encoding domains (L1–L2), name rules (L3–L9), sub-record framing
+(L10–L14, L19, L24), extent slots (L15–L18), and the declaration
+cross-checks that sit between them (L20–L23).
 
 Every vector damages layer `bad` of the `pair` seed and leaves layer `ok`
 untouched, so `serves=["ok"]` supplies the intact sibling `[R-VEC-04]`
@@ -68,7 +68,7 @@ SENTINEL = b"\xff" * 16 + b"\x00" * 4            # §15.2
 def _lead(lname=b"\x03bad", layout=1, lin=1, codec=1, filt=1, alignment=0,
           slab=0, slab_alignment=0, rank=2, chan_count=1,
           rank_bytes=None, cc_bytes=None):
-    """name … C. `rank_bytes`/`cc_bytes` exist only for L3, which is about
+    """name … C. `rank_bytes`/`cc_bytes` are kept for callers that need the
     a field written at a width §7.4 does not fix."""
     return (lname + u8(layout) + u16(lin) + u16(codec) + u16(filt)
             + u64(alignment) + u64(slab) + u64(slab_alignment)
@@ -150,7 +150,7 @@ VECTORS = [
       "(instance: layer record extent_length)",
       "L1", "R-ENC-03", [Patch("layer[bad].extent_length", u64(BIT63))],
       breaks=["index:bad.segment_crcs", "entry:bad[0].wellformed"]),
-    # S != 0 obliges a power-of-two A_slab in 1 … 2^62 (`[R-CNT-23]`, L30),
+    # S != 0 obliges a power-of-two A_slab in 1 … 2^62 (`[R-CNT-23]`, L29),
     # so A_slab = 1 is set alongside: not a second defect but the value the
     # slab declaration requires, leaving S's domain as the only violation.
     L("TV-0203", "layer `bad` slab run length S = 2^63 (instance: slab run length S)",
@@ -163,7 +163,7 @@ VECTORS = [
     # them out of reach.
     #
     # N overflows while E and T stay in domain. The reader cannot compare
-    # entry_count against N without computing N, so L22 is unreachable here
+    # entry_count against N without computing N, so L21 is unreachable here
     # rather than a second defect. P is unchanged at 4, so the stored tile's
     # decoded size still matches its length.
     L("TV-0204", "layer `bad` N = prod ceil(Ei/Ti) = 2^122 (instance: N)",
@@ -227,119 +227,113 @@ VECTORS = [
                          Patch("layer[bad].dim[1].tile_extent", u64(4)),
                          Patch("layer[bad].entry_count", u64(1 << 60))]),
 
-    # -- L3 — a layer-scope field at a width this specification does not fix
     # `[R-ENC-06]`. Channel count C written as u8 rather than u16, the
     # record's total size held at 117 by one extra byte of dimension name.
     # A width deviation necessarily desynchronizes the parse — that is how
     # it is detectable at all — so a reader takes C as u16 = 0x0201 = 513
     # and is one byte out of step from there, overrunning the payload on
     # the very first dimension name (which reads as 121 bytes long).
-    # Outcome and scope are L24's, which is why `[R-ENC-06]` is the rule
-    # and L24 is not: the defect is the width, the overrun is its symptom.
-    L("TV-0210", "layer `bad` writes channel count C as u8 instead of u16",
-      "L3", "R-ENC-06",
-      [Patch("layer[bad].record", _record(
-          _lead(cc_bytes=u8(1))
-          + _dim(b"\x02yy", 2, 2) + DIM_X + CHAN_V + _tail()))]),
+    # Outcome and scope are L23's, which is why `[R-ENC-06]` is the rule
+    # and L23 is not: the defect is the width, the overrun is its symptom.
 
-    # -- L4, L6, L7 — the layer record's own name -------------------------
+    # -- L3, L5, L6 — the layer record's own name -------------------------
     # `[R-ENC-11]`, `[R-ENC-12]`. Detected at open: §19.1 step 4 parses and
     # checks every layer record's name while building the layer table, so
     # these are the layer-scope rows a reader owes before any layer access.
     L("TV-0211", "layer `bad` name is ill-formed UTF-8 (03 62 FF 64)",
-      "L4", "R-ENC-11", [Patch("layer[bad].name", b"\x03b\xffd")],
+      "L3", "R-ENC-11", [Patch("layer[bad].name", b"\x03b\xffd")],
       detected="open", named=False),
     L("TV-0214", "layer `bad` name has length prefix 0 (empty name)",
-      "L6", "R-ENC-12",
+      "L5", "R-ENC-12",
       [Patch("layer[bad].record", _record(
           _lead(lname=b"\x00")
           + _dim(b"\x04yyyy", 2, 2) + DIM_X + CHAN_V + _tail()))],
       detected="open", named=False),
     L("TV-0215", "layer `bad` name contains U+0001, a code point in U+0000-U+001F",
-      "L7", "R-ENC-12", [Patch("layer[bad].name", b"\x03b\x01d")],
+      "L6", "R-ENC-12", [Patch("layer[bad].name", b"\x03b\x01d")],
       detected="open", named=False),
 
-    # -- L5, L8, L9, L10 — dimension and channel entry names --------------
+    # -- L4, L7, L8, L9 — dimension and channel entry names --------------
     # Two instances each, one per entry kind. The channel-name vectors patch
     # `layer[bad].chan[0].name` where the byte count is unchanged; every
     # dimension-name vector rebuilds the record, because the builder's field
     # map names a dimension's extent and tile extent but not its name.
     L("TV-0212", "layer `bad` channel name is ill-formed UTF-8 (instance: channel entry name)",
-      "L5", "R-ENC-11", [Patch("layer[bad].chan[0].name", b"\x01\xff")]),
+      "L4", "R-ENC-11", [Patch("layer[bad].chan[0].name", b"\x01\xff")]),
     L("TV-0213", "layer `bad` dimension name is ill-formed UTF-8 "
       "(instance: dimension entry name)",
-      "L5", "R-ENC-11",
+      "L4", "R-ENC-11",
       [Patch("layer[bad].record", _record(
           _lead() + _dim(b"\x01\xff", 2, 2) + DIM_X + CHAN_V + _tail()))]),
 
     L("TV-0216", "layer `bad` dimension name has length prefix 0 "
       "(instance: dimension entry name)",
-      "L8", "R-ENC-12",
+      "L7", "R-ENC-12",
       [Patch("layer[bad].record", _record(
           _lead() + _dim(b"\x00", 2, 2) + _dim(b"\x02xx", 2, 2)
           + CHAN_V + _tail()))]),
     L("TV-0217", "layer `bad` channel name has length prefix 0 "
       "(instance: channel entry name)",
-      "L8", "R-ENC-12",
+      "L7", "R-ENC-12",
       [Patch("layer[bad].record", _record(
           _lead() + _dim(b"\x02yy", 2, 2) + DIM_X
           + _chan(b"\x00", 6, b"\x00") + _tail()))]),
 
     L("TV-0218", "layer `bad` dimension name contains U+0001 "
       "(instance: dimension entry name)",
-      "L9", "R-ENC-12",
+      "L8", "R-ENC-12",
       [Patch("layer[bad].record", _record(
           _lead() + _dim(b"\x01\x01", 2, 2) + DIM_X + CHAN_V + _tail()))]),
     L("TV-0219", "layer `bad` channel name contains U+0001 "
       "(instance: channel entry name)",
-      "L9", "R-ENC-12", [Patch("layer[bad].chan[0].name", b"\x01\x01")]),
+      "L8", "R-ENC-12", [Patch("layer[bad].chan[0].name", b"\x01\x01")]),
 
     # `[R-ENC-15]`: comparison is raw bytes, no normalization (`[R-ENC-13]`).
     L("TV-0220", "layer `bad` declares two dimensions both named `y` "
       "(instance: dimension entry name)",
-      "L10", "R-ENC-15",
+      "L9", "R-ENC-15",
       [Patch("layer[bad].record", _record(
           _lead() + DIM_Y + _dim(b"\x01y", 2, 2) + CHAN_V + _tail()))]),
     # Two channels needs rank 1 to fit; E0 = T0 = 2 keeps N = entry_count = 1
     # and P·Q = 2·2 = 4, still exactly the stored tile's length.
     L("TV-0221", "layer `bad` declares two channels both named `v` "
       "(instance: channel entry name)",
-      "L10", "R-ENC-15",
+      "L9", "R-ENC-15",
       [Patch("layer[bad].record", _record(
           _lead(rank=1, chan_count=2)
           + _dim(b"\x0d" + b"y" * 13, 2, 2)
           + CHAN_V + _chan(b"\x01v", 6, b"\x00") + _tail()))]),
 
-    # -- L15 — a sub-record that does not fit the inline payload -----------
+    # -- L14 — a sub-record that does not fit the inline payload -----------
     # `[R-CNT-12]` via `[R-CNT-18]`. Instance 1 only: the 24-byte header
     # truncated at the payload end. The record is re-cut to rank 1 with
     # E0 = T0 = 4 — P·Q = 4, the stored tile's length unchanged — freeing
     # 18 bytes, into which a sub-record header begins and stops short.
     L("TV-0222", "layer `bad` sub-record header truncated at the payload end, "
       "18 of 24 bytes (instance: sub-record header)",
-      "L15", "R-CNT-12",
+      "L14", "R-CNT-12",
       [Patch("layer[bad].record", _record(
           _lead(rank=1) + _dim(b"\x01y", 4, 4) + CHAN_V + _tail()
           + struct.pack("<HHIQ", 0x0002, 0b10, 0, 256) + b"\x18\x00"))]),
 
-    # -- L16, L17, L18 — the layer record's extent slot --------------------
+    # -- L15, L16, L17 — the layer record's extent slot --------------------
     # `[R-CNT-13]`. One instance each; the sub-record instance of all three
     # is in SKIPPED. A malformed slot on a layer record is reject-layer, not
-    # reject-file (§7.2), which is what separates these from F32–F34.
+    # reject-file (§7.2), which is what separates these from F30–F32.
     #
     # Half-zero slot: length 0 with a nonzero offset. The file also fails
-    # L23's size formula, unavoidably — the formula's subject is a slot that
+    # L22's size formula, unavoidably — the formula's subject is a slot that
     # has already parsed as a slot — so the shape check is the finer
     # description and the one this vector claims.
     L("TV-0223", "layer `bad` extent slot is (68, 0), exactly one half zero "
       "(instance: layer record extent slot)",
-      "L16", "R-CNT-13", [Patch("layer[bad].extent_length", u64(0))]),
+      "L15", "R-CNT-13", [Patch("layer[bad].extent_length", u64(0))]),
     # The mirror: offset zero, length nonzero. (0, 0) means no extent
     # (`[R-CNT-13]`), so it is the *pairing* that is invalid, and each half
     # is its own instance because the two files differ.
     L("TV-0926", "layer `bad` extent slot is (0, 24), exactly one half zero "
       "(instance: layer record extent_offset)",
-      "L16", "R-CNT-13", [Patch("layer[bad].extent_offset", u64(0))],
+      "L15", "R-CNT-13", [Patch("layer[bad].extent_offset", u64(0))],
       breaks=["index:bad.segment_crcs", "entry:bad[0].wellformed"]),
     # Offset 8 puts the tile index inside the front signature block. The two
     # declared breaks are `checksum_report` recomputing the index chain over
@@ -348,14 +342,14 @@ VECTORS = [
     # conforming reader rejects before reaching either.
     L("TV-0224", "layer `bad` extent_offset = 8, inside the front signature block "
       "(instance: layer record extent slot)",
-      "L17", "R-CNT-13", [Patch("layer[bad].extent_offset", u64(8))],
+      "L16", "R-CNT-13", [Patch("layer[bad].extent_offset", u64(8))],
       breaks=["index:bad.segment_crcs", "entry:bad[0].wellformed"]),
     L("TV-0225", "layer `bad` extent 376+24 = 400 reaches past F-64 = 384 "
       "(instance: layer record extent slot)",
-      "L18", "R-CNT-13", [Patch("layer[bad].extent_offset", u64(376))],
+      "L17", "R-CNT-13", [Patch("layer[bad].extent_offset", u64(376))],
       breaks=["index:bad.segment_crcs", "entry:bad[0].wellformed"]),
 
-    # -- L19 — two structures of one layer claiming the same bytes ---------
+    # -- L18 — two structures of one layer claiming the same bytes ---------
     # `[R-CNT-13]` with §15.3's verifier row. Entry 0 is repointed at the
     # first four bytes of the tile-index region itself: a stored extent
     # overlapping its own layer's index region, which §7.2 makes
@@ -365,76 +359,76 @@ VECTORS = [
     # verifier and no reader is obliged to detect it.
     L("TV-0226", "layer `bad` stored tile [68,72) overlaps its own tile-index region "
       "(instance: tile-index region)",
-      "L19", "R-CNT-13",
+      "L18", "R-CNT-13",
       [Patch("layer[bad].entry[0].offset", u64(IDX_OFF)),
        Patch("layer[bad].entry[0].length", u64(4)),
        Patch("layer[bad].entry[0].crc", u32(crc32c(u64(IDX_OFF)[:4])))],
       repair=["index:bad", "directory.crc", "trailer.crc"],
       detector="verifier", detected="certification"),
 
-    # -- L21 — per-tile alignment and a slab both declared -----------------
+    # -- L20 — per-tile alignment and a slab both declared -----------------
     # `[R-CNT-16]`, the one row here about a combination rather than a
     # value. Entry 0 is made a sentinel first: `bad`'s stored tile sits at
     # offset 64, which no A >= 512 divides, so any file declaring A over a
-    # stored tile would also violate `[R-SLB-01]`'s invariant (L41). With no
+    # stored tile would also violate `[R-SLB-01]`'s invariant (L40). With no
     # stored tile the alignment and slab invariants are vacuous and the
     # mutual exclusion is the only thing wrong. A sentinel entry is defined
     # behavior (§21.6), not a second defect.
     L("TV-0227", "layer `bad` declares both A = 512 and S = 1",
-      "L21", "R-CNT-16",
+      "L20", "R-CNT-16",
       [Patch("layer[bad].entry[0]", SENTINEL),
        Patch("layer[bad].alignment", u64(512)),
        Patch("layer[bad].slab", u64(1)),
        Patch("layer[bad].slab_alignment", u64(1))],
       repair=["index:bad", "directory.crc", "trailer.crc"]),
 
-    # -- L22 — entry_count against the geometry-derived count --------------
+    # -- L21 — entry_count against the geometry-derived count --------------
     # `[R-CNT-17]`. E1 = 4 over T1 = 2 makes G1 = 2 and N = 2 while
-    # entry_count stays 1. L23's size formula reads entry_count, not N, so
+    # entry_count stays 1. L22's size formula reads entry_count, not N, so
     # 1*20 + 4 = 24 still matches the region and this is the count
     # cross-check alone.
     L("TV-0228", "layer `bad` addresses N = 2 tiles but declares entry_count = 1",
-      "L22", "R-CNT-17", [Patch("layer[bad].dim[1].extent", u64(4))]),
+      "L21", "R-CNT-17", [Patch("layer[bad].dim[1].extent", u64(4))]),
 
-    # -- L23 — the index region's declared size ----------------------------
+    # -- L22 — the index region's declared size ----------------------------
     # `[R-CNT-17]`, three files for the three alternatives the row's text
     # states. Each keeps entry_count equal to the geometry-derived count so
-    # that L22 is satisfied and only the size relation fails.
+    # that L21 is satisfied and only the size relation fails.
     L("TV-0229", "layer `bad` extent_length = 20, not entry_count*20 + 4 = 24 "
       "(instance: extent_length)",
-      "L23", "R-CNT-17", [Patch("layer[bad].extent_length", u64(20))]),
+      "L22", "R-CNT-17", [Patch("layer[bad].extent_length", u64(20))]),
     L("TV-0230", "layer `bad` extent slot (0, 0) with entry_count = 1 "
       "(instance: extent_offset)",
-      "L23", "R-CNT-17", [Patch("layer[bad].extent_offset", u64(0)),
+      "L22", "R-CNT-17", [Patch("layer[bad].extent_offset", u64(0)),
                           Patch("layer[bad].extent_length", u64(0))]),
     # E0 = 0 makes the layer legitimately empty (`[R-GEO-02]`), so
     # entry_count = 0 is the correct count and crc_of_crc_array = 0 is what
-    # `[R-CNT-23]` then requires (L28) — neither is the defect. The defect
+    # `[R-CNT-23]` then requires (L27) — neither is the defect. The defect
     # is the extent slot still claiming a 24-byte region.
     L("TV-0231", "layer `bad` has entry_count = 0 but a nonzero extent slot "
       "(instance: entry_count)",
-      "L23", "R-CNT-17", [Patch("layer[bad].dim[0].extent", u64(0)),
+      "L22", "R-CNT-17", [Patch("layer[bad].dim[0].extent", u64(0)),
                           Patch("layer[bad].entry_count", u64(0)),
                           Patch("layer[bad].crc_of_crc_array", u32(0))]),
 
-    # -- L24 — a declared region outside the inline payload ----------------
+    # -- L23 — a declared region outside the inline payload ----------------
     # `[R-CNT-18]`. One file per named region. inline_length stays 93 in all
     # four, so the directory's own record sequence still parses with no
-    # residue and the file-scope framing row (F31) stays out of it.
+    # residue and the file-scope framing row (F29) stays out of it.
     L("TV-0232", "layer `bad` name declares 200 bytes, past the 93-byte payload "
       "(instance: leading fixed fields)",
-      "L24", "R-CNT-18", [Patch("layer[bad].name", b"\xc8bad")], named=False),
+      "L23", "R-CNT-18", [Patch("layer[bad].name", b"\xc8bad")], named=False),
     L("TV-0233", "layer `bad` declares rank 3 with room for two dimension entries "
       "(instance: d dimension entries)",
-      "L24", "R-CNT-18", [Patch("layer[bad].rank", u8(3))]),
+      "L23", "R-CNT-18", [Patch("layer[bad].rank", u8(3))]),
     L("TV-0234", "layer `bad` declares C = 9 with room for one channel entry "
       "(instance: C channel entries)",
-      "L24", "R-CNT-18", [Patch("layer[bad].channel_count", u16(9))]),
+      "L23", "R-CNT-18", [Patch("layer[bad].channel_count", u16(9))]),
     # The dimension and channel entries fit exactly; the 13 trailing fixed
     # bytes start at payload byte 85 and need 98.
     L("TV-0235", "layer `bad` trailing fixed fields start at 85 and need 13 of the "
       "remaining 8 bytes (instance: trailing fixed fields)",
-      "L24", "R-CNT-18",
+      "L23", "R-CNT-18",
       [Patch("layer[bad].record", _record(
           _lead() + DIM_Y + _dim(b"\x06xxxxxx", 2, 2) + CHAN_V
           + _tail()[:8]))]),
@@ -464,25 +458,25 @@ SKIPPED = {
     # sub-record; the `meta` seed carries a *top-level* one, which is a
     # different container. This is the largest single gap in §21.3's
     # layer-scope coverage and it is a corpus-tooling gap, not a spec one.
-    "L11": "user-metadata sub-record with extent slot (0,0): needs a 25-byte "
+    "L10": "user-metadata sub-record with extent slot (0,0): needs a 25-byte "
            "sub-record; the pair seed's layer record has 20 spare bytes and "
            "no seed carries a layer sub-record.",
-    "L12": "sub-record extent_length < 5: same 20-byte ceiling.",
-    "L13": "sub-record inline_length != 1: same 20-byte ceiling.",
-    "L14": "sub-record of type 0x0000: a complete 24-byte header does not "
+    "L11": "sub-record extent_length < 5: same 20-byte ceiling.",
+    "L12": "sub-record inline_length != 1: same 20-byte ceiling.",
+    "L13": "sub-record of type 0x0000: a complete 24-byte header does not "
            "fit in the 20 spare bytes.",
-    "L15/sub-record inline_length": "needs a complete 24-byte header plus an "
+    "L14/sub-record inline_length": "needs a complete 24-byte header plus an "
            "inline_length that overruns; only 20 bytes are available.",
-    "L15/trailing residue": "needs a complete sub-record followed by leftover "
+    "L14/trailing residue": "needs a complete sub-record followed by leftover "
            "bytes (>= 25). Separately, this instance is not distinguishable "
-           "from L15's truncated-header instance whenever fewer than 24 "
+           "from L14's truncated-header instance whenever fewer than 24 "
            "bytes remain: the same bytes are both.",
-    "L20": "two user-metadata sub-records: needs 50 bytes.",
-    "L25": "a sub-record containing a record: needs 48 bytes.",
-    "L16/sub-record extent slot": "no sub-record is constructible (see L11).",
-    "L17/sub-record extent slot": "no sub-record is constructible (see L11).",
-    "L18/sub-record extent slot": "no sub-record is constructible (see L11).",
-    "L19/layer sub-record extents": "no sub-record is constructible (see L11).",
+    "L19": "two user-metadata sub-records: needs 50 bytes.",
+    "L24": "a sub-record containing a record: needs 48 bytes.",
+    "L15/sub-record extent slot": "no sub-record is constructible (see L10).",
+    "L16/sub-record extent slot": "no sub-record is constructible (see L10).",
+    "L17/sub-record extent slot": "no sub-record is constructible (see L10).",
+    "L18/layer sub-record extents": "no sub-record is constructible (see L10).",
 
     # ---- the builder's checksum_report cannot walk these files -----------
     # checksum_report follows a layer record's extent slot without gating on

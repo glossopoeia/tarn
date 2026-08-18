@@ -148,29 +148,25 @@ class as L2 in round 8.
 The register is **125 conditions over 254 instances**, the corpus **306
 vectors** at 100% row and per-instance coverage.
 
-**Escalated — five maintainer decisions.**
+**Escalated — all five decided.** ADR-0068 settled layer deletion. ADR-0069
+settles the other four, and the first of them inverted on the maintainer's
+question — *the format is little-endian only, so how can byte order be
+history?* It cannot: `[R-ENC-01]` defines the encoding rather than
+constraining it, so "stored big-endian" is not a state a file can be in, and
+the same holds for field width. **F1, F5, L3 and T27 are retired** as the
+same category error ADR-0067 struck as F21, settling ADR-0057 against
+ADR-0065/0067. L50 (now L49) splits four ways after all — `flags = 0x0000`
+is a clean witness. `[R-WRT-06]` is restated in the conduct voice §20.1
+already uses, with the compactor's refusal named. The third field class was
+never empty: `version_minor` was mislabelled `structural`, and the class is
+now populated and renamed `descriptive`.
 
-1. **Can a layer ever be deleted? — decided, ADR-0068: no.** An in-place
-   removal would strand the layer's tiles and index as slack, leaving the
-   file no smaller, so it costs what it appears to save; the sanctioned
-   path is a whole-file rewrite under a fresh file_id, which `[R-LIF-01]`
-   already allows. §20.4 now states the bar, `[R-CNF-06]` cites §20.4
-   rather than "Part I" and drops the unknown-records scoping, Appendix H's
-   updater line is corrected, and §23.1 says which removal it means.
-2. **L50's instance split.** L47 and L48 are done; L50's four-way split is
-   held back because one of the four — a layer record whose PE bit differs
-   from the registry — is *only* exhibitable as a co-violation of L47, since
-   type 0x0001 is fixed at MU = 1 / PE = 1 so "PE differs" is necessarily
-   MU = 1 / PE = 0. That is the `[R-VEC-02]` co-attribution gap, and forcing
-   a vector through it would encode a claim the manifest cannot yet make.
-3. **The endianness cause at layer and tile scope.** F1/F2 register it at
-   file scope only, where the parallel field-width cause now sits at all
-   three (F5, L3, T27).
-4. **`[R-WRT-06]`'s compactor obligation** to "emit a new conforming file" is
-   unsatisfiable for an input carrying a content violation `[R-WRT-09]`'s
-   verification depth cannot reach.
-5. **The `informative` field class** has no member anywhere in the document
-   and its definition is not disjoint from `semantic`.
+Two corpus defects surfaced while working these up, both repaired: **TV-0929
+was a false witness** — it claimed L50 while building on an experimental
+0x8001 sub-record the registry does not reach, and recorded a conforming file
+as nonconforming — and **TV-0954, added by this round, served a layer
+`[R-CNT-18]` obliges a reader to refuse.** Register and corpus now stand at
+**121 conditions over 248 instances, 300 vectors**.
 
 **Deferred, with owners.** The remaining editorial defects — §21.7's
 witness-list omissions, `[R-CNT-04]`'s residency dash-list, `[R-WRT-07]`'s

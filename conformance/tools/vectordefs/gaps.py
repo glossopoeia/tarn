@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Instances the section modules left uncovered without recording them.
 
-One entry so far: L19's `stored-tile extents` instance. §21.3's L19 names
+One entry so far: L18's `stored-tile extents` instance. §21.3's L18 names
 three — stored-tile extents, the tile-index region, and layer sub-record
 extents — and the corpus covered the second and third while no module's
 SKIPPED mentioned the first. `[R-VEC-03]` promises a vector per named
@@ -38,7 +38,7 @@ _TWO = register_seed("two_tiles", _seed_two_tiles, layers=["ok", "two"])
 VECTORS = [
     Vector(
         "TV-0950", _TWO,
-        "L19 stored-tile extents: entry[1] redirected onto entry[0]'s extent",
+        "L18 stored-tile extents: entry[1] redirected onto entry[0]'s extent",
         False,
         # §7.2: "a verifier MUST treat an intra-layer overlap — including a
         # stored extent overlapping its own layer's index region or sub-record
@@ -47,7 +47,7 @@ VECTORS = [
         patches=[Patch("layer[two].entry[1].offset", None,
                        note="set to entry[0].offset by the repair below")],
         repair=["index:two", "directory.crc", "trailer.crc"],
-        row="L19", rule="R-CNT-13", outcome="reject-layer",
+        row="L18", rule="R-CNT-13", outcome="reject-layer",
         scope={"kind": "layer", "name": "two",
                "instance": "stored-tile extents"},
         detector="verifier", detected="certification",
@@ -66,26 +66,26 @@ VECTORS[0].patches[0].value = _fix_offset()
 
 VECTORS.append(Vector(
     "TV-0951", "pair",
-    "L47 layer record flags MU = 1 with PE = 0", False,
+    "L46 layer record flags MU = 1 with PE = 0", False,
     # §7.2: "Writers MUST NOT emit the combination MU = 1 with PE = 0; a
     # reader or updater encountering it MUST treat the record as PE = 1".
     # Type 0x0001's registry-fixed flags are MU = 1, PE = 1 (§7.3), so
     # clearing PE necessarily also makes the stored bits differ from the
-    # registry — L50. Both are verifier rows at the same scope and tier, so
+    # registry — L49. Both are verifier rows at the same scope and tier, so
     # neither masks the other; the co-violation is declared rather than
-    # hidden, since no file can carry L47 on a layer record without it.
+    # hidden, since no file can carry L46 on a layer record without it.
     patches=[Patch("layer[bad].flags", struct.pack("<H", 0b01))],
     repair=["directory.crc", "trailer.crc"],
-    row="L47", rule="R-CNT-12", outcome="reject-layer",
-    scope={"kind": "layer", "name": "bad", "co_violates": ["L50"]},
+    row="L46", rule="R-CNT-12", outcome="reject-layer",
+    scope={"kind": "layer", "name": "bad", "co_violates": ["L49"]},
     detector="verifier", detected="certification",
     must_not_serve=[], serves=["ok"]))
 
 
 SKIPPED = {
     # Stale key, kept as evidence and re-pointed. This reason was written
-    # against the L25 that existed before ADR-0057 deleted three rows and §21
-    # renumbered contiguously; today's L25 is the reserved-range row TV-0915
+    # against the L24 that existed before ADR-0057 deleted three rows and §21
+    # renumbered contiguously; today's L24 is the reserved-range row TV-0915
     # covers. The condition described here is the nesting-depth one, which is
     # why the entry is keyed by its rule now rather than by a row number that
     # moves under it — the same drift ADR-0049 forbids relying on.

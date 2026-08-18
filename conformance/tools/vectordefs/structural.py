@@ -7,15 +7,15 @@ had:
 
   * **`truncate:N` / `append:HEX`.** These change the *physical* file length
     without touching `committed_file_length`, which is the only way to build a
-    file shorter than 128 bytes (F7), a file whose committed length is not
-    64-aligned while still equalling the physical size (F15), and a file with
+    file shorter than 128 bytes (F5), a file whose committed length is not
+    64-aligned while still equalling the physical size (F13), and a file with
     bytes past a completed commit (F40). Every one of those rows was recorded
     as a tooling skip.
   * **`register_seed`.** A vectordef may contribute the file shape its rows
     need. Two are registered below: a layer with three packed tiles under a
-    slab declaration (L42, L45, L2's N·P), and a layer carrying a §7.4
-    sub-record (F35, L1).
-  * **`Layer(sub_records=[...])`.** The sub-record instances of F35 and L1 name
+    slab declaration (L41, L44, L2's N·P), and a layer carrying a §7.4
+    sub-record (F33, L1).
+  * **`Layer(sub_records=[...])`.** The sub-record instances of F33 and L1 name
     a container no seed carried.
 
 Two ordering notes recur.
@@ -29,7 +29,7 @@ is declared in the vector's `scope` under `co_violates`, never hidden.
 
 **Slack is what makes several of these constructions legal.** Sentinelling an
 index entry turns its former payload into slack, which `[R-CNT-21]` leaves
-unconstrained; that is the mechanism behind both L45 instances, and it is
+unconstrained; that is the mechanism behind both L44 instances, and it is
 exactly what a commit that supersedes a tile leaves behind.
 """
 import struct
@@ -126,7 +126,7 @@ assert struct.unpack("<Q", _SUB_BLOB[slice(
 
 
 # --------------------------------------------------------------------------
-# F15's replacement trailer, and F40's post-commit residue.
+# F13's replacement trailer, and F40's post-commit residue.
 # --------------------------------------------------------------------------
 
 _MIN_BLOB, _MIN = SEEDS["minimal"]()
@@ -170,11 +170,11 @@ def _hdr(ty, flags, il=_M_IL, eo=_M_EO, el=_M_EL) -> bytes:
 
 
 # --------------------------------------------------------------------------
-# L33's channel-count instance: layer `bad` of `pair` rebuilt with C = 0.
+# L32's channel-count instance: layer `bad` of `pair` rebuilt with C = 0.
 #
 # Setting the field alone frees the 6 bytes of the one channel entry, and
 # §7.4's exact parse then finds 6 bytes of residue before index_encoding —
-# an independent `[R-CNT-18]` defect at the same scope and tier (L24). The
+# an independent `[R-CNT-18]` defect at the same scope and tier (L23). The
 # rebuild spends those 6 bytes on a *dimension name*, which no rule
 # constrains beyond §4.6, so the record's length and the offset of every
 # trailing field are unchanged and C = 0 is the only violation left.
@@ -221,14 +221,14 @@ def _slab_vec(vid, title, patches, row, generation=None, serves=("ok",),
         patches = list(patches) + [Patch("trailer.generation", u64(generation),
                                          "the commit this row ranges over")]
         scope["co_violates"] = [
-            ("L42" if instance == "S" else "L43") +
+            ("L41" if instance == "S" else "L42") +
             " — unavoidable: [R-SLB-04]'s 'the invariants were not "
             "re-established' *is* [R-SLB-03]'s invariant failing, and "
             "[R-LIF-08] confines a verifier to the live state. See "
-            "SPEC_FINDINGS['L45']."]
+            "SPEC_FINDINGS['L44']."]
     return Vector(vid, "slabrun", title, False, patches=list(patches),
                   repair=["index:slab"] + REPAIR_DIR,
-                  row=row, rule="R-SLB-03" if row == "L42" else "R-SLB-04",
+                  row=row, rule="R-SLB-03" if row == "L41" else "R-SLB-04",
                   outcome="reject-layer", scope=scope,
                   detector="verifier", detected="certification",
                   must_not_serve=[], serves=list(serves))
@@ -237,7 +237,7 @@ def _slab_vec(vid, title, patches, row, generation=None, serves=("ok",),
 VECTORS = [
 
     # ==================================================================
-    # F7 `[R-CNT-27]` — below the 128-byte minimum. Two instances, and
+    # F5 `[R-CNT-27]` — below the 128-byte minimum. Two instances, and
     # they are two *fields*: the physical size, and the declared one.
     # ==================================================================
     # Instance 1. `truncate:` cuts the physical file to 64 bytes, leaving
@@ -245,17 +245,17 @@ VECTORS = [
     # Nothing else in §21.2 can be reached in this file and nothing masks
     # it: §19.1 step 1 obtains F before step 2 fetches any trailer, and
     # [R-CNT-27]'s predicate is decidable from F alone. The trailer's
-    # committed_file_length of 128 no longer describes the file (F19) and
-    # the 64 bytes at [F-64, F) are not a trailer (F10) — but both of
+    # committed_file_length of 128 no longer describes the file (F17) and
+    # the 64 bytes at [F-64, F) are not a trailer (F8) — but both of
     # those are steps this file is too short to have.
     Vector("TV-0900", "minimal",
-           "F7 physical file size 64, below the 128-byte minimum "
+           "F5 physical file size 64, below the 128-byte minimum "
            "(instance: F, the physical file size)", False,
            repair=["truncate:64"],
            breaks_checksums=["file.minimum_length"],
-           row="F7", rule="R-CNT-27", outcome="reject-file",
+           row="F5", rule="R-CNT-27", outcome="reject-file",
            scope=dict(FILE, instance="F (physical file size)",
-                      note="F19 and F10 are true of these bytes but "
+                      note="F17 and F8 are true of these bytes but "
                            "unreachable: §19.1 obtains F at step 1 and "
                            "fetches a trailer at step 2, and this file has no "
                            "step 2"),
@@ -263,44 +263,44 @@ VECTORS = [
 
     # Instance 2. The file is 128 bytes and its trailer is intact; the
     # declared committed_file_length is 64. This instance has no isolable
-    # witness — see SPEC_FINDINGS['F7'] — because [R-CNT-06] also
+    # witness — see SPEC_FINDINGS['F5'] — because [R-CNT-06] also
     # requires committed_file_length = F, so any value below 128 in a file
-    # of at least 128 bytes trips F19 as well. Both gates sit in §6.2's
+    # of at least 128 bytes trips F17 as well. Both gates sit in §6.2's
     # single unordered list, both take reject-file at open at file scope,
     # so the reader's verdict is the same under either reading.
     Vector("TV-0901", "minimal",
-           "F7 trailer committed_file_length 64, below the 128-byte minimum "
+           "F5 trailer committed_file_length 64, below the 128-byte minimum "
            "(instance: committed_file_length)", False,
            patches=[Patch("trailer.committed_file_length", u64(64))],
            repair=["trailer.crc"],
            breaks_checksums=["trailer.gates"],
-           row="F7", rule="R-CNT-27", outcome="reject-file",
+           row="F5", rule="R-CNT-27", outcome="reject-file",
            scope=dict(FILE, instance="committed_file_length",
-                      co_violates=["F19 — committed_file_length ≠ F, "
+                      co_violates=["F17 — committed_file_length ≠ F, "
                                    "unavoidable for this instance"]),
            detected="open", must_not_serve=["file"]),
 
     # ==================================================================
-    # F15 `[R-CNT-06]` — committed_file_length not a multiple of 64.
+    # F13 `[R-CNT-06]` — committed_file_length not a multiple of 64.
     # ==================================================================
-    # Built so that F19 stays clean, which is what the previous round
+    # Built so that F17 stays clean, which is what the previous round
     # thought impossible: `append:` writes 8 bytes of pad and a complete
     # trailer, so the physical file is 200 bytes, the live trailer begins
     # at 136, and committed_file_length = 200 = F exactly. 200 mod 64 = 8.
     # The superseded trailer at [64, 128) is zeroed first: left in place
     # it would be a structure between the live directory's end and the
-    # live trailer, which is F9. Everything the live trailer names — the
+    # live trailer, which is F7. Everything the live trailer names — the
     # front block at [0, 16), the directory at [16, 20) — is untouched
     # and verifies, so the 64-alignment gate is the file's only defect.
     Vector("TV-0902", "minimal",
-           "F15 committed_file_length 200, equal to the physical size but "
+           "F13 committed_file_length 200, equal to the physical size but "
            "not a multiple of 64: the trailer begins at 136", False,
            patches=[Patch("trailer", bytes(64),
                           "the superseded trailer is zeroed into slack, so no "
-                          "structure lies in the pre-trailer gap (F9)")],
+                          "structure lies in the pre-trailer gap (F7)")],
            repair=["append:" + _F15_APPEND.hex()],
            breaks_checksums=["trailer.gates"],
-           row="F15", rule="R-CNT-06", outcome="reject-file",
+           row="F13", rule="R-CNT-06", outcome="reject-file",
            scope=dict(FILE, instance="committed_file_length"),
            detected="open", must_not_serve=["file"]),
 
@@ -324,89 +324,89 @@ VECTORS = [
                                      "committed_file_length",
                       note="the committed state at [0, 448) is intact and "
                            "recoverable by §9.6; a reader MUST NOT scan back "
-                           "to it. F19 is true of these bytes and unreachable: "
+                           "to it. F17 is true of these bytes and unreachable: "
                            "§6.2 validates the magic before any field gate, "
                            "and the tail carries none"),
            detected="open", must_not_serve=["file"]),
 
     # ==================================================================
-    # F27 `[R-CNT-12]` — a non-layer top-level record at MU = 1, PE = 0.
+    # F25 `[R-CNT-12]` — a non-layer top-level record at MU = 1, PE = 0.
     # ==================================================================
     # The previous round recorded this unreachable. It is reachable, and
     # the reason the skip gave is the reason to build it *here*: on type
     # 0x0002 the combination differs from §7.3's registry in both bits, so
-    # the file also carries F30. Both rows are verifier-detected at
+    # the file also carries F28. Both rows are verifier-detected at
     # certification, both are file scope, and [R-CNT-22] has the reader
     # apply the registry's fixed semantics regardless — so no reader-tier
     # check fires at all and nothing is masked. The alternative the skip
     # preferred, an unassigned type, is strictly worse: MU = 1 there is
-    # F37, which a reader rejects at open, ahead of certification.
+    # F35, which a reader rejects at open, ahead of certification.
     Vector("TV-0904", "meta",
-           "F27 the user-metadata record carries MUST_UNDERSTAND = 1 with "
+           "F25 the user-metadata record carries MUST_UNDERSTAND = 1 with "
            "PRESERVE_ON_EDIT = 0", False,
            patches=[Patch("record[0x0002].header", _hdr(0x0002, 0b01),
                           "MU = 1, PE = 0")],
            repair=REPAIR_DIR,
-           row="F27", rule="R-CNT-12", outcome="reject-file",
+           row="F25", rule="R-CNT-12", outcome="reject-file",
            scope=dict(FILE, co_violates=[
-               "F30 (flags bit 0) — §7.3 fixes MU = 0 for type 0x0002",
-               "F30 (flags bit 1) — §7.3 fixes PE = 1 for type 0x0002"]),
+               "F28 (flags bit 0) — §7.3 fixes MU = 0 for type 0x0002",
+               "F28 (flags bit 1) — §7.3 fixes PE = 1 for type 0x0002"]),
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
 
     # ==================================================================
-    # F38 `[R-CNT-15]` — a reserved-range type value at file scope.
+    # F36 `[R-CNT-15]` — a reserved-range type value at file scope.
     # ==================================================================
     # Type 0x0003, the first value of §10.2's reserved range, with MU = 0
-    # so F37 (reserved range *with* MU = 1, reader, open) is absent and
+    # so F35 (reserved range *with* MU = 1, reader, open) is absent and
     # the reader's behavior is §21.6's defined ignore. 0x0003 is not a
-    # type §7.3 registers, so F30 does not apply either; the record's
+    # type §7.3 registers, so F28 does not apply either; the record's
     # extent slot and inline_length are the seed's own, valid and unread.
     # The violation is the emission, and only a verifier sees it.
     Vector("TV-0905", "meta",
-           "F38 top-level record of reserved type 0x0003 with MU = 0", False,
+           "F36 top-level record of reserved type 0x0003 with MU = 0", False,
            patches=[Patch("record[0x0002].header", _hdr(0x0003, 0b10))],
            repair=REPAIR_DIR,
-           row="F38", rule="R-CNT-15", outcome="reject-file",
+           row="F36", rule="R-CNT-15", outcome="reject-file",
            scope=FILE,
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
 
     # ==================================================================
-    # F37 `[R-CNT-15]` — a reserved-range type value with MU = 1.
+    # F35 `[R-CNT-15]` — a reserved-range type value with MU = 1.
     # ==================================================================
     # As TV-0905 but with MU set, which is what moves detection from the
     # verifier to the reader at open and the outcome to a refusal of the
-    # whole file. The reserved range is what F37 names; an experimental
+    # whole file. The reserved range is what F35 names; an experimental
     # type with MU = 1 is §21.6's second exception instead — a conforming
     # file a reader refuses — and TV-0152 carries that case.
     Vector("TV-0910", "meta",
-           "F37 top-level record of reserved type 0x0003 with MU = 1", False,
+           "F35 top-level record of reserved type 0x0003 with MU = 1", False,
            patches=[Patch("record[0x0002].header", _hdr(0x0003, 0b11))],
            repair=REPAIR_DIR,
-           row="F37", rule="R-CNT-15", outcome="reject-file",
+           row="F35", rule="R-CNT-15", outcome="reject-file",
            scope=FILE, detected="open",
            must_not_serve=["file"]),
 
     # ==================================================================
-    # F35 `[R-CNT-13]` — the sub-record-extent instance of the
+    # F33 `[R-CNT-13]` — the sub-record-extent instance of the
     # double-claim row, the last of its seven the corpus can reach.
     # ==================================================================
     # Layer `host`'s sub-record extent is redirected onto layer `ok`'s
     # stored tile: two structures of two different layers claiming the
-    # same 24 bytes. Same-layer overlap would be L19 instead, which is
+    # same 24 bytes. Same-layer overlap would be L18 instead, which is
     # why the sub-record sits on `host` and the tile on `ok`. Every
     # reader-tier gate on the slot passes — offset ≥ 16, both halves
     # nonzero, offset + length ≤ F − 64 — and the sub-record's type is
     # ignored, so nothing reads the extent. The seed's original 8-byte
     # extent becomes slack.
     Vector("TV-0906", "subrec",
-           "F35 layer `host`'s sub-record extent covers layer `ok`'s stored "
+           "F33 layer `host`'s sub-record extent covers layer `ok`'s stored "
            "tile (instance: sub-record extents)", False,
            patches=[Patch("layer[host].sub[0].extent_offset", u64(_OK_TILE_OFF)),
                     Patch("layer[host].sub[0].extent_length", u64(_OK_TILE_LEN))],
            repair=REPAIR_DIR,
-           row="F35", rule="R-CNT-13", outcome="reject-file",
+           row="F33", rule="R-CNT-13", outcome="reject-file",
            scope=dict(FILE, instance="sub-record extents"),
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok", "host"]),
@@ -422,7 +422,7 @@ VECTORS = [
     # sub-record slot is not dereferenced by anything, so both of these
     # build.
     #
-    # Each file also fails a later check that reads the same field — L18's
+    # Each file also fails a later check that reads the same field — L17's
     # bound, L2's sum — but reaching either means *acting on* a value §4.2
     # puts outside the domain, which [R-ENC-05] forbids before validation.
     # The domain gate is the first check a conforming reader can perform.
@@ -453,8 +453,8 @@ VECTORS = [
     # N·P. l_rows_a.py could not reach it: N ≥ 2 needs a layer with two or
     # more addressed tiles, and `pair` gives its damage layer one. Seed
     # `slabrun` gives three. T₁ = 2^62 with E₁ = 4 keeps the second grid
-    # count at 1, so N stays 3 and entry_count still matches it (L22
-    # clean) and the index region is still 3 × 20 + 4 bytes (L23 clean).
+    # count at 1, so N stays 3 and entry_count still matches it (L21
+    # clean) and the index region is still 3 × 20 + 4 bytes (L22 clean).
     # Every other product stays in domain: P = 2^62, P·Q = 2^62 at Q = 1,
     # C·N = 3, V = P·C = 2^62. Only N·P = 3·2^62 leaves it.
     #
@@ -476,16 +476,16 @@ VECTORS = [
     # earlier skip reason imagined does not exist.)
 
     # ==================================================================
-    # L33 `[R-GEO-01]` — the geometry floor's channel-count instance.
+    # L32 `[R-GEO-01]` — the geometry floor's channel-count instance.
     # ==================================================================
     # See _bad_c0() above for why this is a whole-record patch. The tile
     # is sentinelled because Q is the sum over zero channels, so the
     # decoded size collapses to 0 and a stored tile would carry T14; a
     # sentinel entry is §21.6's defined "addressed but not stored" and
     # its former payload becomes slack. entry_count stays 1, which is
-    # what the unchanged geometry derives, so L22 and L23 stay clean.
+    # what the unchanged geometry derives, so L21 and L22 stay clean.
     Vector("TV-0911", "pair",
-           "L33 layer `bad` declares channel count C = 0 (instance: channel "
+           "L32 layer `bad` declares channel count C = 0 (instance: channel "
            "count C)", False,
            patches=[Patch("layer[bad].entry[0]", SENTINEL,
                           "Q = 0 with C = 0, so no stored tile can have the "
@@ -495,13 +495,13 @@ VECTORS = [
                           "so §7.4's parse still ends exactly at "
                           "index_encoding")],
            repair=["index:bad"] + REPAIR_DIR,
-           row="L33", rule="R-GEO-01", outcome="reject-layer",
+           row="L32", rule="R-GEO-01", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad", "instance": "channel count C"},
            detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
 
     # ==================================================================
-    # L42 `[R-SLB-03]` — a stored tile inside a run not packed against
+    # L41 `[R-SLB-03]` — a stored tile inside a run not packed against
     # the previous stored tile.
     # ==================================================================
     # The row names three alternatives — gap, overlap, out-of-ordinal
@@ -512,16 +512,16 @@ VECTORS = [
     # against the bytes they now address and the layer's decoded content
     # is unchanged — which is why this file still records what layer
     # `slab` serves. Run 0's first stored tile is still ordinal 0 at 16,
-    # a multiple of A_slab = 16, so L43 stays clean.
+    # a multiple of A_slab = 16, so L42 stays clean.
     _slab_vec("TV-0912",
-              "L42 layer `slab` run 0: ordinals 1 and 2 exchange offsets, so "
+              "L41 layer `slab` run 0: ordinals 1 and 2 exchange offsets, so "
               "ordinal 1 begins 4 bytes past the previous stored tile's end",
               [Patch("layer[slab].entry[1].offset", u64(24)),
                Patch("layer[slab].entry[2].offset", u64(20))],
-              "L42", serves=("ok", "slab")),
+              "L41", serves=("ok", "slab")),
 
     # ==================================================================
-    # L45 `[R-SLB-04]` — a slab declaration carried across a commit that
+    # L44 `[R-SLB-04]` — a slab declaration carried across a commit that
     # changed an affected run. Two instances: the run length S, and the
     # slab alignment A_slab.
     # ==================================================================
@@ -540,22 +540,22 @@ VECTORS = [
     # tile is still 16-aligned, so the A_slab half of the invariant holds
     # and this file isolates the S half.
     _slab_vec("TV-0913",
-              "L45 generation 2 carries S = 3 forward after superseding "
+              "L44 generation 2 carries S = 3 forward after superseding "
               "ordinal 1: run 0 is no longer packed (instance: S)",
               [Patch("layer[slab].entry[1]", SENTINEL,
                      "the commit dropped ordinal 1; its 4 bytes are slack")],
-              "L45", generation=2, instance="S"),
+              "L44", generation=2, instance="S"),
 
     # Instance A_slab: ordinal 0 goes, so run 0's first *stored* tile
     # becomes ordinal 1 at offset 20, and 20 mod 16 = 4. Ordinals 1 and 2
     # are still packed at 20 → 24, so the contiguity half of the
     # invariant holds and this file isolates the alignment half.
     _slab_vec("TV-0914",
-              "L45 generation 2 carries A_slab = 16 forward after superseding "
+              "L44 generation 2 carries A_slab = 16 forward after superseding "
               "ordinal 0: run 0's first stored tile is at 20 (instance: A_slab)",
               [Patch("layer[slab].entry[0]", SENTINEL,
                      "the commit dropped ordinal 0; its 4 bytes are slack")],
-              "L45", generation=2, instance="A_slab"),
+              "L44", generation=2, instance="A_slab"),
 ]
 
 
@@ -563,10 +563,10 @@ VECTORS = [
 #: §21.8 asks for at least one vector per instance; a second construction
 #: under a second id would put two files in the corpus claiming one row.
 COVERED_ELSEWHERE = {
-    "L43": "TV-0297 (vectordefs/l_rows_b.py) — seed `pair`'s layer `bad` "
+    "L42": "TV-0297 (vectordefs/l_rows_b.py) — seed `pair`'s layer `bad` "
            "declares S = 1 and A_slab = 512 over a stored tile at offset 64. "
            "Verified: 64 mod 512 = 64, the run holds exactly one stored tile "
-           "so L42's packing rule has no second tile to relate, and both "
+           "so L41's packing rule has no second tile to relate, and both "
            "declarations are legal. The row is closed.",
 }
 
@@ -574,19 +574,19 @@ COVERED_ELSEWHERE = {
 #: Instances this module leaves open. Every reason below was re-derived
 #: against the seeds and the harness as they now stand, not carried forward.
 SKIPPED = {
-    "F35:trailer": (
+    "F33:trailer": (
         "unreachable, and re-verified against the sub-record slot the new "
         "seed adds. A structure overlapping the live trailer must extend past "
         "F − 64, and every claimant is gated there by a reader rule that "
         "fires strictly before certification: the directory by [R-CNT-06] "
-        "(F12), a top-level record extent by [R-CNT-13] (F34), a layer "
-        "record's *or sub-record's* extent by [R-CNT-13] (L18), a tile-index "
+        "(F10), a top-level record extent by [R-CNT-13] (F32), a layer "
+        "record's *or sub-record's* extent by [R-CNT-13] (L17), a tile-index "
         "entry by [R-IDX-03] (T9). Nothing else can claim a byte."),
-    "F35:front signature block": (
+    "F33:front signature block": (
         "unreachable, mirror image, and likewise re-verified for sub-records: "
         "a claimant needs an offset below 16, and every offset is gated at "
-        "≥ 16 before certification — dir_offset by [R-CNT-06] (F11), record "
-        "and layer and sub-record extents by [R-CNT-13] (F33, L17), "
+        "≥ 16 before certification — dir_offset by [R-CNT-06] (F9), record "
+        "and layer and sub-record extents by [R-CNT-13] (F31, L16), "
         "tile-index entries by [R-IDX-03] (T8)."),
 
     "L1:extent_offset (layer record slot)": (
@@ -625,22 +625,22 @@ SKIPPED = {
 #: reached by trying to build the vector and failing for a reason that is
 #: about the text.
 SPEC_FINDINGS = {
-    "F7": ("SUPERSEDED — the corpus now covers this row; the reason below "
+    "F5": ("SUPERSEDED — the corpus now covers this row; the reason below "
      "was true before register_seed, Layer(sub_records=...) and the "
      "truncate/append verbs existed. " 
-        "F7's committed_file_length instance has no isolable witness. "
+        "F5's committed_file_length instance has no isolable witness. "
         "[R-CNT-06] requires committed_file_length = F, so a declared length "
-        "below 128 in a file of at least 128 bytes always carries F19, and a "
+        "below 128 in a file of at least 128 bytes always carries F17, and a "
         "declared length below 128 that equals F puts the file itself below "
         "128 — which is the other instance. TV-0901 ships the first form. "
         "Either the row should name one instance, or §21.1's Instances "
         "convention should say what to do with a field whose value another "
         "row pins to a second field."),
-    "L45": (
-        "L45 has no manifestation a verifier can distinguish from L42 or "
-        "L43. [R-SLB-04]'s condition is 'the invariants were not "
+    "L44": (
+        "L44 has no manifestation a verifier can distinguish from L41 or "
+        "L42. [R-SLB-04]'s condition is 'the invariants were not "
         "re-established', and those invariants are exactly [R-SLB-03]'s — "
-        "so every L45 file is an L42 or L43 file. [R-LIF-08] then confines a "
+        "so every L44 file is an L41 or L42 file. [R-LIF-08] then confines a "
         "verifier to the live state, and §9.3 keeps no record of what a "
         "commit changed, so the generation counter is the only in-file trace "
         "of the history the row ranges over. TV-0913 and TV-0914 carry "
@@ -658,13 +658,13 @@ SPEC_FINDINGS = {
         "fields the fields are not instances; the same ought to be said of "
         "several *expressions* of one quantity, and the row's instance count "
         "should be 8 rather than 10."),
-    "F27": ("SUPERSEDED — the corpus now covers this row; the reason below "
+    "F25": ("SUPERSEDED — the corpus now covers this row; the reason below "
      "was true before register_seed, Layer(sub_records=...) and the "
      "truncate/append verbs existed. " 
-        "F27 is reachable only in company. On the one registered non-layer "
+        "F25 is reachable only in company. On the one registered non-layer "
         "type, MU = 1/PE = 0 differs from §7.3's registry in both bits and so "
-        "is also F30 twice; on any unassigned type MU = 1 is F37 at open. "
-        "TV-0904 takes the first, where every co-violating row shares F27's "
+        "is also F28 twice; on any unassigned type MU = 1 is F35 at open. "
+        "TV-0904 takes the first, where every co-violating row shares F25's "
         "detector, detection point and scope. Worth stating in §21.2 rather "
         "than leaving each corpus author to rediscover."),
 }

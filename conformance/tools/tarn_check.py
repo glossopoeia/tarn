@@ -67,6 +67,7 @@ COMPLETENESS_DISPOSITIONED = {
     "R-VEC-04": "constrains how the corpus is built, not what a file may contain",
     "R-LIF-08": "the verifier's coverage procedure; the violations it finds are the overlap rows'",
     "R-SLB-04": "a writer obligation whose detection it delegates to [R-SLB-03]; ADR-0057 deleted its row",
+    "R-ENC-01": "the encoding is little-endian by definition, so no file is in a 'big-endian' state; [R-ENC-02]'s writer prohibition is conduct ([R-CNF-02]) and the out-of-range value it yields is caught by that field's own row (ADR-0069)",
 }
 
 # AGENTS.md rule 5: BCP 14 keywords appear in ALL CAPS only. The verb forms

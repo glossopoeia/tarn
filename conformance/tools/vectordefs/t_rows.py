@@ -70,7 +70,7 @@ VECTORS = [
     # the channel bool makes each byte a bool value: 0x01 is legal, 0x02 0x03
     # 0x04 are not. Fill stays 0x00 (a legal bool fill, so [R-TYP-07] is not
     # tripped) and its length prefix still matches bool's element size 1, so
-    # L31 is not tripped either. E == T here, so the tile has no padding
+    # L30 is not tripped either. E == T here, so the tile has no padding
     # positions and T4 cannot co-fire.
     _verifier("TV-0400",
               "layer `bad` redeclared bool: interleaved value bytes 02, 03, 04 "
@@ -82,7 +82,7 @@ VECTORS = [
     # Under codec 1 the stored bytes are the decoded image, so a decoded-size
     # mismatch is produced by re-declaring geometry rather than by editing the
     # payload. Every instance keeps grid = 1 in both dimensions so entry_count
-    # still equals the addressed-tile count (L22 stays clean), and keeps E == T
+    # still equals the addressed-tile count (L21 stays clean), and keeps E == T
     # so no padding position exists to co-violate §14.5.
     _reader("TV-0401",
             "T3 interleaved P·Q, payload longer: `bad` declares tile extents "
@@ -215,9 +215,9 @@ VECTORS = [
     # -- T8 -----------------------------------------------------------------
     # NOTE: this condition cannot be isolated. Every offset below 16 addresses
     # bytes of the front signature block, so the entry's declared extent always
-    # overlaps a structure outside its own layer — F35, [R-CNT-13]. That
+    # overlaps a structure outside its own layer — F33, [R-CNT-13]. That
     # co-violation is inherent to the row's text, not to this construction, and
-    # it does not mask: F35's detector is the verifier at certification, which
+    # it does not mask: F33's detector is the verifier at certification, which
     # §19.2 places outside the reader tiers entirely, while §15.3 classifies
     # this entry reject-tile at tile use. Reported as a register finding.
     _reader("TV-0414",
@@ -255,23 +255,6 @@ VECTORS = [
             [Patch("layer[bad].entry[0].offset", u64(1 << 62)),
              Patch("layer[bad].entry[0].length", u64(1 << 62))],
             REPAIR_ENTRY, "T12", "R-IDX-03", WELLFORMED),
-
-    # -- T27 ----------------------------------------------------------------
-    # [R-ENC-06] at its third owning scope. The 20 bytes are written as
-    # offset u32, length u64, crc u64 -- still 20, so [R-ENC-07]'s size gate
-    # cannot see it. A conforming fixed-width parse reads offset from
-    # [0, 8) = u32(64) ++ u32(4) = 0x0000000400000040, length from [8, 16)
-    # = 0, and crc from [16, 20) = 0. Like F5 and L3 this row records the
-    # cause; the checks that fire are the value gates those shifted reads
-    # trip -- length 0 on a non-sentinel entry, and an extent ending past
-    # F - 64.
-    _reader("TV-0953",
-            "T27 `bad` entry 0 written as offset u32, length u64, crc u64 — "
-            "20 bytes still, parsed as offset 0x0000000400000040, length 0",
-            [Patch("layer[bad].entry[0]", u32(64) + u64(4) + u64(0),
-                   note="the widths shift; the total stays 20")],
-            REPAIR_ENTRY, "T27", "R-ENC-06", WELLFORMED),
-
     # -- T14 ----------------------------------------------------------------
     # Codec stays 1, so [R-COD-04]'s equality binds: tile extents (3,2) give
     # decoded size 6 against the entry's length 4. E == T, so no padding
@@ -372,7 +355,7 @@ SKIPPED = {
         "inverse from one that ignores it, which is the only thing a filter "
         "vector tests. The channel's type cannot be widened either: the fill "
         "field is two bytes (prefix + one byte) and a recipe cannot grow it, so "
-        "any wider type trips L31 instead. Needs a seed whose non-`ok` layer "
+        "any wider type trips L30 instead. Needs a seed whose non-`ok` layer "
         "carries a multi-byte channel.",
     "T26 [interleaved: sample stride Q]":
         "Same: Q = 1 for the damageable layer, so the mandated shuffle is the "
