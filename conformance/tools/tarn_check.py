@@ -29,6 +29,7 @@ run: they mark places where the check is a heuristic and a human decides.
 from __future__ import annotations
 
 import argparse
+import collections
 import re
 import struct
 import subprocess
@@ -528,6 +529,81 @@ def check_spec(spec: Spec, report: Report) -> None:
     # elsewhere. These are the ones a machine can recompute or cross-read.
     failures = _check_constants(spec)
     report.add("SPEC-06", "restated constants agree", failures)
+
+    # SPEC-07 -- the document's claims about its own contents.
+    #
+    # §4.7 states its own membership ("version_minor is the only descriptive
+    # field"). That is the strongest kind of sentence a spec can carry, because
+    # it can be falsified -- and it was, one commit after ADR-0071 wrote it:
+    # §4.7's broadened `structural` swallowed `fill`, leaving the class it
+    # called the only semantic one empty. Round 11 found it by reading. A
+    # machine can read it too.
+    failures = []
+    # Hard-wrapped prose defeats a line-oriented pattern: at ADR-0071 this
+    # very sentence read "is the\nonly semantic field", and the first draft of
+    # this check passed the revision it was written to fail. Normalise first --
+    # the same lesson `grep -c` taught this project in round 7.
+    flat = re.sub(r"\s+", " ", spec.text)
+    classes = collections.Counter(re.findall(r"\| (structural|semantic|descriptive) \|", spec.text))
+    for m in re.finditer(r"`([a-z_]+)` is the only (\w+) field", flat):
+        field, cls = m.group(1), m.group(2)
+        n = classes.get(cls, 0)
+        if n != 1:
+            failures.append(
+                f"§4.7 says `{field}` is the only {cls} field, but {n} table cell(s) "
+                f"carry that class")
+        else:
+            row = any(f"| {field} |" in l and f"| {cls} |" in l for l in spec.lines)
+            if not row:
+                failures.append(
+                    f"§4.7 says `{field}` is the only {cls} field, but no layout-table row "
+                    f"gives `{field}` that class")
+    # A class the taxonomy names but no field carries is the defect ADR-0069
+    # fixed for `informative` and ADR-0072 for `semantic`. Catch the next one.
+    named = set(re.findall(r"It is \*\*(\w+)\*\*", flat)) | \
+            set(re.findall(r"A field is \*\*(\w+)\*\*", flat))
+    for cls in sorted(named):
+        if classes.get(cls, 0) == 0 and f"only {cls} field" not in flat:
+            failures.append(f"§4.7 names the class '{cls}' and no field carries it")
+    report.add("SPEC-07", "self-described membership holds", failures)
+
+    # SPEC-08 -- Appendix B claims to collect every named constant, and
+    # [R-ERR-05] claims to collect the hard limits. ADR-0067 added the
+    # directory minimums to [R-ERR-05] and not to Appendix B; round 9 found it
+    # by reading. Each distinctive token of [R-ERR-05] should be findable in
+    # Appendix B. Prose, so it warns.
+    warnings = []
+    lim = _span(spec.text, "Some limits are instead **hard**", "`[R-ERR-05]`")
+    appb = _span(spec.text, "### Appendix B", "### Appendix C")
+    if lim and appb:
+        flat_lim = re.sub(r"\s+", " ", lim)
+        flat_b = re.sub(r"\s+", " ", appb)
+        toks = set(re.findall(r"0x[0-9A-F]{4,}|\b\d{2,3},\d{3}\b|A_slab|\b128 bytes\b|\b255 bytes\b", flat_lim))
+        # ...and the subjects, which carry no number a token pattern can see.
+        # Some limits name a subject and no number a token pattern can see.
+        # ADR-0067 added "a directory of at least 4 bytes at an offset of at
+        # least 16" to [R-ERR-05] and not to Appendix B; round 9 found it by
+        # reading. Pair the limit's phrasing with what Appendix B must carry.
+        for in_limit, in_appendix in (
+                ("directory of at least", "dir_offset"),
+                ("shorter than 128 bytes", "128 bytes"),
+                ("slab run length S", "Slab run length S"),
+                ("alignment A_slab", "A_slab")):
+            if in_limit in flat_lim:
+                toks.add(in_appendix)
+        for t in sorted(toks):
+            if t not in flat_b:
+                warnings.append(f"[R-ERR-05] names {t!r}; Appendix B does not carry it")
+    report.add("SPEC-08", "Appendix B collects the hard limits", [], warnings)
+
+
+def _span(text: str, start: str, end: str) -> str:
+    """The text between two markers, or "" if either is missing."""
+    i = text.find(start)
+    if i < 0:
+        return ""
+    j = text.find(end, i)
+    return text[i:j if j > 0 else len(text)]
 
 
 def _appendix_a_bytes(spec: Spec) -> bytes | None:

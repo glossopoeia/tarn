@@ -9,7 +9,8 @@ G5, and its structure is not yet decided.
 ```
 conformance/
   tools/
-    tarn_check.py    mechanical consistency checks for spec/tarn.md
+    tarn_check.py      mechanical consistency checks for spec/tarn.md
+    tarn_propagate.py  what else restates the rule a change touched
 ```
 
 ## Running the checks
@@ -25,6 +26,16 @@ No dependencies — Python 3, standard library only. Subcommands:
 | `tarn_check.py register` | §21's error register: row-id contiguity, duplicate conditions, governing rules resolving, every stated count agreeing with the table, the detector/detection-point invariant, and a completeness heuristic over the requirement identifiers |
 | `tarn_check.py spec` | Identifier discipline (§2.2), BCP 14 keyword case, retired vocabulary, Appendix B's restated constants, and Appendix A's hex dump rebuilt from the specification's own rules |
 | `tarn_check.py` | Both |
+| `tarn_propagate.py` | What a *change* leaves behind. For each changed hunk in `spec/tarn.md` it extracts the rule's anchors — the requirement ids and register rows it cites, the field names it uses, the terms it emboldens, its distinctive phrasing — and reports every other passage carrying enough of the same anchors that was **not** changed with it. Exits 1 on an unswept site unless the pair is recorded in `tools/propagation-acks.txt` with a reason. |
+
+Run `tarn_propagate.py` before every commit that touches `spec/tarn.md`. Every
+byte-level defect found since round 7 has been one rule repaired in one place
+and left standing in another; `tarn_check.py` checks the document against
+itself at rest, and this checks a change against the document.
+
+    python3 conformance/tools/tarn_propagate.py            # working tree vs HEAD
+    python3 conformance/tools/tarn_propagate.py --rev <sha> # what that commit should have swept
+
 
 `--rev <commit>` checks a git revision instead of the working tree,
 which is how the tool is regression-tested: every revision from
