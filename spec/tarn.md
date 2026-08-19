@@ -197,7 +197,10 @@ Conformance is defined for five classes.
   declines a layer's or a tile's decode on resource grounds and so
   cannot check §14's decoded-content obligations (`[R-ERR-04]`,
   `[R-SER-05]`, `[R-SER-08]`), or when it declines to decode a
-  user-metadata document (`[R-MTA-09]`).
+  user-metadata document (`[R-MTA-09]`). A user-metadata document
+  under an encoding this specification does not assign is not such
+  a ground: no content rule attaches there, so nothing is left
+  unchecked, and certification is unaffected (`[R-MTA-10]`, §21.6).
   *Cannot establish* is not a finding that the file is nonconforming,
   and a verifier MUST NOT certify a file it reports that way. An
   established violation takes priority: a verifier that has
@@ -1321,7 +1324,11 @@ reach are slack: the verifier sums them and reports the total, and
 their content is not its concern. A verifier decodes every stored
 tile, whatever content obligations §14 places on the layer: §21.4's
 codec rows are file-conformance violations, and a verifier MUST NOT
-certify past a violation it has not looked for. Where the walk does not complete —
+certify past a violation it has not looked for. A user-metadata
+document under an unassigned encoding asks nothing of this walk: no
+rule attaches to its content (`[R-MTA-10]`), so there is no
+violation there to look for, and what the verifier reports instead
+is that rule's subject. Where the walk does not complete —
 a scope-level rejection blocks enumeration, or the verifier stops at
 the first violation (`[R-CNF-11]`) — the sum is reported as partial, and
 `[R-CNT-21]` governs what such a total counts and what the verifier
@@ -2367,7 +2374,11 @@ position arises only at a reserved or experimental value, every
 assigned codec and filter being core: it rejects the layer
 (`[R-COD-03]`, `[R-COD-09]`);
 software unable to execute an assigned codec or filter is not a
-conforming reader (`[R-CNF-03]`). `[R-COD-11]`
+conforming reader (`[R-CNF-03]`). `[R-COD-11]` The
+metadata-encoding space alone differs: an unassigned document
+encoding in a conforming file is not a violation (§21.6), no
+document rule attaches to its extent, and certification is
+unaffected (`[R-MTA-10]`, §18.2).
 
 ### 18. User Metadata
 
@@ -2430,7 +2441,10 @@ decline is one of the unchecked requirements `[R-CNF-11]` obliges
 the verifier to report, and it fixes the file's verdict as *cannot
 establish* only where the verifier established no violation
 elsewhere; the verifier SHOULD report the bound it applied and the
-stored length of the extent it declined. Any violation here is
+stored length of the extent it declined. The decline presupposes an
+encoding this specification assigns, whose document it defines; an
+encoding it does not assign leaves no document rule attached and is
+`[R-MTA-10]`'s subject, not a decline. Any violation here is
 ignore-record, never the tile-scope outcome §17.2 assigns. `[R-MTA-09]`
 
 > **Note.** The 16 MiB figure is a §21.9 minimum guarantee, so the
@@ -2489,6 +2503,28 @@ metadata canonicalizes the decoded document itself. Readers MUST NOT
 depend on member order for meaning, and unsorted members do not make
 a document unreadable: the file is nonconforming, a verifier MUST
 report it, and readers process the document unchanged. `[R-MTA-05]`
+
+The document rules of this section — the frame constraints of
+encoding 2, the decoded-document restrictions above, and
+`[R-MTA-05]`'s member ordering — attach to a document only under an
+encoding this specification assigns. Under an unassigned encoding
+this specification defines no decoding, and for an experimental
+value §10.3 lets two unrelated experiments claim the same value with
+different meanings, so *the decoded document* names nothing this
+specification can test: no content rule attaches to the extent's
+bytes, and file conformance — a pure predicate on bytes
+(`[R-CNF-02]`) — is decided by the structural checks that precede
+the document alone: the record's framing and extent slot
+(`[R-CNT-13]`), the encoding byte's own value set (`[R-MTA-03]`),
+and the extent's terminal CRC (`[R-CNT-20]`). A verifier meeting
+such a record in an otherwise conforming file has no requirement it
+is unable to check — the record is not among `[R-CNF-11]`'s
+cannot-establish grounds, and certification is unaffected — and it
+MUST report each record it ignored on this ground, naming the
+owning scope, the encoding value, and the stored extent length, as
+it reports the slack total (`[R-CNT-21]`): bytes a certificate
+covers without inspecting are counted and named, never silent.
+`[R-MTA-10]`
 
 > **Note.** JSON was chosen over a binary encoding because every
 > target language parses it without a dependency, and because a
@@ -2650,7 +2686,8 @@ structure that carries it:
 - **at use of a tile:** the index-chain, payload, and decode
   checks (§19.4), before any sample of that tile is returned;
 - **at use of a record's extent:** that extent's CRC and the
-  content rules of the document it carries, before anything the
+  content rules of the document it carries — those §18.2 attaches
+  at its encoding (`[R-MTA-10]`) — before anything the
   extent holds is returned — no earlier, since the open fetches
   no extent (§19.1).
 
@@ -3303,7 +3340,10 @@ Outcome: ignore-record — the record is skipped as though absent and
 decoding of stored data is unaffected. Readers SHOULD report the
 loss; silent metadata loss defeats the record's purpose. User
 metadata is quarantined (`[R-CNT-25]`): every way its document can
-be unreadable lands here, whatever the containing scope. Every row
+be unreadable takes this outcome, whatever the containing scope —
+as a violation in the rows below, except at an unassigned encoding,
+where no document rule attaches and §21.6 records the defined
+non-violation (`[R-MTA-10]`). Every row
 here is a violation all the same: the outcome bounds a reader's
 blast radius and never makes the file conforming (`[R-CNF-12]`);
 §21.6 lists the ignore-record conditions that are not violations.
@@ -3313,7 +3353,7 @@ blast radius and never makes the file conforming (`[R-CNF-12]`);
 |---|---|---|---|---|---|
 | R1 | A user-metadata record declares a document encoding of 0, or a reserved-range value (3-0x7F) | encoding 0, top-level record; encoding 0, layer sub-record; reserved 3–0x7F, top-level record; reserved 3–0x7F, layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-25]` (R-MTA-03, R-EXT-03) |
 | R2 | A user-metadata extent's final 4 bytes do not equal the CRC-32C of the preceding bytes | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-20]` (R-CNT-25) |
-| R3 | A user-metadata document's stored bytes fail to decode under its declared encoding | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
+| R3 | A user-metadata document's stored bytes fail to decode under its declared assigned encoding — under an unassigned one this specification defines no decoding, and §21.6 governs (`[R-MTA-10]`) | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
 | R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 states or carries over from `[R-COD-06]` — the single frame occupying the extent's bytes before its terminal CRC included; unlike R3, the constraint is broken whether or not the bytes decode | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent; bytes remaining after the frame, top-level extent; bytes remaining after the frame, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
 | R5 | A decoded user-metadata document violates the document's own content rules — a key or string value whose UTF-8 is ill-formed in the source bytes, or that resolves a `\uXXXX` escape denoting an unpaired surrogate | ill-formed source bytes in a key, top-level document; ill-formed source bytes in a key, layer sub-record document; ill-formed source bytes in a string value, top-level document; ill-formed source bytes in a string value, layer sub-record document; unpaired-surrogate escape in a key, top-level document; unpaired-surrogate escape in a key, layer sub-record document; unpaired-surrogate escape in a string value, top-level document; unpaired-surrogate escape in a string value, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-MTA-04, R-ENC-11) |
 | R6 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-12) |
@@ -3338,7 +3378,7 @@ of them as a failure is the nonconforming party.
 | version_minor is higher than this text defines | Accepted; minors never gate | `[R-CNT-07]` |
 | Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded structures | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier — as a partial total — an upper bound naming what stopped the walk — where its walk did not complete; only compaction reclaims it | `[R-CNT-21]` |
 | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
-| A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]` |
+| A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes. No document rule attaches under an unassigned encoding, so a verifier certifies, reporting the record it ignored | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]`, `[R-MTA-10]` |
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
 | A standardized key (§18.4) appears outside its listed scope, or carries a value whose shape its row does not give | Conforming: placement and value shape are writer guidance, and a reader ignores the key and reads the rest of the document, exactly as for an unrecognized key above | `[R-MTA-07]` |
 | A payload contains a byte string that mimics a trailer | Inert: nothing enumerates slack, and a recovery tool re-verifies its output whole (§9.6) — which catches any mimic that is not itself a consistent generation; §9.6's second caution covers the rest | `[R-LIF-06]` |
@@ -3537,7 +3577,7 @@ pipeline accepting files from untrusted sources SHOULD verify rather
 than merely read; without that, an
 attacker's smuggled bytes travel unexamined. `[R-SEC-03]`
 
-Three residues are stated rather than defended. Slack is covered by no
+Four residues are stated rather than defended. Slack is covered by no
 checksum (§8.1) and constrained by no rule: corruption confined to it
 is invisible to reader and verifier alike, and is caught only by the
 slack total changing (§9.7) — which is why a writer that zeroes its
@@ -3553,7 +3593,14 @@ is why recovery output is re-verified as a whole file before being
 trusted (`[R-LIF-06]`) before any use. Under live-state coverage a
 mimic in slack is inert — nothing enumerates it — but a recovery
 tool that truncates to one produces a different file, which is why
-its output is re-verified whole. `[R-SEC-04]`
+its output is re-verified whole. And the extent of a user-metadata
+record under an unassigned encoding is covered by its terminal CRC
+but constrained by no content rule (`[R-MTA-10]`): the CRC detects
+corruption and authenticates nothing (§4.5), so a certificate
+covers those bytes uninspected — which is why `[R-MTA-10]` makes
+the verifier's report name each such record, and an operator who
+wants no such bytes rejects on that report line, a policy above
+conformance. `[R-SEC-04]`
 
 #### 22.4 Content the reader hands onward
 
@@ -4071,7 +4118,10 @@ whatever its MU bit (`[R-CNT-15]`, F36, L25);
 alignment and slab invariants (§16); decoded-content obligations —
 padding samples and interleaved boolean bytes (§14.5, §14.2);
 user-metadata member ordering (`[R-MTA-05]`, §18.2); certifies only
-files with no violation at any scope (§2.4); reports *nonconforming*
+files with no violation at any scope (§2.4) — a user-metadata
+record at an unassigned encoding is no violation and no bar, and is
+instead reported: owning scope, encoding value, stored extent
+length (`[R-MTA-10]`); reports *nonconforming*
 whenever it has established a violation, reserving *cannot
 establish* for a traversal that established none; and reports each
 requirement it was unable to check on a capability or resource
