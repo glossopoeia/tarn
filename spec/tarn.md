@@ -2796,9 +2796,14 @@ An appender MUST, in order:
    repaired to a sentinel. Against any other structure the appender
    carries forward, it MUST NOT repair the defect — `[R-LIF-01]`
    freezes the committed prefix — and MUST NOT drop the record
-   (§20.4); re-emitting it byte-identically is not authorship, since
-   `[R-WRT-05]` makes only *a record it modifies* new output under
-   `[R-CNF-05]`. An appender that carries a violation forward SHOULD
+   (§20.4). Reproducing a structure's bytes unchanged is not
+   authoring them: an appender satisfies its writer obligations for
+   the bytes it produces, and a violation latent in a structure it
+   neither modifies nor relies on travels with that structure
+   (§20.1, `[R-WRT-01]`) — which is as true of an index entry copied
+   to its disk-ordinal position as of a record re-emitted
+   byte-identically (`[R-WRT-05]`). Certifying the whole file is a
+   verifier's office. An appender that carries a violation forward SHOULD
    report it, and a caller that is not told cannot know the file it
    extended was already damaged.
 3. **Validate what the commit touches**, per `[R-WRT-03]`.
@@ -2818,7 +2823,12 @@ An appender MUST, in order:
    the existing region, as does a layer the commit leaves
    untouched (`[R-WRT-05]`); relocating a live index region is
    compaction's operation (§20.5, `[R-WRT-07]`), not an
-   appender's. Extents this commit supersedes become slack
+   appender's. A commit that changes a
+   layer's recorded fill re-emits every stored tile of that layer
+   carrying a padding position or a pad bit, whose content
+   `[R-SER-05]` fixes to the fill: the declaration and the bytes it
+   governs change together, or the commit leaves the layer
+   nonconforming. Extents this commit supersedes become slack
    (`[R-CNT-21]`); a slab declaration is re-established or
    cleared (`[R-SLB-04]`), and an aligned layer's new tiles
    satisfy its invariant or the declaration is cleared
@@ -2882,9 +2892,9 @@ An appender MUST, in order:
 > **(c) A change confined to the directory** — clearing a slab
 > declaration, renaming a layer, or changing a channel's fill value on
 > a layer with no padding position and no pad bit. Only the directory
-> is re-emitted. A fill change on a layer carrying either additionally
-> requires re-emitting the affected stored tiles, whose content
-> `[R-SER-05]` fixes — which makes it shape (b). Editing user metadata is not this shape:
+> is re-emitted. A fill change on a layer carrying either
+> re-emits the affected stored tiles (step 4), which makes it shape
+> (b). Editing user metadata is not this shape:
 > its document lives in an extent (`[R-CNT-25]`), so a new extent is
 > appended and the old one becomes slack, as in (b).
 >
