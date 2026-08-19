@@ -1031,6 +1031,47 @@ ignore-record. A *known* type appearing where §7.3's table does not
 scope it — a layer record nested as a sub-record, say — is a
 validity error at layer scope, not an unknown type. `[R-CNT-18]`
 
+> **Example — a complete layer record payload.** A rank-1 layer named
+> `sst`: dimension `x` with extent 100 and tile extent 32; one
+> interleaved float32 channel — §12.3's `temp` entry, byte for byte;
+> codec 1 (none), filter 1 (none), no alignment or slab declaration;
+> no sub-records. The grid count is ⌈100 / 32⌉ = 4 (§11.2), so
+> entry_count = 4. With no tile stored, every index entry is the
+> sentinel (§15.2), and the index region is the 80-byte entry array
+> followed by its one segment CRC (§15.1): `0x80A34955` over those 80
+> bytes, stored `55 49 A3 80`. crc_of_crc_array is the CRC-32C of
+> that 4-byte array: `0xC4EE982E`. The inline payload is 81 bytes:
+>
+> ```
+>  0  03 73 73 74                name: length 3, `sst`
+>  4  01                         layout 1 = interleaved
+>  5  01 00                      linearization 1 = row-major
+>  7  01 00                      codec 1 = none
+>  9  01 00                      filter 1 = none
+> 11  00 ×8                      alignment A = 0: none declared
+> 19  00 ×8                      slab S = 0: none declared
+> 27  00 ×8                      slab alignment 0, forced by S = 0
+> 35  01                         rank d = 1
+> 36  01 00                      channel count C = 1
+> 38  01 78                      dimension name: length 1, `x`
+> 40  64 00 00 00 00 00 00 00    extent 100
+> 48  20 00 00 00 00 00 00 00    tile extent 32
+> 56  04 74 65 6D 70 0C 00       channel `temp`, type 12 = float32
+> 63  04 00 00 C0 7F             fill: length 4, quiet NaN 0x7FC00000
+> 68  01                         index_encoding 1 = raw-segmented
+> 69  04 00 00 00 00 00 00 00    entry_count = 4
+> 77  2E 98 EE C4                crc_of_crc_array = 0xC4EE982E
+> ```
+>
+> Name and the nine scalars from layout through channel count occupy
+> 4 + 34 bytes, the dimension entry 18, the channel entry 12, and the
+> trailing fixed fields 13 — 81 exactly, with no residue, so the
+> sub-record sequence is empty. The record framing this payload
+> (§7.2) carries type 0x0001, the registry-fixed flags MU = 1,
+> PE = 1 (§7.3), inline_length = 81, and — `[R-CNT-17]`'s
+> arithmetic — an extent slot of length 4 × 20 + ⌈4 / 2¹⁶⌉ × 4 = 84
+> addressing the index region wherever the writer placed it.
+
 > **Note.** The nesting prohibition binds writers and any type a later
 > version registers; in format major 1 it has no reader-detectable
 > witness, and so no register row. Detecting nesting means parsing a
