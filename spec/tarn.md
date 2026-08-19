@@ -1399,7 +1399,10 @@ array is empty. Readers MUST accept such a layer, and a read of any
 region of it returns no samples. `[R-GEO-02]`
 
 > **Rationale.** Empty layers serve schema-first workflows: declare
-> layers at creation, grow extents as data arrives. Growth that leaves
+> layers at creation, grow extents as data arrives. Extents grow;
+> they do not shrink, and no declaration a stored tile depends on
+> changes once that tile exists (§20.3) — a layer that stores nothing
+> may still be re-declared freely. Growth that leaves
 > every grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) unchanged touches the directory
 > alone; growth that raises one changes entry_count and with it
 > extent_length (`[R-CNT-17]`), so the layer's whole tile-index region
@@ -2823,12 +2826,23 @@ An appender MUST, in order:
    the existing region, as does a layer the commit leaves
    untouched (`[R-WRT-05]`); relocating a live index region is
    compaction's operation (§20.5, `[R-WRT-07]`), not an
-   appender's. A commit that changes a
-   layer's recorded fill re-emits every stored tile of that layer
-   carrying a padding position or a pad bit, whose content
-   `[R-SER-05]` fixes to the fill: the declaration and the bytes it
-   governs change together, or the commit leaves the layer
-   nonconforming. Extents this commit supersedes become slack
+   appender's. A commit MUST NOT change a
+   layer's declarations in a way that alters, for any tile that layer
+   stores, what §14 fixes for its stored bytes or how they decode —
+   the set of padding positions (§11.3) and the content
+   `[R-SER-05]` fixes there, the decoded size, the byte offset of any
+   sample within the decoded tile image, or the codec and filter that
+   produced the stored bytes. Every such change makes each stored
+   tile it reaches nonconforming, and re-emitting those tiles would
+   strand the originals as slack — the whole layer's worth, since
+   `[R-LIF-01]` freezes them where they lie — leaving the file larger
+   for a change that reads like a directory edit. Such a change is a
+   new layer, or a whole-file rewrite under a fresh file_id
+   (`[R-LIF-01]`, §20.5). A layer that stores no tile MAY be
+   re-declared freely, which is what schema-first creation needs
+   (§11.1); and an extent MAY always **grow**, since a position that
+   becomes real held that channel's fill and fill is a legal sample
+   value. Extents this commit supersedes become slack
    (`[R-CNT-21]`); a slab declaration is re-established or
    cleared (`[R-SLB-04]`), and an aligned layer's new tiles
    satisfy its invariant or the declaration is cleared
@@ -2892,9 +2906,9 @@ An appender MUST, in order:
 > **(c) A change confined to the directory** — clearing a slab
 > declaration, renaming a layer, or changing a channel's fill value on
 > a layer with no padding position and no pad bit. Only the directory
-> is re-emitted. A fill change on a layer carrying either
-> re-emits the affected stored tiles (step 4), which makes it shape
-> (b). Editing user metadata is not this shape:
+> is re-emitted. A fill change on a layer carrying either is not an
+> appender's operation at all (step 4): it would invalidate every
+> stored tile it reaches. Editing user metadata is not this shape:
 > its document lives in an extent (`[R-CNT-25]`), so a new extent is
 > appended and the old one becomes slack, as in (b).
 >
