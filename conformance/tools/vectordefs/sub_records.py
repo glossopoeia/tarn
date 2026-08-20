@@ -112,6 +112,16 @@ def _seed_umeta_wide():
                 flags=_PE)])])
 
 
+def _seed_umeta_empty():
+    """L12's other direction (ADR-0079): inline_length 0, the encoding byte
+    absent. Like the wide case this is not reachable by patch — the stored
+    length has to match the bytes actually present or the sequence carries
+    residue, which is L14."""
+    return build_with_layout([_ok(), _sub(
+        [Record(0x0002, inline=b"", extent=_umeta(DOC_SORTED),
+                flags=_PE)])])
+
+
 def _seed_umeta_two():
     """L19: two user-metadata sub-records, each valid on its own."""
     return build_with_layout([_ok(), _sub([
@@ -210,6 +220,7 @@ def _seed_residue():
 
 UMETA = register_seed("sub_umeta", _seed_umeta, ["ok", "sub"])
 UMETA_WIDE = register_seed("sub_umeta_wide", _seed_umeta_wide, ["ok", "sub"])
+UMETA_EMPTY = register_seed("sub_umeta_empty", _seed_umeta_empty, ["ok", "sub"])
 UMETA_TWO = register_seed("sub_umeta_two", _seed_umeta_two, ["ok", "sub"])
 INERT_SEED = register_seed("sub_inert", _seed_inert, ["ok", "sub"])
 NESTED = register_seed("sub_nested_layer", _seed_nested_layer, ["ok", "sub"])
@@ -280,7 +291,12 @@ VECTORS = [
                    note="§8.1 claims 4 of the extent's bytes for its CRC, so "
                         "5 is the floor")]),
     _reject("TV-0804", UMETA_WIDE,
-            "user-metadata sub-record with inline_length 2", "L12", "R-MTA-03"),
+            "user-metadata sub-record with inline_length 2 (instance: "
+            "inline_length >= 2)", "L12", "R-MTA-03"),
+    _reject("TV-0818", UMETA_EMPTY,
+            "user-metadata sub-record with inline_length 0, the encoding "
+            "byte absent (instance: inline_length 0, the encoding byte "
+            "absent)", "L12", "R-MTA-03"),
 
     # ----------------------------------------------------------------------
     # L13-L14 — §7.2's framing, read before any type's own rules.

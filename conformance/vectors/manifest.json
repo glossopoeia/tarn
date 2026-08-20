@@ -1710,7 +1710,7 @@
     {
       "id": "TV-0135",
       "file": "reject-file/TV-0135.tarn",
-      "title": "F23 top-level user-metadata record's inline_length is 2",
+      "title": "F23 top-level user-metadata record's inline_length is 2 (instance: inline_length >= 2)",
       "sha256": "177f2785c370d2e2960fb1ac9b4cdfd1df4d7b5ce9fe0586ad15e23524dd45af",
       "size": 320,
       "conforming": false,
@@ -1736,7 +1736,7 @@
       "violations": [
         {
           "row": "F23",
-          "instance": "\u2014",
+          "instance": "inline_length \u2265 2",
           "rule": "R-MTA-03",
           "outcome": "reject-file",
           "scope": {
@@ -3002,6 +3002,46 @@
           "row": "F17",
           "instance": "committed_file_length, physical file longer",
           "rule": "R-CNT-06",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file"
+          },
+          "detector": "reader",
+          "detected": "open"
+        }
+      ]
+    },
+    {
+      "id": "TV-0157",
+      "file": "reject-file/TV-0157.tarn",
+      "title": "F23 top-level user-metadata record's inline_length is 0, the encoding byte absent (instance: inline_length 0, the encoding byte absent)",
+      "sha256": "a5e8403907520e1bd44e57ff54ddb764a887b28aba74274cd513c6e7d8297f42",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "directory",
+            "value": "010003006000000028000000000000001800000000000000036f6b780101000100010000000000000000000000000000000000000000000000000002010001790200000000000000020000000000000001780300000000000000030000000000000001740c00040000000001010000000000000034d41709020002000000000040000000000000001b00000000000000ad61f50a"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "file"
+        ],
+        "may_escalate_to": "file"
+      },
+      "violations": [
+        {
+          "row": "F23",
+          "instance": "inline_length 0, the encoding byte absent",
+          "rule": "R-MTA-03",
           "outcome": "reject-file",
           "scope": {
             "kind": "file"
@@ -47523,7 +47563,7 @@
     {
       "id": "TV-0804",
       "file": "reject-layer/TV-0804.tarn",
-      "title": "user-metadata sub-record with inline_length 2",
+      "title": "user-metadata sub-record with inline_length 2 (instance: inline_length >= 2)",
       "sha256": "38d882f600ca1fc83b7d715f556d62720c2631fdc320e8110d1920390e8a7c1d",
       "size": 448,
       "conforming": false,
@@ -47579,7 +47619,7 @@
       "violations": [
         {
           "row": "L12",
-          "instance": "\u2014",
+          "instance": "inline_length \u2265 2",
           "rule": "R-MTA-03",
           "outcome": "reject-layer",
           "scope": {
@@ -48706,6 +48746,77 @@
           },
           "detector": "verifier",
           "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0818",
+      "file": "reject-layer/TV-0818.tarn",
+      "title": "user-metadata sub-record with inline_length 0, the encoding byte absent (instance: inline_length 0, the encoding byte absent)",
+      "sha256": "3b734ad2e4f070e2357698aee8a2d1c455c4396681efbf3758f9309e281f9e98",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "sub_umeta_empty",
+        "patches": [],
+        "repair": []
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:sub"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L12",
+          "instance": "inline_length 0, the encoding byte absent",
+          "rule": "R-MTA-03",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "sub"
+          },
+          "detector": "reader",
+          "detected": "layer access"
         }
       ]
     },

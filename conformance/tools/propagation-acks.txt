@@ -25,3 +25,12 @@ R-WRT-06 -> R-CNT-13: [R-WRT-07]'s enumeration now covers an MU = 1 type the com
 R-ENC-14 -> R-ENC-14: Appendix G's closing recap gained NFC names so it stops omitting item 10; item 10 itself states the SHOULD and is unchanged.
 R-WRT-06 -> R-CNT-18: §20.4's MU = 1 row binds an updater retaining a record byte-identically; [R-WRT-07]'s new clause binds a compactor relocating references a registration defines. Different operations, neither restating the other.
 R-CNT-23 -> R-CNT-23: L30's cell gained the direction axis (ADR-0078); §13.1's rule still states the fill is "exactly the channel's element size in bytes", which is what both directions violate, and a cell enumeration does not touch it.
+R-CNF-02 -> R-CNT-22: §21.2's preamble names which rows reach a foreign-major file; §21.1's specialization list decides which row a file is recorded against. Different propositions sharing only row labels.
+R-SLB-01 -> R-SLB-01: §20.5's placement freedom gained the layout-invariant qualifier §20.2 already carries; the edit brings the compactor's clause to the creator's form, so the two now agree.
+R-CNF-02 -> R-CNT-04: F1's row states its two instances and their binding readers; the preamble names which of them reach a foreign-major file. The row is unchanged and still correct.
+R-CNF-02 -> R-CNT-05: Appendix H's verifier line already says the front-block check binds a verifier where [R-CNT-04] exempts a reader (F1, F6); §21.2's preamble now names the same two rows for the same reason.
+R-CNT-13 -> R-SER-08: §21.7's ordinal-mapping clause was qualified to name T2/T4/T5 as its witnesses, on the model of T26's own row text ("the check that detects it is T2's or T4's"). The row is the source of the wording, not a site lagging behind it.
+R-MTA-05 -> R-CNF-05: F27 and L48 gained "at any nesting depth" so they stop under-stating §18.2's rule, which says "at every nesting depth". The rows were the lagging sites and this is the sweep.
+R-MTA-05 -> R-MTA-05: as above — the rows now carry the nesting-depth qualifier the rule states; nothing in [R-MTA-05] changed.
+R-CNF-02 -> R-CNT-07: F18 registers version_major = 0 and §21.2's preamble explains why that row sits outside the foreign-major premise rather than excepting it. Row unchanged.
+R-CNF-02 -> R-CNT-06: F8 is one of the rows the new preamble names as reaching a foreign-major file, quoting §6.2's ordering. The row itself is unchanged.

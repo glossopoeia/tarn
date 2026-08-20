@@ -129,6 +129,26 @@ def _meta_dir_inline_len_2() -> bytes:
     return bytes(d)
 
 
+def _meta_dir_inline_len_0() -> bytes:
+    """F23's other direction (ADR-0079): inline_length 0, so the encoding
+    byte is absent. The freed byte is given to the layer's name, the mirror
+    of the wide case, so the sequence still parses to the end with no
+    residue and F29 stays out of the file."""
+    d0, dl = _META["directory"]
+    d = bytearray(_META_BLOB[d0:d0 + dl])
+    hdr_off, _ = _META["record[0x0002].header"]
+    inl_off, inl_w = _META["record[0x0002].inline"]
+    nm_off, nm_w = _META["layer[ok].name"]
+    lay_off, _ = _META["layer[ok].record"]
+    d[inl_off - d0:inl_off - d0 + inl_w] = b""                  # drop the byte
+    d[hdr_off - d0 + 4:hdr_off - d0 + 8] = u32(0)               # inline_length
+    d[nm_off - d0:nm_off - d0 + nm_w] = b"\x03okx"              # +1 byte
+    old = struct.unpack("<I", d[lay_off - d0 + 4:lay_off - d0 + 8])[0]
+    d[lay_off - d0 + 4:lay_off - d0 + 8] = u32(old + 1)
+    assert len(d) == dl, len(d)
+    return bytes(d)
+
+
 # --------------------------------------------------------------------------
 # F34 — two user-metadata records in one top-level sequence.
 #
@@ -545,8 +565,18 @@ VECTORS = [
            repair=["directory.crc", "trailer.crc"],
            row="F22", rule="R-CNT-25", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
+    Vector("TV-0157", "meta", "F23 top-level user-metadata record's "
+           "inline_length is 0, the encoding byte absent (instance: "
+           "inline_length 0, the encoding byte absent)", False,
+           patches=[Patch("directory", _meta_dir_inline_len_0(),
+                          note="the freed inline byte goes to the layer "
+                               "name ok -> okx, so the sequence parses "
+                               "with no residue")],
+           repair=["directory.crc", "trailer.crc"],
+           row="F23", rule="R-MTA-03", outcome="reject-file",
+           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0135", "meta", "F23 top-level user-metadata record's "
-           "inline_length is 2", False,
+           "inline_length is 2 (instance: inline_length >= 2)", False,
            patches=[Patch("directory", _meta_dir_inline_len_2(),
                           note="the extra inline byte comes from renaming the "
                                "layer ok -> o, so the sequence still parses "
