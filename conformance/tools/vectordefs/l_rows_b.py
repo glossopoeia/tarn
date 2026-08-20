@@ -179,8 +179,22 @@ VECTORS = [
     # and test [R-CNT-18] instead. uint64's element size is 8, the fill
     # prefix stays 1. The tile is sentinelled because retyping also
     # changes the decoded size, which codec 1 ties to the entry's length.
+    # ADR-0078 gave L30 the direction axis: TV-0275 declares a type whose
+    # element size EXCEEDS the stored fill prefix, TV-0280 one whose element
+    # size falls below it. Both sentinel the tile, since retyping also moves
+    # the decoded size that codec 1 ties to the entry's length.
+    Vector("TV-0280", "pair",
+           "layer `bad` channel `v` is uint8 with a 4-byte fill (instance: "
+           "prefix longer than the element size)", False,
+           patches=SENTINEL + [Patch("layer[bad].chan[0].type", u16(6),
+                                     "uint8: element size 1, fill prefix 4")],
+           repair=REPAIR_IDX,
+           row="L30", rule="R-CNT-23", outcome="reject-layer",
+           scope={"kind": "layer", "name": "bad"}, detected="layer access",
+           must_not_serve=["layer:bad"], serves=["ok"]),
     Vector("TV-0275", "pair",
-           "layer `bad` channel `v` is uint64 with a 1-byte fill", False,
+           "layer `bad` channel `v` is uint64 with a 1-byte fill (instance: "
+           "prefix shorter than the element size)", False,
            patches=SENTINEL + [Patch("layer[bad].chan[0].type", u16(9),
                                      "uint64: element size 8, fill prefix 1")],
            repair=REPAIR_IDX,

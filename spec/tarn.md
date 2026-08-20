@@ -625,14 +625,23 @@ Every byte the live state does not claim is **slack**: alignment and
 slab gaps, the pre-trailer pad, and everything an earlier commit
 superseded. Slack has no internal structure this specification
 defines, its content is unconstrained, and no conformance requirement
-applies to it. A reader MUST NOT interpret it (§9.5); a verifier MUST
-report the total number of slack bytes, since that number is what
-tells an operator to compact. Where the walk of §9.7 does not
+applies to it. A reader MUST NOT interpret it (§9.5); a verifier that
+reaches a live state MUST report the total number of slack bytes,
+since that number is what tells an operator to compact. Where §6.2's
+ordered validation rejects the file before a live trailer is
+established there is no F and no live state to walk, so the total is
+not owed at all: the verifier reports the trailer failure and
+nothing about slack, which is not a partial total but the absence of
+one. Where the walk of §9.7 does not
 enumerate every region's claimants — whether because a scope-level
 rejection ends that scope's enumeration (a rejected layer's claimants
 are not enumerated, whether or not the rejection impeded reading
-them), or because the verifier elected under `[R-CNF-11]` to stop at
-the first violation — the verifier MUST report the total
+them — and where the rejection is one the walk itself established,
+L18's overlap or L40 through L42's placement among them, the
+claimants it had already enumerated are discarded with the layer,
+since the total is a claim about a live state one of whose layers is
+not usable), or because the verifier elected under `[R-CNF-11]` to
+stop at the first violation — the verifier MUST report the total
 as partial. A partial total is F less the bytes claimed by the
 claimants the walk did enumerate — an upper bound on the file's true
 slack, never an under-count — and a verifier reporting one MUST say
@@ -1463,10 +1472,11 @@ array is empty. Readers MUST accept such a layer, and a read of any
 region of it returns no samples. `[R-GEO-02]`
 
 > **Rationale.** Empty layers serve schema-first workflows: declare
-> layers at creation, grow extents as data arrives. Extents grow
-> freely; a shrink is barred wherever it alters what §14 fixes for a
-> tile the layer already stores (§20.3), which is the ordinary case —
-> a layer that stores nothing may still be re-declared freely. Growth
+> layers at creation, grow extents as data arrives. Extents grow; a
+> shrink is barred wherever it alters what §14 fixes for a tile the
+> layer already stores (§20.3, which states the tense normatively and
+> governs), which is the ordinary case — a layer that stores nothing
+> may still be re-declared freely. Growth
 > that leaves
 > every grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) unchanged touches the directory
 > alone; growth that raises one changes entry_count and with it
@@ -2139,7 +2149,9 @@ usable extent, and the run's stored tiles close over them. An entry
 whose only defect is that its stored bytes fail its crc is not
 transparent — its offset and length stand, and the packing relation
 reads them as it does any other stored tile's — so this invariant
-stays decidable from index bytes alone. A run with no stored tiles
+stays decidable from the index entries alone, given the committed
+file length §15.3 already requires to classify any entry. A run with no stored
+tiles
 imposes nothing. A verifier MUST
 check these invariants (violation: reject-layer, §15.3); readers are
 not obligated to, and MAY instead detect contiguity arithmetically
@@ -2925,17 +2937,22 @@ An appender MUST, in order:
    compaction's operation (§20.5, `[R-WRT-07]`), not an
    appender's. A commit MUST NOT change a
    layer's declarations in a way that alters, for any tile that layer
-   stores, what §14 fixes for its stored bytes or how they decode —
+   stores **in the generation this commit supersedes**, what §14
+   fixes for its stored bytes or how they decode —
    the set of padding positions (§11.3) and the content
    `[R-SER-05]` fixes there, the decoded size, the byte offset of any
    sample within the decoded tile image, or the codec and filter that
-   produced the stored bytes. The test is the effect on a stored
-   tile, and the list names where that effect arises rather than
-   standing on its own: a change that reaches none of these for any
-   tile the layer stores — a filter whose mandated stride makes it
+   produced the stored bytes. The tense is the prior generation's
+   (§3.1 defines *stored* against a generation), so a commit does not
+   escape this by unstoring in the same breath: superseding every
+   tile of a layer and re-declaring it are one operation, and this
+   bars it. The test is the effect on such a tile, and the list names
+   where that effect arises rather than standing on its own: a change
+   that leaves every one of those tiles' stored bytes meaning exactly
+   what they meant — a filter whose mandated stride makes it
    the identity (`[R-COD-10]`), or a new padding position whose
-   stored byte already holds the fill `[R-SER-05]` fixes — leaves
-   every stored tile conforming and is not what this bars. Where a
+   stored byte already holds the fill `[R-SER-05]` fixes — is not
+   what this bars. Where a
    change does reach them it makes each stored tile it reaches
    nonconforming, and re-emitting those tiles would
    strand the originals as slack — the whole layer's worth, since
@@ -2944,9 +2961,13 @@ An appender MUST, in order:
    new layer, or a whole-file rewrite under a fresh file_id
    (`[R-LIF-01]`, §20.5). A layer that stores no tile MAY be
    re-declared freely, which is what schema-first creation needs
-   (§11.1); and an extent MAY always **grow**, since a position that
+   (§11.1); and an extent MAY **grow**, since a position that
    becomes real held that channel's fill and fill is a legal sample
-   value. Extents this commit supersedes become slack
+   value — provided the grown geometry stays within every bound the
+   layer's own declarations impose, `[R-COD-07]`'s lz4 decoded-size
+   cap being the one such bound in format major 1 (L44), which an
+   empty layer escapes only because that cap is quantified over
+   addressed tiles. Extents this commit supersedes become slack
    (`[R-CNT-21]`); a slab declaration is re-established or
    cleared (`[R-SLB-04]`), and an aligned layer's new tiles
    satisfy its invariant or the declaration is cleared
@@ -3010,9 +3031,12 @@ An appender MUST, in order:
 > **(c) A change confined to the directory** — clearing a slab
 > declaration, renaming a layer, or changing a channel's fill value on
 > a layer with no padding position and no pad bit. Only the directory
-> is re-emitted. A fill change on a layer carrying either is not an
+> is re-emitted. A fill change on a layer that **stores** a tile
+> carrying either is not an
 > appender's operation at all (step 4): it would invalidate every
-> stored tile it reaches. Editing user metadata is not this shape:
+> stored tile it reaches. A layer storing no tile is re-declared
+> freely whatever its geometry, which is the same step's permission. Editing
+> user metadata is not this shape:
 > its document lives in an extent (`[R-CNT-25]`), so a new extent is
 > appended and the old one becomes slack, as in (b).
 >
@@ -3115,7 +3139,12 @@ re-emitted), and updates the layer-record fields covering a
 regenerated region (crc_of_crc_array). No other record payload
 carries a file offset: MU = 0 records by rule (§7.2), and an
 MU = 1 type the compactor does not implement never reaches this
-step (`[R-WRT-06]`). The output's reference arrays MUST equal the
+step (`[R-WRT-06]`). An MU = 1 type it *does* implement is the
+remaining case, and §7.2 admits it — such a type carries further
+references where this specification or registry review defines
+them — so a compactor implementing one relocates whatever that
+registration defines, on the same terms as the tile index. The output's
+reference arrays MUST equal the
 live generation's bit for bit (`[R-MDL-02]`): compaction changes
 where bytes live, never what a layer denotes. `[R-WRT-07]`
 
@@ -3168,9 +3197,14 @@ structure's bytes. `[R-WRT-09]`
 The register — §21.2 through §21.5 (`[R-ERR-02]`) — enumerates
 every detectable file-conformance violation this specification names: each row is one
 malformed condition, with the outcome class its scope determines
-(§2.4), the actor obliged to detect it (`[R-CNF-04]`, `[R-CNF-11]`),
+(§2.4) — except where a rule assigns one expressly, as `[R-CNT-25]`'s
+quarantine does for every §21.5 row, whatever the containing scope —
+the actor obliged to detect it (`[R-CNF-04]`, `[R-CNF-11]`),
 the point by which detection is due (§19.2), and the requirement that
-defines it. Its **completeness is normative** — a
+defines it. A Governing rule cell names that requirement first; any
+identifiers following it in parentheses are the further rules the
+condition reads, cited without brackets to keep them distinct from
+the governing one. Its **completeness is normative** — a
 *detectable* file-conformance violation this specification names and
 the register omits is a defect in this document, detectability being the gate
 `[R-CNF-07]` already applies and §21.7 the account, by class, of
@@ -3203,11 +3237,16 @@ and one whose members give the condition materially different shapes
 enumerates them (T15, T25). Two axes recur often enough to be stated rather than judged each
 time. Where the quantity a condition derives varies by layout, the
 layout formulas are materially different shapes and the cell
-enumerates them. Where the condition compares two quantities and
-either can be the greater — a *differs from* or *does not equal* —
-the two directions are likewise enumerated; where its own text
-bounds the comparison in one direction — an *exceeds*, a *larger
-than* — there is one. Instances within a
+enumerates them. Where the condition compares two **magnitudes**
+either of which can be the greater — a *differs from* or *does not
+equal* — the two directions are likewise enumerated; where its own
+text bounds the comparison in one direction — an *exceeds*, a
+*larger than* — there is one. A comparison with no magnitude
+ordering enumerates no direction: a stored checksum against a
+computed one, or a byte pattern against a constant, is equal or it
+is not, and *greater* names nothing. Nor does a field tested only
+for being nonzero — an *A ≠ 0*, an *S ≠ 0* — which is a value test
+and not a comparison of two quantities at all. Instances within a
 cell are separated by semicolons, and a cell reading — is one
 instance; the count is therefore mechanical once the cell is
 written. One instance is one
@@ -3221,11 +3260,18 @@ entirely. For a row whose Detector is *verifier*, the outcome names
 the scope at which the damage is recorded, not an obligation on any
 reader: the governing rule states what a reader does, and for
 several such rows it obliges the reader to serve the structure
-unchanged (`[R-SER-08]`, `[R-CNT-22]`).
+unchanged (`[R-SER-08]`, `[R-CNT-22]`, and `[R-MTA-05]`, whose
+unsorted document readers process as they find it — F27 and L48).
 
 #### 21.2 File-scope violations
 
-Outcome: reject-file. 36 conditions.
+Outcome: reject-file. 36 conditions. Every row here presupposes a
+file this specification judges: one declaring format major 1. A file
+declaring another major is neither conforming nor nonconforming
+under this text (§2.3, `[R-CNF-02]`), and no row below reaches it —
+§6.2's ordered validation puts the version gate ahead of every check
+but the trailer magic and the trailer CRC, so a foreign-major file
+is refused on capability grounds before any geometry row applies.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
@@ -3245,7 +3291,7 @@ Outcome: reject-file. 36 conditions.
 | F14 | The u32 at trailer offset 60 does not equal the CRC-32C of trailer bytes [0,60) | trailer CRC | reader | open | `[R-CNT-06]` (R-CNT-20, R-ENC-09) |
 | F15 | The 4 reserved bytes at trailer offset 56 are not all zero | trailer reserved [56,60) | reader | open | `[R-CNT-06]` (R-CNT-24) |
 | F16 | Trailer dir_length is less than 4, too small to hold the directory region's terminal CRC-32C | dir_length | reader | open | `[R-CNT-06]` (R-ENC-07) |
-| F17 | Trailer committed_file_length does not equal the transport-authoritative file size (physical file not truncated or extended to it) | committed_file_length | reader | open | `[R-CNT-06]` (R-LIF-04, R-CNT-10) |
+| F17 | Trailer committed_file_length does not equal the transport-authoritative file size (physical file not truncated or extended to it) | committed_file_length, physical file shorter; committed_file_length, physical file longer | reader | open | `[R-CNT-06]` (R-LIF-04, R-CNT-10) |
 | F18 | Trailer version_major is 0, a permanently invalid major in every format major version | version_major | reader | open | `[R-CNT-07]` |
 | F19 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-15 | reader | open | `[R-CNT-08]` |
 | F20 | The final 4 bytes of the directory region do not equal the CRC-32C of the preceding dir_length - 4 bytes (the raw record sequence) | directory region CRC | reader | open | `[R-CNT-11]` (R-CNT-20, R-ENC-10) |
@@ -3293,8 +3339,8 @@ layer unaffected. 49 conditions.
 | L18 | Two structures of one and the same layer claim overlapping bytes in the live committed state | stored-tile extents; tile-index region; layer sub-record extents | verifier | certification | `[R-CNT-13]` (R-IDX-03) |
 | L19 | A layer record's sub-record sequence contains more than one user-metadata sub-record (type 0x0002) | — | reader | layer access | `[R-CNT-14]` |
 | L20 | A layer record declares both a per-tile alignment A ≠ 0 and a slab S ≠ 0 | — | reader | layer access | `[R-CNT-16]` |
-| L21 | entry_count does not equal the geometry-derived addressed-tile count (N interleaved, C·N planar) | interleaved N; planar C·N | reader | layer access | `[R-CNT-17]` (R-CNT-20) |
-| L22 | Under index_encoding 1, extent_length ≠ entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 — including slot (0,0) with entry_count > 0, or a nonzero slot with entry_count = 0 | extent_length against the formula; slot (0,0) with entry_count > 0; a nonzero slot with entry_count = 0 | reader | layer access | `[R-CNT-17]` (R-ENC-07, R-CNT-20) |
+| L21 | entry_count does not equal the geometry-derived addressed-tile count (N interleaved, C·N planar) | interleaved N, entry_count larger; interleaved N, entry_count smaller; planar C·N, entry_count larger; planar C·N, entry_count smaller | reader | layer access | `[R-CNT-17]` (R-CNT-20) |
+| L22 | Under index_encoding 1, extent_length ≠ entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 — including slot (0,0) with entry_count > 0, or a nonzero slot with entry_count = 0 | extent_length against the formula, extent_length larger; extent_length against the formula, extent_length smaller; slot (0,0) with entry_count > 0; a nonzero slot with entry_count = 0 | reader | layer access | `[R-CNT-17]` (R-ENC-07, R-CNT-20) |
 | L23 | A declared region of the layer record's inline payload does not lie entirely within inline_length (overrun or truncation) | leading fixed fields (name … C); d dimension entries; C channel entries; trailing fixed fields (index_encoding, entry_count, crc_of_crc_array) | reader | layer access | `[R-CNT-18]` |
 | L24 | A layer record's sub-record carries a reserved-range type value (0x0003-0x7FFF, §10.2) with MUST_UNDERSTAND (flags bit 0) set to 1 | — | reader | layer access | `[R-CNT-18]` (R-CNT-15) |
 | L25 | A layer record's sub-record carries a type value from the reserved range 0x0003-0x7FFF, which this specification has not assigned; emitting one is a violation whatever its MU bit | — | verifier | certification | `[R-CNT-15]` (R-CNT-18) |
@@ -3302,7 +3348,7 @@ layer unaffected. 49 conditions.
 | L27 | Layer record has entry_count = 0 but a nonzero crc_of_crc_array | — | reader | layer access | `[R-CNT-23]` (R-IDX-04) |
 | L28 | Layer record has slab S = 0 but a nonzero slab alignment A_slab | — | reader | layer access | `[R-CNT-23]` (R-SLB-02) |
 | L29 | Layer record declares S ≠ 0 with an A_slab that is not a power of two in 1 … 2^62 (A_slab = 0 included) | A_slab = 0; A_slab not a power of two; A_slab above 2^62 | reader | layer access | `[R-CNT-23]` (R-SLB-02) |
-| L30 | A channel entry's fill length prefix differs from the element size of the channel's declared type | — | reader | layer access | `[R-CNT-23]` (R-TYP-06) |
+| L30 | A channel entry's fill length prefix differs from the element size of the channel's declared type | prefix longer than the element size; prefix shorter than the element size | reader | layer access | `[R-CNT-23]` (R-TYP-06) |
 | L31 | Layer record's index_encoding is a value other than 1 — 0, reserved 2–0x7F, or experimental ≥ 0x80 | index_encoding 0; reserved 2-0x7F; experimental >= 0x80 | reader | layer access | `[R-CNT-23]` (§15.1) |
 | L32 | A layer geometry field whose floor is 1 is 0 | rank d; channel count C; tile extent Tᵢ | reader | layer access | `[R-GEO-01]` (R-CNT-23) |
 | L33 | Layer record's linearization is a value other than 1 — 0, reserved 2–3, reserved 4–0x7FFF, or experimental ≥ 0x8000 | linearization 0; reserved 2-3; reserved 4-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-GEO-05]` (R-CNT-23) |
@@ -3465,7 +3511,14 @@ values it carries; `[R-CNT-13]`'s prohibition on an MU = 0
 record encoding file offsets in its own payload is opaque by
 construction; `[R-CNT-18]`'s prohibition on a sub-record containing
 records is detectable only by parsing a payload no format-major-1
-reader parses as a record sequence (§7.4's closing Note); and `[R-ENC-06]`'s fixed field widths are not a state a
+reader parses as a record sequence (§7.4's closing Note);
+§20.3 step 4's bar on a declaration change is witnessed only where
+the affected tiles remain stored — the §21.4 rows then fire — and a
+commit that supersedes every tile it would have damaged leaves the
+live state clean, so the bar is unwitnessed there for the same
+reason `[R-LIF-01]` is: it is a property of the prior generation,
+which §9.7 does not reconstruct; and `[R-ENC-06]`'s fixed field widths are not
+a state a
 file can be in, since the parse is always at the widths this
 specification fixes and a structure written at any other yields
 different values at them, caught by the rows for the fields that hold
@@ -3473,7 +3526,7 @@ them. `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 121 conditions over 268
+Every row of §21.2 through §21.5 — 121 conditions over 273
 instances — has at least one conformance vector (§24) whose expected
 outcome is that row's outcome, and one vector per instance. A row without a vector is a
 gap in the corpus, not a licence to skip the check. `[R-ERR-02]`
@@ -4008,8 +4061,11 @@ the file.
    other fields with the `file_id` field taken as zero, then written
    in — the hash a named function at a named version, its input the
    bytes [0, F − 64) followed by the trailer's first 60 bytes with the
-   `file_id` field zeroed, and the identifier its low eight digest
-   bytes read little-endian, with any other fixed nonzero value
+   `file_id` field zeroed, and the identifier the digest's **last
+   eight bytes in output order** — the eight a named hash emits last,
+   read little-endian; *low* names their position in the digest, not
+   an arithmetic magnitude, and the two readings of that word are why
+   this says which end. Any other fixed nonzero value is
    substituted in the measure-zero case that they are all zero
    (§6.2 forbids `file_id` = 0). This is a creator's rule: a compactor
    adopting the profile takes `[R-WRT-06]`'s fresh draw instead, since
@@ -4041,7 +4097,9 @@ the file.
    lengths, payload and extent content; emitting them in either
    order yields the same file, so the writer chooses. Record order carries no meaning (`[R-CNT-14]`), so it
    is otherwise free to vary, as is structure placement
-   (`[R-LIF-02]` step 2). Each structure begins where the previous one
+   (`[R-LIF-02]` step 2). The first structure begins at 16, directly
+   after the front signature block, which §5.2 counts as no
+   structure; each later structure begins where the previous one
    ended, save where alignment forces a gap — a
    declared A or A_slab, or §6.2's 64-byte trailer alignment, the
    pre-trailer pad included — and every byte of every such gap is zero — `[R-CNT-03]`'s advice, taken as a requirement
@@ -4090,7 +4148,8 @@ SHOULD); the sentinel for every all-fill tile, which no rule requires;
 a single generation, which §9 nowhere constrains; the absence or
 fixing of a declared alignment and slab, which §16 leaves to the
 writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
-SHOULD; a derived `file_id`, where §9.3 states only advice; and the
+SHOULD; a derived `file_id`, where §9.3 states only advice; NFC-normalized
+names, which `[R-ENC-14]` states as a SHOULD; and the
 producer pinning of items 1 and 9. Read the numbered items as the
 list; this paragraph names what they are for, not how many there
 are.

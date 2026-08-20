@@ -34,8 +34,8 @@ reader reaches it. That is the opposite of masking.
 """
 import struct
 
-from tarn_build import crc32c
-from tarn_vectors import Vector, Patch, SEEDS
+from tarn_build import Channel, Layer, build_with_layout, crc32c
+from tarn_vectors import Vector, Patch, SEEDS, register_seed
 
 u8 = lambda v: struct.pack("<B", v)
 u16 = lambda v: struct.pack("<H", v)
@@ -130,6 +130,53 @@ def L(id_, title, row, rule, patches, *, repair=("directory.crc", "trailer.crc")
                   # over with content the corpus cannot compute.
                   serves=["ok"],
                   breaks_checksums=list(breaks))
+
+
+
+# --------------------------------------------------------------------------
+# Seed `l21big` — a layer whose entry_count exceeds the derived count.
+#
+# Round 14 gave L21 and L22 the direction axis (ADR-0078). The "entry_count
+# smaller" instances patch seed `pair`, whose bad layer derives N = 1 — the
+# floor — so nothing there can make entry_count the LARGER side. This seed
+# derives N = 2 with entry_count 2 and a 44-byte region, so shrinking a
+# dimension drops the derived count below a stationary entry_count.
+#
+# The `spacer` layer declares alignment 512, which pushes its stored tile to
+# offset 512 and leaves a wide gap after `bad`'s index region. That gap is
+# what lets L22's "extent_length larger" grow the declared length without
+# the region running into the next structure and co-violating F33/L18.
+# --------------------------------------------------------------------------
+
+def seed_l21big():
+    ok = Layer("ok", extents=(2, 3), tile_extents=(2, 3),
+               channels=[Channel("t", 12)],
+               tiles=[struct.pack("<6I", 0x3F800000, 0x80000000, 0x7FC00001,
+                                  0xC0000000, 0x00000000, 0x7F800000)])
+    bad = Layer("bad", extents=(4, 3), tile_extents=(2, 3),
+                channels=[Channel("v", 6, b"\x00")],
+                tiles=[None, None])
+    spacer = Layer("spacer", extents=(1, 1), tile_extents=(1, 1),
+                   channels=[Channel("s", 6, b"\x00")],
+                   alignment=512, tiles=[bytes([0x5A])])
+    return build_with_layout([ok, bad, spacer])
+
+
+register_seed("l21big", seed_l21big, ["ok", "bad", "spacer"])
+_BIG_BLOB, _BIG = seed_l21big()
+_BIG_EO, _BIG_EL = _BIG["layer[bad].index_region"]
+assert _BIG_EL == 2 * 20 + 4, _BIG_EL          # entry_count 2 under [R-CNT-17]
+assert _BIG_EO + _BIG_EL + 4 <= 512, "no room to grow extent_length"
+
+
+def _big(vid, title, patches, row, instance, rule="R-CNT-17"):
+    return Vector(vid, "l21big", title, False, patches=list(patches),
+                  repair=["directory.crc", "trailer.crc"],
+                  row=row, rule=rule, outcome="reject-layer",
+                  scope={"kind": "layer", "name": "bad", "instance": instance},
+                  detector="reader", detected="layer access",
+                  instance=instance,
+                  must_not_serve=["layer:bad"], serves=["ok"])
 
 
 VECTORS = [
@@ -410,17 +457,43 @@ VECTORS = [
     # entry_count = 1. The region is still 1*20 + 4 = 24 bytes, so L22
     # stays clean exactly as in the interleaved case.
     L("TV-0236", "layer `bad`, planar: addresses C·N = 2 tiles but declares "
-      "entry_count = 1 (instance: planar C·N)",
+      "entry_count = 1 (instance: planar C·N, entry_count smaller)",
       "L21", "R-CNT-17", [Patch("layer[bad].layout", b"\x02", "planar"),
                           Patch("layer[bad].dim[1].extent", u64(4))]),
+    # ADR-0078 gave L21 the direction axis. The two above make entry_count
+    # the SMALLER side; these two make it the larger, on seed `l21big`,
+    # whose bad layer derives N = 2 against a stationary entry_count = 2.
+    # Shrinking dim 0 from 4 to 2 collapses the grid to (1,1): the derived
+    # count falls to 1 while entry_count stays 2 and extent_length stays
+    # 44 = 2 × 20 + 4, so [R-CNT-17]'s size relation holds and L22 is clean.
+    _big("TV-0240",
+         "L21 layer `bad` declares entry_count = 2 but addresses N = 1 "
+         "(instance: interleaved N, entry_count larger)",
+         [Patch("layer[bad].dim[0].extent", u64(2))],
+         "L21", "interleaved N, entry_count larger"),
+    _big("TV-0241",
+         "L21 layer `bad`, planar: declares entry_count = 2 but addresses "
+         "C·N = 1 (instance: planar C·N, entry_count larger)",
+         [Patch("layer[bad].layout", b"\x02", "planar"),
+          Patch("layer[bad].dim[0].extent", u64(2))],
+         "L21", "planar C·N, entry_count larger"),
 
     # -- L22 — the index region's declared size ----------------------------
     # `[R-CNT-17]`, three files for the three alternatives the row's text
     # states. Each keeps entry_count equal to the geometry-derived count so
     # that L21 is satisfied and only the size relation fails.
     L("TV-0229", "layer `bad` extent_length = 20, not entry_count*20 + 4 = 24 "
-      "(instance: extent_length)",
+      "(instance: extent_length against the formula, extent_length smaller)",
       "L22", "R-CNT-17", [Patch("layer[bad].extent_length", u64(20))]),
+    # The larger direction. On seed `pair` the region abuts the directory,
+    # so growing extent_length would overlap it and co-violate F33; seed
+    # `l21big` leaves a wide gap before the aligned `spacer` tile, so 48
+    # against the formula's 44 is the only condition the file carries.
+    _big("TV-0242",
+         "L22 layer `bad` extent_length = 48, not entry_count*20 + 4 = 44 "
+         "(instance: extent_length against the formula, extent_length larger)",
+         [Patch("layer[bad].extent_length", u64(48))],
+         "L22", "extent_length against the formula, extent_length larger"),
     L("TV-0230", "layer `bad` extent slot (0, 0) with entry_count = 1 "
       "(instance: extent_offset)",
       "L22", "R-CNT-17", [Patch("layer[bad].extent_offset", u64(0)),

@@ -163,6 +163,14 @@ def _entry(offset: int, length: int, blob: bytes) -> bytes:
 
 _T = len(_PAIR_BLOB) - 64                       # pair: F - 64 = 384
 
+# The minimal seed's own 64-byte trailer, appended verbatim by TV-0156 so the
+# physical file outruns committed_file_length while a valid trailer still sits
+# at the physical end. Read from the seed rather than transcribed, so it
+# cannot drift from the file it is copied out of.
+_MINIMAL_BLOB, _ = SEEDS["minimal"]()
+_MINIMAL_TRAILER_HEX = _MINIMAL_BLOB[-64:].hex()
+assert len(_MINIMAL_BLOB) == 128 and len(_MINIMAL_TRAILER_HEX) == 128
+
 
 # --------------------------------------------------------------------------
 # F7's non-tile claimant families (ADR-0076). Self-contained seeds: the
@@ -470,9 +478,27 @@ VECTORS = [
     # 192 keeps committed_file_length a multiple of 64 and above the 128-byte
     # floor, so F17 is the only condition the file carries (not F13, not F5).
     Vector("TV-0128", "minimal",
-           "F17 committed_file_length = 192 in a 128-byte file", False,
+           "F17 committed_file_length = 192 in a 128-byte file (instance: "
+           "committed_file_length, physical file shorter)", False,
            patches=[Patch("trailer.committed_file_length", u64(192))],
            repair=["trailer.crc"],
+           breaks_checksums=["trailer.gates"],
+           row="F17", rule="R-CNT-06", outcome="reject-file",
+           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
+    # ADR-0078's other direction: the physical file is LONGER than the
+    # length the trailer commits to. A reader locates the trailer from the
+    # transport's file size, so appending arbitrary bytes would displace it
+    # and the file would fail F8's magic instead. Appending a byte-identical
+    # copy of the trailer keeps a valid, CRC-verifying trailer at the
+    # physical end whose committed_file_length names 128 against a 192-byte
+    # file — F17 and nothing else. §6.2's gates all pass on that trailer:
+    # 128 is a multiple of 64 and above §5.1's floor, and the directory at
+    # [16, 20) lies within 128 - 64.
+    Vector("TV-0156", "minimal",
+           "F17 committed_file_length = 128 in a 192-byte file, the trailer "
+           "copied verbatim to the physical end (instance: "
+           "committed_file_length, physical file longer)", False,
+           repair=["append:" + _MINIMAL_TRAILER_HEX],
            breaks_checksums=["trailer.gates"],
            row="F17", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),

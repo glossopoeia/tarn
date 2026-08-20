@@ -1476,7 +1476,7 @@
     {
       "id": "TV-0128",
       "file": "reject-file/TV-0128.tarn",
-      "title": "F17 committed_file_length = 192 in a 128-byte file",
+      "title": "F17 committed_file_length = 192 in a 128-byte file (instance: committed_file_length, physical file shorter)",
       "sha256": "b7c5b2b276f92a32380bc7855fbb1c45321b0344a8cdc94a60136b82f6864edf",
       "size": 128,
       "conforming": false,
@@ -1501,7 +1501,7 @@
       "violations": [
         {
           "row": "F17",
-          "instance": "committed_file_length",
+          "instance": "committed_file_length, physical file shorter",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -2974,6 +2974,40 @@
           },
           "detector": "verifier",
           "detected": "certification"
+        }
+      ]
+    },
+    {
+      "id": "TV-0156",
+      "file": "reject-file/TV-0156.tarn",
+      "title": "F17 committed_file_length = 128 in a 192-byte file, the trailer copied verbatim to the physical end (instance: committed_file_length, physical file longer)",
+      "sha256": "e1a140ba92adde1a559a3b91b3c6b9ad7b33924a2851d8951dfdf8577dcfc6df",
+      "size": 192,
+      "conforming": false,
+      "derivation": {
+        "seed": "minimal",
+        "patches": [],
+        "repair": [
+          "append:8a4e5241540d0a1a01000000000000000100000000000000100000000000000004000000000000008000000000000000efcdab896745230100000000d23809e0"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "file"
+        ],
+        "may_escalate_to": "file"
+      },
+      "violations": [
+        {
+          "row": "F17",
+          "instance": "committed_file_length, physical file longer",
+          "rule": "R-CNT-06",
+          "outcome": "reject-file",
+          "scope": {
+            "kind": "file"
+          },
+          "detector": "reader",
+          "detected": "open"
         }
       ]
     },
@@ -5224,7 +5258,7 @@
       "violations": [
         {
           "row": "L21",
-          "instance": "interleaved N",
+          "instance": "interleaved N, entry_count smaller",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
@@ -5239,7 +5273,7 @@
     {
       "id": "TV-0229",
       "file": "reject-layer/TV-0229.tarn",
-      "title": "layer `bad` extent_length = 20, not entry_count*20 + 4 = 24 (instance: extent_length)",
+      "title": "layer `bad` extent_length = 20, not entry_count*20 + 4 = 24 (instance: extent_length against the formula, extent_length smaller)",
       "sha256": "a16a3f928cf5385dbbbee8d9217a25e56c27b36cf6c9a4b1e6f2426a26ebae9c",
       "size": 448,
       "conforming": false,
@@ -5303,7 +5337,7 @@
       "violations": [
         {
           "row": "L22",
-          "instance": "extent_length against the formula",
+          "instance": "extent_length against the formula, extent_length smaller",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
@@ -5805,7 +5839,7 @@
     {
       "id": "TV-0236",
       "file": "reject-layer/TV-0236.tarn",
-      "title": "layer `bad`, planar: addresses C\u00b7N = 2 tiles but declares entry_count = 1 (instance: planar C\u00b7N)",
+      "title": "layer `bad`, planar: addresses C\u00b7N = 2 tiles but declares entry_count = 1 (instance: planar C\u00b7N, entry_count smaller)",
       "sha256": "8ae21f33f48f16d5d6d3aab38adad24592661f31396bed5070ef93cf5e5f818a",
       "size": 448,
       "conforming": false,
@@ -5873,12 +5907,256 @@
       "violations": [
         {
           "row": "L21",
-          "instance": "planar C\u00b7N",
+          "instance": "planar C\u00b7N, entry_count smaller",
           "rule": "R-CNT-17",
           "outcome": "reject-layer",
           "scope": {
             "kind": "layer",
             "name": "bad"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0240",
+      "file": "reject-layer/TV-0240.tarn",
+      "title": "L21 layer `bad` declares entry_count = 2 but addresses N = 1 (instance: interleaved N, entry_count larger)",
+      "sha256": "a6e9793a582a0d26056010267d93316055de8a72ef678536679cab9cf0536fbe",
+      "size": 576,
+      "conforming": false,
+      "derivation": {
+        "seed": "l21big",
+        "patches": [
+          {
+            "field": "layer[bad].dim[0].extent",
+            "value": "0200000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:bad"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L21",
+          "instance": "interleaved N, entry_count larger",
+          "rule": "R-CNT-17",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad",
+            "instance": "interleaved N, entry_count larger"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0241",
+      "file": "reject-layer/TV-0241.tarn",
+      "title": "L21 layer `bad`, planar: declares entry_count = 2 but addresses C\u00b7N = 1 (instance: planar C\u00b7N, entry_count larger)",
+      "sha256": "ec3596d57c63c8f9d6a782509b3e225e5d2044c304610dfb5d7293fddbb69a7e",
+      "size": 576,
+      "conforming": false,
+      "derivation": {
+        "seed": "l21big",
+        "patches": [
+          {
+            "field": "layer[bad].layout",
+            "value": "02"
+          },
+          {
+            "field": "layer[bad].dim[0].extent",
+            "value": "0200000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:bad"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L21",
+          "instance": "planar C\u00b7N, entry_count larger",
+          "rule": "R-CNT-17",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad",
+            "instance": "planar C\u00b7N, entry_count larger"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0242",
+      "file": "reject-layer/TV-0242.tarn",
+      "title": "L22 layer `bad` extent_length = 48, not entry_count*20 + 4 = 44 (instance: extent_length against the formula, extent_length larger)",
+      "sha256": "106192e99393c07d94738550840a9c2c644626cb192d6f73ac0827fc695330b9",
+      "size": 576,
+      "conforming": false,
+      "derivation": {
+        "seed": "l21big",
+        "patches": [
+          {
+            "field": "layer[bad].extent_length",
+            "value": "3000000000000000"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:bad"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L22",
+          "instance": "extent_length against the formula, extent_length larger",
+          "rule": "R-CNT-17",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad",
+            "instance": "extent_length against the formula, extent_length larger"
           },
           "detector": "reader",
           "detected": "layer access"
@@ -6346,7 +6624,7 @@
     {
       "id": "TV-0275",
       "file": "reject-layer/TV-0275.tarn",
-      "title": "layer `bad` channel `v` is uint64 with a 1-byte fill",
+      "title": "layer `bad` channel `v` is uint64 with a 1-byte fill (instance: prefix shorter than the element size)",
       "sha256": "1cff756bddf4859c6a06b9c98edf816714ea344bcff56b13c24de12142d0a22c",
       "size": 448,
       "conforming": false,
@@ -6423,7 +6701,7 @@
       "violations": [
         {
           "row": "L30",
-          "instance": "\u2014",
+          "instance": "prefix shorter than the element size",
           "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
@@ -6799,6 +7077,98 @@
           "row": "L32",
           "instance": "rank d",
           "rule": "R-GEO-01",
+          "outcome": "reject-layer",
+          "scope": {
+            "kind": "layer",
+            "name": "bad"
+          },
+          "detector": "reader",
+          "detected": "layer access"
+        }
+      ]
+    },
+    {
+      "id": "TV-0280",
+      "file": "reject-layer/TV-0280.tarn",
+      "title": "layer `bad` channel `v` is uint8 with a 4-byte fill (instance: prefix longer than the element size)",
+      "sha256": "fcf7b1cf75e09cd0961bd2e3b771ea7ee1cace95d02111ac0535a922a1db35f9",
+      "size": 448,
+      "conforming": false,
+      "derivation": {
+        "seed": "pair",
+        "patches": [
+          {
+            "field": "layer[bad].entry[0].offset",
+            "value": "ffffffffffffffff"
+          },
+          {
+            "field": "layer[bad].entry[0].length",
+            "value": "ffffffffffffffff"
+          },
+          {
+            "field": "layer[bad].entry[0].crc",
+            "value": "zero"
+          },
+          {
+            "field": "layer[bad].chan[0].type",
+            "value": "0600"
+          }
+        ],
+        "repair": [
+          "index:bad",
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "layer:bad"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "L30",
+          "instance": "prefix longer than the element size",
+          "rule": "R-CNT-23",
           "outcome": "reject-layer",
           "scope": {
             "kind": "layer",
