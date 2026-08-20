@@ -484,6 +484,36 @@ VECTORS = [
            row="L44", rule="R-COD-07", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
+    # ADR-0076: the other two decoded-size formulas, TV-0301's
+    # construction re-run. Planar: the single uint8 plane is P·Bᶜ =
+    # 0x7E000002 · 1. Packed bool: P = 0x1F8000001 · 2 = 0x3F0000002,
+    # and ⌈P/8⌉ = 0x7E000001 — one byte past the bound.
+    Vector("TV-0307", "pair",
+           "layer `bad`, planar: codec 4 with a uint8 plane's decoded size "
+           "0x7E000002", False,
+           patches=SENTINEL + [Patch("layer[bad].codec", u16(4), "lz4"),
+                               Patch("layer[bad].layout", b"\x02", "planar"),
+                               Patch("layer[bad].dim[0].tile_extent",
+                                     u64(0x3F000001),
+                                     "P·Bᶜ = 0x7E000002 > 0x7E000000")],
+           repair=REPAIR_IDX,
+           row="L44", rule="R-COD-07", outcome="reject-layer",
+           scope={"kind": "layer", "name": "bad"}, detected="layer access",
+           must_not_serve=["layer:bad"], serves=["ok"]),
+    Vector("TV-0308", "pair",
+           "layer `bad`, packed planar bool: codec 4 with a plane of "
+           "⌈0x3F0000002/8⌉ = 0x7E000001 bytes", False,
+           patches=SENTINEL + [Patch("layer[bad].codec", u16(4), "lz4"),
+                               Patch("layer[bad].layout", b"\x02", "planar"),
+                               Patch("layer[bad].chan[0].type", u16(1),
+                                     "bool"),
+                               Patch("layer[bad].dim[0].tile_extent",
+                                     u64(0x1F8000001),
+                                     "⌈P/8⌉ = 0x7E000001 > 0x7E000000")],
+           repair=REPAIR_IDX,
+           row="L44", rule="R-COD-07", outcome="reject-layer",
+           scope={"kind": "layer", "name": "bad"}, detected="layer access",
+           must_not_serve=["layer:bad"], serves=["ok"]),
 
     # -- L45 · filter other than 1 or 2 -----------------------------------
     Vector("TV-0302", "pair", "layer `bad` declares filter 0 (invalid)", False,

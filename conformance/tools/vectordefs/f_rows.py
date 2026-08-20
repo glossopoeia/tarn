@@ -22,8 +22,9 @@ The header sits inside the directory, so the repair chain is
 import struct
 import sys
 
-from tarn_build import FRONT, TRAILER_MAGIC, crc32c
-from tarn_vectors import SEEDS, Patch, Vector
+from tarn_build import (FRONT, TRAILER_MAGIC, Channel, Layer, Record,
+                        build_with_layout, crc32c)
+from tarn_vectors import SEEDS, Patch, Vector, register_seed
 
 u16 = lambda v: struct.pack("<H", v)
 u32 = lambda v: struct.pack("<I", v)
@@ -163,6 +164,90 @@ def _entry(offset: int, length: int, blob: bytes) -> bytes:
 _T = len(_PAIR_BLOB) - 64                       # pair: F - 64 = 384
 
 
+# --------------------------------------------------------------------------
+# F7's non-tile claimant families (ADR-0076). Self-contained seeds: the
+# structure is placed in the existing pre-trailer pad and the owning slot
+# repointed, then the directory and trailer CRCs are recomputed over the
+# final bytes. File length never changes.
+# --------------------------------------------------------------------------
+
+def _f7_ok() -> Layer:
+    """The intact sibling, identical to seed `meta`'s `ok` layer."""
+    return Layer("ok", extents=(2, 3), tile_extents=(2, 3),
+                 channels=[Channel("t", 12)],
+                 tiles=[struct.pack("<6I", 0x3F800000, 0x80000000, 0x7FC00001,
+                                    0xC0000000, 0x00000000, 0x7F800000)])
+
+
+def _f7_reseal(buf: bytearray, t: int, d0: int, dl: int) -> bytes:
+    buf[d0 + dl - 4:d0 + dl] = struct.pack(
+        "<I", crc32c(bytes(buf[d0:d0 + dl - 4])))
+    buf[t + 60:t + 64] = struct.pack("<I", crc32c(bytes(buf[t:t + 60])))
+    return bytes(buf)
+
+
+def _f7_span(blob: bytes) -> tuple[int, int, int]:
+    t = len(blob) - 64
+    d0, dl = struct.unpack("<QQ", blob[t + 24:t + 40])
+    return t, d0, dl
+
+
+def _seed_f7_index():
+    bad = Layer("bad", extents=(2, 2), tile_extents=(2, 2),
+                channels=[Channel("v", 6, b"\x00")],
+                tiles=[bytes([1, 2, 3, 4])])
+    blob, layout = build_with_layout([_f7_ok(), bad])
+    t, d0, dl = _f7_span(blob)
+    eo, el = layout["layer[bad].index_region"]
+    assert t - (d0 + dl) >= el, "pre-trailer pad too small for the region"
+    buf = bytearray(blob)
+    buf[t - el:t] = blob[eo:eo + el]           # verbatim copy, ends at F - 64
+    so, _ = layout["layer[bad].extent_offset"]
+    buf[so:so + 8] = struct.pack("<Q", t - el)
+    layout["layer[bad].index_region"] = (t - el, el)
+    return _f7_reseal(buf, t, d0, dl), layout
+
+
+def _seed_f7_record():
+    blob, layout = build_with_layout(
+        [_f7_ok()], [Record(0x8001, inline=b"", extent=b"\xA5" * 8)])
+    t, d0, dl = _f7_span(blob)
+    assert t - (d0 + dl) >= 8, "pre-trailer pad too small for the extent"
+    buf = bytearray(blob)
+    ho, _ = layout["record[0x8001].header"]
+    buf[ho + 8:ho + 16] = struct.pack("<Q", t - 8)
+    layout["record[0x8001].extent"] = (t - 8, 8)
+    return _f7_reseal(buf, t, d0, dl), layout
+
+
+def _seed_f7_sub():
+    host = Layer("host", extents=(2, 2), tile_extents=(2, 2),
+                 channels=[Channel("v", 6, b"\x00")],
+                 tiles=[bytes([1, 2, 3, 4])],
+                 sub_records=[Record(0x8001, inline=b"", extent=b"\xA5" * 8)])
+    blob, layout = build_with_layout([_f7_ok(), host])
+    t, d0, dl = _f7_span(blob)
+    assert t - (d0 + dl) >= 8, "pre-trailer pad too small for the extent"
+    buf = bytearray(blob)
+    so, _ = layout["layer[host].sub[0].extent_offset"]
+    buf[so:so + 8] = struct.pack("<Q", t - 8)
+    layout["layer[host].sub[0].extent"] = (t - 8, 8)
+    return _f7_reseal(buf, t, d0, dl), layout
+
+
+register_seed("f7index", _seed_f7_index, ["ok", "bad"])
+register_seed("f7record", _seed_f7_record, ["ok"])
+register_seed("f7sub", _seed_f7_sub, ["ok", "host"])
+
+
+def _f7_vec(vid, seed, title, serves):
+    return Vector(vid, seed, title, False,
+                  row="F7", rule="R-CNT-05", outcome="reject-file",
+                  scope={"kind": "file"},
+                  detector="verifier", detected="certification",
+                  must_not_serve=[], serves=list(serves))
+
+
 VECTORS = [
     # Seed `meta` rather than `minimal`: reversing 128 sets bit 63 and the
     # file would carry F2 as well, while reversing this seed's 320 lands on
@@ -294,6 +379,31 @@ VECTORS = [
            scope={"kind": "file"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok"]),
+
+    # ADR-0076 enumerated F7's cell over the claimant families. TV-0119
+    # above is the stored-tile instance; the other three place their
+    # structure in the pre-trailer pad — slack, whose content nothing
+    # constrains — and repoint the owning slot, so every checksum verifies
+    # over exactly the shipped bytes and placement is the file's only
+    # fact. The record and sub-record variants use an unregistered
+    # experimental type, whose extent §8.1 covers with no checksum, so the
+    # zero bytes standing in the pad are the extent. The tile-index
+    # variant needs its region bytes valid at the new placement, so a
+    # verbatim copy of the region is written into the pad first and the
+    # original region's bytes fall to slack. Each extent ends exactly at
+    # F - 64, TV-0119's construction, so no bounds gate fires.
+    _f7_vec("TV-0153", "f7index",
+            "F7 layer `bad`'s tile-index region lies in the pre-trailer pad "
+            "— a verbatim copy, every CRC intact",
+            serves=["ok", "bad"]),
+    _f7_vec("TV-0154", "f7record",
+            "F7 an experimental-type record's extent lies in the pre-trailer "
+            "pad",
+            serves=["ok"]),
+    _f7_vec("TV-0155", "f7sub",
+            "F7 layer `host`'s experimental-type sub-record extent lies in "
+            "the pre-trailer pad",
+            serves=["ok", "host"]),
 
     # ------------------------------------------------------------------
     # F8-F19 [R-CNT-06]/[R-CNT-07]/[R-CNT-08] — §6.2's trailer gates.

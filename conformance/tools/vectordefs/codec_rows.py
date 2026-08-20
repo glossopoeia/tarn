@@ -497,6 +497,43 @@ VECTORS += [
             "T22 codec 3 and Frame_Content_Size 3 against a decoded size of 4",
             _z(zstd_frame(IMG, content_size=3)), "T22", "R-COD-06"),
 
+    # ADR-0076: T21's and T22's cells enumerate the decoded-size formulas;
+    # the vectors above are the interleaved instances. Same construction
+    # discipline: E == T so no padding position exists, the packed plane
+    # keeps P mod 8 = 0 so no pad bit exists, and each frame's content
+    # decodes to exactly the plane's size, so the frame field named in the
+    # title is the file's only fact.
+    _reader("TV-0727",
+            "T21 codec 3, planar: Window_Size 1024 against a uint8 plane's "
+            "decoded size of 4",
+            Layer("bad", extents=(2, 2), tile_extents=(2, 2), layout=2,
+                  channels=[Channel("v", 6)], codec=3,
+                  tiles=[zstd_frame(IMG, window_log=10,
+                                    omit_content_size=True)]),
+            "T21", "R-COD-06"),
+    _reader("TV-0728",
+            "T21 codec 3, packed planar bool: Window_Size 1024 against a "
+            "plane of ⌈8/8⌉ = 1 byte",
+            Layer("bad", extents=(2, 4), tile_extents=(2, 4), layout=2,
+                  channels=[Channel("v", 1)], codec=3,
+                  tiles=[zstd_frame(b"\xAA", window_log=10,
+                                    omit_content_size=True)]),
+            "T21", "R-COD-06"),
+    _reader("TV-0729",
+            "T22 codec 3, planar: Frame_Content_Size 3 against a uint8 "
+            "plane's decoded size of 4",
+            Layer("bad", extents=(2, 2), tile_extents=(2, 2), layout=2,
+                  channels=[Channel("v", 6)], codec=3,
+                  tiles=[zstd_frame(IMG, content_size=3)]),
+            "T22", "R-COD-06"),
+    _reader("TV-0730",
+            "T22 codec 3, packed planar bool: Frame_Content_Size 0 against a "
+            "plane of ⌈8/8⌉ = 1 byte",
+            Layer("bad", extents=(2, 4), tile_extents=(2, 4), layout=2,
+                  channels=[Channel("v", 1)], codec=3,
+                  tiles=[zstd_frame(b"\xAA", content_size=0)]),
+            "T22", "R-COD-06"),
+
     # -- T23 ----------------------------------------------------------------
     _reader("TV-0720",
             "T23 codec 4 and the stored bytes are an LZ4 frame (magic "

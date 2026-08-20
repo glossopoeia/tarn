@@ -276,6 +276,48 @@ VECTORS = [
             [Patch("layer[bad].dim[0].extent", u64(3)),
              Patch("layer[bad].dim[0].tile_extent", u64(3))],
             REPAIR_RECORD, "T14", "R-COD-04"),
+    # ADR-0076 enumerated T14's cell: the three decoded-size formulas ×
+    # entry length longer/shorter. TV-0419 above is the interleaved
+    # shorter instance. Same construction discipline throughout: E == T so
+    # no padding position exists (T4 clean), packed planes keep P mod 8 = 0
+    # (T5 clean), and codec stays 1, where §19.2's order detects at the
+    # entry — ADR-0056's reading — before any decode.
+    _reader("TV-0422",
+            "T14 codec 1 with entry length 4 against decoded size 2 (`bad` "
+            "tile extents (2,1))",
+            [Patch("layer[bad].dim[1].extent", u64(1)),
+             Patch("layer[bad].dim[1].tile_extent", u64(1))],
+            REPAIR_RECORD, "T14", "R-COD-04"),
+    _reader("TV-0423",
+            "T14 codec 1, planar: entry length 4 against a uint8 plane's "
+            "decoded size 2 (`bad` tile extents (2,1))",
+            [Patch("layer[bad].layout", b"\x02", "planar"),
+             Patch("layer[bad].dim[1].extent", u64(1)),
+             Patch("layer[bad].dim[1].tile_extent", u64(1))],
+            REPAIR_RECORD, "T14", "R-COD-04"),
+    _reader("TV-0424",
+            "T14 codec 1, planar: entry length 4 against a uint8 plane's "
+            "decoded size 6 (`bad` tile extents (2,3))",
+            [Patch("layer[bad].layout", b"\x02", "planar"),
+             Patch("layer[bad].dim[1].extent", u64(3)),
+             Patch("layer[bad].dim[1].tile_extent", u64(3))],
+            REPAIR_RECORD, "T14", "R-COD-04"),
+    _reader("TV-0425",
+            "T14 codec 1, packed planar bool: entry length 4 against a plane "
+            "of ⌈8/8⌉ = 1 byte (`bad` tile extents (2,4))",
+            [Patch("layer[bad].layout", b"\x02", "planar"),
+             Patch("layer[bad].chan[0].type", u16(1), "bool"),
+             Patch("layer[bad].dim[1].extent", u64(4)),
+             Patch("layer[bad].dim[1].tile_extent", u64(4))],
+            REPAIR_RECORD, "T14", "R-COD-04"),
+    _reader("TV-0426",
+            "T14 codec 1, packed planar bool: entry length 4 against a plane "
+            "of ⌈40/8⌉ = 5 bytes (`bad` tile extents (2,20))",
+            [Patch("layer[bad].layout", b"\x02", "planar"),
+             Patch("layer[bad].chan[0].type", u16(1), "bool"),
+             Patch("layer[bad].dim[1].extent", u64(20)),
+             Patch("layer[bad].dim[1].tile_extent", u64(20))],
+            REPAIR_RECORD, "T14", "R-COD-04"),
 
     # -- T17 ----------------------------------------------------------------
     # Declaring codec 3 over the stored bytes 01 02 03 04, which are not the

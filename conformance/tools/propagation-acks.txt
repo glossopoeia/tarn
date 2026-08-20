@@ -11,3 +11,5 @@
 # or with a reason that has stopped being true, is worse than no entry: it
 # silences the one instrument that has caught this class of defect.
 R-CNF-03 -> R-CNF-03: ADR-0075's §17.4 edit adds a metadata-encoding contrast beside [R-COD-11]; it does not touch what [R-CNF-03] demands of a conforming reader, and §21.9's restatement is about the limits-table floor, which the change does not reach.
+R-CNT-05 -> R-CNT-05: ADR-0076 enumerated F7's Instances cell only; the condition text is unchanged and Appendix H's checklist line restates the rule, not the cell's arithmetic.
+R-COD-07 -> R-COD-07: ADR-0076 enumerated L44's Instances cell only; §17.2's rule text is the governing statement and is unchanged by a cell enumeration.

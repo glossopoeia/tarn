@@ -520,6 +520,34 @@ VECTORS = [
                Patch("layer[slab].entry[2].offset", u64(20))],
               "L41", serves=("ok", "slab")),
 
+    # ADR-0076 enumerated the row's three named alternatives; TV-0912
+    # above is out-of-ordinal placement. The gap: unstore the run's
+    # middle tile. Sentinels are transparent to [R-SLB-03], so the run's
+    # stored sequence is ordinal 0 ending at 20 and ordinal 2 at 24 —
+    # four unclaimed bytes inside the run. The freed bytes fall to slack
+    # and no other row fires (a sentinel is §21.6's defined behavior);
+    # run 0 still starts at 16 = A_slab, so L42 stays clean. Ordinal 1
+    # now reads as fill, so `serves` names `ok` alone.
+    _slab_vec("TV-0932",
+              "L41 layer `slab` run 0: ordinal 1 unstored, so ordinal 2 at "
+              "24 begins 4 bytes past the previous stored tile's end at 20",
+              [Patch("layer[slab].entry[1]", SENTINEL)],
+              "L41", serves=("ok",)),
+
+    # The overlap: ordinal 2's offset moved to 20 — ordinal 1's extent,
+    # whose payload is byte-identical, so the entry's crc verifies over
+    # the bytes it now addresses and the layer's decoded content is
+    # unchanged. The run is not packed (offset 20 where the previous
+    # stored tile ends at 24), and the same bytes co-satisfy the
+    # intra-layer overlap row, inherently: an in-run overlap between
+    # stored tiles is an overlap between two structures of one layer.
+    # Outcomes agree (reject-layer), the T17/T18 precedent.
+    _slab_vec("TV-0933",
+              "L41 layer `slab` run 0: ordinal 2's offset is 20, inside "
+              "ordinal 1's extent — the run overlaps where it should pack",
+              [Patch("layer[slab].entry[2].offset", u64(20))],
+              "L41", serves=("ok", "slab")),
+
     # ==================================================================
     # L44 `[R-SLB-04]` — a slab declaration carried across a commit that
     # changed an affected run. Two instances: the run length S, and the

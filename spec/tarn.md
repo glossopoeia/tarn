@@ -3212,7 +3212,7 @@ Outcome: reject-file. 36 conditions.
 | F4 | Two layer records in the live directory carry byte-identical name fields, both obtainable within their records' inline_length (comparison is raw bytes, no normalization) | layer record name | reader | open | `[R-ENC-15]` (R-ENC-13) |
 | F5 | File size is below the 128-byte minimum, so the front block, directory, pre-trailer pad and trailer cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-27]` (R-CNT-01, R-CNT-06) |
 | F6 | The 16-byte front signature block is not byte-identical to the constant; the obligation binds a reader holding those bytes resident, and a reader that would have to fetch them MAY defer or omit the check (`[R-CNT-04]`) | magic bytes [0,8); reserved bytes [8,16) | reader | open | `[R-CNT-04]` |
-| F7 | A structure occupies bytes between the live directory's end and the live trailer | — | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
+| F7 | A structure occupies bytes between the live directory's end and the live trailer | stored-tile extents; tile-index regions; record extents; sub-record extents | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
 | F8 | The 8 bytes at F-64 are not exactly the trailer magic 8A 4E 52 41 54 0D 0A 1A | trailer magic | reader | open | `[R-CNT-06]` |
 | F9 | Trailer dir_offset is less than 16, pointing the directory into or before the front signature block | dir_offset | reader | open | `[R-CNT-06]` |
 | F10 | Trailer dir_offset + dir_length exceeds F - 64, so the declared directory region runs into or past the live trailer | — | reader | open | `[R-CNT-06]` |
@@ -3290,10 +3290,10 @@ layer unaffected. 49 conditions.
 | L38 | A segment CRC ≠ CRC-32C over that segment's entry bytes as stored, entries [s·2¹⁶, min((s+1)·2¹⁶, entry_count)) — a partial segment covers only its actual bytes, and the all-sentinel constant 0xEECB3BB2 never substitutes for comparison | — | reader | tile use | `[R-IDX-04]` (R-IDX-05, R-CNT-20, R-ENC-10) |
 | L39 | Layer record declares a nonzero alignment A that is not a power of two in 512 … 2^62 | A not a power of two; A below 512; A above 2^62 | reader | layer access | `[R-SLB-01]` (R-CNT-23) |
 | L40 | Alignment A declared and a stored tile's index-entry offset is not a multiple of A | — | verifier | certification | `[R-SLB-01]` (R-IDX-03) |
-| L41 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels and entries §15.3 classifies reject-tile on a structural ground are transparent, an entry failing only its stored bytes' crc is not) | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
+| L41 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels and entries §15.3 classifies reject-tile on a structural ground are transparent, an entry failing only its stored bytes' crc is not) | gap; overlap; out-of-ordinal placement | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
 | L42 | A slab run's first stored tile's offset is not a multiple of A_slab | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
 | L43 | Layer record's codec is a value other than 1 … 4 — 0, reserved 5–0x7FFF, or experimental ≥ 0x8000 | codec 0; reserved 5-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-03]` (R-CNT-23) |
-| L44 | Codec 4 (lz4) declared on a layer any of whose addressed tiles' decoded size exceeds 0x7E000000 bytes — in a planar layer the largest channel plane governs | — | reader | layer access | `[R-COD-07]` |
+| L44 | Codec 4 (lz4) declared on a layer any of whose addressed tiles' decoded size exceeds 0x7E000000 bytes — in a planar layer the largest channel plane governs | interleaved P·Q; planar numeric P·Bᶜ; packed planar bool ⌈P/8⌉ | reader | layer access | `[R-COD-07]` |
 | L45 | Layer record's filter is a value other than 1 or 2 — 0, reserved 3–0x7FFF, or experimental ≥ 0x8000 | filter 0; reserved 3-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-09]` (R-CNT-23) |
 | L46 | A layer record's or sub-record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0 | layer record; sub-record | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
 | L47 | Any of a layer record's or sub-record's reserved flag bits 2-15 is set | layer record flags bits 2-15; sub-record flags bits 2-15 | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
@@ -3320,15 +3320,15 @@ returns fill in place of data (`[R-CNF-09]`). 26 conditions.
 | T11 | A non-sentinel tile-index entry's offset or length exceeds 2⁶³ − 1 (bit 63 set), the value being distinct from the all-ones sentinel | offset; length | reader | tile use | `[R-IDX-03]` (R-ENC-03) |
 | T12 | A non-sentinel tile-index entry's offset + length exceeds 2⁶³ − 1 although each field alone is in domain | — | reader | tile use | `[R-IDX-03]` (R-ENC-04) |
 | T13 | A stored tile is not independently decodable from its own extent and layer record — the decode needs state or side data outside the extent; the check that detects it is T25's, and this row records the cause rather than a procedure of its own | deflate stream carrying a previous tile's history window; lz4 block whose match offset reaches back into a previous tile's output | reader | tile use | `[R-COD-02]` (R-COD-06, R-COD-08) |
-| T14 | Codec 1 (none) declared and a non-sentinel index entry's length differs from the tile's decoded size | — | reader | tile use | `[R-COD-04]` |
+| T14 | Codec 1 (none) declared and a non-sentinel index entry's length differs from the tile's decoded size | interleaved P·Q, length longer; interleaved P·Q, length shorter; planar numeric P·Bᶜ, length longer; planar numeric P·Bᶜ, length shorter; packed planar bool ⌈P/8⌉, length longer; packed planar bool ⌈P/8⌉, length shorter | reader | tile use | `[R-COD-04]` |
 | T15 | Codec 2 (deflate) and the stored bytes carry a wrapper rather than a raw RFC 1951 DEFLATE stream; the check that detects it is T24's or T25's, and this row records the cause rather than a procedure of its own | zlib RFC 1950 (CMF/FLG header + trailing Adler-32); gzip RFC 1952 member (1F 8B, trailing CRC32+ISIZE) | reader | tile use | `[R-COD-05]` |
 | T16 | Codec 2 (deflate) and the stored extent holds more than one DEFLATE stream — a second stream begins after the BFINAL block; the check that detects it is T24's, and this row records the cause rather than a procedure of its own | — | reader | tile use | `[R-COD-05]` |
 | T17 | Codec 3 (zstd) and the stored bytes do not begin with the compressed-frame magic 28 B5 2F FD | — | reader | tile use | `[R-COD-06]` |
 | T18 | Codec 3 (zstd) and the stored extent holds more than the single compressed frame | a second concatenated compressed frame; a skippable frame before the frame; a skippable frame after the frame; a skippable frame between two frames | reader | tile use | `[R-COD-06]` |
 | T19 | Codec 3 (zstd) and the frame header carries a nonzero Dictionary_ID | — | reader | tile use | `[R-COD-06]` |
 | T20 | Codec 3 (zstd) and the frame header sets the Content_Checksum_flag | — | reader | tile use | `[R-COD-06]` |
-| T21 | Codec 3 (zstd) and the frame declares a window size larger than the tile's decoded size | — | reader | tile use | `[R-COD-06]` |
-| T22 | Codec 3 (zstd) and the frame's Frame_Content_Size field is present but does not equal the tile's decoded size | — | reader | tile use | `[R-COD-06]` |
+| T21 | Codec 3 (zstd) and the frame declares a window size larger than the tile's decoded size | interleaved P·Q; planar numeric P·Bᶜ; packed planar bool ⌈P/8⌉ | reader | tile use | `[R-COD-06]` |
+| T22 | Codec 3 (zstd) and the frame's Frame_Content_Size field is present but does not equal the tile's decoded size | interleaved P·Q; planar numeric P·Bᶜ; packed planar bool ⌈P/8⌉ | reader | tile use | `[R-COD-06]` |
 | T23 | Codec 4 (lz4) and the stored bytes are an LZ4 frame (magic 04 22 4D 18) instead of exactly one raw LZ4 block; the check that detects it is T25's, and this row records the cause rather than a procedure of its own | — | reader | tile use | `[R-COD-07]` |
 | T24 | The decode does not consume the entry's length exactly — bytes remain in the stored extent after the stream, frame, or block ends | any codec | reader | tile use | `[R-COD-08]` |
 | T25 | The stored bytes are a malformed stream that fails to decode | deflate block type 3 / invalid Huffman table; corrupt zstd block header; lz4 match offset 0 or match reaching past produced output | reader | tile use | `[R-COD-08]` |
@@ -3445,7 +3445,7 @@ them. `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 121 conditions over 248
+Every row of §21.2 through §21.5 — 121 conditions over 264
 instances — has at least one conformance vector (§24) whose expected
 outcome is that row's outcome, and one vector per instance. A row without a vector is a
 gap in the corpus, not a licence to skip the check. `[R-ERR-02]`
