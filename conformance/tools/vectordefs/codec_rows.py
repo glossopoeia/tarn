@@ -534,6 +534,33 @@ VECTORS += [
                   tiles=[zstd_frame(b"\xAA", content_size=0)]),
             "T22", "R-COD-06"),
 
+    # ADR-0077 gave T22 the direction axis it shares with T14: the three
+    # vectors above declare a Frame_Content_Size BELOW the decoded size,
+    # these three declare one ABOVE it. Above needs care — the frames above
+    # are single-segment, where Window_Size is Frame_Content_Size, so a
+    # larger declared value would also declare an oversized window and
+    # co-violate T21. Clearing Single_Segment with an explicit window_log
+    # of 10 fixes Window_Size at 1024 ≥ every decoded size here, so only
+    # the Frame_Content_Size relation fails.
+    _reader("TV-0731",
+            "T22 codec 3: Frame_Content_Size 5 against a decoded size of 4",
+            _z(zstd_frame(IMG, content_size=5, window_log=10)),
+            "T22", "R-COD-06"),
+    _reader("TV-0732",
+            "T22 codec 3, planar: Frame_Content_Size 5 against a uint8 "
+            "plane's decoded size of 4",
+            Layer("bad", extents=(2, 2), tile_extents=(2, 2), layout=2,
+                  channels=[Channel("v", 6)], codec=3,
+                  tiles=[zstd_frame(IMG, content_size=5, window_log=10)]),
+            "T22", "R-COD-06"),
+    _reader("TV-0733",
+            "T22 codec 3, packed planar bool: Frame_Content_Size 2 against a "
+            "plane of ⌈8/8⌉ = 1 byte",
+            Layer("bad", extents=(2, 4), tile_extents=(2, 4), layout=2,
+                  channels=[Channel("v", 1)], codec=3,
+                  tiles=[zstd_frame(b"\xAA", content_size=2, window_log=10)]),
+            "T22", "R-COD-06"),
+
     # -- T23 ----------------------------------------------------------------
     _reader("TV-0720",
             "T23 codec 4 and the stored bytes are an LZ4 frame (magic "

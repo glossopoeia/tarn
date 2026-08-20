@@ -400,8 +400,19 @@ VECTORS = [
     # entry_count stays 1. L22's size formula reads entry_count, not N, so
     # 1*20 + 4 = 24 still matches the region and this is the count
     # cross-check alone.
-    L("TV-0228", "layer `bad` addresses N = 2 tiles but declares entry_count = 1",
+    L("TV-0228", "layer `bad` addresses N = 2 tiles but declares entry_count = 1 "
+      "(instance: interleaved N)",
       "L21", "R-CNT-17", [Patch("layer[bad].dim[1].extent", u64(4))]),
+    # ADR-0077 enumerated L21's two layout formulas. Planar: the derived
+    # count is C·N, so declaring layout 2 over the seed's single channel
+    # leaves N = 1 and C·N = 1 — the count must be made to differ by the
+    # same extent patch, which under planar gives C·N = 2 against
+    # entry_count = 1. The region is still 1*20 + 4 = 24 bytes, so L22
+    # stays clean exactly as in the interleaved case.
+    L("TV-0236", "layer `bad`, planar: addresses C·N = 2 tiles but declares "
+      "entry_count = 1 (instance: planar C·N)",
+      "L21", "R-CNT-17", [Patch("layer[bad].layout", b"\x02", "planar"),
+                          Patch("layer[bad].dim[1].extent", u64(4))]),
 
     # -- L22 — the index region's declared size ----------------------------
     # `[R-CNT-17]`, three files for the three alternatives the row's text
