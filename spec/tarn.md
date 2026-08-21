@@ -3120,7 +3120,7 @@ PE = 0 is read as PE = 1, `[R-CNT-12]`), and carry these obligations:
 |---|---|
 | MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. Compaction is barred on the same ground (`[R-WRT-06]`). |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
-| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender may drop it only in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, the entry set of its index, or which of its tiles are stored; for a top-level record, the file's layer set — which a commit changes by adding a layer and equally by modifying any layer's record — an appender never removes one (§20.4) — or another *non-layer* top-level record. Superseding a stored tile's bytes re-places that layer's index region (§20.3, `[R-WRT-04]`) and so modifies that layer's record, which is such a change: an appender superseding a tile MAY drop the record, and the SHOULD-report below is what keeps the loss visible. Dropping the record, or dropping another record in the same commit, is not itself such a change either, so a commit whose only effect would be the drop MUST retain it. A compactor may drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender MUST NOT drop it except in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, the entry set of its index, or which of its tiles are stored; for a top-level record, the file's layer set, any layer record's content, or another *non-layer* top-level record. A commit changes the layer set by adding a layer; an appender never removes one (`[R-CNT-22]`, §7.3). Superseding a stored tile's bytes re-places that layer's index region (§20.3, `[R-WRT-04]`), moving its extent slot (§7.4) and so modifying that layer's record, which is such a change: an appender superseding a tile MAY drop a top-level such record, or such a sub-record of the layer whose tile it superseded, and the SHOULD-report below is what keeps the loss visible. Dropping the record, or dropping another record in the same commit, is not itself such a change, so a commit whose only effect would be the drop MUST retain it. A compactor MAY drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
 No commit therefore removes a layer record, or a user-metadata
 record at either scope. Both registered types carry PE = 1, and an
@@ -3598,9 +3598,12 @@ reader parses as a record sequence (§7.4's closing Note);
 the affected tiles remain stored *and* the change reaches a byte §14
 structurally constrains — a padding position, a pad bit, or a boolean
 byte — where §21.4's content rows fire; a change that reaches the
-decoded size or the codec instead is witnessed by T3 or T14, which
+decoded size instead is witnessed by T3 or T14, which
 test a length rather than the decoded image's content — T14 the
-entry's declared length, T3 the decoded payload's own; and a
+entry's declared length, T3 the decoded payload's own; a change that
+reaches the codec is witnessed by the rows for the codec now declared,
+which test the stored bytes as a stream of it (T15, T17, T23, T25),
+or by T14 where the new declaration is codec 1; and a
 commit that supersedes every tile it would have damaged leaves the
 live state clean, so the bar is unwitnessed there for the same
 reason `[R-LIF-01]` is: it is a property of the prior generation,
@@ -3806,8 +3809,9 @@ file a reader opens later. `[R-SEC-07]`
 #### 23.1 Deletion is not erasure
 
 The append-only model (§9.1) means a commit that supersedes data —
-the only removal a commit performs, no commit removing a layer at all
-(§20.4) — removes only that data's *reachability*: the superseded bytes remain in the
+the only removal of sample data a commit performs, no commit removing
+a layer at all, and an unknown ancillary record's drop (§20.4) the one
+other removal available to it — removes only that data's *reachability*: the superseded bytes remain in the
 file as slack (`[R-CNT-21]`), readable by anyone with the bytes
 and a hex editor, and recoverable by any tool that scans backward for
 an earlier trailer (§9.6). Writers and the tools built on them
@@ -4194,7 +4198,9 @@ the file.
    is otherwise free to vary, as is structure placement
    (`[R-LIF-02]` step 2). The first structure begins at 16, directly
    after the front signature block, which §5.2 counts as no
-   structure; each later structure begins where the previous one
+   structure — or, where a declared alignment admits no structure at
+   16, at the least position above it the declaration admits; each
+   later structure begins where the previous one
    ended, save where alignment forces a gap — a
    declared A or A_slab, or §6.2's 64-byte trailer alignment, the
    pre-trailer pad included — and every byte of every such gap is zero — `[R-CNT-03]`'s advice, taken as a requirement

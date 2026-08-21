@@ -1,6 +1,7 @@
 # 0070. A supersede-only commit drops nothing
 
-- Status: Accepted
+- Status: Superseded by ADR-0081 (ADR-0080 reversed this decision without
+  recording it; ADR-0081 records the supersession)
 - Date: 2026-08-17
 - Covers: the scope of §20.4's tiles-only caveat; round 10's editorial tail
 - Confirm: none

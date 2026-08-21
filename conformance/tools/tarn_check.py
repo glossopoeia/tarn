@@ -238,11 +238,21 @@ class Spec:
                     return flat
         return ""
 
-    def is_normative_line(self, line: str) -> bool:
-        """Notes, examples and rationale are set as block quotes; tables carry
-        restatements whose wording §21.1 subordinates to the rule."""
+    def is_normative_line(self, line: str, section: str = "") -> bool:
+        """Notes, examples and rationale are set as block quotes, always exempt.
+
+        A table row is exempt only inside §21, where §21.1 subordinates a row's
+        wording to the rule it cites. Elsewhere a table cell can be a rule's
+        only statement -- §20.4's updater-obligations table is one -- and
+        exempting it hid a lowercase `may ... only` gate sitting beside an
+        ALL-CAPS MAY in the same cell for four rounds. Outside §21, check it.
+        """
         s = line.strip()
-        return not (s.startswith(">") or s.startswith("|"))
+        if s.startswith(">"):
+            return False
+        if s.startswith("|"):
+            return not section.startswith("21")
+        return True
 
 
 # --------------------------------------------------------------------------
@@ -484,8 +494,12 @@ def check_spec(spec: Spec, report: Report) -> None:
 
     # SPEC-03 -- AGENTS.md rule 5.
     failures, warnings = [], []
+    section = ""
     for i, line in enumerate(spec.lines, 1):
-        if not spec.is_normative_line(line):
+        h = re.match(r"^#+\s+(\d[\d.]*)", line)
+        if h:
+            section = h.group(1)
+        if not spec.is_normative_line(line, section):
             continue
         for m in re.finditer(BCP14_VERBS, line):
             failures.append(f"line {i}: lowercase '{m.group(0)}' in normative text")
