@@ -81,6 +81,23 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0063](0063-standardized-key-placement-is-advisory.md) | Standardized key placement and value shape are advisory | Accepted (resolves round 7's register gap by deletion; refines ADR-0045) |
 | [0064](0064-instance-identity-in-the-manifest.md) | A vector names the instance it exercises, by the register's own words | Accepted (makes [R-ERR-02] measurable; corrects two mis-filed vectors) |
 | [0065](0065-seven-escalations-round-seven-raised.md) | Seven decisions round seven escalated | Accepted (clears round 7; five more items were already decided) |
+| [0066](0066-round-eight-reopens-the-updater-table.md) | Round eight reopens the updater table | Accepted (§20.4's MU = 1 grant at file scope and the MU = 0 / PE = 0 drop licence; scopes *cannot establish*) |
+| [0067](0067-conformance-is-per-major-and-four-register-repairs.md) | Conformance is per-major, and four register repairs | Accepted (scopes *conforming*; removes F21 and renumbers the F rows) |
+| [0068](0068-no-commit-removes-a-layer.md) | No commit removes a layer | Accepted (settles layer deletion; corrects [R-CNF-06]'s citation and §23.1's account) |
+| [0069](0069-byte-order-is-not-a-file-state.md) | Byte order is not a file state | Accepted (retires the cause-row family; resolves ADR-0057 against ADR-0065/ADR-0067) |
+| [0070](0070-a-supersede-only-commit-drops-nothing.md) | A supersede-only commit drops nothing | **Superseded by ADR-0081** (ADR-0080 reversed this decision without recording it) |
+| [0071](0071-six-decisions-round-ten-raised.md) | Six decisions round ten raised | Accepted (amends ADR-0065's slack clause; trims ADR-0069's §20.5 sentence) |
+| [0072](0072-the-taxonomy-loses-its-middle-class.md) | The taxonomy loses its middle class, and the appender its dead limb | Accepted (amends ADR-0071 in both of the places round 11 found) |
+| [0073](0073-a-mechanical-propagation-check.md) | A mechanical propagation check | Accepted (adds `tarn_propagate.py`, SPEC-07 and SPEC-08; extends ADR-0050's tooling scope) |
+| [0074](0074-a-stored-tile-freezes-its-declarations.md) | A stored tile freezes the declarations it depends on | Accepted (reverses the fill obligation landed hours earlier in the same round) |
+| [0075](0075-document-rules-attach-only-under-assigned-encodings.md) | Document rules attach only under assigned encodings | Accepted (fixes the verifier verdict at an experimental user-metadata encoding) |
+| [0076](0076-the-instance-criterion-applied-in-one-direction.md) | The instance criterion applied in one direction | Accepted (enumerates six cells; sixteen vectors added in the same commit) |
+| [0077](0077-the-instance-criterion-stated-and-the-ordering-key-decircularized.md) | The instance criterion stated, and the ordering key de-circularized | Accepted (supersedes ADR-0076's direction rule; its cells stand) |
+| [0078](0078-a-declaration-freeze-with-a-tense.md) | A declaration freeze with a tense | Accepted (supersedes ADR-0077's direction criterion, narrowing it; four more cells) |
+| [0079](0079-a-shrink-that-de-addresses-is-permitted.md) | A shrink that de-addresses is permitted | Accepted (revises ADR-0074 and ADR-0078, narrowing their stranding argument) |
+| [0080](0080-the-shrink-permission-takes-the-bar-s-tense.md) | The shrink permission takes the bar's tense | Accepted (revises ADR-0079's shrink paragraph, whose quantifier this corrects) |
+| [0081](0081-the-drop-licence-regains-its-quantifier.md) | The drop licence regains its quantifier, and ADR-0070 is superseded | Accepted (supersedes ADR-0070; widens `SPEC-03`'s scope; from the round-18 repair audit) |
+| [0082](0082-a-compactor-answers-for-the-region-it-regenerates.md) | A compactor answers for the region it regenerates, on detection | Accepted (confirms ADR-0081's open item; supersedes ADR-0080's compactor clause) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).
