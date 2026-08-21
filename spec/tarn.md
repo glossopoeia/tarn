@@ -3173,13 +3173,15 @@ the (file_id, range) cache contract of `[R-LIF-03]`, since
 relocation puts different bytes at the same ranges. The output
 trailer MUST copy the input's unknown ignore-lane flag bits forward,
 in place of the flags = 0 §6.3 requires of a file created under this
-text (`[R-CNT-08]`). Where any such bit is set, the output's
-version_minor SHOULD be at least the input's: a compactor cannot know
-which minor version defined a bit it does not implement, and a lower
-minor states a feature floor the carried bit contradicts, misstating
-it to tooling as `[R-CNT-26]` describes. Where none is set,
-version_minor follows `[R-CNT-26]`, as it does for an appender (§20.3
-step 6). Neither has a witness in the output alone (§21.7).
+text (`[R-CNT-08]`). Where the output carries any feature the
+compactor does not implement — a carried ignore-lane bit, or an
+unrecognized `tarn.` key in a user-metadata record it never decoded
+(§18.3, `[R-MTA-06]`) — the output's version_minor SHOULD be at least
+the input's: a compactor cannot know which minor version defined a
+feature it does not implement, and a lower minor understates the
+file's feature floor to tooling, the mirror of the overstatement
+`[R-CNT-26]` names. Otherwise version_minor follows `[R-CNT-26]`'s
+floor. Neither obligation has a witness in the output alone (§21.7).
 A compactor MUST refuse to compact a file carrying any record
 whose type it does not implement with MU = 1: such a type can
 define references this specification does not (§7.2), so its
@@ -3617,9 +3619,11 @@ or by T14 where the new declaration is codec 1; and a
 commit that supersedes every tile it would have damaged leaves the
 live state clean, so the bar is unwitnessed there for the same
 reason `[R-LIF-01]` is: it is a property of the prior generation,
-which §9.7 does not reconstruct; §20.5's floor on a compacted file's
-version_minor (`[R-WRT-06]`) is unwitnessed for that same reason, the
-output carrying no record of its input's minor; and `[R-ENC-06]`'s fixed field widths are not
+which §9.7 does not reconstruct; §20.5's two obligations on a
+compacted file's trailer (`[R-WRT-06]`) — the unknown ignore-lane bits
+it MUST carry forward, and the floor its version_minor SHOULD take —
+are unwitnessed for that same reason, the output carrying no record of
+its input's flags or its input's minor; and `[R-ENC-06]`'s fixed field widths are not
 a state a
 file can be in, since the parse is always at the widths this
 specification fixes and a structure written at any other yields
@@ -3829,7 +3833,7 @@ file as slack (`[R-CNT-21]`), readable by anyone with the bytes
 and a hex editor, and recoverable by any tool that scans backward for
 an earlier trailer (§9.6). Writers and the tools built on them
 MUST NOT represent any commit that makes sample data unreachable as
-erasure of it — a shrink reported as a deletion misleads exactly as a
+erasure of it — a shrink reported as erasure misleads exactly as a
 supersede so reported does.
 `[R-PRV-01]`
 
@@ -4240,7 +4244,11 @@ the file.
    writers that default fill differently disagree about which tiles
    exist, not merely about eight bytes of the layer record.
 8. **`version_minor` at the floor** `[R-CNT-26]` states, and
-   `flags` = 0.
+   `flags` = 0. Both are creator's rules, as item 2's identifier is: a
+   compactor adopting the profile carries its input's unknown
+   ignore-lane bits forward instead, and where it carries any feature
+   it does not implement takes §20.5's floor rather than
+   `[R-CNT-26]`'s (`[R-WRT-06]`).
 9. **User metadata either absent, or serialized by a named JSON
    writer at a named version, at a fixed storage encoding (§18.2) —
    and, where that encoding is 2, by a named zstd implementation at a

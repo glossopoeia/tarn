@@ -105,6 +105,31 @@ Two of round 18's design-level findings were also in text written that day,
 including §23.1's narrowed overclaim. The repairs remain the defect surface;
 what changed is that the defects in them are no longer byte-level.
 
+## Amendment, from the repair audit run before round 19
+
+The scoping in the Decision above **overshot in the narrowing direction**, and
+the audit of these very repairs caught it as byte-level. "Where an unknown
+ignore-lane bit is set" names one of the four growth vehicles `[R-EXT-01]`
+defines, and the reason the clause gives is not specific to flag bits: §18.3
+equates the two, "later minor versions register keys, exactly as they define
+ignore-lane flag bits". A compactor MUST carry a user-metadata record forward
+and cannot inspect it, `[R-WRT-09]`'s depth reaching no decoded content — so
+for an input whose only later-minor feature is an unrecognized `tarn.` key, the
+else-branch fired and `[R-CNT-26]`'s floor was not computable.
+
+The trigger is therefore **any feature the compactor does not implement**, with
+both vehicles named. Three further corrections landed with it: §21.7 now
+records *both* of §20.5's unwitnessed obligations rather than one, closing a
+citation that reached half as far as the sentence citing it; Appendix G item 8
+gains the compactor carve-out item 2 already carries for `file_id`, since the
+new MUST contradicted its flat `flags = 0`; and §23.1's gloss uses the rule's
+own word, *erasure*, rather than *deletion*, which the subsection's heading,
+§20.5's Note and `[R-PRV-02]` all rely on keeping distinct.
+
+The misattribution of `[R-CNT-26]`'s consequence clause is also corrected: it
+names the harm of a minor that is too **high**, and a compactor's risk is the
+mirror, which the text now says rather than borrowing.
+
 ## Precedent
 
 - `[R-CNT-26]`'s own SHOULD, whose register this decision joins rather than
