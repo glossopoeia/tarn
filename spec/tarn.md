@@ -1481,10 +1481,11 @@ region of it returns no samples. `[R-GEO-02]`
 > **Rationale.** Empty layers serve schema-first workflows: declare
 > layers at creation, grow extents as data arrives. §20.3 states
 > normatively, and governs, what a commit may do to a layer that
-> already stores tiles: a shrink is barred wherever it alters what
-> §14 fixes for a tile the new state still stores, and permitted
-> where it drops tiles out of the addressed set, whose extents then
-> become slack. A layer that stores nothing may be re-declared
+> already stored tiles in the generation a commit supersedes: a
+> shrink is barred wherever it alters what §14 fixes for such a
+> tile — whether or not the new state still stores it — and permitted
+> where it only drops tiles out of the addressed set, whose extents
+> then become slack. A layer that stored nothing may be re-declared
 > freely. Growth
 > that leaves
 > every grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) unchanged touches the directory
@@ -3080,7 +3081,8 @@ An appender MUST, in order:
 > carrying either is not an
 > appender's operation at all (step 4): it would invalidate every
 > stored tile it reaches. A layer storing no tile is re-declared
-> freely whatever its geometry, which is the same step's permission. Editing
+> freely, subject to every rule its new geometry is subject to, which
+> is the same step's permission. Editing
 > user metadata is not this shape:
 > its document lives in an extent (`[R-CNT-25]`), so a new extent is
 > appended and the old one becomes slack, as in (b).
@@ -3118,7 +3120,7 @@ PE = 0 is read as PE = 1, `[R-CNT-12]`), and carry these obligations:
 |---|---|
 | MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. Compaction is barred on the same ground (`[R-WRT-06]`). |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
-| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender may drop it only in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, the entry set of its index, or which of its tiles are stored; for a top-level record, the file's layer set — which a commit changes by adding or removing a layer and equally by modifying any layer's record — or another *non-layer* top-level record. Superseding a stored tile's bytes is not such a change for either kind — it re-places that layer's index region (§20.3, `[R-WRT-04]`) without altering the scope any record attaches to — so a commit whose only change is a supersede MUST retain the record. Dropping the record, or dropping another record in the same commit, is not itself such a change either, so a commit whose only effect would be the drop MUST retain it. A compactor may drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender may drop it only in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, the entry set of its index, or which of its tiles are stored; for a top-level record, the file's layer set — which a commit changes by adding a layer and equally by modifying any layer's record — an appender never removes one (§20.4) — or another *non-layer* top-level record. Superseding a stored tile's bytes re-places that layer's index region (§20.3, `[R-WRT-04]`) and so modifies that layer's record, which is such a change: an appender superseding a tile MAY drop the record, and the SHOULD-report below is what keeps the loss visible. Dropping the record, or dropping another record in the same commit, is not itself such a change either, so a commit whose only effect would be the drop MUST retain it. A compactor may drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
 No commit therefore removes a layer record, or a user-metadata
 record at either scope. Both registered types carry PE = 1, and an
@@ -3185,13 +3187,15 @@ every retained record per §20.4, except that relocation re-points
 extent slots, regenerates each relocated tile-index region (entry
 offsets new; entry lengths, entry crcs, and sentinel entries
 unchanged; an entry §15.3 classifies reject-tile on a structural
-ground is reproduced with its offset and length exactly as they
-stand, there being no live extent for a re-pointing to target —
-`[R-IDX-03]` gives such an entry no stored extent and no claimant in
-the coverage walk — and the violation travels with it into the
-output (`[R-WRT-01]`); `[R-WRT-09]`'s checks reach the index chain and each
-stored tile's entry crc, not an entry's own value domain, so such
-an entry is not one `[R-WRT-06]` obliges a compactor to refuse;
+ground obliges the compactor to refuse (`[R-WRT-06]`): the
+regenerated region is bytes the compactor produces, and §20.1 makes
+it answer for those in full: it can neither reproduce the entry
+nor invent a replacement — `[R-WRT-01]`'s licence for a latent
+violation to travel reaches only a structure the commit neither
+modifies nor relies on, which a regenerated region is not. That
+`[R-WRT-09]`'s checks reach the index chain and each stored tile's
+entry crc rather than an entry's own value domain means only that a
+compactor need not have looked; where it has, this is the disposal;
 segment CRCs recomputed over the entries as
 re-emitted), and updates the layer-record fields covering a
 regenerated region (crc_of_crc_array). No other record payload
@@ -3485,7 +3489,9 @@ metadata is quarantined (`[R-CNT-25]`): every way its document can
 be unreadable takes this outcome, whatever the containing scope —
 as a violation in the rows below, except at an experimental-range
 encoding, where no document rule attaches and §21.6 records the
-defined non-violation (`[R-MTA-10]`). Encoding 0 and a reserved-range
+defined non-violation (`[R-MTA-10]`), and except where a reader or
+verifier declines the decode on the size bound, which `[R-MTA-09]`
+makes that actor's capability and not a fact about the file. Encoding 0 and a reserved-range
 value are unassigned too, and R1 registers both as violations: what
 `[R-MTA-10]` withdraws is the document's content rules, never the
 encoding byte's own value set (`[R-MTA-03]`). Every row
@@ -3593,7 +3599,8 @@ the affected tiles remain stored *and* the change reaches a byte §14
 structurally constrains — a padding position, a pad bit, or a boolean
 byte — where §21.4's content rows fire; a change that reaches the
 decoded size or the codec instead is witnessed by T3 or T14, which
-read the index entry rather than the decoded image; and a
+test a length rather than the decoded image's content — T14 the
+entry's declared length, T3 the decoded payload's own; and a
 commit that supersedes every tile it would have damaged leaves the
 live state clean, so the bar is unwitnessed there for the same
 reason `[R-LIF-01]` is: it is a property of the prior generation,
@@ -3636,8 +3643,10 @@ bounds, and a writer MAY rely on that. `[R-ERR-03]`
 
 A file exceeding any of these remains conforming, and a reader MAY
 decline it — at the whole file, or at the narrowest scope whose
-declarations exceed what it can serve, a layer or a tile. Software that declines a file whose every quantity lies
-within the table is not a conforming reader (`[R-CNF-03]`) — the
+declarations exceed what it can serve, a layer or a tile. Software that declines **on that ground** a file whose every quantity lies
+within the table is not a conforming reader (`[R-CNF-03]`) — the two
+capability refusals §21.6 names, a foreign format major and an
+unimplemented MU = 1 type, are not this ground — the
 guarantees are the floor, not a suggestion. Either way, a refusal
 on resource grounds MUST be reported as a resource limit and not as
 a validity error: the two send a user to opposite remedies, and a
@@ -4145,8 +4154,8 @@ the file.
    eight bytes in output order** — the eight a named hash emits last,
    read little-endian; naming the end rather than calling them the
    *low* bytes is deliberate, that word being read as a position by
-   some and as an arithmetic magnitude by others. Any other fixed
-   nonzero value is
+   some and as an arithmetic magnitude by others. The value
+   0x0000000000000001 is
    substituted in the measure-zero case that they are all zero
    (§6.2 forbids `file_id` = 0). This is a creator's rule: a compactor
    adopting the profile takes `[R-WRT-06]`'s fresh draw instead, since
@@ -4160,8 +4169,8 @@ the file.
    arrays can legitimately differ in tiling, layout, and codec.
 3. **A total emission order, contiguously.** For each layer in
    ascending layer-name byte order: its stored tiles in disk-ordinal
-   order, then its tile-index region; then any record extents in
-   ascending record order — all of them after every layer's tiles and
+   order, then its tile-index region; then any remaining record
+   extents in ascending record order — all of them after every layer's tiles and
    index region, not interleaved with them; then the directory. That
    order runs over top-level records first, then, within each layer
    record, its sub-records; and the directory's own record sequence,
@@ -4304,7 +4313,8 @@ no structure between the live directory's end and the live trailer
 (`[R-CNT-05]`, F7); a reserved-range record or sub-record type value,
 whatever its MU bit (`[R-CNT-15]`, F36, L25);
 alignment and slab invariants (§16); decoded-content obligations —
-padding samples and interleaved boolean bytes (§14.5, §14.2);
+padding samples, pad bits and interleaved boolean bytes (§14.5, §14.3,
+§14.2);
 user-metadata member ordering (`[R-MTA-05]`, §18.2); certifies only
 files with no violation at any scope (§2.4) — a user-metadata
 record at an experimental-range encoding is no violation and no bar,
