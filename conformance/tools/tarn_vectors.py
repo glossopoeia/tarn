@@ -655,9 +655,11 @@ INSTANCE_OF: dict[str, str] = {
     'TV-0710': 'gzip RFC 1952 member (1F 8B, trailing CRC32+ISIZE)',
     'TV-0711': '—',
     'TV-0712': 'a second concatenated compressed frame',
-    'TV-0713': 'a skippable frame before the frame',
-    'TV-0714': 'a skippable frame after the frame',
-    'TV-0715': 'a skippable frame between two frames',
+    # ADR-0080 collapsed T18's placement axis: the constraint reads the same
+    # wherever the skippable frame sits, so all three exercise one instance.
+    'TV-0713': 'a skippable frame',
+    'TV-0714': 'a skippable frame',
+    'TV-0715': 'a skippable frame',
     'TV-0716': '—',
     'TV-0717': '—',
     'TV-0718': 'interleaved P·Q',

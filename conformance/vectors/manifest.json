@@ -45777,7 +45777,7 @@
       "violations": [
         {
           "row": "T18",
-          "instance": "a skippable frame before the frame",
+          "instance": "a skippable frame",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -45849,7 +45849,7 @@
       "violations": [
         {
           "row": "T18",
-          "instance": "a skippable frame after the frame",
+          "instance": "a skippable frame",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {
@@ -45921,7 +45921,7 @@
       "violations": [
         {
           "row": "T18",
-          "instance": "a skippable frame between two frames",
+          "instance": "a skippable frame",
           "rule": "R-COD-06",
           "outcome": "reject-tile",
           "scope": {

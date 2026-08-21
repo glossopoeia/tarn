@@ -34,3 +34,8 @@ R-MTA-05 -> R-CNF-05: F27 and L48 gained "at any nesting depth" so they stop und
 R-MTA-05 -> R-MTA-05: as above — the rows now carry the nesting-depth qualifier the rule states; nothing in [R-MTA-05] changed.
 R-CNF-02 -> R-CNT-07: F18 registers version_major = 0 and §21.2's preamble explains why that row sits outside the foreign-major premise rather than excepting it. Row unchanged.
 R-CNF-02 -> R-CNT-06: F8 is one of the rows the new preamble names as reaching a foreign-major file, quoting §6.2's ordering. The row itself is unchanged.
+R-MTA-10 -> R-MTA-10: R3's parenthetical was corrected to say "experimental-range" and to note that encoding 0 and reserved values are unassigned too; §21.5's preamble already said exactly that after round 14. The row was the lagging site and this is the sweep.
+R-ENC-04 -> R-ENC-04: §19.3's enumeration of what layer access validates gained [R-ENC-04]'s ceiling and the §14 decoded sizes derived under it; §14.3 and §20.3 state the same ceiling and are unchanged by the enumeration naming it.
+R-ENC-04 -> R-SER-07: as above — §14.3 defines the packed-bool decoded size and §19.3 now says layer access checks it. Neither rule moved.
+R-CNT-21 -> R-SER-05: §20.3's shrink permission was restated in the bar's own tense ("in the generation this commit supersedes"); the bar three sentences earlier is the source of that wording and is unchanged.
+R-IDX-03 -> R-IDX-03: §20.5's compactor clause now cites [R-IDX-03] for the proposition that a structurally invalid entry has no stored extent and no claimant in the coverage walk; §15.3 is where that proposition is stated and is unchanged by being cited.
