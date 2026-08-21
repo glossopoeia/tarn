@@ -76,10 +76,15 @@ stranded "either", the em-dash nesting, the "layer set" stretch); §23.1's
 structure under a declared alignment. `SPEC-03` widened. ADR-0070 marked
 superseded.
 
-**Left for the maintainer:** §20.5's compactor disposal, where ADR-0080 says
-*reproduce* and round 17 says *MUST refuse*, neither recorded. The audit
-faults the reversal's argument on three grounds and does not settle its
-conclusion. See ADR-0081, "Left open".
+**§20.5's compactor disposal**, where ADR-0080 said *reproduce* and round 17
+said *MUST refuse* with neither recorded, was settled by the maintainer in
+favour of refusal — but re-grounded. See
+[ADR-0082](../../decisions/0082-a-compactor-answers-for-the-region-it-regenerates.md):
+the conclusion stands on §20.5's own "MUST NOT emit a file carrying a
+violation it has detected", with detection forced because `[R-IDX-03]` leaves
+such an entry no stored extent for a re-pointing to target, so regenerating
+the region cannot proceed without meeting it. The two claims the audit
+faulted — `[R-WRT-01]` "reaches only", and §20.1 answering "in full" — are
+deleted, and the disposal is lifted out of the parenthetical it broke.
 
-Round 18 itself has not run. The charter is written against the repaired
-surface once that decision is taken.
+Round 18 then runs against the repaired surface.

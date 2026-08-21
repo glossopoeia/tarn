@@ -3186,19 +3186,25 @@ tile's bytes verbatim — each index entry's crc is unchanged — and
 every retained record per §20.4, except that relocation re-points
 extent slots, regenerates each relocated tile-index region (entry
 offsets new; entry lengths, entry crcs, and sentinel entries
-unchanged; an entry §15.3 classifies reject-tile on a structural
-ground obliges the compactor to refuse (`[R-WRT-06]`): the
-regenerated region is bytes the compactor produces, and §20.1 makes
-it answer for those in full: it can neither reproduce the entry
-nor invent a replacement — `[R-WRT-01]`'s licence for a latent
-violation to travel reaches only a structure the commit neither
-modifies nor relies on, which a regenerated region is not. That
-`[R-WRT-09]`'s checks reach the index chain and each stored tile's
-entry crc rather than an entry's own value domain means only that a
-compactor need not have looked; where it has, this is the disposal;
-segment CRCs recomputed over the entries as
+unchanged; segment CRCs recomputed over the entries as
 re-emitted), and updates the layer-record fields covering a
-regenerated region (crc_of_crc_array). No other record payload
+regenerated region (crc_of_crc_array).
+
+Regenerating a region means classifying every entry in it: a sentinel
+is re-emitted unchanged, and every other entry is re-pointed to where
+its stored extent now lies. An entry §15.3 classifies reject-tile on a
+structural ground is neither — `[R-IDX-03]` gives it no stored extent
+for a re-pointing to target — so regenerating the region cannot
+proceed without meeting it, and the violation is thereafter one the
+compactor has detected. `[R-WRT-06]` then obliges refusal: the
+compactor can neither reproduce the entry nor invent a replacement,
+and no drop is available, a tile-index entry being no record §20.4's
+table licenses dropping. That `[R-WRT-09]`'s checks reach the index
+chain and each stored tile's entry crc rather than an entry's own
+value domain bounds how far a compactor goes looking, not what it
+owes on what regenerating the region has already put in front of it.
+
+No other record payload
 carries a file offset: MU = 0 records by rule (§7.2), and an
 MU = 1 type the compactor does not implement never reaches this
 step (`[R-WRT-06]`). An MU = 1 type it *does* implement is the

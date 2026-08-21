@@ -5,7 +5,7 @@
 - Covers: §20.4's MU = 0 / PE = 0 cell; §23.1's removal appositive; §21.7's
   codec witnesses; Appendix G item 3's first structure; `SPEC-03`'s scope
 - Supersedes: ADR-0070, whose decision ADR-0080 reversed without recording it
-- Confirm: §20.5's compactor disposal, left open below
+- Confirm: §20.5's compactor disposal — confirmed by ADR-0082
 
 ## Context
 
