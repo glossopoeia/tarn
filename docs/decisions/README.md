@@ -98,6 +98,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0080](0080-the-shrink-permission-takes-the-bar-s-tense.md) | The shrink permission takes the bar's tense | Accepted (revises ADR-0079's shrink paragraph, whose quantifier this corrects) |
 | [0081](0081-the-drop-licence-regains-its-quantifier.md) | The drop licence regains its quantifier, and ADR-0070 is superseded | Accepted (supersedes ADR-0070; widens `SPEC-03`'s scope; from the round-18 repair audit) |
 | [0082](0082-a-compactor-answers-for-the-region-it-regenerates.md) | A compactor answers for the region it regenerates, on detection | Accepted (confirms ADR-0081's open item; supersedes ADR-0080's compactor clause) |
+| [0083](0083-version-minor-is-advisory-and-erasure-is-not-only-superseding.md) | `version_minor` is advisory for a compactor, and erasure is not only superseding | Accepted (resolves round 18's byte-level finding; widens `[R-PRV-01]` to any commit making data unreachable) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

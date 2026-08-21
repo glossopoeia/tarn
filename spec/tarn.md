@@ -3171,11 +3171,15 @@ compacted file is a whole-file rewrite under a new file_id by
 definition (`[R-LIF-01]`), and reusing the input's would break
 the (file_id, range) cache contract of `[R-LIF-03]`, since
 relocation puts different bytes at the same ranges. The output
-trailer copies the input's unknown ignore-lane flag bits forward
-(`[R-CNT-08]`) and carries the greater of `[R-CNT-26]`'s floor and
-the input's version_minor — a compactor cannot know which minor
-version defined an ignore-lane bit it does not implement, so it does
-not lower the floor beneath one.
+trailer MUST copy the input's unknown ignore-lane flag bits forward,
+in place of the flags = 0 §6.3 requires of a file created under this
+text (`[R-CNT-08]`). Where any such bit is set, the output's
+version_minor SHOULD be at least the input's: a compactor cannot know
+which minor version defined a bit it does not implement, and a lower
+minor states a feature floor the carried bit contradicts, misstating
+it to tooling as `[R-CNT-26]` describes. Where none is set,
+version_minor follows `[R-CNT-26]`, as it does for an appender (§20.3
+step 6). Neither has a witness in the output alone (§21.7).
 A compactor MUST refuse to compact a file carrying any record
 whose type it does not implement with MU = 1: such a type can
 define references this specification does not (§7.2), so its
@@ -3613,7 +3617,9 @@ or by T14 where the new declaration is codec 1; and a
 commit that supersedes every tile it would have damaged leaves the
 live state clean, so the bar is unwitnessed there for the same
 reason `[R-LIF-01]` is: it is a property of the prior generation,
-which §9.7 does not reconstruct; and `[R-ENC-06]`'s fixed field widths are not
+which §9.7 does not reconstruct; §20.5's floor on a compacted file's
+version_minor (`[R-WRT-06]`) is unwitnessed for that same reason, the
+output carrying no record of its input's minor; and `[R-ENC-06]`'s fixed field widths are not
 a state a
 file can be in, since the parse is always at the widths this
 specification fixes and a structure written at any other yields
@@ -3814,14 +3820,17 @@ file a reader opens later. `[R-SEC-07]`
 
 #### 23.1 Deletion is not erasure
 
-The append-only model (§9.1) means a commit that supersedes data —
-the only removal of sample data a commit performs, no commit removing
-a layer at all, and an unknown ancillary record's drop (§20.4) the one
-other removal available to it — removes only that data's *reachability*: the superseded bytes remain in the
+The append-only model (§9.1) means that what a commit removes, it
+removes only from *reachability*. A commit removes sample data two
+ways — superseding it, and a shrink that de-addresses tiles (§20.3
+step 4) — and a dropped ancillary record's extent (§20.4) goes the
+same way; no commit removes a layer at all. In each case the bytes remain in the
 file as slack (`[R-CNT-21]`), readable by anyone with the bytes
 and a hex editor, and recoverable by any tool that scans backward for
 an earlier trailer (§9.6). Writers and the tools built on them
-MUST NOT represent a commit that supersedes data as erasure of it.
+MUST NOT represent any commit that makes sample data unreachable as
+erasure of it — a shrink reported as a deletion misleads exactly as a
+supersede so reported does.
 `[R-PRV-01]`
 
 Compaction (§20.5) is the only operation that removes slack,

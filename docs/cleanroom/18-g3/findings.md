@@ -91,10 +91,29 @@ are still the defect surface; the defects in them are no longer byte-level.
 
 ## Disposition
 
-The byte-level defect needs a maintainer decision before an edit — MUST or
-SHOULD, and unconditional or scoped to inputs carrying an unknown ignore-lane
-bit — and the appender/compactor asymmetry has to be settled with it, since
-the constructions are identical. Recorded and pending.
+**Resolved by [ADR-0083](../../decisions/0083-version-minor-is-advisory-and-erasure-is-not-only-superseding.md).**
+The two conjuncts take different modals, and that is the point: the ignore-lane
+carry-forward is a **MUST** (clearing those bits destroys information the
+compactor is provably unable to evaluate, and §6.3 and §20.5 had each stated
+the compactor's case without a modal while pointing at the other); the
+`version_minor` floor is a **SHOULD**, scoped to the case its rationale
+actually reaches — where an unknown ignore-lane bit is set — with the deviation
+consequence stated, and otherwise deferring to `[R-CNT-26]` exactly as an
+appender does.
+
+SHOULD because `version_minor` is the trailer's only `descriptive` field, no
+verdict or reader behaviour turns on it, and above all **no verifier can check
+it**: the output carries no record of its input's minor. §21.7 now records
+that, next to `[R-LIF-01]`, which is unwitnessed for the same reason. The
+appender/compactor asymmetry turned out to be an artefact of form rather than
+substance — §20.3 step 6 sits inside "An appender MUST, in order:", so the
+enclosing MUST already supplied the modal that §20.5's running prose lacked.
+
+Both repair defects this round found in the same day's text are also fixed:
+§23.1 stops claiming an "only" and enumerates the removals instead, and
+`[R-PRV-01]` widens from "a commit that supersedes data" to any commit that
+makes sample data unreachable — the shrink-as-delete case being the one a user
+is most likely to meet.
 
 Register and corpus unchanged: **121 conditions over 273 instances, 327
 vectors.** The register hunter's hand recount reproduced §21.8's totals
