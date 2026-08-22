@@ -2463,7 +2463,13 @@ tile's declared decoded size do not apply, because a document has
 no declared size — a reader instead decodes with a bound of its
 own choosing, no smaller than §21.9's user-metadata guarantee, and
 a document exceeding that bound is ignore-record like any other it
-cannot read. A **verifier** that declines to decode a document on
+cannot read. The frame's declared `Window_Size` is unconstrained
+here for the same reason, and takes the same treatment: a reader's
+window bound is its own, no smaller than §21.9's guarantee for that
+quantity, and a frame declaring more than the reader admits is
+ignore-record on that ground — the reader's capability, not a
+failure to decode within the meaning of R3, and no violation
+(`[R-MTA-09]`, `[R-ERR-03]`). A **verifier** that declines to decode a document on
 the bound above cannot establish that document's conformance and MUST NOT certify
 the file, exactly as `[R-COD-11]` requires of a codec it cannot
 execute; the bound is that verifier's capability and not a limit on

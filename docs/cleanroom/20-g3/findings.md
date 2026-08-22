@@ -60,11 +60,15 @@ records it trying 23 attacks in round 5 and refuting every one.
 
 ## Disposition
 
-The survivor needs a maintainer decision — whether §18.2 gains a window bound
-for metadata frames, or §21.5/§21.9 say which side of the
-violation/capability line a window above the floor falls on. `[R-MTA-09]`
-already settles the *size-bound* decline as a capability, which is the obvious
-model. **No repair made this round.**
+**Resolved by [ADR-0085](../../decisions/0085-a-metadata-frames-window-is-the-readers-capability.md).**
+The window takes the treatment the same §18.2 sentence already gives the
+decoded size: unconstrained here, and a frame declaring more than the reader
+admits is ignore-record on that ground — the reader's capability, not a failure
+to decode within the meaning of R3, and no violation. `[R-MTA-09]` supplied
+both the model and the wording, having decided the identical question for the
+neighbouring quantity; `[R-ERR-03]`'s "minimum guarantees, not caps" is why the
+file stays conforming and the refusal lands on the actor. Row R4 is untouched —
+the window is not among the frame constraints it registers.
 
 Register and corpus unchanged: 121 conditions over 273 instances, 327 vectors —
 recomputed mechanically by the quiz author (36+49+26+10 rows), along with every

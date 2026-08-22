@@ -100,6 +100,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0082](0082-a-compactor-answers-for-the-region-it-regenerates.md) | A compactor answers for the region it regenerates, on detection | Accepted (confirms ADR-0081's open item; supersedes ADR-0080's compactor clause) |
 | [0083](0083-version-minor-is-advisory-and-erasure-is-not-only-superseding.md) | `version_minor` is advisory for a compactor, and erasure is not only superseding | Accepted (resolves round 18's byte-level finding; widens `[R-PRV-01]` to any commit making data unreachable) |
 | [0084](0084-the-experimental-mu1-refusal-is-top-level-only.md) | The experimental MU = 1 refusal is top-level only, and two clauses get keywords | Accepted (resolves round 19's byte-level finding; adds a context-injection clause to ADR-0034's access rule) |
+| [0085](0085-a-metadata-frames-window-is-the-readers-capability.md) | A metadata frame's window is the reader's capability, not the file's defect | Accepted (resolves round 20's byte-level finding; follows `[R-MTA-09]`'s model for the neighbouring quantity) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).
