@@ -2468,8 +2468,9 @@ here for the same reason, and takes the same treatment: a reader's
 window bound is its own, no smaller than §21.9's guarantee for that
 quantity, and a frame declaring more than the reader admits is
 ignore-record on that ground — the reader's capability, not a
-failure to decode within the meaning of R3, and no violation
-(`[R-MTA-09]`, `[R-ERR-03]`). A **verifier** that declines to decode a document on
+failure to decode within the meaning of R3, and no violation: the
+file exceeds a §21.9 guarantee and so remains conforming while the
+reader MAY decline it (`[R-ERR-04]`). A **verifier** that declines to decode a document on
 the bound above cannot establish that document's conformance and MUST NOT certify
 the file, exactly as `[R-COD-11]` requires of a codec it cannot
 execute; the bound is that verifier's capability and not a limit on
@@ -3512,8 +3513,9 @@ be unreadable takes this outcome, whatever the containing scope —
 as a violation in the rows below, except at an experimental-range
 encoding, where no document rule attaches and §21.6 records the
 defined non-violation (`[R-MTA-10]`), and except where a reader or
-verifier declines the decode on the size bound, which `[R-MTA-09]`
-makes that actor's capability and not a fact about the file. Encoding 0 and a reserved-range
+verifier declines the decode on the size bound or on the frame's
+declared window, which `[R-MTA-09]` makes that actor's capability and
+not a fact about the file. Encoding 0 and a reserved-range
 value are unassigned too, and R1 registers both as violations: what
 `[R-MTA-10]` withdraws is the document's content rules, never the
 encoding byte's own value set (`[R-MTA-03]`). Every row
