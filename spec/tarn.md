@@ -1050,8 +1050,8 @@ remaining bytes MUST parse as zero or more complete sub-records under
 is a validity error at layer scope. Sub-records are layer-scope records; a
 sub-record MUST NOT itself contain records (nesting depth beyond two
 is a validity error at layer scope), and an unknown sub-record type
-with MU = 1 is reject-layer — never reject-file — and with MU = 0 is
-ignore-record. A *known* type appearing where §7.3's table does not
+with MU = 1 is reject-layer, and a reader MUST NOT reject the file for
+it; with MU = 0 it is ignore-record. A *known* type appearing where §7.3's table does not
 scope it — a layer record nested as a sub-record, say — is a
 validity error at layer scope, not an unknown type. `[R-CNT-18]`
 
@@ -3189,7 +3189,7 @@ whose type it does not implement with MU = 1: such a type can
 define references this specification does not (§7.2), so its
 bytes cannot be safely relocated. `[R-WRT-06]`
 
-A compactor preserves content but not placement — placement is not among the things it carries forward, and it is free to place structures anywhere §5.2 admits and every declared layout invariant permits (`[R-SLB-01]`, `[R-SLB-03]`): every stored
+A compactor MUST preserve content, and preserves no placement — placement is not among the things it carries forward, and it is free to place structures anywhere §5.2 admits and every declared layout invariant permits (`[R-SLB-01]`, `[R-SLB-03]`): every stored
 tile's bytes verbatim — each index entry's crc is unchanged — and
 every retained record per §20.4, except that relocation re-points
 extent slots, regenerates each relocated tile-index region (entry
@@ -3564,9 +3564,12 @@ Two structural cases are **conforming files a reader nevertheless
 refuses**. The first is **version_major naming a major this reader
 does not implement**: the reader rejects the file (`[R-CNT-07]`), but
 the file can be perfectly conforming under that major. The second is
-an **experimental-range record type carrying MU = 1** (§10.2,
-§10.3): `[R-CNT-15]` obliges the reader to reject, and `[R-CNF-02]`
-makes the file conforming all the same, since the prohibition on
+an **experimental-range top-level record type carrying MU = 1**
+(§10.2, §10.3): `[R-CNT-15]` obliges the reader to reject, and
+`[R-CNF-02]` makes the file conforming all the same. The qualifier is
+load-bearing — the same type as a layer sub-record is reject-layer and
+never a ground to refuse the file (`[R-CNT-18]`), so only the
+top-level case is a file a reader refuses, since the prohibition on
 publishing experimental values binds a writer's conduct and not the
 bytes. In both the outcome records a reader's capability, not a defect
 in the bytes, and the diagnostic ought to distinguish the two.

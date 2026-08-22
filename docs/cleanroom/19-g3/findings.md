@@ -40,6 +40,18 @@ about scope rather than casing — but a disclosed breach is usable only because
 it was disclosed, and **this leak is not specific to this round.** It should be
 assumed to have been present in earlier ones.
 
+**What the index actually contained matters more than the round-state hint.**
+Its first line named the lineage this repository's standing rule forbids
+mentioning anywhere. The repository-side gate could never have caught it, since
+it greps the repository and the memory directory is not in it. Nothing reached
+the repository — that gate has returned clean every round — but the words were
+in agent context throughout. Fixed three ways: the index hooks are now
+content-free; the lineage gate is now two-part, the second covering the memory
+directory; and every ACCESS block now tells agents that injected material is
+not evidence, to disregard it, and to disclose that it appeared without
+repeating it. The third is the durable one — it holds whatever the runtime does
+next.
+
 ## The survivor: §21.6 states a file-wide refusal where `[R-CNT-18]` confines it to a layer
 
 §21.6's closing paragraph names, without any placement qualifier, "an
