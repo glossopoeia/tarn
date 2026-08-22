@@ -63,3 +63,55 @@ and A-04 were graded REFUTED while B-01, the same underlying defect seen from
 another hunk, was CONFIRMED. **A split across verifiers on one defect is the
 shape the refute phase exists for**, and it is why the confirmed set was
 cross-checked by hand rather than taken as given.
+
+---
+
+# Second and third passes, over the fixes
+
+The audit above found four defects; fixing them produced a diff that was
+audited again, and that produced a third.
+
+| pass | surface | findings | confirmed / partial | byte-level after refute |
+|---|---|---|---|---|
+| 1 | ADR-0083's three hunks | 16 | 3 / 1 | **1** |
+| 2 | the four fixes, plus two I found myself | 15 | 1 / 3 | **0** |
+
+**Pass 2's byte-level flag was downgraded, and the refute phase upheld the
+downgrade on a general ground rather than a case-specific one.** `[R-CNF-12]`:
+"Deviation from a SHOULD is not a violation for this purpose: §21's register
+enumerates MUST-level conditions only." Since ADR-0083 made the clause
+explicitly a SHOULD, and `[R-CNT-07]` forbids a reader rejecting on
+`version_minor`, and `[R-CNF-05]` gates emission on file conformance, **no
+formulation of this clause can move the emittable set.** The question is closed
+permanently, not settled for one wording.
+
+That also re-reads round 18's finding: it was byte-level *because the mandatory
+reading was still available*. Fixing the modal did not merely repair the
+sentence — it removed the sentence from the class of things that can be
+byte-level at all.
+
+## What pass 2 corrected
+
+- **The enumeration, twice wrong in opposite directions.** ADR-0083 named two
+  growth vehicles and pass 1 found it short; I replaced it with a deferral to
+  all four of §10.1's, and pass 2 found *that* over-reaching — two of the four
+  reach a conforming file only as reserved-range values this text registers as
+  violations (F36, L25, R1). The stable form is the original two **with the
+  reason they are exhaustive**, which is what was missing all along.
+- **Appendix G item 8** claimed "both are creator's rules"; the `version_minor`
+  half binds a compactor too. Each half now carries its own scope, and the item
+  concedes what the profile cannot deliver: a compactor's output is
+  reproducible only modulo its trailer, since `[R-WRT-06]`'s fresh `file_id` is
+  no function of content.
+- **Appendix G's closing paragraph**, which pass 1 had explicitly told me to
+  sweep and I had not.
+
+## The reading
+
+Three passes, three sets of defects, each in the fix for the last. The
+instrument is not converging on a clean diff by iteration — it is finding a
+different defect each time because each fix is new text. What changed by pass 2
+is the *severity floor*: pass 1 found a byte-level defect, pass 2 found none
+that survived, and the reason is structural rather than lucky. That is the
+first evidence in this project that a passage can be argued out of the
+byte-level class entirely.

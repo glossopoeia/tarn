@@ -3173,11 +3173,13 @@ the (file_id, range) cache contract of `[R-LIF-03]`, since
 relocation puts different bytes at the same ranges. The output
 trailer MUST copy the input's unknown ignore-lane flag bits forward,
 in place of the flags = 0 §6.3 requires of a file created under this
-text (`[R-CNT-08]`). Where the output carries any feature the
-compactor does not implement — a carried ignore-lane bit, or an
-unrecognized `tarn.` key in a user-metadata record it never decoded
-(§18.3, `[R-MTA-06]`) — the output's version_minor SHOULD be at least
-the input's: a compactor cannot know which minor version defined a
+text (`[R-CNT-08]`). Where the output carries a feature a later minor
+defines and this compactor does not — on a conforming input a carried
+ignore-lane bit (§6.3) or an unrecognized `tarn.` key in a record it
+never decoded (§18.3), the two of §10.1's four vehicles §21.6 makes
+conforming, the other two reaching such a file only as values this
+text still registers as reserved-range violations (F36, L25, R1) —
+the output's version_minor SHOULD be at least the input's: a compactor cannot know which minor version defined a
 feature it does not implement, and a lower minor understates the
 file's feature floor to tooling, the mirror of the overstatement
 `[R-CNT-26]` names. Otherwise version_minor follows `[R-CNT-26]`'s
@@ -4244,11 +4246,17 @@ the file.
    writers that default fill differently disagree about which tiles
    exist, not merely about eight bytes of the layer record.
 8. **`version_minor` at the floor** `[R-CNT-26]` states, and
-   `flags` = 0. Both are creator's rules, as item 2's identifier is: a
-   compactor adopting the profile carries its input's unknown
-   ignore-lane bits forward instead, and where it carries any feature
-   it does not implement takes §20.5's floor rather than
-   `[R-CNT-26]`'s (`[R-WRT-06]`).
+   `flags` = 0. The `flags` half is a creator's rule, as item 2's
+   identifier is: a compactor adopting the profile carries its input's
+   unknown ignore-lane bits forward instead (`[R-CNT-08]`). The
+   version_minor floor binds a compactor too, save where its output
+   carries a feature it does not implement, when §20.5's floor governs
+   instead (`[R-WRT-06]`). A compactor's output is therefore
+   reproducible only modulo its trailer: `[R-WRT-06]`'s fresh file_id
+   is no function of content, and this item's floor turns on which
+   features the compactor implements. An adopter needing byte-identity
+   across compactors pins the compactor, as items 1 and 9 pin their
+   producers.
 9. **User metadata either absent, or serialized by a named JSON
    writer at a named version, at a fixed storage encoding (§18.2) —
    and, where that encoding is 2, by a named zstd implementation at a
@@ -4276,7 +4284,7 @@ SHOULD); the sentinel for every all-fill tile, which no rule requires;
 a single generation, which §9 nowhere constrains; the absence or
 fixing of a declared alignment and slab, which §16 leaves to the
 writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
-SHOULD; a derived `file_id`, where §9.3 states only advice; NFC-normalized
+SHOULD — item 8's creator's rule, not a compactor's (§20.5); a derived `file_id`, where §9.3 states only advice; NFC-normalized
 names, which `[R-ENC-14]` states as a SHOULD; and the
 producer pinning of items 1 and 9. Read the numbered items as the
 list; this paragraph names what they are for, not how many there

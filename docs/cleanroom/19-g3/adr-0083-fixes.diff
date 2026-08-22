@@ -1,0 +1,104 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index fef8d82..b34ced6 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -3170,19 +3170,22 @@ and generation 1: a
+ compacted file is a whole-file rewrite under a new file_id by
+ definition (`[R-LIF-01]`), and reusing the input's would break
+ the (file_id, range) cache contract of `[R-LIF-03]`, since
+ relocation puts different bytes at the same ranges. The output
+ trailer MUST copy the input's unknown ignore-lane flag bits forward,
+ in place of the flags = 0 §6.3 requires of a file created under this
+-text (`[R-CNT-08]`). Where any such bit is set, the output's
+-version_minor SHOULD be at least the input's: a compactor cannot know
+-which minor version defined a bit it does not implement, and a lower
+-minor states a feature floor the carried bit contradicts, misstating
+-it to tooling as `[R-CNT-26]` describes. Where none is set,
+-version_minor follows `[R-CNT-26]`, as it does for an appender (§20.3
+-step 6). Neither has a witness in the output alone (§21.7).
++text (`[R-CNT-08]`). Where the output carries any feature the
++compactor does not implement — by any of the four vehicles §10.1
++enumerates (`[R-EXT-01]`), a carried ignore-lane bit and an
++unrecognized `tarn.` key in a record it never decoded being the two it
++is likeliest to meet — the output's version_minor SHOULD be at least
++the input's: a compactor cannot know which minor version defined a
++feature it does not implement, and a lower minor understates the
++file's feature floor to tooling, the mirror of the overstatement
++`[R-CNT-26]` names. Otherwise version_minor follows `[R-CNT-26]`'s
++floor. Neither obligation has a witness in the output alone (§21.7).
+ A compactor MUST refuse to compact a file carrying any record
+ whose type it does not implement with MU = 1: such a type can
+ define references this specification does not (§7.2), so its
+ bytes cannot be safely relocated. `[R-WRT-06]`
+ 
+ A compactor preserves content but not placement — placement is not among the things it carries forward, and it is free to place structures anywhere §5.2 admits and every declared layout invariant permits (`[R-SLB-01]`, `[R-SLB-03]`): every stored
+@@ -3614,15 +3617,17 @@ entry's declared length, T3 the decoded payload's own; a change that
+ reaches the codec is witnessed by the rows for the codec now declared,
+ which test the stored bytes as a stream of it (T15, T17, T23, T25),
+ or by T14 where the new declaration is codec 1; and a
+ commit that supersedes every tile it would have damaged leaves the
+ live state clean, so the bar is unwitnessed there for the same
+ reason `[R-LIF-01]` is: it is a property of the prior generation,
+-which §9.7 does not reconstruct; §20.5's floor on a compacted file's
+-version_minor (`[R-WRT-06]`) is unwitnessed for that same reason, the
+-output carrying no record of its input's minor; and `[R-ENC-06]`'s fixed field widths are not
++which §9.7 does not reconstruct; §20.5's two obligations on a
++compacted file's trailer (`[R-WRT-06]`) — the unknown ignore-lane bits
++it MUST carry forward, and the floor its version_minor SHOULD take —
++are unwitnessed for that same reason, the output carrying no record of
++its input's flags or its input's minor; and `[R-ENC-06]`'s fixed field widths are not
+ a state a
+ file can be in, since the parse is always at the widths this
+ specification fixes and a structure written at any other yields
+ different values at them, caught by the rows for the fields that hold
+ them. `[R-ERR-01]`
+ 
+@@ -3826,13 +3831,13 @@ ways — superseding it, and a shrink that de-addresses tiles (§20.3
+ step 4) — and a dropped ancillary record's extent (§20.4) goes the
+ same way; no commit removes a layer at all. In each case the bytes remain in the
+ file as slack (`[R-CNT-21]`), readable by anyone with the bytes
+ and a hex editor, and recoverable by any tool that scans backward for
+ an earlier trailer (§9.6). Writers and the tools built on them
+ MUST NOT represent any commit that makes sample data unreachable as
+-erasure of it — a shrink reported as a deletion misleads exactly as a
++erasure of it — a shrink reported as erasure misleads exactly as a
+ supersede so reported does.
+ `[R-PRV-01]`
+ 
+ Compaction (§20.5) is the only operation that removes slack,
+ and it does so by writing a new file — the input persists,
+ unmodified, until something outside this specification deletes it,
+@@ -4237,13 +4242,17 @@ the file.
+    the writer records all-zero bytes — `[R-TYP-10]`'s SHOULD, taken
+    as a requirement here. This one reaches further than the fill
+    field: item 6 stores no tile whose samples all equal fill, so two
+    writers that default fill differently disagree about which tiles
+    exist, not merely about eight bytes of the layer record.
+ 8. **`version_minor` at the floor** `[R-CNT-26]` states, and
+-   `flags` = 0.
++   `flags` = 0. Both are creator's rules, as item 2's identifier is: a
++   compactor adopting the profile carries its input's unknown
++   ignore-lane bits forward instead, and where it carries any feature
++   it does not implement takes §20.5's floor rather than
++   `[R-CNT-26]`'s (`[R-WRT-06]`).
+ 9. **User metadata either absent, or serialized by a named JSON
+    writer at a named version, at a fixed storage encoding (§18.2) —
+    and, where that encoding is 2, by a named zstd implementation at a
+    named version with fixed settings, as item 1 pins a tile codec.** `[R-MTA-05]`'s sorted keys make one
+    writer's output reproducible but explicitly do not make two
+    writers' output identical — number formatting varies by runtime —
+@@ -4265,13 +4274,13 @@ gap *extent*, which placement freedom (`[R-SLB-05]`) leaves open;
+ record and sub-record order, which `[R-CNT-14]` leaves free; the fill
+ a writer records when its caller chooses none (`[R-TYP-10]`, a
+ SHOULD); the sentinel for every all-fill tile, which no rule requires;
+ a single generation, which §9 nowhere constrains; the absence or
+ fixing of a declared alignment and slab, which §16 leaves to the
+ writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
+-SHOULD; a derived `file_id`, where §9.3 states only advice; NFC-normalized
++SHOULD — item 8's creator's rule, not a compactor's (§20.5); a derived `file_id`, where §9.3 states only advice; NFC-normalized
+ names, which `[R-ENC-14]` states as a SHOULD; and the
+ producer pinning of items 1 and 9. Read the numbered items as the
+ list; this paragraph names what they are for, not how many there
+ are.
+ 
+ ### Appendix H — Conformance checklists (non-normative)
