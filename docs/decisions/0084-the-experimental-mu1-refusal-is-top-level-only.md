@@ -91,6 +91,25 @@ because it holds whatever a runtime does next.
 
 **Rounds before 19 should be discounted accordingly.**
 
+## Amendment, from the repair audit run before round 20
+
+The keyword above **overreached, and the audit of this very decision caught it
+as byte-level.** "An unknown sub-record type with MU = 1" is reader-relative
+and covers the *reserved* range as well as the experimental one — and a
+reserved-range sub-record is register row L24, a violation, so the file is
+nonconforming. On exactly that file `[R-CNF-12]` says "For a nonconforming file
+no acceptance obligation exists — a reader MAY reject it upon detecting any
+violation." The new MUST NOT forbade precisely what `[R-CNF-12]` permits, rule
+against rule, with no lex-specialis clause on the page to resolve it (§21.1's
+precedence governs rows against rules, not two rules).
+
+The prohibition is therefore bounded to the case it was written for: **where
+the file is otherwise conforming**, a reader MUST NOT reject the file for such
+a sub-record; on a nonconforming file `[R-CNF-12]`'s licence is untouched and
+said to be untouched. That is the whole fork this ADR set out to close — the
+experimental-range case, which `[R-CNF-02]` makes conforming — so the bound
+costs the decision nothing.
+
 ## Consequences
 
 Rounds 18 and 19 each returned exactly one byte-level defect, both in text no

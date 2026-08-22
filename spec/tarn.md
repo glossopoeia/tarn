@@ -1050,8 +1050,10 @@ remaining bytes MUST parse as zero or more complete sub-records under
 is a validity error at layer scope. Sub-records are layer-scope records; a
 sub-record MUST NOT itself contain records (nesting depth beyond two
 is a validity error at layer scope), and an unknown sub-record type
-with MU = 1 is reject-layer, and a reader MUST NOT reject the file for
-it; with MU = 0 it is ignore-record. A *known* type appearing where §7.3's table does not
+with MU = 1 is reject-layer, and where the file is otherwise
+conforming a reader MUST NOT reject the file for it — on a
+nonconforming file `[R-CNF-12]`'s licence to reject on any detected
+violation is untouched; with MU = 0 it is ignore-record. A *known* type appearing where §7.3's table does not
 scope it — a layer record nested as a sub-record, say — is a
 validity error at layer scope, not an unknown type. `[R-CNT-18]`
 
