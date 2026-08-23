@@ -2473,12 +2473,13 @@ file exceeds a §21.9 guarantee and so remains conforming while the
 reader MAY decline it (`[R-ERR-04]`). The frame's content-size field,
 unlike the decoded size and the window, is *not* left to the reader:
 it MAY be present, and when present it MUST equal the byte length of
-the decoded document. A mismatch is a failure to decode within the
-meaning of R3, so that R3's condition stays checkable from the bytes
-alone rather than turning on a decoder's tolerance (`[R-CNF-02]`) —
-the tile rule of `[R-COD-06]` transposed to the quantity a document
-does have, its decoded length, in place of the declared size it does
-not. A **verifier** that declines to decode a document on
+the decoded document. A mismatch is one of the frame
+constraints R4 registers, not a failure to decode under R3: the bytes
+decode, and what is wrong is what the header said about them. Routing
+it to R4 keeps the condition checkable from the bytes alone rather
+than turning on a decoder's tolerance (`[R-CNF-02]`) — the tile rule
+of `[R-COD-06]` transposed to the quantity a document does have, its
+decoded length, in place of the declared size it does not. A **verifier** that declines to decode a document on
 the bound above cannot establish that document's conformance and MUST NOT certify
 the file, exactly as `[R-COD-11]` requires of a codec it cannot
 execute; the bound is that verifier's capability and not a limit on
@@ -3537,7 +3538,7 @@ blast radius and never makes the file conforming (`[R-CNF-12]`);
 | R1 | A user-metadata record declares a document encoding of 0, or a reserved-range value (3-0x7F) | encoding 0, top-level record; encoding 0, layer sub-record; reserved 3–0x7F, top-level record; reserved 3–0x7F, layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-25]` (R-MTA-03, R-EXT-03) |
 | R2 | A user-metadata extent's final 4 bytes do not equal the CRC-32C of the preceding bytes | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-20]` (R-CNT-25) |
 | R3 | A user-metadata document's stored bytes fail to decode under its declared assigned encoding — under an experimental-range one this specification defines no decoding and §21.6 governs (`[R-MTA-10]`); encoding 0 and a reserved value are unassigned too and R1 registers both | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
-| R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 states or carries over from `[R-COD-06]` — the single frame occupying the extent's bytes before its terminal CRC included; unlike R3, the constraint is broken whether or not the bytes decode | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent; bytes remaining after the frame, top-level extent; bytes remaining after the frame, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
+| R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 states or carries over from `[R-COD-06]` — the single frame occupying the extent's bytes before its terminal CRC included; unlike R3, the constraint is broken whether or not the bytes decode, and — for the content-size field — whether or not they decode to the length it declares | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent; bytes remaining after the frame, top-level extent; bytes remaining after the frame, layer sub-record extent; the content-size field declared larger than the decoded length, top-level extent; the content-size field declared larger than the decoded length, layer sub-record extent; the content-size field declared smaller than the decoded length, top-level extent; the content-size field declared smaller than the decoded length, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
 | R5 | A decoded user-metadata document violates the document's own content rules — a key or string value whose UTF-8 is ill-formed in the source bytes, or that resolves a `\uXXXX` escape denoting an unpaired surrogate | ill-formed source bytes in a key, top-level document; ill-formed source bytes in a key, layer sub-record document; ill-formed source bytes in a string value, top-level document; ill-formed source bytes in a string value, layer sub-record document; unpaired-surrogate escape in a key, top-level document; unpaired-surrogate escape in a key, layer sub-record document; unpaired-surrogate escape in a string value, top-level document; unpaired-surrogate escape in a string value, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-MTA-04, R-ENC-11) |
 | R6 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-12) |
 | R7 | A decoded user-metadata document is not well-formed JSON, or its top-level value is not an object | not well-formed JSON, top-level document; not well-formed JSON, layer sub-record document; top-level value not an object, top-level document; top-level value not an object, layer sub-record document; leading U+FEFF, top-level document; leading U+FEFF, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
@@ -3655,7 +3656,7 @@ them. `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 121 conditions over 273
+Every row of §21.2 through §21.5 — 121 conditions over 277
 instances — has at least one conformance vector (§24) whose expected
 outcome is that row's outcome, and one vector per instance. A row without a vector is a
 gap in the corpus, not a licence to skip the check. `[R-ERR-02]`

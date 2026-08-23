@@ -102,6 +102,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0084](0084-the-experimental-mu1-refusal-is-top-level-only.md) | The experimental MU = 1 refusal is top-level only, and two clauses get keywords | Accepted (resolves round 19's byte-level finding; adds a context-injection clause to ADR-0034's access rule) |
 | [0085](0085-a-metadata-frames-window-is-the-readers-capability.md) | A metadata frame's window is the reader's capability, not the file's defect | Accepted (resolves round 20's byte-level finding; follows `[R-MTA-09]`'s model for the neighbouring quantity) |
 | [0086](0086-the-limits-tables-per-instance-rows.md) | §21.9's per-instance rows range over instances, not declarations | Accepted (resolves round 21's unanimous byte-level finding; aligns the table with `[R-COD-07]`'s existing quantifier) |
+| [0087](0087-the-content-size-mismatch-is-an-r4-constraint.md) | A metadata frame's content-size mismatch is an R4 constraint, with four instances | Accepted (closes round 22's register debt; revises ADR-0085's R3 routing; 273 → 277 instances, four vectors) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

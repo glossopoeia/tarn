@@ -126,7 +126,7 @@ def _blockhdr(size: int, btype: int, last: bool) -> bytes:
 
 
 def _frame(content: bytes, magic: bytes = ZMAGIC, dict_id: int | None = None,
-           checksum: bool = False) -> bytes:
+           checksum: bool = False, fcs: int | None = None) -> bytes:
     """One single-segment frame holding `content` in a raw block.
 
     Frame_Header_Descriptor bit 5 is Single_Segment, so there is no window
@@ -138,7 +138,8 @@ def _frame(content: bytes, magic: bytes = ZMAGIC, dict_id: int | None = None,
     out = magic + bytes([fhd])
     if dict_id is not None:
         out += bytes([dict_id])
-    out += bytes([len(content)]) + _blockhdr(len(content), 0, True) + content
+    out += bytes([len(content) if fcs is None else fcs])
+    out += _blockhdr(len(content), 0, True) + content
     if checksum:
         out += u32(_xxh64(content) & 0xFFFFFFFF)
     return out
@@ -211,6 +212,13 @@ F_CHECKSUM = _frame(_pad_json(10), checksum=True)
 # neither a zstd frame (magic 0xFD2FB528) nor a skippable one
 # (0x184D2A5x) — so this is residue, not F_TWO_FRAMES's second frame.
 F_TRAILING = _frame(_pad_json(7)) + b"\x00" * 7
+# R4's content-size instances. Single_Segment is set, so the content-size field
+# is one byte and RFC 8878 makes Window_Size equal to it -- both values stay far
+# under §21.9's 8 MiB window guarantee, so these vectors carry the content-size
+# mismatch and nothing else. The block still declares its true length, so the
+# frame decodes; what is wrong is only what the header said about it.
+F_FCS_LARGER = _frame(_pad_json(14), fcs=15)
+F_FCS_SMALLER = _frame(_pad_json(14), fcs=13)
 
 # R10's key must exceed 255 bytes, which no 23-byte verbatim document can hold;
 # encoding 2 is the only way to reach the row. The key runs as a single RLE
@@ -384,6 +392,19 @@ VECTORS = [
        "layer sub-record extent",
        sub=True, row="R4", rule="R-MTA-09", detected="extent use",
        patches=[ENC[2], _ext(F_TRAILING)]),
+
+    _v("TV-0957", "zstd document whose content-size field is declared larger than the decoded length, top-level extent",
+       sub=False, row="R4", rule="R-MTA-09", detected="extent use",
+       patches=[ENC[2], _ext(F_FCS_LARGER)]),
+    _v("TV-0958", "zstd document whose content-size field is declared larger than the decoded length, layer sub-record extent",
+       sub=True, row="R4", rule="R-MTA-09", detected="extent use",
+       patches=[ENC[2], _ext(F_FCS_LARGER)]),
+    _v("TV-0959", "zstd document whose content-size field is declared smaller than the decoded length, top-level extent",
+       sub=False, row="R4", rule="R-MTA-09", detected="extent use",
+       patches=[ENC[2], _ext(F_FCS_SMALLER)]),
+    _v("TV-0960", "zstd document whose content-size field is declared smaller than the decoded length, layer sub-record extent",
+       sub=True, row="R4", rule="R-MTA-09", detected="extent use",
+       patches=[ENC[2], _ext(F_FCS_SMALLER)]),
 
     # -- R5: ill-formed UTF-8 in a string value -------------------------------
     # A lone 0xFF starts no UTF-8 sequence, so the document is not UTF-8 text at

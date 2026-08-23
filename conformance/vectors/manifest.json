@@ -51827,6 +51827,352 @@
           "detected": "certification"
         }
       ]
+    },
+    {
+      "id": "TV-0957",
+      "file": "ignore-record/TV-0957.tarn",
+      "title": "zstd document whose content-size field is declared larger than the decoded length, top-level extent",
+      "sha256": "98ad8bcc6f16f008b6da7bc1809d7edd0d58c18cc0386d82daa6eb5790ed266b",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].inline",
+            "value": "02"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "28b52ffd200f7100007b2261223a317d20202020202020ebb05f71"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:file"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R4",
+          "instance": "the content-size field declared larger than the decoded length, top-level extent",
+          "rule": "R-MTA-09",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "file",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0958",
+      "file": "ignore-record/TV-0958.tarn",
+      "title": "zstd document whose content-size field is declared larger than the decoded length, layer sub-record extent",
+      "sha256": "2ca2bb2d627e4bcd63f2afc3e075f8e15fc5105dc523761b0fbbdbbe175124be",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "layer[ok].record",
+            "value": "010003007800000028000000000000001800000000000000026f6b0101000100010000000000000000000000000000000000000000000000000002010001790200000000000000020000000000000001780300000000000000030000000000000001740c00040000000001010000000000000034d41709"
+          },
+          {
+            "field": "record[0x0002].inline",
+            "value": "02"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "28b52ffd200f7100007b2261223a317d20202020202020ebb05f71"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:layer:ok"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R4",
+          "instance": "the content-size field declared larger than the decoded length, layer sub-record extent",
+          "rule": "R-MTA-09",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "layer",
+            "layer": "ok",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0959",
+      "file": "ignore-record/TV-0959.tarn",
+      "title": "zstd document whose content-size field is declared smaller than the decoded length, top-level extent",
+      "sha256": "e43aee8757f51c10e7239c4898287f6f46ca2eed637ede18e4c6cce75bf806d6",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].inline",
+            "value": "02"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "28b52ffd200d7100007b2261223a317d20202020202020bdb48d6f"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:file"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R4",
+          "instance": "the content-size field declared smaller than the decoded length, top-level extent",
+          "rule": "R-MTA-09",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "file",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0960",
+      "file": "ignore-record/TV-0960.tarn",
+      "title": "zstd document whose content-size field is declared smaller than the decoded length, layer sub-record extent",
+      "sha256": "ccce636c6108bcc71e77c374cb0b636010b074b7f03935561d207f7af2633159",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "layer[ok].record",
+            "value": "010003007800000028000000000000001800000000000000026f6b0101000100010000000000000000000000000000000000000000000000000002010001790200000000000000020000000000000001780300000000000000030000000000000001740c00040000000001010000000000000034d41709"
+          },
+          {
+            "field": "record[0x0002].inline",
+            "value": "02"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "28b52ffd200d7100007b2261223a317d20202020202020bdb48d6f"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:layer:ok"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R4",
+          "instance": "the content-size field declared smaller than the decoded length, layer sub-record extent",
+          "rule": "R-MTA-09",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "layer",
+            "layer": "ok",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
     }
   ]
 }
