@@ -1,0 +1,49 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 3884285..f783c0e 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -2467,13 +2467,21 @@ cannot read. The frame's declared `Window_Size` is unconstrained
+ here for the same reason, and takes the same treatment: a reader's
+ window bound is its own, no smaller than §21.9's guarantee for that
+ quantity, and a frame declaring more than the reader admits is
+ ignore-record on that ground — the reader's capability, not a
+ failure to decode within the meaning of R3, and no violation: the
+ file exceeds a §21.9 guarantee and so remains conforming while the
+-reader MAY decline it (`[R-ERR-04]`). A **verifier** that declines to decode a document on
++reader MAY decline it (`[R-ERR-04]`). The frame's content-size field
++is the one header quantity that is *not* left to the reader: it MAY
++be present, and when present it MUST equal the byte length of the
++decoded document. A mismatch is a failure to decode within the
++meaning of R3, so that R3's condition stays checkable from the bytes
++alone rather than turning on a decoder's tolerance (`[R-CNF-02]`) —
++the tile rule of `[R-COD-06]` transposed to the quantity a document
++does have, its decoded length, in place of the declared size it does
++not. A **verifier** that declines to decode a document on
+ the bound above cannot establish that document's conformance and MUST NOT certify
+ the file, exactly as `[R-COD-11]` requires of a codec it cannot
+ execute; the bound is that verifier's capability and not a limit on
+ validity (`[R-CNF-10]`), so the decline is not a finding that the
+ file is nonconforming and a verifier MUST NOT report it as one. The
+ decline is one of the unchecked requirements `[R-CNF-11]` obliges
+@@ -3672,12 +3680,21 @@ bounds, and a writer MAY rely on that. `[R-ERR-03]`
+ | layers per file | 65,536 |
+ | size of the directory region, dir_length | 16 MiB |
+ | decoded size of one tile | 256 MiB |
+ | decoded size of one user-metadata document | 16 MiB |
+ | zstd frame `Window_Size` | 8 MiB |
+ 
++The last three rows are **per-instance**: they range over the tiles,
++user-metadata documents and compressed frames a file actually
++contains, and a file containing none of a kind does not exceed that
++row, whatever its declarations would derive — a layer addressing no tile
++(§11.2) has no tile whose decoded size the table can bound, exactly
++as `[R-COD-07]`'s cap is quantified over a layer's *addressed* tiles.
++The first five range over declarations, which every file and every
++layer carries.
++
+ A file exceeding any of these remains conforming, and a reader MAY
+ decline it — at the whole file, or at the narrowest scope whose
+ declarations exceed what it can serve, a layer or a tile. Software that declines **on that ground** a file whose every quantity lies
+ within the table is not a conforming reader (`[R-CNF-03]`) — the two
+ capability refusals §21.6 names, a foreign format major and an
+ unimplemented MU = 1 type, are not this ground — the

@@ -2470,10 +2470,10 @@ quantity, and a frame declaring more than the reader admits is
 ignore-record on that ground — the reader's capability, not a
 failure to decode within the meaning of R3, and no violation: the
 file exceeds a §21.9 guarantee and so remains conforming while the
-reader MAY decline it (`[R-ERR-04]`). The frame's content-size field
-is the one header quantity that is *not* left to the reader: it MAY
-be present, and when present it MUST equal the byte length of the
-decoded document. A mismatch is a failure to decode within the
+reader MAY decline it (`[R-ERR-04]`). The frame's content-size field,
+unlike the decoded size and the window, is *not* left to the reader:
+it MAY be present, and when present it MUST equal the byte length of
+the decoded document. A mismatch is a failure to decode within the
 meaning of R3, so that R3's condition stays checkable from the bytes
 alone rather than turning on a decoder's tolerance (`[R-CNF-02]`) —
 the tile rule of `[R-COD-06]` transposed to the quantity a document
