@@ -82,10 +82,27 @@ it should say which side the refuter attacked from.
 
 ## Disposition
 
-Both survivors need a maintainer decision. Survivor 2's fix is the same move
-ADR-0085 made for the window, applied to the quantity it missed. Survivor 1 is
-a quantifier question on §21.9's table — whether its per-structure rows range
-over structures the file *addresses* or over what its *declarations derive* —
-and it may reach more rows than the tile one.
+Both fixed.
+
+**Survivor 2** — the tile rule of `[R-COD-06]` transposed to the quantity a
+document does have: the content-size field MAY be present, and when present
+MUST equal the byte length of the decoded document, a mismatch being a failure
+to decode within R3's meaning. Routed to R3 and not R4 deliberately: R4 covers
+constraints "broken whether or not the bytes decode", and an FCS mismatch can
+only be found by decoding and measuring. No new register row.
+
+**Survivor 1 — [ADR-0086](../../decisions/0086-the-limits-tables-per-instance-rows.md).**
+§21.9's last three rows are per-instance and range over instances the file
+actually contains; the first five range over declarations. `[R-COD-07]`'s lz4
+cap had already been quantified over *addressed* tiles, and §20.3 remarks on
+it, so this aligns the table with a choice the document had made once and left
+unmade here.
+
+**The audit gains a sixth check.** ADR-0085 passed all five and still left the
+neighbouring quantity of the same frame header unpinned, because every check
+asks whether the repaired words are right and those words were right about the
+thing they mentioned. Check 6 asks what the repair *left open*: name the
+structure it governs, list every quantity that structure can carry, and say
+which of them any rule fixes.
 
 Register and corpus unchanged: 121 conditions over 273 instances, 327 vectors.

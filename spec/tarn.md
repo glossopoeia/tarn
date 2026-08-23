@@ -3683,6 +3683,15 @@ bounds, and a writer MAY rely on that. `[R-ERR-03]`
 | decoded size of one user-metadata document | 16 MiB |
 | zstd frame `Window_Size` | 8 MiB |
 
+The last three rows are **per-instance**: they range over the tiles,
+user-metadata documents and compressed frames a file actually
+contains, and a file containing none of a kind does not exceed that
+row, whatever its declarations would derive — a layer addressing no tile
+(§11.2) has no tile whose decoded size the table can bound, exactly
+as `[R-COD-07]`'s cap is quantified over a layer's *addressed* tiles.
+The first five range over declarations, which every file and every
+layer carries.
+
 A file exceeding any of these remains conforming, and a reader MAY
 decline it — at the whole file, or at the narrowest scope whose
 declarations exceed what it can serve, a layer or a tile. Software that declines **on that ground** a file whose every quantity lies
