@@ -2453,7 +2453,12 @@ codec 3 (`[R-CNF-03]`). An encoding a reader does not implement is
 therefore one this specification does not assign, and is
 ignore-record (`[R-CNT-25]`). `[R-MTA-03]`
 
-Encoding 1 stores the document verbatim. Encoding 2 stores it as
+Encoding 1 stores the document verbatim. Under either encoding a
+reader decodes with a bound of its own choosing, no smaller than
+§21.9's user-metadata guarantee, and a document exceeding that
+bound is ignore-record like any other it cannot read; §21.9's row
+is stated over a document's decoded size, which a verbatim
+document has as surely as a compressed one. Encoding 2 stores it as
 exactly one RFC 8878 compressed frame occupying the extent's bytes
 before its terminal CRC, under every frame constraint `[R-COD-06]`
 places on a frame, named here or not, save two: what it states
@@ -2463,20 +2468,35 @@ below. Carried over — named for convenience, not as a closed list —
 are the frame magic; no skippable frame and no second frame; no
 dictionary use, disclosed or not, and no nonzero dictionary ID; no
 content-checksum flag; and the bar on sizing any buffer from a
-length the frame itself declares. The first exception holds because
-a document has no declared size — a reader instead decodes with a
-bound of its own choosing, no smaller than §21.9's user-metadata
-guarantee, and a document exceeding that bound is ignore-record
-like any other it cannot read. The frame's declared `Window_Size`
-is unconstrained here for the same reason, and takes the same
+length the frame itself declares. Two of those carry no witness a
+file exhibits, and R4 registers neither: dictionary use the header
+does not disclose is a writer violation nothing in the extent
+shows, exactly as `[R-COD-06]` has it for a tile (§21.7), and the
+bar on sizing a buffer binds a reader rather than the document.
+The first exception holds because a document has no declared size,
+which is why the bound above is the reader's own and not the
+file's. The frame's declared `Window_Size` is unconstrained here
+for the same reason, and takes the same
 treatment: a reader's window bound is its own, no smaller than
 §21.9's guarantee for that quantity, and a frame declaring more
 than the reader admits is ignore-record on that ground — the
 reader's capability, not a failure to decode within the meaning of
 R3, and no violation: the file exceeds a §21.9 guarantee and so
 remains conforming while the reader MAY decline it (`[R-ERR-04]`).
-The frame's content-size field, unlike the decoded size and the
-window, is *not* left to the reader: it MAY be present, and when
+Writers SHOULD keep the declared window within §21.9's 8 MiB
+`Window_Size` guarantee even for a larger document, as
+`[R-COD-06]` asks for a tile. Where the frame sets
+Single_Segment_Flag there is no Window_Descriptor and RFC 8878
+makes the frame's `Window_Size` its content-size field, which this
+section pins below to the decoded document's byte length: a
+document larger than that guarantee, framed that way, exceeds a
+§21.9 row and so falls outside `[R-CNF-03]`'s acceptance duty,
+and a writer that needs one frames it with a Window_Descriptor
+instead. §21.9's user-metadata row bounds a document's decoded
+size; it does not relieve the frame carrying it of the
+`Window_Size` row. The frame's content-size field, unlike the
+decoded size and the window, is *not* left to the reader: it MAY
+be present, and when
 present it MUST equal the byte length of
 the decoded document. A mismatch is one of the frame
 constraints R4 registers, not a failure to decode under R3: the bytes
@@ -3543,7 +3563,7 @@ blast radius and never makes the file conforming (`[R-CNF-12]`);
 | R1 | A user-metadata record declares a document encoding of 0, or a reserved-range value (3-0x7F) | encoding 0, top-level record; encoding 0, layer sub-record; reserved 3–0x7F, top-level record; reserved 3–0x7F, layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-25]` (R-MTA-03, R-EXT-03) |
 | R2 | A user-metadata extent's final 4 bytes do not equal the CRC-32C of the preceding bytes | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-20]` (R-CNT-25) |
 | R3 | A user-metadata document's stored bytes fail to decode under its declared assigned encoding — under an experimental-range one this specification defines no decoding and §21.6 governs (`[R-MTA-10]`); encoding 0 and a reserved value are unassigned too and R1 registers both | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
-| R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 states or carries over from `[R-COD-06]` — the single frame occupying the extent's bytes before its terminal CRC included; unlike R3, the constraint is broken whether or not the bytes decode, and — for the content-size field — whether or not they decode to the length it declares | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent; bytes remaining after the frame, top-level extent; bytes remaining after the frame, layer sub-record extent; the content-size field declared larger than the decoded length, top-level extent; the content-size field declared larger than the decoded length, layer sub-record extent; the content-size field declared smaller than the decoded length, top-level extent; the content-size field declared smaller than the decoded length, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
+| R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 states or carries over from `[R-COD-06]` — the single frame occupying the extent's bytes before its terminal CRC included; unlike R3, a constraint of this row is broken by what the frame declares rather than by whether the bytes decode, so a reader that only tries decoding establishes none of them, and the content-size field breaks its constraint exactly when it is present and does not equal the decoded document's byte length | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent; bytes remaining after the frame, top-level extent; bytes remaining after the frame, layer sub-record extent; the content-size field declared larger than the decoded length, top-level extent; the content-size field declared larger than the decoded length, layer sub-record extent; the content-size field declared smaller than the decoded length, top-level extent; the content-size field declared smaller than the decoded length, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
 | R5 | A decoded user-metadata document violates the document's own content rules — a key or string value whose UTF-8 is ill-formed in the source bytes, or that resolves a `\uXXXX` escape denoting an unpaired surrogate | ill-formed source bytes in a key, top-level document; ill-formed source bytes in a key, layer sub-record document; ill-formed source bytes in a string value, top-level document; ill-formed source bytes in a string value, layer sub-record document; unpaired-surrogate escape in a key, top-level document; unpaired-surrogate escape in a key, layer sub-record document; unpaired-surrogate escape in a string value, top-level document; unpaired-surrogate escape in a string value, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-MTA-04, R-ENC-11) |
 | R6 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-12) |
 | R7 | A decoded user-metadata document is not well-formed JSON, or its top-level value is not an object | not well-formed JSON, top-level document; not well-formed JSON, layer sub-record document; top-level value not an object, top-level document; top-level value not an object, layer sub-record document; leading U+FEFF, top-level document; leading U+FEFF, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
@@ -3611,8 +3631,10 @@ Stated plainly, because a register invites the opposite assumption:
 this format detects *corruption of structure*, not *incorrectness of
 content*. A writer that emits well-formed structures carrying wrong
 sample values — a mis-strided filter (`[R-COD-10]`), an undisclosed
-compression dictionary (`[R-COD-06]`), or simply wrong data —
-produces a file that every checksum in §8 certifies. Checksums are
+compression dictionary (`[R-COD-06]`, and `[R-MTA-09]` for a
+user-metadata document, whose wrong content is the document's
+rather than a tile's samples), or simply wrong data — produces a
+file that every checksum in §8 certifies. Checksums are
 computed over what the writer wrote. The obligations of §14.5 and
 `[R-SER-08]` narrow this only where content is structurally
 constrained: padding positions, pad bits, and boolean bytes.
