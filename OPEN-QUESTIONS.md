@@ -376,7 +376,7 @@ entirely on layout regardless).
 
 ## E. Codecs and filters
 
-### Q-E1. Codec wrapper pinning. [Resolved → ADR-0039]
+### Q-E1. Codec wrapper pinning. [Resolved → ADR-0039; its zstd half reopened by Q-E4]
 **Resolution:** deflate = raw RFC 1951; zstd = one minimal-strict
 RFC 8878 frame (dictionary and content-checksum flag forbidden,
 reject-tile; content-size allowed, cross-checked against decoded
@@ -439,6 +439,80 @@ columnar reserved via the index-encoding enum.
   O(1) index *fetch*). Leaning: start with (a) for the draft; adopt (b)
   only if the size model shows (a) breaking the discovery budget at
   realistic scale.
+
+### Q-E4. Are a codec wrapper's pinned fields enforced, ignored, or advised? [shaping]
+
+**Question:** Q-E1 struck or pinned every zstd frame-header field the
+container already carries. It did not ask *how* the pin is enforced. Today each
+is a normative reader check with a register row. Should the hygiene fields
+instead be **declared ignored** — a reader MUST NOT act on them, and a
+nonconforming value is no violation — with the checks moved to a
+recommended-but-optional verifier appendix?
+
+- **Why it matters.** Three costs, one benefit, and a defect class.
+
+  *Adoption.* A TARN writer today cannot use a stock `ZSTD_compress()`: it must
+  configure the encoder to suppress the content-checksum flag and control the
+  window. Q-E1 already conceded this once in the other direction — zstd's
+  content-size is "retained on adoption grounds" — so the principle is
+  established, only its reach is open.
+
+  *Spec surface.* §21.4 carries eleven codec rows, the largest cluster in the
+  register, plus their instances and vectors. The cost scales with a codec's
+  *contradictable header fields*, not with codecs as such — zstd is expensive
+  because its header restates four things TARN fixes elsewhere.
+
+  *A defect class.* Two byte-level defects in three rounds came from this
+  surface (rounds 21 and 22, ADR-0085 and ADR-0087). Both had the same root:
+  a field left **unconstrained** makes file conformance depend on whether *a
+  decoder* notices, which `[R-CNF-02]` forbids. "Ignored" removes that
+  dependence; "unconstrained" is what creates it. `[R-MTA-10]` already makes
+  exactly this move for experimental encodings.
+
+  *What is not on the table.* deflate and lz4 are already headerless — Q-E1
+  chose raw RFC 1951 and one raw LZ4 block. zstd's header is not separable in
+  practice: `ZSTD_decompressBlock` is an advanced API requiring caller-managed
+  window and dictionary state, so mandating headerless zstd would put TARN
+  readers outside `ZSTD_decompress()`. The question is only about the fields.
+
+- **The fields do not cost the same.** Any option must triage them:
+
+  | field | character | if unenforced |
+  |---|---|---|
+  | Dictionary_ID | decoder needs a dictionary it lacks | decode fails anyway — T25 instead of T19, losing diagnostic specificity only |
+  | Content_Checksum_flag | redundant with the entry crc | costs a few bytes; breaks nothing |
+  | `Frame_Content_Size` | declares decoded length; never an allocation source | **safe to ignore, and better than today** |
+  | **Window_Size** | drives decoder **memory allocation** | **not hygiene** — §22.2's decompression-bomb defence rests on it |
+
+- **Options & tradeoffs:**
+  (a) **Status quo** — all four enforced, four rows plus R4's instances. Highest
+  determinism and best diagnostics; highest adoption cost and the largest
+  ongoing defect surface.
+  (b) **Ignore the three hygiene fields, keep Window_Size normative.** Removes
+  ~3 rows, their instances and vectors; a writer may use a stock encoder;
+  the bomb defence is untouched. Costs diagnostic specificity, and Appendix G's
+  byte-reproducibility gets harder because "encoder defaults" vary by version.
+  (c) **(b) plus a non-normative appendix** of recommended verifier checks.
+  `[R-CNF-12]` already supplies the machinery — a SHOULD deviation "does not
+  bar certification" and is reported as an advisory — so this needs no new
+  concept. It cannot carry Window_Size, since an advisory cannot hold a
+  resource-safety guarantee.
+  (d) **Ignore all four**, replacing the window rule with a reader-side
+  allocation cap. Maximal simplification, but relocates a security check rather
+  than removing it, and the cap is itself a rule with a row.
+
+- **What settles it.** Apply Q-E1's own test one level up: for each field, does
+  *enforcing* it protect anything the container does not already protect? The
+  entry crc covers integrity; the layer's declarations fix decoded size; only
+  the window governs an allocation TARN cannot otherwise bound. Then price the
+  answer honestly — count the rows, instances and vectors each option removes,
+  and check Appendix G still closes its degrees of freedom without pinned
+  encoder settings.
+
+- **Scope if adopted:** §17.2 (`[R-COD-06]`), §18.2 (`[R-MTA-09]`), §21.4's
+  T-rows, §21.5's R4, §22.2, Appendix G, and the corpus. Reopens Q-E1's zstd
+  half and would supersede parts of ADR-0039, ADR-0085 and ADR-0087. Wants its
+  own cycle, not a cleanroom round's repair slot.
 
 ## F. Metadata and naming
 
