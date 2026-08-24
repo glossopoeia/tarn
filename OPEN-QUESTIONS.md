@@ -111,6 +111,29 @@ index fetches parallelize.
 - **What settles it:** Drafting §5/§7 (Batch 3): whether any container
   invariant actually needs a layer to exist. Leaning: (a).
 
+### Q-A6. Does `[R-LIF-02]`'s write procedure bind a compactor? [shaping]
+**Question:** §20.2 binds a creator and §20.3 an appender to `[R-LIF-02]`
+by name. §20.5 binds a compactor to no write procedure at all.
+- **Why it matters.** Two readings are defensible and they differ on
+  emitted bytes. (A) It binds: a compactor's output is a generation-1 file
+  with no prior trailer, which is exactly §9.2's creation path; §20.1
+  lists the compactor as a writer tier and `[R-WRT-01]` says it "satisfies
+  every writer requirement for the bytes it produces". Under A it owes
+  both barriers and its pre-trailer pad is the minimum to the next 64-byte
+  boundary. (B) It does not: `[R-LIF-01]` explicitly contrasts a commit
+  with "a whole-file rewrite under a new file_id (compaction, §20)".
+  Round 23's writer walk reported it; triage graded it a design decision,
+  not byte-level, because no register row fires either way — but a
+  compactor's pad length is a byte question.
+- **Options:** (a) State that `[R-LIF-02]` binds a compactor, as §20.2 and
+  §20.3 state it for their tiers. (b) State that it does not, and say what
+  does bind the output's pad and barriers. (c) Leave it, on the ground
+  that `[R-WRT-01]`'s blanket already decides it — which is the reading
+  round 23 could not confirm from the text.
+- **What settles it:** whether any two conforming compactors can differ in
+  emitted bytes under (a) and (b); if they can, the silence is a defect
+  and not an economy.
+
 ## B. Slabs and physical layout
 
 ### Q-B1. What exactly is a slab? [Resolved → ADR-0022]
@@ -267,6 +290,32 @@ verifier-checked, reject-tile.
 - **What settles it:** Whether padding is ever legitimately observable — it
   is exactly when a buggy reader fails to clip, which argues (a). Leaning:
   (a) for edge samples, zero for alignment gaps.
+
+### Q-C5. Must a certificate name an unassigned-type record's extent? [shaping]
+**Question:** §22.3 names four residues a certificate cannot vouch for.
+The verifier's report reaches three — slack is counted and totalled
+(`[R-CNT-21]`), a user-metadata extent under an unassigned encoding is
+counted and named (`[R-MTA-10]`), a trailer-mimic in slack is inert. The
+fourth is not reached: **the extent of a record of a type this
+specification has not assigned.**
+- **Why it matters.** Those bytes are live committed state — `[R-CNT-02]`
+  names "a record extent (the bytes any record's extent slot references,
+  whatever the record's type)" as a claimant class — so they are excluded
+  from the slack total and the certificate covers them. §8.1 gives them no
+  checksum. `[R-MTA-10]` states the principle for the neighbouring case in
+  terms: "bytes a certificate covers without inspecting are counted and
+  named, never silent", and §22.3 gives the operational point, "an
+  operator who wants no such bytes rejects on that report line". The
+  operator has no such line here. Not byte-level — the file certifies as
+  conforming either way — but it is what the certificate discloses.
+- **Options:** (a) Extend `[R-MTA-10]`'s report duty to any record whose
+  type this specification has not assigned, naming the type, the owning
+  scope and the extent length. (b) Fold those extents into the slack
+  total, which contradicts `[R-CNT-02]`'s claimant classes. (c) Leave it
+  and say in §22.3 that this residue is deliberately unreported.
+- **What settles it:** whether an operator can distinguish, from a
+  certificate alone, a file with no uninspected extents from one with a
+  16 MiB extent of an unassigned type. Today they cannot.
 
 ## D. Types, fill, statistics
 
@@ -691,7 +740,82 @@ an external format, or the value domain forces one.
 - **What settles it:** Decide per-limit during the security-section draft;
   each chosen number gets an at-limit conformance vector.
 
+### Q-H2. Does any row bound a *stored* quantity, and do §21.9's rows compose? [shaping]
+**Question:** §21.9's table bounds a tile's decoded size (256 MiB), a
+document's decoded size (16 MiB) and a frame's `Window_Size` (8 MiB) —
+every one a *decoded* or *declared* quantity. **Nothing bounds a stored
+extent's length.** Its only constraints are §15.3's `length ≥ 1`,
+`length ≤ 2⁶³ − 1` and `offset + length ≤ F − 64`. §19.4 step 5 obliges a
+reader to fetch the whole extent and verify its CRC *before* decoding, so
+mandatory per-tile I/O is bounded by nothing but the file length. The
+table also never says what its rows bound **collectively**.
+- **Why it matters.** `[R-CNF-10]` puts every limit affecting which files a
+  conforming reader accepts in this specification and never only in an
+  implementation. A reader that declines a 4 GiB stored extent for a 1 KiB
+  tile has no row to decline it under, and `[R-CNF-03]`'s acceptance duty
+  runs to "a conforming file none of whose values exceeds those
+  guarantees" — a phrase that ranges over the rows, and the stored length
+  is in none of them. Round 23 found this from two directions
+  independently (reader-01, adversary-04).
+- **Options:** (a) Add a stored-extent row to §21.9, with a figure.
+  (b) Leave it, and say in §21.9 that the table bounds decoded and
+  declared quantities only, so a reader's I/O budget is its own and no
+  refusal on it is a §21.9 refusal. (c) Bound the stored length against
+  the decoded size by a ratio, which reintroduces the expansion bound
+  §17.2's closing Note deliberately refuses.
+- **What settles it:** whether a reader can be made to fetch unbounded
+  bytes for a bounded tile — construct it — and whether (b) leaves
+  `[R-CNF-10]` satisfied or merely restated.
+
+### Q-H3. Is a user-metadata document's nesting depth bounded? [shaping]
+**Question:** RFC 8259 §9 expressly permits an implementation to limit
+nesting depth. This specification imports RFC 8259 as the document's
+definition and pins four other RFC 8259 freedoms — top-level type,
+byte-order mark, number range, duplicate-key identity — and pins key
+length at 255 bytes, which §21.9 calls one of only two hard limits
+"chosen here". It states no depth bound anywhere.
+- **Why it matters.** Round 23's adversary built a conforming 1.14 MiB
+  document of `{"a":` ×200,000 + `1` + `}` ×200,000: well-formed JSON, a
+  top-level object, one finite number, sorted at every depth, inside
+  §21.9's 16 MiB row. A recursive-descent reader meets a stack no
+  declaration bounds. All three triage passes and the refute phase agreed
+  it is **not** byte-level — R7's condition is "not well-formed JSON",
+  and a 200,000-deep object is well-formed — so the emittable set does not
+  move. It is a resource question, and `[R-CNF-10]` is the reason it
+  cannot simply live in implementations.
+- **Options:** (a) A §21.9 minimum-guarantee row for nesting depth, which
+  is the shape `[R-CNF-10]` asks for and costs one row and its
+  arithmetic. (b) A hard limit in `[R-ERR-05]`, like the 255-byte key.
+  (c) Nothing, with a Note recording that depth is a reader's own
+  resource bound and its refusal a resource limit under `[R-ERR-04]`.
+- **What settles it:** whether a depth refusal is distinguishable from
+  the size refusal §21.9 already licenses; if it is not, (c) costs
+  nothing and (a) adds a row for a case another row already reaches.
+
 ## I. Process
+
+### Q-I3. Does `[R-VEC-04]`'s intact-sibling rule reach ignore-record vectors? [shaping]
+**Question:** `[R-VEC-04]` requires an intact sibling for vectors of two of
+the four outcome classes — reject-layer and reject-tile — then gives a
+rationale that reaches all of them: "Without the sibling a vector cannot
+distinguish a reader that scopes its refusal from one that rejects the
+file entire, because `[R-CNF-12]` permits the latter for any nonconforming
+file and every vector built from §21's register is nonconforming."
+- **Why it matters.** "Every vector built from §21's register" includes
+  §21.5's ten ignore-record rows, and §21.5 is explicit that they are
+  violations. So the rationale covers 48 ignore-record vectors the
+  requirement's own range excludes. Either the range is too narrow or the
+  rationale overclaims, and this is `[R-VEC-04]`'s recorded
+  damaged-scope-content debt seen from the other side.
+- **Options:** (a) Widen the requirement to ignore-record, which adds an
+  intact sibling to 48 vectors and is corpus work. (b) Narrow the
+  rationale, saying why scoping is only testable where a scope narrower
+  than the file exists — a record is skipped, not scoped. (c) Leave both
+  and record the asymmetry in §24.
+- **What settles it:** whether a reader that rejects the file entire on an
+  ignore-record violation is distinguishable from one that skips the
+  record, *without* an intact sibling. If the record's absence is itself
+  the witness, (b) is right and costs nothing.
 
 ### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
 **Resolution:** a non-normative Appendix G — codec 1 or a named codec

@@ -13380,7 +13380,7 @@
         {
           "row": "R6",
           "instance": "empty key, top-level document",
-          "rule": "R-CNT-25",
+          "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
             "kind": "record",
@@ -13468,7 +13468,7 @@
         {
           "row": "R6",
           "instance": "empty key, layer sub-record document",
-          "rule": "R-CNT-25",
+          "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
             "kind": "record",
@@ -13553,7 +13553,7 @@
         {
           "row": "R6",
           "instance": "key with a code point in U+0000\u2013U+001F, top-level document",
-          "rule": "R-CNT-25",
+          "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
             "kind": "record",
@@ -13641,7 +13641,7 @@
         {
           "row": "R6",
           "instance": "key with a code point in U+0000\u2013U+001F, layer sub-record document",
-          "rule": "R-CNT-25",
+          "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
             "kind": "record",

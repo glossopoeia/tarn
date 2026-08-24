@@ -443,18 +443,18 @@ VECTORS = [
 
     # -- R6: keys that break §4.6's name rules --------------------------------
     _v("TV-0522", "empty key, top-level document",
-       sub=False, row="R6", rule="R-CNT-25", detected="extent use",
+       sub=False, row="R6", rule="R-MTA-04", detected="extent use",
        patches=[ENC[1], _json(b'{"":1}')]),
     _v("TV-0523", "empty key, layer sub-record document",
-       sub=True, row="R6", rule="R-CNT-25", detected="extent use",
+       sub=True, row="R6", rule="R-MTA-04", detected="extent use",
        patches=[ENC[1], _json(b'{"":1}')]),
     # Written as an escape, so the JSON source is well-formed and the violation
     # is in the *decoded* key: §18.2 resolves escapes before applying §4.6.
     _v("TV-0524", "key containing U+0001, top-level document",
-       sub=False, row="R6", rule="R-CNT-25", detected="extent use",
+       sub=False, row="R6", rule="R-MTA-04", detected="extent use",
        patches=[ENC[1], _json(b'{"a\\u0001":1}')]),
     _v("TV-0525", "key containing U+0001, layer sub-record document",
-       sub=True, row="R6", rule="R-CNT-25", detected="extent use",
+       sub=True, row="R6", rule="R-MTA-04", detected="extent use",
        patches=[ENC[1], _json(b'{"a\\u0001":1}')]),
 
     # -- R7: not a JSON object, or marked ------------------------------------

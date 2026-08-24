@@ -105,3 +105,43 @@ cannot explain; it is worth recording that this round's agents could see, in
 their environment block, that recent commits named §18.2 and §21.9.
 
 Both parts of the lineage gate return clean.
+
+## Disposition
+
+Decided by the maintainer: repair the §21.7 cluster and the register cells,
+defer the editorial findings with named owning sections, and send the design
+decisions to the ledger rather than to spec text (AGENTS.md rule 3). The
+repairs were kept deliberately narrow — round 24 must read them, and rounds 8,
+10 and 14 each found their defect in a clean round's repairs.
+
+**Fixed — ADR-0090.**
+
+| Finding | Repair |
+|---|---|
+| quiz-01 | §21.7's "only where" now governs one conjunct, not two; the witnessed cases are separate sentences |
+| adversary-03 | the codec witness is *sometimes*, not unconditional — both halves are constructible around |
+| diagrams-01 | the filter and a sample's byte offset are named as unwitnessed; §20.3 step 4 bars four things and §21.7 accounted for three |
+| reader-02 | `[R-WRT-06]` has four trailer obligations, not two, and the output carries no record that it is a compaction output at all |
+| register-03 | §20.5's "(F36, L25, R1)" now names all seven identifier spaces §10.2 tabulates |
+| verifier-01 | F5 is a fifth row reaching a foreign-major file — `[R-CNT-27]`'s floor **precedes** §6.2's order rather than sitting in it |
+| register-02 | R6's governing-rule cell names `[R-MTA-04]`, the rule that defines it, as R10 already did; four vectors re-emitted |
+| register-01 | **not** fixed as proposed. R8 keeps one instance, and the register now says why — the reason existed, in a comment in `r_rows.py`, where no reader of the specification can see it |
+
+register-01 is worth naming separately. The reporter asked for a split; the
+counter-argument was already correct and already written down, in the corpus
+build script. **That is the same failure ADR-0089 closed in three other
+places** — a document that cannot show its own reasoning — and it is the first
+instance of it found by a round rather than by an audit.
+
+**Deferred, with named owning sections.** The nine editorial findings not in
+the §21.7 cluster: reader-03/adversary-01 (§18.2), diagrams-03 (§4.7 and §7.2),
+quiz-02 (§21.8), quiz-03 (§21.9). Each is decidable from the text as it stands;
+none changes an obligation.
+
+**To the ledger, not the spec.** The five design decisions become Q-A6
+(does `[R-LIF-02]` bind a compactor), Q-C5 (must a certificate name an
+unassigned-type record's extent), Q-H2 (does any row bound a *stored* quantity),
+Q-H3 (is nesting depth bounded), Q-I3 (does `[R-VEC-04]`'s intact-sibling rule
+reach ignore-record vectors). Each carries options and a settling test.
+
+The register does not move: 121 conditions, 277 instances, 331 vectors.

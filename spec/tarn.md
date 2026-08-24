@@ -3221,7 +3221,9 @@ defines and this compactor does not — on a conforming input a carried
 ignore-lane bit (§6.3) or an unrecognized `tarn.` key in a record it
 never decoded (§18.3), the two of §10.1's four vehicles §21.6 makes
 conforming, the other two reaching such a file only as values this
-text still registers as reserved-range violations (F36, L25, R1) —
+text still registers as reserved-range violations — F36 and L25 for a
+record type, and one row for each identifier space §10.2 tabulates
+(L31, L33, L34, L36, L43, L45, R1) —
 the output's version_minor SHOULD be at least the input's: a compactor cannot know which minor version defined a
 feature it does not implement, and a lower minor understates the
 file's feature floor to tooling, the mirror of the overstatement
@@ -3398,12 +3400,16 @@ other than 1 is neither conforming nor nonconforming under this text
 (§2.3, `[R-CNF-02]`), and the rows below whose subject is that
 file's *geometry* do not reach it: §6.2 puts the version gate ahead
 of every check but the trailer magic and the trailer CRC, so such a
-file is refused on capability grounds first. Four rows are outside
-that reasoning and do reach it, because their subject is a field
+file is refused on capability grounds first. Five rows are outside
+that reasoning and do reach it. Four have as their subject a field
 fixed across every major (`[R-CNT-24]`): F8 and F1's trailer-magic
 instance, F14's trailer CRC — the two checks §6.2 places before the
 gate — and F6 with F1's front-block instance, which `[R-CNT-04]`
-places before other processing. F18 is not an exception but a case
+places before other processing. The fifth is F5, `[R-CNT-27]`'s
+128-byte floor, which §6.2's order does not name because it precedes
+that order: a file shorter than 128 bytes has no trailer to read a
+magic, a CRC or a version from, so the floor is established before
+any field the gate consults exists. F18 is not an exception but a case
 outside the premise: version_major = 0 declares no major at all and
 is permanently invalid in every one (§21.6).
 
@@ -3565,9 +3571,9 @@ blast radius and never makes the file conforming (`[R-CNF-12]`);
 | R3 | A user-metadata document's stored bytes fail to decode under its declared assigned encoding — under an experimental-range one this specification defines no decoding and §21.6 governs (`[R-MTA-10]`); encoding 0 and a reserved value are unassigned too and R1 registers both | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
 | R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 states or carries over from `[R-COD-06]` — the single frame occupying the extent's bytes before its terminal CRC included; unlike R3, a constraint of this row is broken by what the frame declares rather than by whether the bytes decode, so a reader that only tries decoding establishes none of them, and the content-size field breaks its constraint exactly when it is present and does not equal the decoded document's byte length | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent; bytes remaining after the frame, top-level extent; bytes remaining after the frame, layer sub-record extent; the content-size field declared larger than the decoded length, top-level extent; the content-size field declared larger than the decoded length, layer sub-record extent; the content-size field declared smaller than the decoded length, top-level extent; the content-size field declared smaller than the decoded length, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
 | R5 | A decoded user-metadata document violates the document's own content rules — a key or string value whose UTF-8 is ill-formed in the source bytes, or that resolves a `\uXXXX` escape denoting an unpaired surrogate | ill-formed source bytes in a key, top-level document; ill-formed source bytes in a key, layer sub-record document; ill-formed source bytes in a string value, top-level document; ill-formed source bytes in a string value, layer sub-record document; unpaired-surrogate escape in a key, top-level document; unpaired-surrogate escape in a key, layer sub-record document; unpaired-surrogate escape in a string value, top-level document; unpaired-surrogate escape in a string value, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-MTA-04, R-ENC-11) |
-| R6 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-ENC-12) |
+| R6 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25, R-ENC-12) |
 | R7 | A decoded user-metadata document is not well-formed JSON, or its top-level value is not an object | not well-formed JSON, top-level document; not well-formed JSON, layer sub-record document; top-level value not an object, top-level document; top-level value not an object, layer sub-record document; leading U+FEFF, top-level document; leading U+FEFF, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
-| R8 | A user-metadata document contains a non-finite number, in any form | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+| R8 | A user-metadata document contains a non-finite number, in any form — a magnitude whose binary64 interpretation overflows (`1e400`) and the bare tokens `NaN`, `Infinity` and `-Infinity` alike, the two being one instance because a document carrying a bare token is not well-formed JSON either, so no file exhibits this row's predicate alone through one (§21.1, R7) | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R9 | Two members of one object in a user-metadata document carry the same key, identity being the decoded string and not the JSON source bytes (`"a"` and `"\u0061"` are the same key) | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R10 | A user-metadata document key is longer than 255 bytes | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-ENC-12) |
 
@@ -3658,23 +3664,32 @@ construction; `[R-CNT-18]`'s prohibition on a sub-record containing
 records is detectable only by parsing a payload no format-major-1
 reader parses as a record sequence (§7.4's closing Note);
 §20.3 step 4's bar on a declaration change is witnessed only where
-the affected tiles remain stored *and* the change reaches a byte §14
-structurally constrains — a padding position, a pad bit, or a boolean
-byte — where §21.4's content rows fire; a change that reaches the
-decoded size instead is witnessed by T3 or T14, which
-test a length rather than the decoded image's content — T14 the
-entry's declared length, T3 the decoded payload's own; a change that
-reaches the codec is witnessed by the rows for the codec now declared,
-which test the stored bytes as a stream of it (T15, T17, T23, T25),
-or by T14 where the new declaration is codec 1; and a
+the affected tiles remain stored, and then only for part of what it
+bars. A change reaching a byte §14 structurally constrains — a
+padding position, a pad bit, or a boolean byte — fires §21.4's
+content rows. A change reaching the decoded size is witnessed by T3
+or T14, which test a length rather than the decoded image's content
+— T14 the entry's declared length, T3 the decoded payload's own. A
+change reaching the codec is *sometimes* witnessed by the rows for
+the codec now declared, which test the stored bytes as a stream of it
+(T15, T17, T23, T25), or by T14 where the new declaration is
+codec 1 — but neither is assured: a writer can choose stored bytes
+that satisfy the old declaration and the new one alike, and the
+change is unwitnessed there. A change reaching the filter, or moving
+a sample's byte offset within the decoded image without changing
+that image's length, has no witness at all — both filter values are
+length-preserving (§17.3), and the content rows test only the bytes
+§14 constrains. And a
 commit that supersedes every tile it would have damaged leaves the
 live state clean, so the bar is unwitnessed there for the same
 reason `[R-LIF-01]` is: it is a property of the prior generation,
-which §9.7 does not reconstruct; §20.5's two obligations on a
-compacted file's trailer (`[R-WRT-06]`) — the unknown ignore-lane bits
-it MUST carry forward, and the floor its version_minor SHOULD take —
-are unwitnessed for that same reason, the output carrying no record of
-its input's flags or its input's minor; and `[R-ENC-06]`'s fixed field widths are not
+which §9.7 does not reconstruct; §20.5's four obligations on a
+compacted file's trailer (`[R-WRT-06]`) — its fresh `file_id` draw,
+its generation, the unknown ignore-lane bits it MUST carry forward,
+and the floor its version_minor SHOULD take — are unwitnessed for
+that same reason, the output carrying no record of its input's
+`file_id`, generation, flags or minor, nor any record that it is a
+compaction output at all; and `[R-ENC-06]`'s fixed field widths are not
 a state a
 file can be in, since the parse is always at the widths this
 specification fixes and a structure written at any other yields
