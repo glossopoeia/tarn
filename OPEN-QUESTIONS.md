@@ -740,6 +740,37 @@ an external format, or the value domain forces one.
 - **What settles it:** Decide per-limit during the security-section draft;
   each chosen number gets an at-limit conformance vector.
 
+### Q-H4. Which register rows reach a file declaring a foreign major, and can detection order settle it? [shaping]
+**Question:** §21.2's preamble decides which rows reach a file declaring a
+format major other than 1 by **procedural priority** — "§6.2 puts the
+version gate ahead of every check but the trailer magic and the trailer
+CRC, so such a file is refused on capability grounds first." But
+`[R-RDR-02]` fixes only the *latest* detection point and then says "A
+reader MAY detect any violation earlier (`[R-CNF-12]`)". If detection
+order is a reader's option, no row's reach can be established by it.
+- **Why it matters.** Round 23 reported that `[R-CNT-27]`'s 128-byte
+  floor has no position in §6.2's order, so a short foreign-major file's
+  verdict is open. ADR-0090 answered it by adding F5 to the preamble's
+  exception list with an ordering warrant — **and the audit before round
+  24 falsified that warrant three ways**: `[R-CNT-27]` carries no ordering
+  language; the physical claim ("no trailer to read a magic, a CRC or a
+  version from") is false for every file of 64 to 127 bytes, the trailer
+  being 64 bytes; and `[R-RDR-02]` makes the priority permissive anyway.
+  ADR-0091 reverted it. The original question is therefore still open —
+  **and the audit showed it reaches the preamble's existing four rows
+  too**, since they rest on the same permissive ordering.
+- **Options:** (a) Make §6.2's order a MUST for the gates it names, so
+  priority is a fact and the preamble's reasoning is sound. Narrowest, but
+  it constrains readers `[R-RDR-02]` deliberately leaves free.
+  (b) Decide reach by *what a rule's subject is* rather than by when it is
+  checked — `[R-CNT-24]`'s across-major fields already supply that test for
+  the four, and F5's subject, a physical size, is fixed across majors too.
+  (c) State that a file below 64 bytes declares no readable major and is
+  outside the premise, as F18 is, leaving 64–127 to the gate.
+- **What settles it:** whether two conforming readers can differ on the
+  verdict for one short foreign-major file. If they can, the preamble is
+  deciding something the document leaves open, and (a) or (b) is owed.
+
 ### Q-H2. Does any row bound a *stored* quantity, and do §21.9's rows compose? [shaping]
 **Question:** §21.9's table bounds a tile's decoded size (256 MiB), a
 document's decoded size (16 MiB) and a frame's `Window_Size` (8 MiB) —
