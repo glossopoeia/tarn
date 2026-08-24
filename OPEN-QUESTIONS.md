@@ -376,7 +376,7 @@ entirely on layout regardless).
 
 ## E. Codecs and filters
 
-### Q-E1. Codec wrapper pinning. [Resolved → ADR-0039; its zstd half reopened by Q-E4]
+### Q-E1. Codec wrapper pinning. [Resolved → ADR-0039; its zstd half reopened by Q-E4 and re-closed by ADR-0088]
 **Resolution:** deflate = raw RFC 1951; zstd = one minimal-strict
 RFC 8878 frame (dictionary and content-checksum flag forbidden,
 reject-tile; content-size allowed, cross-checked against decoded
@@ -440,7 +440,28 @@ columnar reserved via the index-encoding enum.
   only if the size model shows (a) breaking the discovery budget at
   realistic scale.
 
-### Q-E4. Are a codec wrapper's pinned fields enforced, ignored, or advised? [shaping]
+### Q-E4. Are a codec wrapper's pinned fields enforced, ignored, or advised? [Resolved → ADR-0088]
+**Resolution:** all four stay normative reader checks; T19–T22 and R4's
+sixteen instances are unchanged, and the register holds at 121 conditions
+over 277 instances. Two measurements and the cohort decided it. libzstd
+already rejects a lying `Frame_Content_Size`, a nonzero `Dictionary_ID`
+without a dictionary, and a set `Content_Checksum_flag` over a wrong
+checksum, while accepting an oversized `Window_Size` — so the only field
+enforcement adds is the one every option kept, and declaring the other
+three ignored would make a file conforming that no `ZSTD_decompress()`
+reader can serve. **Two lines of the triage table below are wrong and the
+measurement is the record:** the content-checksum flag does not "break
+nothing", and the content-size field is not "safe to ignore". The adoption
+premise is also wrong — one-shot `ZSTD_compress()` emits a conforming
+frame at every size tested with no configuration, because
+`Single_Segment_Flag` makes `Window_Size` equal `Frame_Content_Size` equal
+the decoded size; the measured friction is an unpledged streaming
+encoder, which breaks **T21 alone**. The cross-codec reason is that T19,
+T20 and T22 are zstd's T15 and T23 — strike the wrapper where it is
+separable, pin its fields where it is not. What the entry got right is the
+defect class, which the same ADR fixes at its source: §18.2's carry-over
+of `[R-COD-06]` was a closed enumeration and is now exhaustive by
+construction.
 
 **Question:** Q-E1 struck or pinned every zstd frame-header field the
 container already carries. It did not ask *how* the pin is enforced. Today each

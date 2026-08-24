@@ -2455,24 +2455,29 @@ ignore-record (`[R-CNT-25]`). `[R-MTA-03]`
 
 Encoding 1 stores the document verbatim. Encoding 2 stores it as
 exactly one RFC 8878 compressed frame occupying the extent's bytes
-before its terminal CRC, under the frame constraints of
-`[R-COD-06]` that do not reference a tile: the frame magic; no
-skippable frame and no second frame; no nonzero dictionary ID; no
-content-checksum flag. The constraints §17.2 states against a
-tile's declared decoded size do not apply, because a document has
-no declared size — a reader instead decodes with a bound of its
-own choosing, no smaller than §21.9's user-metadata guarantee, and
-a document exceeding that bound is ignore-record like any other it
-cannot read. The frame's declared `Window_Size` is unconstrained
-here for the same reason, and takes the same treatment: a reader's
-window bound is its own, no smaller than §21.9's guarantee for that
-quantity, and a frame declaring more than the reader admits is
-ignore-record on that ground — the reader's capability, not a
-failure to decode within the meaning of R3, and no violation: the
-file exceeds a §21.9 guarantee and so remains conforming while the
-reader MAY decline it (`[R-ERR-04]`). The frame's content-size field,
-unlike the decoded size and the window, is *not* left to the reader:
-it MAY be present, and when present it MUST equal the byte length of
+before its terminal CRC, under every frame constraint `[R-COD-06]`
+places on a frame, named here or not, save two: what it states
+against a tile's declared decoded size, and what it states about
+the frame's declared `Window_Size`. This section replaces both,
+below. Carried over — named for convenience, not as a closed list —
+are the frame magic; no skippable frame and no second frame; no
+dictionary use, disclosed or not, and no nonzero dictionary ID; no
+content-checksum flag; and the bar on sizing any buffer from a
+length the frame itself declares. The first exception holds because
+a document has no declared size — a reader instead decodes with a
+bound of its own choosing, no smaller than §21.9's user-metadata
+guarantee, and a document exceeding that bound is ignore-record
+like any other it cannot read. The frame's declared `Window_Size`
+is unconstrained here for the same reason, and takes the same
+treatment: a reader's window bound is its own, no smaller than
+§21.9's guarantee for that quantity, and a frame declaring more
+than the reader admits is ignore-record on that ground — the
+reader's capability, not a failure to decode within the meaning of
+R3, and no violation: the file exceeds a §21.9 guarantee and so
+remains conforming while the reader MAY decline it (`[R-ERR-04]`).
+The frame's content-size field, unlike the decoded size and the
+window, is *not* left to the reader: it MAY be present, and when
+present it MUST equal the byte length of
 the decoded document. A mismatch is one of the frame
 constraints R4 registers, not a failure to decode under R3: the bytes
 decode, and what is wrong is what the header said about them. Routing
