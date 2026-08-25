@@ -3040,9 +3040,14 @@ An appender MUST, in order:
    it rescue a commit that damages a prior-generation stored tile.
    Unstoring that tile in the same commit does not rescue it either,
    and for the same reason: the quantifier is the superseded
-   generation's, so a shrink that turns real positions into padding
-   of a tile stored there is barred whether or not the new state
-   still stores it. §21.7 records the consequence — that this is
+   generation's, so a shrink that alters what §14 fixes for a tile
+   stored there is barred whether or not the new state still stores
+   it. What counts as such an alteration is the bar above and nothing
+   else, its carve-out included — a new padding position whose stored
+   byte already holds the fill `[R-SER-05]` fixes is not one, so a
+   shrink producing only those is permitted here exactly as it is
+   there, and this sentence answers the rescue question rather than
+   restating the test. §21.7 records the consequence — that this is
    precisely where the bar has no witness, the live state being clean
    — which is why the rule is stated here and not left to the rows.
    Where a shrink is permitted the de-addressed tiles' extents become slack
@@ -3213,7 +3218,28 @@ and generation 1: a
 compacted file is a whole-file rewrite under a new file_id by
 definition (`[R-LIF-01]`), and reusing the input's would break
 the (file_id, range) cache contract of `[R-LIF-03]`, since
-relocation puts different bytes at the same ranges. The output
+relocation puts different bytes at the same ranges.
+
+`[R-LIF-02]`'s commit protocol does not bind a compactor. That protocol
+is stated for a commit, and `[R-LIF-01]` makes a compaction a whole-file
+rewrite under a new file_id rather than a commit, so neither its barrier
+ordering nor its step 5 pad reaches this tier — where §20.2 binds a
+creator to that path by name and §20.3 step 6 binds an appender, this
+section deliberately does not. Two consequences follow and are intended.
+**The output's pre-trailer gap is fixed by nothing.** §6.2 requires the
+trailer to occupy the file's final 64 bytes and bounds the gap ahead of
+it only through step 5, so two conforming compactors given one input MAY
+emit outputs of different lengths, and a gap longer than a commit would
+have produced is conforming — one of the writer obligations §2.3 names
+as no file-conformance violation. **And no barrier ordering is owed
+within the output.** A compaction leaves its input intact and writes
+bytes that are not readable as a TARN file until the trailer completing
+them is present, so there is no committed prefix for a barrier to
+protect and a torn output is an unreadable file rather than a damaged
+one. A compactor SHOULD make its output durable before anything
+discards the input; what discards it is outside this specification.
+
+The output
 trailer MUST copy the input's unknown ignore-lane flag bits forward,
 in place of the flags = 0 §6.3 requires of a file created under this
 text (`[R-CNT-08]`). Where the output carries a feature a later minor

@@ -111,7 +111,25 @@ index fetches parallelize.
 - **What settles it:** Drafting §5/§7 (Batch 3): whether any container
   invariant actually needs a layer to exist. Leaning: (a).
 
-### Q-A6. Does `[R-LIF-02]`'s write procedure bind a compactor? [shaping]
+### Q-A6. Does `[R-LIF-02]`'s write procedure bind a compactor? [Resolved → ADR-0093]
+**Resolution:** it does not. `[R-LIF-02]` is stated for a commit, and
+`[R-LIF-01]` makes a compaction a whole-file rewrite under a new `file_id`
+rather than a commit, so neither its barrier ordering nor its step 5 pad
+reaches that tier. §20.5 now states both consequences as intended: the
+output's pre-trailer gap is fixed by nothing, so two conforming compactors
+MAY emit outputs of different lengths — §2.3 already named the over-long
+gap as no file-conformance violation — and no barrier ordering is owed
+within the output, because a compaction leaves its input intact and a torn
+output is an unreadable file rather than a damaged one, with a SHOULD to
+make the output durable before anything discards the input.
+
+**This entry is also a lesson about deferral.** Round 23's writer walk
+reported this defect, round 23's three triage passes graded it
+*design-decision*, and it was sent here rather than repaired. Round 24's
+three passes graded the identical finding **byte-level**, unanimously. The
+text never changed; the grading did. **A design-decision grade is not a
+finding that something is not byte-level**, and a byte-level defect sat in
+this ledger for a full cycle as a result.
 **Question:** §20.2 binds a creator and §20.3 an appender to `[R-LIF-02]`
 by name. §20.5 binds a compactor to no write procedure at all.
 - **Why it matters.** Two readings are defensible and they differ on
