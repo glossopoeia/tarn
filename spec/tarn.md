@@ -2226,7 +2226,10 @@ of `[R-SLB-03]` are: by a verifier. `[R-SLB-04]`
 
 The owning scope of a layer's codec and filter declarations is the
 layer; the owning scope of one stored tile's payload under them is
-the tile (§2.4).
+the tile (§2.4). Every rule in this section ranges over **stored**
+tiles — a tile whose index entry is the sentinel is not stored (§3.1,
+`[R-IDX-02]`), carries no payload under any codec, and satisfies these
+rules vacuously.
 
 #### 17.1 The pipeline
 
@@ -2259,9 +2262,9 @@ included — as a validity error at layer scope (`[R-CNT-23]`).
 `[R-COD-03]`
 
 **Codec 1 — none.** The stored bytes are the filtered image
-verbatim. The index entry's length therefore MUST equal the tile's
-decoded size (§14.2, §14.3); a reader MUST treat a mismatch as a
-validity error at tile scope — checkable from the entry and the
+verbatim. A **non-sentinel** index entry's length therefore MUST equal
+the tile's decoded size (§14.2, §14.3); a reader MUST treat a mismatch
+as a validity error at tile scope — checkable from the entry and the
 layer record alone, before any payload fetch. `[R-COD-04]`
 
 **Codec 2 — deflate.** The stored bytes are exactly one DEFLATE
@@ -4360,9 +4363,10 @@ the file.
 5. **No declared alignment and no slab**, or fixed declared values —
    both change placement and neither is implied by content. **A fixed
    filter value** likewise: §17.3 leaves the choice to the writer, it
-   changes the stored bytes of every tile it touches, and no content
-   implies it, so two writers agreeing on everything else still
-   disagree on bytes without it pinned.
+   changes the stored bytes of any tile whose shuffle stride exceeds 1
+   — §17.3 makes it the identity where the stride is 1, as for a packed
+   boolean plane — and no content implies it, so two writers agreeing
+   on everything else still disagree on bytes without it pinned.
 6. **The sentinel for every all-fill tile**, so that a tile whose
    samples all equal fill is never stored; otherwise two writers
    agreeing on content still disagree on bytes.
