@@ -1486,8 +1486,10 @@ region of it returns no samples. `[R-GEO-02]`
 > already stored tiles in the generation a commit supersedes: a
 > shrink is barred wherever it alters what §14 fixes for such a
 > tile — whether or not the new state still stores it — and permitted
-> where it only drops tiles out of the addressed set, whose extents
-> then become slack. A layer that stored nothing may be re-declared
+> wherever it does not: dropping tiles out of the addressed set,
+> whose extents then become slack, is the ordinary case, and a new
+> padding position whose stored byte already holds the fill is the
+> other. A layer that stored nothing may be re-declared
 > freely. Growth
 > that leaves
 > every grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) unchanged touches the directory
@@ -3218,26 +3220,15 @@ and generation 1: a
 compacted file is a whole-file rewrite under a new file_id by
 definition (`[R-LIF-01]`), and reusing the input's would break
 the (file_id, range) cache contract of `[R-LIF-03]`, since
-relocation puts different bytes at the same ranges.
-
-`[R-LIF-02]`'s commit protocol does not bind a compactor. That protocol
-is stated for a commit, and `[R-LIF-01]` makes a compaction a whole-file
-rewrite under a new file_id rather than a commit, so neither its barrier
-ordering nor its step 5 pad reaches this tier — where §20.2 binds a
-creator to that path by name and §20.3 step 6 binds an appender, this
-section deliberately does not. Two consequences follow and are intended.
-**The output's pre-trailer gap is fixed by nothing.** §6.2 requires the
-trailer to occupy the file's final 64 bytes and bounds the gap ahead of
-it only through step 5, so two conforming compactors given one input MAY
-emit outputs of different lengths, and a gap longer than a commit would
-have produced is conforming — one of the writer obligations §2.3 names
-as no file-conformance violation. **And no barrier ordering is owed
-within the output.** A compaction leaves its input intact and writes
-bytes that are not readable as a TARN file until the trailer completing
-them is present, so there is no committed prefix for a barrier to
-protect and a torn output is an unreadable file rather than a damaged
-one. A compactor SHOULD make its output durable before anything
-discards the input; what discards it is outside this specification.
+relocation puts different bytes at the same ranges. A compactor MUST
+follow `[R-LIF-02]`'s **creation path**, as §20.2 obliges a creator:
+the output has no prior trailer and stands at generation 1, which is
+the case that path states, and `[R-WRT-01]` already has a compactor
+satisfying every writer requirement for the bytes it produces. The pad
+of step 5 and the barriers of steps 4 and 6 — both, not one — are owed
+here as they are of a creator. That a compaction is a whole-file
+rewrite rather than a commit (`[R-LIF-01]`) fixes what the output *is*,
+not which rules govern the writing of it.
 
 The output
 trailer MUST copy the input's unknown ignore-lane flag bits forward,
@@ -3934,13 +3925,18 @@ file a reader opens later. `[R-SEC-07]`
 #### 23.1 Deletion is not erasure
 
 The append-only model (§9.1) means that what a commit removes, it
-removes only from *reachability*. A commit removes sample data two
-ways — superseding it, and a shrink that de-addresses tiles (§20.3
-step 4) — and a dropped ancillary record's extent (§20.4) goes the
-same way; no commit removes a layer at all. In each case the bytes remain in the
-file as slack (`[R-CNT-21]`), readable by anyone with the bytes
-and a hex editor, and recoverable by any tool that scans backward for
-an earlier trailer (§9.6). Writers and the tools built on them
+removes only from *reachability*. A commit removes sample data three
+ways — superseding it, a shrink that de-addresses tiles, and a shrink
+that turns a stored tile's real positions into padding without
+de-addressing it (§20.3 step 4) — and a dropped ancillary record's
+extent (§20.4) goes the same way; no commit removes a layer at all.
+The first two leave the bytes in the file as slack (`[R-CNT-21]`),
+readable by anyone with the bytes and a hex editor, and recoverable
+by any tool that scans backward for an earlier trailer (§9.6). The
+third leaves them inside a live stored tile, as its padding content,
+and discloses nothing a reader could not already derive: §20.3 step 4
+permits that shrink only where those bytes already hold the channel's
+recorded fill, which the layer record publishes. Writers and the tools built on them
 MUST NOT represent any commit that makes sample data unreachable as
 erasure of it — a shrink reported as erasure misleads exactly as a
 supersede so reported does.

@@ -111,7 +111,28 @@ index fetches parallelize.
 - **What settles it:** Drafting §5/§7 (Batch 3): whether any container
   invariant actually needs a layer to exist. Leaning: (a).
 
-### Q-A6. Does `[R-LIF-02]`'s write procedure bind a compactor? [Resolved → ADR-0093]
+### Q-A6. Does `[R-LIF-02]`'s write procedure bind a compactor? [Resolved → ADR-0094, reversing ADR-0093]
+**Final resolution (ADR-0094): it binds.** A compactor MUST follow
+`[R-LIF-02]`'s creation path, as §20.2 obliges a creator: the output has no
+prior trailer and stands at generation 1, which is the case that path
+states. ADR-0093 decided the opposite and the audit before round 25
+falsified it against **five** existing passages — §20.1's `[R-WRT-01]` and
+§20.5's own earlier sentence ("a compactor satisfies every writer
+requirement for the bytes it produces"), `[R-LIF-02]`'s second paragraph
+(stated for *creation*, not for a commit), §6.3's `[R-CNT-08]` (which
+classes a compactor as a writer creating a file under this text and carves
+out only the flags rule), and Appendix H's writer checklist ("follows the
+commit protocol including both barriers"). ADR-0093's own warrant, that
+the protocol "is stated for a commit", was false of that second paragraph.
+
+**What the two decisions cost, recorded because the pattern matters more
+than the outcome.** Round 23 reported this defect and graded it
+design-decision; it was deferred here. Round 24 graded it byte-level. The
+first repair chose the reading that required amending five passages, and
+the audit caught it before a round did. The reading that required one
+sentence was the one the document had already taken in five places.
+
+**Superseded resolution (ADR-0093):** it does not bind.
 **Resolution:** it does not. `[R-LIF-02]` is stated for a commit, and
 `[R-LIF-01]` makes a compaction a whole-file rewrite under a new `file_id`
 rather than a commit, so neither its barrier ordering nor its step 5 pad

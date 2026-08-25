@@ -1,0 +1,96 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 2dc1419..5808102 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -3029,31 +3029,36 @@ An appender MUST, in order:
+    product is another, and the list is not offered as exhaustive:
+    a growth is permitted exactly where the geometry it produces
+    satisfies every rule that geometry is subject to.
+ 
+    An extent MAY also **shrink**, and the bar above is the whole of
+    the test, **in the bar's own tense**: a shrink is permitted
+    exactly where it alters nothing §14 fixes for any tile the layer
+    stores in the generation this commit supersedes. Dropping a tile
+    out of the addressed set (§11.2's grid count falls) is not itself
+    such an alteration — a tile the new state does not address carries
+    no §14 obligation and its extent becomes slack — but neither does
+    it rescue a commit that damages a prior-generation stored tile.
+    Unstoring that tile in the same commit does not rescue it either,
+    and for the same reason: the quantifier is the superseded
+-   generation's, so a shrink that turns real positions into padding
+-   of a tile stored there is barred whether or not the new state
+-   still stores it. §21.7 records the consequence — that this is
++   generation's, so a shrink that alters what §14 fixes for a tile
++   stored there is barred whether or not the new state still stores
++   it. What counts as such an alteration is the bar above and nothing
++   else, its carve-out included — a new padding position whose stored
++   byte already holds the fill `[R-SER-05]` fixes is not one, so a
++   shrink producing only those is permitted here exactly as it is
++   there, and this sentence answers the rescue question rather than
++   restating the test. §21.7 records the consequence — that this is
+    precisely where the bar has no witness, the live state being clean
+    — which is why the rule is stated here and not left to the rows.
+    Where a shrink is permitted the de-addressed tiles' extents become slack
+    (`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller entry_count and
+    so a re-emitted index region, and every surviving stored tile is
+    untouched. Discarding data is the caller's operation and this
+    specification does not bar it. A writer SHOULD instead produce a
+    new file wherever a commit would strand a large share of a
+    layer's stored bytes — and always where it would re-emit every
+    one of them, which duplicates the layer rather than dropping part
+    of it. A file is charged for by its length wherever storage is
+    metered, so slack that is not data the caller chose to discard is
+    paid for and never read. Extents this commit supersedes become slack
+    (`[R-CNT-21]`); a slab declaration is re-established or
+@@ -3202,29 +3207,50 @@ verification depth is `[R-WRT-09]`'s and reaches no decoded content.
+ A compactor MUST refuse to compact when any check `[R-WRT-09]`
+ obliges fails, and MUST NOT emit a file carrying a violation it has
+ detected: it can neither re-emit the structure corrected
+ (`[R-WRT-05]`), nor keep it and call the output clean. Dropping is
+ the one disposal that answers, and only where §20.4's table licenses
+ it: a record dropped is not in the output, so the output carries no
+ violation and the prohibition — which bites on what the output
+ carries — is satisfied. Where the table does not license a drop the
+ compactor MUST refuse. It MUST mint a fresh file_id for the output — a new draw under §9.3's
+ randomness advice, not merely a value compared against the input's —
+ and generation 1: a
+ compacted file is a whole-file rewrite under a new file_id by
+ definition (`[R-LIF-01]`), and reusing the input's would break
+ the (file_id, range) cache contract of `[R-LIF-03]`, since
+-relocation puts different bytes at the same ranges. The output
++relocation puts different bytes at the same ranges.
++
++`[R-LIF-02]`'s commit protocol does not bind a compactor. That protocol
++is stated for a commit, and `[R-LIF-01]` makes a compaction a whole-file
++rewrite under a new file_id rather than a commit, so neither its barrier
++ordering nor its step 5 pad reaches this tier — where §20.2 binds a
++creator to that path by name and §20.3 step 6 binds an appender, this
++section deliberately does not. Two consequences follow and are intended.
++**The output's pre-trailer gap is fixed by nothing.** §6.2 requires the
++trailer to occupy the file's final 64 bytes and bounds the gap ahead of
++it only through step 5, so two conforming compactors given one input MAY
++emit outputs of different lengths, and a gap longer than a commit would
++have produced is conforming — one of the writer obligations §2.3 names
++as no file-conformance violation. **And no barrier ordering is owed
++within the output.** A compaction leaves its input intact and writes
++bytes that are not readable as a TARN file until the trailer completing
++them is present, so there is no committed prefix for a barrier to
++protect and a torn output is an unreadable file rather than a damaged
++one. A compactor SHOULD make its output durable before anything
++discards the input; what discards it is outside this specification.
++
++The output
+ trailer MUST copy the input's unknown ignore-lane flag bits forward,
+ in place of the flags = 0 §6.3 requires of a file created under this
+ text (`[R-CNT-08]`). Where the output carries a feature a later minor
+ defines and this compactor does not — on a conforming input a carried
+ ignore-lane bit (§6.3) or an unrecognized `tarn.` key in a record it
+ never decoded (§18.3), the two of §10.1's four vehicles §21.6 makes
+ conforming, the other two reaching such a file only as values this
+ text still registers as reserved-range violations — F36 and L25 for a
+ record type, and one row for each of the other seven spaces §10.2
+ tabulates (L31, L33, L34, L36, L43, L45, R1) —
+ the output's version_minor SHOULD be at least the input's: a compactor cannot know which minor version defined a
+ feature it does not implement, and a lower minor understates the
+ file's feature floor to tooling, the mirror of the overstatement
+ `[R-CNT-26]` names. Otherwise version_minor follows `[R-CNT-26]`'s
