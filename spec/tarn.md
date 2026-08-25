@@ -3405,7 +3405,9 @@ that reasoning and do reach it, because their subject is a field
 fixed across every major (`[R-CNT-24]`): F8 and F1's trailer-magic
 instance, F14's trailer CRC — the two checks §6.2 places before the
 gate — and F6 with F1's front-block instance, which `[R-CNT-04]`
-places before other processing. F18 is not an exception but a case
+places before other processing for a reader that already holds those
+bytes, one that would have to fetch them being free to defer or omit
+the check. F18 is not an exception but a case
 outside the premise: version_major = 0 declares no major at all and
 is permanently invalid in every one (§21.6).
 
@@ -3569,7 +3571,7 @@ blast radius and never makes the file conforming (`[R-CNF-12]`);
 | R5 | A decoded user-metadata document violates the document's own content rules — a key or string value whose UTF-8 is ill-formed in the source bytes, or that resolves a `\uXXXX` escape denoting an unpaired surrogate | ill-formed source bytes in a key, top-level document; ill-formed source bytes in a key, layer sub-record document; ill-formed source bytes in a string value, top-level document; ill-formed source bytes in a string value, layer sub-record document; unpaired-surrogate escape in a key, top-level document; unpaired-surrogate escape in a key, layer sub-record document; unpaired-surrogate escape in a string value, top-level document; unpaired-surrogate escape in a string value, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-MTA-04, R-ENC-11) |
 | R6 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25, R-ENC-12) |
 | R7 | A decoded user-metadata document is not well-formed JSON, or its top-level value is not an object | not well-formed JSON, top-level document; not well-formed JSON, layer sub-record document; top-level value not an object, top-level document; top-level value not an object, layer sub-record document; leading U+FEFF, top-level document; leading U+FEFF, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
-| R8 | A user-metadata document contains a non-finite number, in any form — a magnitude whose binary64 interpretation overflows (`1e400`) and the bare tokens `NaN`, `Infinity` and `-Infinity` alike, the two being one instance not because they share a shape — they do not — but because a document carrying a bare token is not well-formed JSON either, so no file exhibits this row's predicate alone through one and the second is exhibitable only as a co-violation of R7, which is `[R-VEC-02]`'s limit rather than a judgement under §21.1 | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+| R8 | A user-metadata document contains a non-finite number, in any form — a magnitude whose binary64 interpretation overflows (`1e400`) and the bare tokens `NaN`, `Infinity` and `-Infinity` alike | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R9 | Two members of one object in a user-metadata document carry the same key, identity being the decoded string and not the JSON source bytes (`"a"` and `"\u0061"` are the same key) | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R10 | A user-metadata document key is longer than 255 bytes | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-ENC-12) |
 
@@ -3675,8 +3677,9 @@ change is unwitnessed there. A change reaching the filter, or moving
 a sample's byte offset within the decoded image without changing
 that image's length, is witnessed on the same terms T26 states for a
 wrong stride: where the resulting image breaks §14.5's padding
-content or `[R-SER-08]`'s bool bytes, T2, T4 or T5 fires, and where
-it breaks neither there is no witness. Neither change is caught by a
+content or `[R-SER-08]`'s bool bytes, the check that detects it is
+T2's or T4's, exactly as T26 has it, and where it breaks neither
+there is no witness. Neither change is caught by a
 length: both filter values are length-preserving (§17.3), and moving
 a sample within an image of unchanged length alters no declared
 quantity. And a
@@ -3687,11 +3690,10 @@ which §9.7 does not reconstruct; §20.5's four obligations on a
 compacted file's trailer (`[R-WRT-06]`) — its fresh `file_id` draw,
 its generation, the unknown ignore-lane bits it MUST carry forward,
 and the floor its version_minor SHOULD take — are unwitnessed for
-that same reason, and for one they share: the output carries no
-record that it is a compaction output at all, so no check can know
-that any of the four was owed. The last two are unwitnessed twice
-over, the output also carrying no record of its input's flags or its
-input's minor; and `[R-ENC-06]`'s fixed field widths are not
+a reason all four share: the output carries no record that it is a
+compaction output at all, so no check can know that any of the four
+was owed. For the last two there is a second, the output carrying no
+record of its input's flags or its input's minor either; and `[R-ENC-06]`'s fixed field widths are not
 a state a
 file can be in, since the parse is always at the widths this
 specification fixes and a structure written at any other yields

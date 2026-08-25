@@ -825,6 +825,40 @@ length at 255 bytes, which §21.9 calls one of only two hard limits
 
 ## I. Process
 
+### Q-I4. Does R8 carry two instances or four? [shaping]
+**Question:** R8 registers "a non-finite number, in any form", which
+`[R-MTA-04]` states as two alternatives — a magnitude whose binary64
+interpretation overflows (`1e400` is the ordinary case) and the bare
+tokens `NaN`, `Infinity`, `-Infinity`. The row states two instances, one
+per placement. Should it state four?
+- **Why it matters.** §21.1 enumerates alternatives that "give the
+  condition materially different shapes", and these plausibly do: `1e400`
+  is syntactically valid JSON needing a decimal-to-binary64 conversion and
+  an overflow test, while a bare token is one RFC 8259 does not admit at
+  all, which a strict parser rejects before any numeric rule runs.
+  §18.2 says so itself — "which RFC 8259 does not admit and some parsers
+  accept regardless".
+- **What has been tried, and why this is a ledger entry and not a repair.**
+  Round 23 reported it (register-01). **Two attempts to justify keeping two
+  instances have both been wrong**, each caught by the audit that followed:
+  ADR-0090 cited a "§21.1 distinguishability test" §21.1 does not state;
+  ADR-0091 cited `[R-VEC-02]`, which resolves non-isolable conditions the
+  *opposite* way — "the entry records every row the file exercises and says
+  which it was built for". ADR-0092 removed the warrant rather than
+  inventing a third. The condition cell now states the two alternatives and
+  claims nothing about their instance count.
+- **Options:** (a) Split to four instances — 277 → 279, two new vectors,
+  each co-attributed to R7 under `[R-VEC-02]`'s non-isolable clause, since
+  a bare-token document is not well-formed JSON either. (b) Keep two, with
+  a ground that survives audit — which nobody has yet produced. (c) Decide
+  that a condition whose second alternative cannot be exhibited in
+  isolation states one instance, as a general rule stated in §21.1 rather
+  than argued per row, which would also reach L50's held fourth instance.
+- **What settles it:** whether `[R-VEC-02]`'s co-attribution clause makes
+  the bare-token case buildable as a vector. If it does, (a) follows and
+  the register grows by two; if §21.1 needs a general rule instead, (c) is
+  the cheaper fix and closes a standing debt with it.
+
 ### Q-I3. Does `[R-VEC-04]`'s intact-sibling rule reach ignore-record vectors? [shaping]
 **Question:** `[R-VEC-04]` requires an intact sibling for vectors of two of
 the four outcome classes — reject-layer and reject-tile — then gives a
