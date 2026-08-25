@@ -104,11 +104,41 @@ material. Both parts of the lineage gate return clean.
 
 ## Disposition
 
-**Not decided here.** Both byte-level survivors are questions with two
-defensible readings — whether `[R-LIF-02]` binds a compactor, and which of §20.3
-step 4's two sentences governs — and the last three repair cycles established
-that answering such a question inside a repair slot produces a false statement.
-They go to the maintainer.
+**Both byte-level survivors resolved.** `[R-LIF-02]` binds a compactor
+(ADR-0093 decided it did not, and ADR-0094 reversed that against five
+contradicting passages the audit found); §20.3 step 4's carve-out governs the
+shrink, settled by a six-agent panel with an unprimed control (ADR-0093).
 
-The 18 non-byte-level defects are recorded above. §21.7 again draws the largest
-cluster (six findings), for the fifth consecutive cycle.
+**The 18 non-byte-level defects**, dispositioned by the maintainer after a
+document sweep. Two needed no action at all:
+
+| Finding | Disposition |
+|---|---|
+| writer-04 — §23.1 omits unstoring a tile | **Already fixed** by ADR-0095, which replaced §23.1's closed count with a partition by consequence |
+| writer-05 — R8 collapses `[R-MTA-04]`'s alternatives | **Already Q-I4**, opened by ADR-0092; round 24's register hunter re-reported it independently |
+
+**Fixed — ADR-0096.** Both are checkable against a named rule, which is the
+class of repair this project's audits have not been finding defects in.
+
+| Finding | Repair |
+|---|---|
+| register-04 | R7's Condition cell gains the leading-U+FEFF alternative its own Instances cell already counted twice and §18.2 states |
+| register-05 | **L16** takes F31's bound, not the reverse: F30 and L15 already register the one-half-zero case, so a *nonzero* extent slot has `extent_offset` ≥ 1 and "in 1-15" is the precise form. The finding's phrasing suggested changing F31; the sweep showed F31 was right |
+
+**Sent to the ledger.** §21.7's eight findings are not dispositioned singly:
+four ADRs have repaired that section in four days and it has drawn a cluster in
+five consecutive rounds, so **Q-I5** asks what the section is *for* and what
+its account must cover, with three options priced. The three design-decisions
+become **Q-A7** (§20.5's version_minor floor turns on a fact a compactor cannot
+obtain), **Q-H5** (which verdict a verifier reports for a foreign-major file a
+row reaches — distinct from Q-H4, which asks which rows reach), and **Q-C5**
+(whether §8.1's one unchecksummed live region owes a verifier report).
+
+**Deferred, with named owning sections.** reader-03/adversary-02 and verifier-02
+(§2.3's MU = 1 carve-out and where the sub-record verdict is stated — §2.3);
+writer-02/quiz-01 (§20.5's index-regeneration trigger — §20.5); quiz-03
+(§21.2's use of "geometry" — §21.2); verifier-01 with diagrams-02 (§5.2's
+no-total-owed exemption against Appendix H's verifier checklist — §5.2, and
+they are one defect seen from two sides); diagrams-03 (§21.6's trailer-mimic
+row — §21.6); diagrams-04 (§4.7's presentation contract against §7.4's table —
+§4.7).

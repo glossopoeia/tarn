@@ -898,6 +898,67 @@ per placement. Should it state four?
   the register grows by two; if §21.1 needs a general rule instead, (c) is
   the cheaper fix and closes a standing debt with it.
 
+### Q-I5. What is §21.7 for, and what must its account cover? [shaping]
+**Question:** §21.7 accounts, by class, for obligations no single file
+witnesses. Four ADRs have repaired it in four days (0089, 0090, 0091, 0092)
+and **it has drawn a finding cluster in five consecutive rounds** — eight in
+round 24 alone. Every patch has produced the next round's findings there.
+That pattern is about the section's contract, not its sentences.
+- **Why it matters.** An enumeration here is a claim that the listed cases
+  *are* the cases, and §21.1 makes §21.7 the detectability gate a verifier
+  reasons from. A short list is not untidy; it tells an implementer a
+  witness exists where none does, or none where one does. Round 24's eight
+  findings are each a member missing from, or wrongly attached to, one of
+  its lists: `[R-GEO-06]`'s disk-ordinal witnesses, T5's attachment to a
+  class T26 excludes, `[R-LIF-02]`'s step-3 ordering and its two barriers,
+  §20.4's preservation regime, and the appender's `[R-CNT-08]`
+  carry-forward.
+- **The recurring failure is structural.** Each repair enumerated from a
+  reading of the passage rather than deriving from the rules it accounts
+  for. ADR-0095 recorded the general form: where a partition can be stated
+  by a property its members must satisfy, state it that way, because the
+  property is checkable against any candidate and a list only against the
+  candidates someone thought of.
+- **Options:** (a) Restate §21.7 as a **test** rather than an inventory — a
+  rule is unwitnessed where no register row's condition is satisfiable by a
+  single file exhibiting its breach — with the current cases as
+  non-normative illustration. (b) Keep the inventory but **derive it
+  mechanically**: enumerate every requirement, ask of each whether a row
+  witnesses it, and make the result a checked artifact like the register's
+  own totals. (c) Split it: the normative claim (which obligations the
+  register omits, and why omission is not a gap) separated from the
+  illustrative walk-through that keeps going stale.
+- **What settles it:** whether a property can be stated that decides
+  membership for any requirement without naming it. If it can, (a) ends the
+  cluster; if it cannot, (b) is the only form that stays true, and the
+  cost is a second checked artifact.
+
+### Q-A7. Can a compactor obtain the fact §20.5's version_minor floor turns on? [shaping]
+**Question:** §20.5 makes the output's `version_minor` SHOULD be at least
+the input's where the output carries a feature a later minor defines and
+the compactor does not implement. Round 24's reader walk found the rule
+names two such cases, and a compactor cannot obtain the fact for one of
+them. Options: narrow the rule to the case a compactor can decide; state
+the floor unconditionally; or make the undecidable case an explicit
+carve-out. Owning section §20.5.
+
+### Q-H5. Which verdict does a verifier report for a foreign-major file a register row reaches? [shaping]
+**Question:** §21.2's preamble says four rows reach a file declaring a
+format major other than 1, without saying which of §2.3's three verdicts
+the verifier then reports — conforming, nonconforming, or cannot
+establish. §2.3 makes such a file "neither conforming nor nonconforming
+under this text", so a row that reaches it and establishes a violation
+sits across that line. **Distinct from Q-H4**, which asks *which rows*
+reach; this asks *what follows* when one does. Owning section §21.2.
+
+### Q-C5. Does the one live region under no checksum owe a verifier report? [shaping]
+**Question:** §8.1's coverage map ends with a live region covered by no
+checksum. Round 24's verifier walk found it carries no verifier reporting
+duty, unlike the better-protected structures around it and unlike
+`[R-MTA-10]`'s uninspected extents, which §22.3 requires be counted and
+named. Options: give it a report duty matching `[R-MTA-10]`'s; state that
+none is owed and why; or extend a checksum to it. Owning section §8.1.
+
 ### Q-I3. Does `[R-VEC-04]`'s intact-sibling rule reach ignore-record vectors? [shaping]
 **Question:** `[R-VEC-04]` requires an intact sibling for vectors of two of
 the four outcome classes — reject-layer and reject-tile — then gives a
