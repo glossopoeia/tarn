@@ -1486,10 +1486,11 @@ region of it returns no samples. `[R-GEO-02]`
 > already stored tiles in the generation a commit supersedes: a
 > shrink is barred wherever it alters what §14 fixes for such a
 > tile — whether or not the new state still stores it — and permitted
-> wherever it does not: dropping tiles out of the addressed set,
-> whose extents then become slack, is the ordinary case, and a new
-> padding position whose stored byte already holds the fill is the
-> other. A layer that stored nothing may be re-declared
+> wherever it does not: a tile dropped out of the addressed set
+> carries no §14 obligation and its extent becomes slack, a tile the
+> superseded generation did not store carries none either, and a new
+> padding position whose stored byte already holds the fill alters
+> nothing. One shrink can do several of these at once. A layer that stored nothing may be re-declared
 > freely. Growth
 > that leaves
 > every grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) unchanged touches the directory
@@ -3925,18 +3926,24 @@ file a reader opens later. `[R-SEC-07]`
 #### 23.1 Deletion is not erasure
 
 The append-only model (§9.1) means that what a commit removes, it
-removes only from *reachability*. A commit removes sample data three
-ways — superseding it, a shrink that de-addresses tiles, and a shrink
-that turns a stored tile's real positions into padding without
-de-addressing it (§20.3 step 4) — and a dropped ancillary record's
-extent (§20.4) goes the same way; no commit removes a layer at all.
-The first two leave the bytes in the file as slack (`[R-CNT-21]`),
+removes only from *reachability*. It removes sample data by making it
+unreachable and never by erasing it: superseding a stored tile's
+payload, unstoring a tile so its entry becomes the sentinel (§15.2),
+and a shrink that either drops tiles out of the addressed set or turns
+real positions into padding (§20.3 step 4) all do it, and a dropped
+ancillary record's extent (§20.4) goes the same way; no commit removes
+a layer at all. **Where the structure carrying the bytes leaves the
+live state**, they remain in the file as slack (`[R-CNT-21]`),
 readable by anyone with the bytes and a hex editor, and recoverable
-by any tool that scans backward for an earlier trailer (§9.6). The
-third leaves them inside a live stored tile, as its padding content,
-and discloses nothing a reader could not already derive: §20.3 step 4
-permits that shrink only where those bytes already hold the channel's
-recorded fill, which the layer record publishes. Writers and the tools built on them
+by any tool that scans backward for an earlier trailer (§9.6).
+**Where it does not** — a shrink turning real positions into padding
+of a tile the new state still stores — they remain inside that tile
+as its padding content, and disclose nothing a reader could not
+already derive: §20.3 step 4 permits that shrink only where those
+bytes already hold the channel's recorded fill, which the layer
+record publishes. Those two cases are exhaustive because the bytes
+either travel out of the live state or stay in the structure that
+carried them; the list of operations above is not offered as closed. Writers and the tools built on them
 MUST NOT represent any commit that makes sample data unreachable as
 erasure of it — a shrink reported as erasure misleads exactly as a
 supersede so reported does.

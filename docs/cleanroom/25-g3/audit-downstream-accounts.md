@@ -1,595 +1,773 @@
-# Round 25 audit — downstream-accounts charter (hunks 01 and 02)
+# Round 25 — downstream-accounts audit (auditor B)
+
+Charter: three hunks, but the question is what *outside* them depended on the
+old answers, and what hunk 2's reversal stranded.
 
 ## 0. Disclosure
 
-Files opened:
-- `/private/tmp/.../r25audit/hunk-01.diff` (my charter)
-- `/private/tmp/.../r25audit/hunk-02.diff` (my charter)
-- `/Users/robertkleffner/Documents/GitHub/tarn/spec/tarn.md` (many ranges, listed below)
+Read, in full or in the ranges named:
 
-Nothing else. I did not open `full.diff`, other hunk files, `docs/`, `PLAN.md`,
-`OPEN-QUESTIONS.md`, `AGENTS.md`, `README.md`, `conformance/`, `spec/registry.json`,
-git history, or the web. I did not list the r25audit directory (I `cat`'d the two
-named files by their full paths and wrote this one file with a heredoc).
+- `/private/tmp/claude-501/-Users-robertkleffner-Documents-GitHub-tarn/f4334f8b-602f-4a50-9c17-a97272554180/scratchpad/r25audit-b/hunk-01.diff`
+- `/private/tmp/claude-501/-Users-robertkleffner-Documents-GitHub-tarn/f4334f8b-602f-4a50-9c17-a97272554180/scratchpad/r25audit-b/hunk-02.diff`
+- `/private/tmp/claude-501/-Users-robertkleffner-Documents-GitHub-tarn/f4334f8b-602f-4a50-9c17-a97272554180/scratchpad/r25audit-b/hunk-03.diff`
+- `/Users/robertkleffner/Documents/GitHub/tarn/spec/tarn.md`, ranges:
+  55–70, 134–280, 282–345, 596–690, 735–830, 928–942, 1000–1060, 1156–1260,
+  1288–1300, 1358–1370, 1463–1600, 1693–1745, 1889–1990, 1989–2035,
+  2894–2936, 2936–3200, 3199–3340, 3595–3730, 3945–3998, 4198–4212,
+  4256–4467.
 
-Unrequested context that appeared before I began: a project-instruction block
-pointing at `AGENTS.md`, and an index of the maintainer's memory files naming
-several topics including one about a register/corpus relationship and one about
-propagation checks. I did not open any of those files and drew no conclusion from
-their titles. Their presence is disclosed here; nothing in this audit rests on them.
+Ran only `grep`/`sed`/`tr`/`wc` against `spec/tarn.md`. Read nothing under
+`docs/`, `conformance/`, `PLAN.md`, `OPEN-QUESTIONS.md`, `AGENTS.md`,
+`README.md`, `spec/registry.json`; ran no git command; did not open
+`full.diff`; did not list the hunk directory; no web access.
 
-Commands run:
-- `wc -l spec/tarn.md`
-- `sed -n` over spec/tarn.md line ranges: 120-180, 180-235, 548-600, 735-800,
-  825-845, 1140-1210, 1240-1280, 1455-1510, 2895-2940, 2960-3080, 3150-3300,
-  3340-3400, 3658-3760, 3930-3975, 4300-4400, 4400-4471.
-- Built a whitespace-normalised stream of spec/tarn.md plus a char->line map in
-  `/private/tmp/.../scratchpad/norm.txt` and `pos.json` (python3, reads only
-  spec/tarn.md), then ran a regex query script `q.py` against it. This is the
-  hard-wrap workaround: every phrase search below is wrap-insensitive.
-- `grep -n` for a set of short unwrappable fragments to fix line numbers.
-
-Normalised-search queries run (hit counts in brackets):
-  `R-LIF-02` [13], `21\.7` [8], `shrink|shrunk|shrinking` [8], `§20\.3` [12],
-  `barrier` [13], `pre-trailer` [13], `durab|fdatasync|torn` [20],
-  `compactor|compaction` [55], `R-SER-05` [13], `R-CNT-17` [13].
+**Context I did not ask for.** Material appeared in my context before I began:
+a project-instruction pointer (`CLAUDE.md` → `AGENTS.md`) and an index of the
+maintainer's memory notes naming several TARN-specific topics, plus an
+environment/git-status header listing recent commit subject lines. I did not
+open any of it and I have not used it: every conclusion below is traced to a
+line of `spec/tarn.md` or of a hunk file, quoted in place. I name its
+appearance here because disclosure is mandatory; I do not repeat its contents.
 
 ---
 
-## 1. What each repair changed about the document's CONTENT
+## 1. What each hunk changes about the document's content
 
-### Hunk 1 (§20.3 step 4, shrink paragraph, line 3029ff)
+### Hunk 1 — §11.1 shrink Rationale (a `>` block; non-normative per [R-CNF-01])
 
-Removed: "a shrink that turns real positions into padding of a tile stored there
-is barred whether or not the new state still stores it."
+Before: a shrink is "permitted where it only drops tiles out of the addressed
+set, whose extents then become slack."
 
-Added: "a shrink that alters what §14 fixes for a tile stored there is barred
-whether or not the new state still stores it. What counts as such an alteration
-is the bar above and nothing else, its carve-out included — a new padding position
-whose stored byte already holds the fill `[R-SER-05]` fixes is not one, so a
-shrink producing only those is permitted here exactly as it is there, and this
-sentence answers the rescue question rather than restating the test."
+After: a shrink is "permitted wherever it does not [alter what §14 fixes]:
+dropping tiles out of the addressed set, whose extents then become slack, is
+the ordinary case, and a new padding position whose stored byte already holds
+the fill is the other."
 
-**Content change.** The old rescue sentence barred *any* shrink that converts real
-positions to padding on a prior-generation stored tile. The main bar three
-paragraphs up (line 3009-3012) carves out exactly that case when the stored byte
-already holds the fill. The two collided. The repair resolves the collision in
-favour of the carve-out.
+**Content change:** the Rationale stops presenting de-addressing as the *only*
+permitted shrink and promotes §20.3 step 4's carve-out — the shrink that
+converts real positions to padding inside a *surviving, still-stored* tile — to
+a co-equal named case. Nothing new is *required*; a shape of commit that the
+old Rationale implied was barred is now stated as permitted.
 
-What is now permitted that was not: **a commit MAY shrink a dimension extent of a
-layer that stored tiles in the superseded generation, where every position the
-shrink turns into padding already holds that channel's recorded fill.** The
-smallest witness: Eᵢ = 10, Tᵢ = 16 (Gᵢ = 1, one addressed tile, positions 10..15
-already padding). Shrink Eᵢ to 9. Position 9 becomes padding; if its stored byte
-already equals fill, the carve-out applies and the shrink is permitted. Note
-Gᵢ = ⌈9/16⌉ = 1 is **unchanged**: no tile is de-addressed and entry_count does not
-move.
+### Hunk 2 — §20.5 compactor obligations (normative; inside [R-WRT-06])
 
-Nothing is newly barred. Nothing previously fixed became unfixed.
+Before (one day old): "[R-LIF-02]'s commit protocol does not bind a compactor
+… Two consequences follow and are intended. **The output's pre-trailer gap is
+fixed by nothing.** … two conforming compactors given one input MAY emit
+outputs of different lengths … **And no barrier ordering is owed within the
+output.** … A compactor SHOULD make its output durable before anything
+discards the input."
 
-### Hunk 2 (§20.5, line 3223ff)
+After: "A compactor MUST follow `[R-LIF-02]`'s **creation path**, as §20.2
+obliges a creator … The pad of step 5 and the barriers of steps 4 and 6 —
+both, not one — are owed here as they are of a creator."
 
-Added a whole paragraph: `[R-LIF-02]`'s commit protocol does not bind a compactor;
-neither its barrier ordering nor its step 5 pad reaches the compactor tier. Two
-named consequences: (a) the output's pre-trailer gap "is fixed by nothing", so two
-conforming compactors given one input MAY emit outputs of different lengths and a
-longer-than-a-commit gap is conforming; (b) no barrier ordering is owed within the
-output, justified by "a torn output is an unreadable file rather than a damaged
-one". Plus a new obligation: "A compactor SHOULD make its output durable before
-anything discards the input."
+**Content change:** three things move. (a) A compactor's output pre-trailer gap
+is now pinned to `[R-LIF-02]` step 5's pad-to-64 rather than free; outputs of
+two conforming compactors can no longer differ in length on that account.
+(b) Two storage barriers are now owed inside the compaction write, where none
+were. (c) The `SHOULD` on making the output durable before the input is
+discarded is deleted outright, not replaced (subsumed: step 6's barrier makes
+the output durable at completion, and [R-PRV-02] still says the input persists
+"until something outside this specification deletes it").
 
-**Content change.** Before, §20.5 said nothing about the commit protocol, and the
-natural reading — a compaction output is a generation-1 file, and §9.2's creation
-path is how generation-1 files get written — bound a compactor to steps 4-6 (both
-barriers) and step 5 (minimal pad). The repair severs that. Now permitted that was
-not: **a compactor may emit an output whose pre-trailer gap exceeds the minimal
-64-byte-boundary pad, and may write its output's bytes in any order.** Newly
-fixed by nothing that was fixed before: the write ordering of a compaction output.
-Newly created: a SHOULD-level durability obligation replacing what was a
-MUST-level barrier pair.
+### Hunk 3 — §23.1 [R-PRV-01] (normative)
 
----
+Before: "A commit removes sample data two ways — superseding it, and a shrink
+that de-addresses tiles (§20.3 step 4) … In each case the bytes remain in the
+file as slack."
 
-## 2. Passages that depended on the old answers
+After: "three ways — superseding it, a shrink that de-addresses tiles, and a
+shrink that turns a stored tile's real positions into padding without
+de-addressing it (§20.3 step 4) … The first two leave the bytes in the file as
+slack … The third leaves them inside a live stored tile, as its padding
+content, and discloses nothing a reader could not already derive: §20.3 step 4
+permits that shrink only where those bytes already hold the channel's recorded
+fill, which the layer record publishes."
 
-Method: grep the *terms*, not the identifiers; then read where every hit sits.
+**Content change:** the same promotion as hunk 1, in normative text, plus a new
+factual claim about disclosure (the third way exposes nothing new because the
+bytes were already the published fill). The `MUST NOT`-represent-as-erasure
+rule is unchanged and its quantifier ("any commit that makes sample data
+unreachable") is unchanged.
 
-### 2a. Depending on hunk 1's old answer (a real→padding shrink is barred)
-
-Query `shrink|shrunk|shrinking` [8 hits]: lines 1487, 3033, 3034, 3043, 3048,
-3053, 3938, 3945.
-
-**Line 3053, §20.3 step 4, SAME PARAGRAPH, unchanged by the repair:**
-
-> "Where a shrink is permitted the de-addressed tiles' extents become slack
-> (`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller entry_count and so a
-> re-emitted index region, and every surviving stored tile is untouched."
-
-Universally quantified over permitted shrinks. For the class the repair newly
-names — a grid-count-preserving shrink producing only fill-holding padding
-positions — every clause but the last is false: there are no de-addressed tiles,
-`[R-CNT-17]` obliges no smaller entry_count, and no index region is re-emitted.
-
-Checked `[R-CNT-17]` at line 1042: "Under index_encoding 1, extent_length MUST
-equal entry_count × 20 + ⌈entry_count / 2¹⁶⌉ × 4 ... or an entry_count that does
-not equal the geometry-derived addressed-tile count, is a validity error at layer
-scope." The addressed-tile count is N (interleaved) or C·N (planar), N = ∏Gᵢ
-(§11.2, line 1502). Gᵢ unchanged ⟹ entry_count unchanged. Confirmed.
-
-This collides with two other unchanged statements:
-
-- §20.3 step 4 opening, line 2980: "Every layer whose stored-tile set or index
-  content this commit changes has its tile-index region re-emitted in full". A
-  grid-count-preserving shrink changes neither.
-- §20.3 step 4, line 2989-2993: "A layer whose record alone changes **keeps its
-  extent slot, pointing at the existing region**, as does a layer the commit
-  leaves untouched (`[R-WRT-05]`); **relocating a live index region is
-  compaction's operation (§20.5, `[R-WRT-07]`), not an appender's**." So an
-  appender that follows line 3053 and re-emits the index region for this shrink
-  performs an operation this same subsection reserves to a compactor.
-- §11.1 Rationale, line 1491-1497, states the growth half correctly and
-  symmetrically: "Growth that leaves every grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) unchanged
-  **touches the directory alone**; growth that raises one changes entry_count and
-  with it extent_length (`[R-CNT-17]`), so the layer's whole tile-index region is
-  re-emitted". The document already knows a grid-count-preserving extent change
-  touches the directory alone. Line 3053 says the opposite for shrinks.
-
-=> FINDING B-01. Byte-level: yes (worked below).
-
-Honesty note: line 3053 was already imprecise pre-repair for a layer that stored
-nothing in the superseded generation (freely re-declarable, line 3020-3024) — such
-a shrink can also preserve the grid count. But that case is handled by a different
-sentence and the paragraph's subject is a layer with prior-generation stored tiles.
-The repair puts the non-empty case squarely against line 3053, three sentences
-after the widening.
-
-**Line 1487-1490, §11.1 Rationale (inside a ">" block, non-normative):**
-
-> "§20.3 states normatively, and governs, what a commit may do to a layer that
-> already stored tiles in the generation a commit supersedes: a shrink is barred
-> wherever it alters what §14 fixes for such a tile — whether or not the new state
-> still stores it — and **permitted where it only drops tiles out of the addressed
-> set**, whose extents then become slack."
-
-The bar half matches the repaired wording verbatim in substance. The permission
-half is a two-case partition ("barred wherever X ... and permitted where only Y")
-that names de-addressing as the whole of the permitted class. Under the repair the
-permitted class is strictly larger: a shrink that de-addresses nothing at all is
-permitted when the new padding positions already hold the fill. Under the OLD
-rescue sentence this restatement was exactly right; the repair invalidated it and
-did not sweep it.
-
-=> FINDING B-02.
-
-**Line 3938-3940, §23.1 `[R-PRV-01]`, normative:**
-
-> "A commit removes sample data **two ways** — superseding it, and a shrink that
-> de-addresses tiles (§20.3 step 4) — and a dropped ancillary record's extent
-> (§20.4) goes the same way"
-
-A closed count. The repair adds a third way: a shrink that converts real positions
-to padding without de-addressing anything. Those positions leave the layer's
-addressable extent; §11.3/§2.4 keep a reader from ever returning a padding
-position, and the bytes remain in the file. Under the old rescue sentence that
-route was barred for any layer with prior-generation stored tiles, so "two ways"
-was complete.
-
-=> FINDING B-03. The MUST NOT that follows ("Writers ... MUST NOT represent any
-commit that makes sample data unreachable as erasure of it") is quantified over
-"any commit", so the normative force survives; the count does not.
-
-**Line 3945 (§23.1, same requirement) and line 3690 (§21.7):** checked, unaffected.
-§21.7's "§20.3 step 4's bar on a declaration change is witnessed only where the
-affected tiles remain stored, and then only for part of what it bars" plus "A
-change reaching a byte §14 structurally constrains — a padding position, a pad bit,
-or a boolean byte — fires §21.4's content rows" remains correct after the repair:
-a barred real→padding shrink (byte NOT holding fill) is witnessed by T2/T4 where
-the tile remains stored; the newly-permitted one is not a violation and needs no
-witness. No finding.
-
-Query `§20\.3` [12 hits]: 65, 604, 608, 1484, 1497, 1787, 3171, 3227, 3327, 3690,
-3938, 4438. Line 1787's Note ("each commit that changes a layer's stored-tile set,
-or that grows its extents across a grid boundary, re-emits that layer's whole
-tile-index region") is about growth and stored-tile-set change; unaffected.
-Line 4438 (Appendix H updater) unaffected. Others read and unaffected.
-
-### 2b. Depending on hunk 2's old answer (a compactor follows [R-LIF-02])
-
-Query `barrier` [13 hits]: 783, 1174, 1183, 1193, 2927, 2928, 2929, 3071, 3074,
-3225, 3234, 3237, **4432**.
-
-**Line 4429-4433, Appendix H, "Conforming writer" checklist (non-normative):**
-
-> "**Conforming writer** — emits only conforming files (§2.3); ... **follows the
-> commit protocol including both barriers (§9.2)**; honors any alignment or slab
-> it declares (§16)."
-
-Quantified over the §2.3 "Conforming writer" class. §20.1 line 2909-2913 places the
-compactor inside it: "An appender and a compactor satisfy every writer requirement
-for the bytes they produce". Post-repair a compactor follows neither the barriers
-nor step 5's pad, so this checklist line is false for one of the three writer tiers.
-Pre-repair it was true under the natural reading. Unswept.
-
-=> FINDING B-04. Non-normative (Appendix H's own header: "each entry's authority is
-the requirement or section cited, never this summary"), so no normative conflict —
-but it is a restatement the repair should have swept, and it is the passage an
-implementer auditing a compactor is pointed at.
-
-Query `pre-trailer` [13 hits]: 153, 566, 631, 661, 755, 837, 1981, 3229, 3446,
-3618, 4089, 4108, 4334.
-
-**Line 836-838, §6.4 `[R-CNT-09]`, normative:**
-
-> "Writers SHOULD keep dir_length plus **the pre-trailer pad** plus 64 within
-> 65,536 bytes so that a 64 KiB suffix fetch captures trailer and directory
-> together"
-
-Quantified over "Writers", which includes a compactor. This is a live bound on the
-compactor's pre-trailer gap. The repair's bolded thesis is "**The output's
-pre-trailer gap is fixed by nothing.**"
-
-**Line 660-661, §5.2 `[R-CNT-03]`, normative:** "Writers SHOULD zero the gaps they
-create — the run before an aligned tile or slab run, and **the pre-trailer pad**."
-Also binds a compactor; also constrains the gap (its content).
-
-**Line 754-757, §6.2 `[R-CNT-05]`, normative:** "Writers MUST place the directory so
-that no structure lies between its end and the trailer." A MUST on the gap's
-occupancy, binding every writer. Register row F7 (line 3448) is its witness.
-
-**Line 566-568, §5.1 `[R-CNT-01]`, normative:** "The file size of a conforming file
-equals the live trailer's committed file length F, and **F is a multiple of 64**
-(§6.2)." With §6.2's "The trailer occupies the final 64 bytes ... beginning at a
-64-aligned offset (equivalently: F mod 64 = 0)", the gap's length mod 64 is fixed
-by where the directory ends. A compactor cannot choose an arbitrary gap length —
-only multiples of 64 above the minimum.
-
-=> FINDING B-05: "fixed by nothing" is falsified four ways by unchanged text.
-
-Verified the repair's own sub-claim: "§6.2 ... bounds the gap ahead of it only
-through step 5". §6.2 line 756-760: "bounds their number only through step 5 of the
-commit protocol, which pads to the next 64-byte boundary (`[R-LIF-02]`) — a longer
-gap is conforming, and no conforming commit produces one." That sub-claim about
-§6.2 in particular is CORRECT. The overclaim is the bolded thesis, which ranges
-over the document.
-
-Also checked §6.2's "no conforming commit produces one": still true after the
-repair, since a compaction is not a commit ([R-LIF-01], line 1162-1164). No finding.
-
-**Line 148-157, §2.3 `[R-CNF-02]`, normative:**
-
-> "A writer obligation whose violation this specification expressly declares not to
-> be a file-conformance violation **binds the actor in the same way**; §6.3's
-> flags = 0 against a set ignore-lane bit and **§6.2's pre-trailer gap longer than
-> `[R-LIF-02]` step 5's pad** are the cases this text states"
-
-The repair cites this: "a gap longer than a commit would have produced is
-conforming — **one of the writer obligations §2.3 names as no file-conformance
-violation**." Two problems, one inside and one outside the hunk.
-
-Inside: the citation defeats the thesis. §2.3's carve-out is for a writer
-obligation that IS violated but does not make the file nonconforming; it says
-such an obligation "binds the actor". If the compactor's long gap is that case,
-the compactor is conduct-bound not to produce it, contradicting "fixed by nothing"
-and "MAY emit outputs of different lengths". If it is not that case (nothing binds
-a compactor here), the citation misfires — the long gap is simply permitted, not a
-declared non-violation.
-
-Outside: §2.3 is unchanged and its statement is unqualified. Read on its own it
-makes a compactor emitting a long gap a nonconforming *writer* (conforming file,
-nonconforming actor). The repair needed to except the compactor tier there and
-did not.
-
-Third-order: §21.7 (line 3717-3721) accounts for the compactor obligations that
-have no witness — "§20.5's four obligations on a compacted file's trailer
-(`[R-WRT-06]`) ... are unwitnessed for a reason all four share: the output carries
-no record that it is a compaction output at all". After the repair, a long
-pre-trailer gap has exactly that property for a *different* rule: a verifier
-meeting one cannot tell whether the producer was a compactor (permitted) or a
-committer (a §2.3 conduct violation). Before the repair a long gap always meant a
-conduct violation. §21.7 names rules by identifier, so it did not move.
-
-=> FINDING B-06.
-
-Query `durab|fdatasync|torn` [20 hits]: 58, 60, 1174(×2), 1180, 1183, 1194(×2),
-1214, 1248, 1269, 1283, 1317, 1457, 2332, 2929, 3238, 3239, 4206.
-
-**Repair's own justification, line 3235-3239:** "A compaction leaves its input
-intact and writes bytes that are **not readable as a TARN file until the trailer
-completing them is present**, so there is no committed prefix for a barrier to
-protect and **a torn output is an unreadable file rather than a damaged one**."
-
-The premise holds only if the trailer is written last — which is exactly the
-ordering the sentence before it declares not owed. Nothing else fixes write order:
-§6.2 fixes the trailer's *position* (final 64 bytes), not when it is written;
-`[R-LIF-04]` (line 1246-1258) is scoped to "A writer beginning a commit against an
-existing file" and does not reach a compactor writing a new file. A compactor that
-writes the trailer and directory first and the tile payloads after, then crashes,
-leaves a file that passes §6.2's trailer gates and the directory CRC and fails only
-at each stored tile's CRC — reject-tile, §8's chain, line 1140-1143. That file is
-readable and damaged, which is what the sentence says cannot happen.
-
-=> FINDING B-07.
-
-Checked the neighbouring Note at line 1193-1196 ("Where barriers are weaker than
-assumed, safety degrades from 'torn commits are invisible' to 'torn commits are
-detected': §8's chain still catches every inconsistent state loudly"). Consistent
-with the damaged-file case being *detected*; it does not rescue the repair's
-"unreadable rather than damaged". No separate finding.
-
-Query `compactor|compaction` [55 hits]. Read every one. Others checked and clean:
-- line 812 §6.3 (compactor carries ignore-lane bits) — consistent.
-- line 3199-3202 §20.5 opening ("so slack is never carried"; "Given a conforming
-  input the output is a conforming file") — a longer gap is still conforming, and
-  "carried" is about the input's slack. No finding.
-- line 3949-3952 `[R-PRV-02]` ("the input persists, unmodified, until something
-  outside this specification deletes it") — the repair's "what discards it is
-  outside this specification" restates this. Duplication, not contradiction.
-- Appendix G items 2, 3, 8 (lines 4290-4295, 4330-4338, 4355-4365). Item 3 pins the
-  pre-trailer pad to the forced 64-byte alignment for profile adopters, so item 8's
-  "A compactor's output is therefore reproducible only modulo its trailer" survives
-  the repair. Item 4's gloss "One generation, so that the file is the output of a
-  single commit" now sits awkwardly against item 8's compactor-adopter language,
-  but `[R-LIF-01]` already excluded compaction from "commit" before this repair, so
-  the repair did not create it. Not reported.
-- line 3331-3339 `[R-WRT-09]` Note (verification depth) — unaffected.
+**Common thread:** hunks 1 and 3 both take one previously-incidental carve-out
+in §20.3 step 4 and make it a first-class, enumerated case. That is exactly the
+kind of change that strands *consequence* sentences written when only the other
+case existed. Section 3 is where I went looking.
 
 ---
 
-## 3. The seven checks, per hunk
+## 2. The seven checks, per hunk
 
-### HUNK 1
+### Check 1 — tense and quantifier
 
-**Rule the repair adopts.** For a layer storing tiles in the superseded generation,
-a shrink is barred iff it alters, for such a tile, what §14 fixes for its stored
-bytes or how they decode — and the main bar's carve-out is part of that test, so a
-shrink whose only effect is to create padding positions whose stored bytes already
-hold the fill is permitted, and unstoring/de-addressing neither rescues a barred
-shrink nor is required to license a permitted one.
+**Hunk 1.** The Rationale's antecedent is "a layer that already stored tiles in
+the generation a commit supersedes"; "such a tile" therefore ranges over tiles
+the layer stored in the **superseded** generation. The normative rule it
+restates, §20.3 step 4 (line 3036):
 
-**1 TENSE AND QUANTIFIER — PASS.** The repair speaks about the superseded
-generation ("a tile stored **there**", antecedent "the superseded generation's").
-The normative rule it restates, line 2996-3001: "A commit MUST NOT change a layer's
-declarations in a way that alters, for **any tile that layer stores in the
-generation this commit supersedes**, what §14 fixes for its stored bytes or how
-they decode". Repair: "a shrink that **alters what §14 fixes for a tile stored
-there**". Same generation, same predicate; "a tile" existential against the bar's
-"any tile" universal-under-negation — equivalent. The repair is a restatement, not
-the normative rule; the normative rule is line 2996.
+> "a shrink is permitted exactly where it alters nothing §14 fixes for any tile
+> the layer stores in the generation this commit supersedes."
 
-**2 CITATIONS — PASS (2 of 2).**
-- `[R-SER-05]` (line 1961-1966): "Every padding position MUST encode ... that
-  channel's fill ... Every pad bit (§14.3) MUST carry the plane's channel's fill
-  bit." The repair says "the fill `[R-SER-05]` fixes". Resolves.
-- §21.7 (line 3658ff): the repair claims it "records the consequence — that this is
-  precisely where the bar has no witness, the live state being clean". §21.7 line
-  3690: "§20.3 step 4's bar on a declaration change is witnessed only where the
-  affected tiles remain stored"; and line 3712-3716: "a commit that supersedes
-  every tile it would have damaged leaves the live state clean, so the bar is
-  unwitnessed there". Resolves — via the first clause. See check 7 for the verb
-  mismatch on the second.
-- §11.2, §11.3, §14 appear in surrounding unchanged text; §11.2's grid count
-  (line 1500-1502) and §11.3 padding read and consistent.
+Same generation, same quantifier ("any tile … stores in the generation this
+commit supersedes" vs "such a tile"). The "whether or not the new state still
+stores it" clause matches §20.3 line 3045–3047 word for word in force. **PASS.**
 
-**3 NORMATIVE SITING — PASS.** The repair sits in §20.3's numbered step 4, ordinary
-prose, no ">" prefix. `[R-WRT-04]` closes the step at line 3074. The only ">"-block
-restatement of the shrink rule is §11.1's Rationale at line 1484-1490, and it is
-now stale — B-02, which is the mirror-image signature (repair landed in normative
-text, the non-normative restatement still says the old thing).
+**Hunk 2.** Generation question: which file? The repair speaks about the
+*output*, at generation 1, with no prior trailer. `[R-LIF-02]`'s creation
+paragraph (lines 1182–1185) is quantified over exactly that case: "On creation
+there is no prior trailer: the writer first emits the front signature block
+… then performs steps 2–6, writing beginning at offset 16, with generation 1."
+The repair's own words — "the output has no prior trailer and stands at
+generation 1, which is the case that path states" — match. **PASS.**
 
-**4 NO CONTRADICTION IN THE SAME PASSAGE — FAIL.** Line 3053, three sentences
-later, unchanged. B-01.
+**Hunk 3.** Tense: "a shrink that turns a **stored** tile's real positions into
+padding without de-addressing it". §3.1: "unqualified *stored* means stored in
+the live generation." §20.3's bar is quantified over the *superseded*
+generation. For the third way the two coincide (the tile survives the commit
+still stored), so the loose "stored" is harmless here. **PASS**, noted.
 
-**5 EXHAUSTIVE CLAIMS.** Words flagged: "nothing else", "only those", "exactly as".
-- "What counts as such an alteration is the bar above **and nothing else**" — tried
-  to falsify. Searched for any other rule that makes an extent shrink a violation
-  for a prior-generation stored tile: `[R-COD-07]`'s lz4 cap and `[R-ENC-04]`'s
-  2⁶³−1 ceiling (both named in the growth paragraph, line 3026-3033) bound a
-  *grown* geometry, not a shrunk one; `[R-SLB-01]`'s alignment invariant is
-  re-tested at line 3068-3071 for the whole new state, and that sentence is
-  separate from the bar and unchanged, so "nothing else" is scoped to *what counts
-  as an alteration under the bar*, not to what else can make the commit illegal.
-  Reads as sound. No finding.
-- "a shrink producing **only those**" — the class is well-defined (new padding
-  positions whose stored bytes already hold the fill). No finding.
+### Check 2 — citations resolve
 
-**6 WHAT ELSE IN THIS STRUCTURE IS UNCONSTRAINED.** Structure governed: a layer's
-geometry declaration as re-declared by a commit. Quantities it carries: rank d;
-per-dimension name, extent Eᵢ, tile extent Tᵢ; channel count C; per-channel sample
-type and fill; layout (interleaved/planar); codec; filter; index_encoding;
-entry_count; crc_of_crc_array; declared alignment A / slab.
-- Eᵢ: governed — growth paragraph (3020-3033) and shrink paragraph (3034-3057).
-- Tᵢ, C, d, sample type, layout, codec, filter: governed by the main bar at 2996
-  (each alters decoded size, sample offsets, or the codec/filter) plus the
-  free-re-declaration licence at 3020 for an empty layer. Note the shrink and
-  growth paragraphs both say "an extent", which §11.1 line 1471-1473 distinguishes
-  from "a tile extent" — so Tᵢ is NOT covered by either paragraph, but it is
-  covered by the main bar. Not a gap.
-- entry_count / crc_of_crc_array / extent_length: governed by `[R-CNT-17]` and
-  `[R-CNT-23]` as derived quantities. The repair's newly-permitted class leaves
-  them unchanged — which is precisely what line 3053 gets wrong (B-01).
-- fill: a change of a channel's recorded fill alters "the content `[R-SER-05]`
-  fixes" at every padding position of a prior-generation stored tile, so the main
-  bar reaches it. Covered.
-No unconstrained sibling found beyond what B-01 already names.
+Every identifier and section number in the three `+` sides, opened and read:
 
-**7 ANALOGY — PASS, with the verbs recorded.** The repair argues by analogy twice.
-- "permitted **here exactly as it is there**". Repair's governing verb: a shrink
-  "**producing** only those [new padding positions whose stored byte already holds
-  the fill]". Cited rule's governing verb (line 3009-3012): "a change that
-  **leaves** every one of those tiles' stored bytes **meaning exactly what they
-  meant** ... is not what this bars". Different sets: the repair ranges over
-  padding positions the shrink creates; the carve-out ranges over every stored byte
-  of every prior-generation stored tile of the layer. Tested the entailment: a pure
-  Eᵢ shrink changes ∏Tᵢ not at all, so decoded size, sample byte offsets, codec and
-  filter are all untouched; the only §14-fixed quantity that moves is the padding
-  set and its content, and the "only those" restriction makes each new member
-  already correct. Entailment holds. The analogy carries one class only (padding
-  positions), so there is no second member to test it against separately. PASS.
-- "the same reason: the quantifier is the superseded generation's" — repair's verb
-  "the layer **stores** in the generation this commit supersedes" against §3.1's
-  definition of *stored* against a generation (cited at line 3003). Same set. PASS.
-- The §21.7 citation is a near-analogy worth recording: repair says the bar has no
-  witness because "the live state being clean"; §21.7's matching sentence says "a
-  commit that **supersedes** every tile it would have damaged leaves the live state
-  clean". The shrink paragraph's case is **de-addressing / unstoring**, not
-  superseding. Different verbs over different sets. It still resolves, because
-  §21.7's earlier and broader clause — "witnessed only where the affected tiles
-  **remain stored**" — covers de-addressing too. Recorded as a pass; not reported.
+| Cite | Where it appears | Verdict |
+|---|---|---|
+| §20.3 | hunk 1, hunk 3 | PASS — §20.3 step 4 is where the shrink bar and its carve-out are stated normatively |
+| §14 | hunk 1 | PASS — §14.5 [R-SER-05] fixes padding content; §14.2/§14.3 fix decoded size and offsets |
+| §11.2 / ⌈Eᵢ/Tᵢ⌉ | hunk 1 | PASS — §11.2 defines the grid count in that form |
+| [R-CNT-17] | hunk 1 | PASS — §7.4: "extent_length MUST equal entry_count × 20 + ⌈entry_count / 2¹⁶⌉ × 4"; entry_count "equals the addressed-tile count" |
+| [R-GEO-06] | hunk 1 | PASS — §11.4 disk tile ordinal |
+| [R-WRT-04] | hunk 1 | PASS — the append procedure, whose step 4 renumbers ordinals |
+| [R-LIF-02] "creation path" | hunk 2 | PASS — the paragraph at 1182–1185 exists and states the no-prior-trailer, generation-1 case |
+| §20.2 | hunk 2 | PASS — [R-WRT-02]: "A creator MUST follow `[R-LIF-02]`'s creation path … (`[R-LIF-02]` steps 4–6 — both barriers, not one)". The repair's "both, not one" is that idiom verbatim |
+| [R-WRT-01] | hunk 2 | PASS — §20.1: "An appender and a compactor satisfy every writer requirement for the bytes they produce". The repair's gloss ("already has a compactor satisfying every writer requirement for the bytes it produces") is accurate |
+| [R-LIF-01] | hunk 2 | PASS — §9.1: "every conforming mutation … is either a commit (§9.2) or a whole-file rewrite under a new file_id (compaction, §20)" |
+| [R-LIF-03] | hunk 2 (context) | PASS — §9.3 states the (file_id, range) cache contract |
+| step 5 / steps 4 and 6 | hunk 2 | PASS — §9.2: (4) barrier, (5) pad to next 64-byte boundary + trailer, (6) barrier |
+| §20.3 step 4 | hunk 3 | PASS — the carve-out is there: "a new padding position whose stored byte already holds the fill `[R-SER-05]` fixes is not one" |
+| §20.4 | hunk 3 | PASS — the MU=0/PE=0 row is the dropped-ancillary case, extent "becoming slack" |
+| [R-CNT-21] | hunk 3 | PASS — §5.2 defines slack and its unconstrained content |
+| §9.6 | hunk 3 | PASS — "probe backward at 64-aligned offsets o for the trailer magic … The nearest-to-end valid candidate is the last committed state" |
+| "which the layer record publishes" (fill) | hunk 3 | PASS — §7.4's channel entries carry `fill (u8 len + bytes)`; [R-TYP-06] makes it authoritative |
+| "no commit removes a layer at all" | hunk 3 (retained) | PASS — §20.4: "No commit therefore removes a layer record" / "an appender never removes one" |
 
-### HUNK 2
+No citation in any `+` line points at a rule that only nearly says the claimed
+thing. **Check 2 clean.**
 
-**Rule the repair adopts.** A compactor is bound by none of `[R-LIF-02]`: it owes
-no barrier before or after its trailer, owes no minimal pad, and may write its
-output's bytes in any order; it SHOULD make the output durable before anything
-discards the input.
+### Check 3 — the repair sits in normative text
 
-**1 TENSE AND QUANTIFIER — PASS.** `[R-LIF-02]` line 1168: "A writer **performing a
-commit** MUST, in order ...". The repair's "That protocol is stated for a commit"
-matches word for word. `[R-LIF-01]` line 1162-1164: "every conforming mutation of a
-file is either a commit (§9.2) or a whole-file rewrite under a new file_id
-(compaction, §20)". The repair's "makes a compaction a whole-file rewrite under a
-new file_id rather than a commit" matches. Ranges over "a compactor", the §20.1
-tier (line 2907-2908). Correct set.
+Grepped the distinctive terms rather than the IDs (whitespace-normalised,
+because the file is hard-wrapped):
 
-**2 CITATIONS — 5 pass, 1 fails.**
-- `[R-LIF-02]` (line 1168-1181): steps 4 and 6 are the barriers, step 5 is "append
-  the pad to the next 64-byte boundary ... and the new trailer". "barrier ordering
-  nor its step 5 pad" resolves. PASS.
-- `[R-LIF-01]` (line 1160-1164): quoted above. PASS.
-- §20.2 (line 2921-2932) "binds a creator to that path by name": "A creator MUST
-  follow `[R-LIF-02]`'s creation path ... (`[R-LIF-02]` steps 4-6 — both barriers,
-  not one)". PASS, verbatim support.
-- §20.3 step 6 (line 3072-3074) "binds an appender": "**Commit** (`[R-LIF-02]`
-  steps 4-6): barrier; pad; trailer ...; barrier." PASS.
-- §6.2 (line 737-738, 754-760) "requires the trailer to occupy the file's final 64
-  bytes and bounds the gap ahead of it only through step 5": both halves verbatim
-  supported. PASS.
-- §2.3 "one of the writer obligations §2.3 names as no file-conformance violation"
-  (line 148-157): §2.3 does name exactly this case, so the pointer lands — but what
-  §2.3 says about it ("binds the actor in the same way") is the opposite of what
-  the repair uses it for. FAIL. B-06.
-- `[R-WRT-05]`, `[R-WRT-09]`, `[R-CNT-08]`, `[R-CNT-26]`, `[R-LIF-03]`, §9.3, §6.3,
-  §18.3, §10.1, §10.2, §21.6, §7.2 all appear in the hunk's *context* lines, not in
-  the repaired text; not re-audited under this charter.
+```
+$ grep -n -i "shrink\|de-address" spec/tarn.md
+1487:> shrink is barred wherever it alters what §14 fixes for such a     <- hunk 1, inside a ">" block
+3035:   An extent MAY also **shrink**, and the bar above is the whole of  <- §20.3, normative
+3036-3057 (normative, [R-WRT-04])
+3929/3931/3938/3941  <- hunk 3, §23.1, normative, [R-PRV-01]
+```
 
-**3 NORMATIVE SITING — PASS.** The new paragraph is ordinary prose inside §20.5,
-within the span closed by `[R-WRT-06]` at line 3263. Not a ">" block. Searched for
-a competing normative statement that still binds a compactor to the protocol: the
-only candidates are §20.2 (creator, by name — §20.1 line 2907 makes creator and
-compactor distinct tiers) and Appendix H's checklist (line 4431), which is
-explicitly non-normative. So the repair lands; but Appendix H still says the old
-thing to any reader who consults it — B-04.
+```
+$ tr '\n' ' ' < spec/tarn.md | tr -s ' ' | grep -o "new padding position whose stored byte[^§]*"
+… "or a new padding position whose stored byte already holds the fill `[R-SER-05]` fixes — is not what this bars." (§20.3, line ~3011, NORMATIVE)
+… "a new padding position whose stored byte already holds the fill `[R-SER-05]` fixes is not one, so a shrink producing only those is permitted here exactly as it is there" (§20.3, line ~3048, NORMATIVE)
+```
 
-**4 NO CONTRADICTION IN THE SAME PASSAGE — FAIL.** The paragraph's own second half
-contradicts its first: no ordering is owed, yet the justification assumes the
-trailer arrives last. B-07.
+Hunk 1 edits a `>` block, so it has no force of its own — but the rule it now
+restates *does* have a normative home at §20.3 step 4, stated the same way, so
+the repair did land. This is the reverse of the failure signature: the
+Rationale was the stale half and §20.3 was already correct. **PASS.**
 
-**5 EXHAUSTIVE CLAIMS.** Flagged: "fixed by nothing", "Two consequences follow",
-"no barrier ordering is owed", "rather than", "outside this specification".
-- "**fixed by nothing**" — falsified by `[R-CNT-09]` (SHOULD bound on
-  dir_length + pad + 64), `[R-CNT-03]` (SHOULD-zeroed content), `[R-CNT-05]` (MUST:
-  no structure in it), `[R-CNT-01]`/§6.2 (F mod 64 = 0 fixes the gap length modulo
-  64). B-05.
-- "**Two consequences follow and are intended**" — a count of two over the
-  consequences of not being bound by `[R-LIF-02]`. A third follows and is not
-  named: step 5 also fixes *generation* ("generation one greater than the prior
-  trailer's") and *committed_file_length*. Both are separately pinned in §20.5
-  ("and generation 1") and by `[R-CNT-01]`, so the count is defensible. No finding.
-- "**a torn output is an unreadable file rather than a damaged one**" — falsified.
-  B-07.
-- "what discards it is **outside this specification**" — consistent with
-  `[R-PRV-02]` line 3950-3953. PASS.
+Hunk 2 sits between "…relocation puts different bytes at the same ranges." and
+the `[R-WRT-06]` tag at line 3252 — inside the requirement, with `MUST`.
+**PASS.** Hunk 3 sits inside `[R-PRV-01]`, above its tag. **PASS.**
 
-**6 WHAT ELSE IN THIS STRUCTURE IS UNCONSTRAINED.** Structure governed: the tail of
-a compaction output — everything after the directory's CRC — plus the act of
-writing the output. Every quantity it carries:
-1. gap **length** — repair: nothing. Actually: `[R-CNT-09]` SHOULD, `[R-CNT-01]`
-   F mod 64 = 0. B-05.
-2. gap **content** — repair: silent, and swept up by "fixed by nothing". Actually:
-   `[R-CNT-03]`'s SHOULD-zeroing binds a compactor as a writer; §6.2 says content is
-   otherwise unconstrained. Folded into B-05.
-3. gap **occupancy** — `[R-CNT-05]`'s MUST (no structure), row F7. Repair does not
-   except it and could not; folded into B-05.
-4. **write order** — repair: nothing owed. Genuinely nothing else fixes it
-   (`[R-LIF-04]` is commit-scoped, line 1246). This is the real gap, and B-07 is
-   its consequence.
-5. **durability** — repair: new SHOULD. Nothing else.
-6. **physical length vs committed_file_length** — `[R-LIF-04]`'s truncation rule is
-   commit-scoped and does not reach a compactor; `[R-CNT-01]`'s "The file size of a
-   conforming file equals ... F" covers it as a file predicate. Covered, no gap.
-7. trailer fields: generation (pinned, "and generation 1"); file_id (pinned, fresh
-   draw); flags ignore lane (pinned, `[R-CNT-08]`); flags incompat lane and
-   version_major (§6.2/§6.3 field table); version_minor (SHOULD ≥ input's, else
-   `[R-CNT-26]`); reserved bytes (§6.2 table: zero); trailer CRC (§6.2 table).
-   All covered.
-So the one quantity the repair frees and nothing else catches is write order, and
-the repair's own justification for freeing it is the thing that is false.
+### Check 4 — contradiction in the same passage, including untouched text
 
-**7 ANALOGY.** The repair argues by analogy once, and by contrast twice.
-- "**exactly as** it is there" does not appear in hunk 2. The analogy is
-  "**where** §20.2 binds a creator to that path by name **and** §20.3 step 6 binds
-  an appender, **this section deliberately does not**." Verbs side by side:
-  §20.2 "A creator **MUST follow** `[R-LIF-02]`'s creation path"; §20.3 step 6
-  "**Commit** (`[R-LIF-02]` steps 4-6): barrier; pad; trailer ...; barrier";
-  repair "this section **deliberately does not**". Sets: creator tier, appender
-  tier, compactor tier — three disjoint tiers per §20.1 line 2902-2909. The
-  argument from silence is sound because §20.1 makes the tiers disjoint and §20.2's
-  and §20.3's bindings are by tier name. PASS. Recorded.
-- "one of the writer obligations §2.3 names" carries the analogy for a single
-  quantity (the gap), so there is no second member to test — but the two governing
-  verbs do not match: repair "**is conforming** ... [and nothing binds the
-  compactor]" against §2.3 "**binds the actor** in the same way". FAIL, B-06.
-- "the mirror of the overstatement `[R-CNT-26]` names" is in unchanged context
-  text, not the repair. Not audited.
+This is where the audit's one strong finding is. Details in §3.1 below
+(**B-01**). Summarising the collisions I looked for and what I found:
+
+- §11.1 (hunk 1's passage), whole subsection read: [R-GEO-01], [R-GEO-02], the
+  Rationale, §11.2. No carve-out or MUST collides with the widened permission.
+  The Rationale's growth half is untouched and independent. Clean.
+- §20.5 (hunk 2's passage), whole section read, 3201–3333. Placement freedom
+  ("preserves no placement … free to place structures anywhere §5.2 admits")
+  does **not** collide: §20.2's creation path also leaves placement free
+  ([R-SLB-05]). The MU=1 refusal, the regeneration rules, [R-WRT-09]'s depth —
+  none collides with a pad or a barrier. One residual ambiguity, **B-05**.
+- §23.1 (hunk 3's passage), whole subsection read. The `MUST NOT` that follows
+  is quantified over "any commit that makes sample data unreachable", strictly
+  wider than the three-way list, so the list cannot narrow the rule. Clean.
+- §20.3 step 4, which hunks 1 and 3 both cite as their normative authority:
+  **collision found**, see B-01.
+
+### Check 5 — exhaustive claims
+
+Words promising completeness, in the `+` text, each tested:
+
+- hunk 1: "**the other**" — a closed two-item list of permitted shrinks.
+  **FALSIFIED**, see **B-04**.
+- hunk 1: "every grid count ⌈Eᵢ / Tᵢ⌉ … unchanged" (retained text) — fine.
+- hunk 2: "**both**, not one" (barriers) — §9.2 has exactly two barriers, steps
+  4 and 6. TRUE.
+- hunk 2: "the **two** of §10.1's four vehicles §21.6 makes conforming"
+  (retained context, not a `+` line, but re-checked): §21.6 does carry exactly
+  two such rows — "An ignore-lane flag bit (16–31) is set" and "A
+  user-metadata document carries an unrecognized `tarn.`-prefixed key". TRUE.
+- hunk 2: "fixes what the output *is*, not which rules govern the writing of
+  it" — no count. Fine.
+- hunk 3: "**three** ways" — a count. **FALSIFIED on a reading**, see **B-06**.
+- hunk 3: "**only** where those bytes already hold the channel's recorded
+  fill" — tested against §20.3: a shrink that damages a prior-generation stored
+  tile is barred "whether or not the new state still stores it", and
+  superseding in the same commit does not rescue it ("superseding every tile of
+  a layer and re-declaring it are one operation, and this bars it"). So there
+  is no escape route and the "only" holds. TRUE — but the *unit* is wrong, see
+  **B-03**.
+- hunk 3: "no commit removes a layer at all" — §20.4 confirms. TRUE.
+- hunk 3: "discloses nothing a reader could not already derive" — the fill is
+  in the layer record's channel entry ([R-TYP-06]), so a reader can derive the
+  byte values. TRUE for numeric and interleaved bool; for a packed bool plane
+  the "bytes" framing is what B-03 is about.
+
+### Check 6 — what else in this structure is still unconstrained?
+
+**Hunk 2's structure — the compaction output's trailer and pre-trailer region.**
+Enumerated every quantity the output can carry and asked what fixes it:
+
+| Quantity | Fixed by | Status |
+|---|---|---|
+| front signature block | §6.1; now also the creation path | fixed (the repair *adds* an explicit warrant) |
+| structure placement | free by §20.5, §5.2, [R-SLB-05] | deliberately free |
+| directory + its CRC | [R-LIF-02] step 3, §20.4 | fixed |
+| **pre-trailer pad length** | **[R-LIF-02] step 5, newly, via this repair** | **fixed — this is the repair** |
+| pre-trailer pad content | unconstrained ([R-CNT-03] advises zero) | deliberately free |
+| trailer magic / version_major | §6.2 | fixed |
+| version_minor | §20.5 SHOULD ≥ input's, else [R-CNT-26] | fixed |
+| flags (ignore lane) | [R-CNT-08] carry-forward | fixed |
+| flags (incompat lane) | a conforming input has none set (§6.3 → compactor is a reader first) | fixed |
+| generation | 1 | fixed |
+| dir_offset / dir_length / committed_file_length | derived, §6.2 | fixed |
+| file_id | fresh draw | fixed |
+| reserved / trailer CRC | §6.2 | fixed |
+| barriers 4 and 6 | newly owed | fixed |
+
+No sibling quantity of the pad is left dangling: the repair pinned the one
+member that was loose and everything adjacent was already pinned. **PASS.**
+
+**Hunks 1 and 3's structure — a permitted shrink of a layer's geometry.**
+Members: rank d, each Eᵢ, each Tᵢ, channel count, channel types, fills, layout,
+linearization, codec, filter, A / S / A_slab, index_encoding, entry_count,
+crc_of_crc_array, the extent slot. A shrink touches Eᵢ only, and its knock-ons
+are: grid counts Gᵢ, N, the addressed-tile set, the padding-position set,
+entry_count, extent_length, disk ordinals, the reference array. Two of those
+are where the audit found something:
+
+- the **padding-position set**: the repairs govern it in units of *bytes*, and
+  R-SER-05 governs it in three units — "the recorded fill bytes for a numeric
+  channel, the recorded fill byte for an interleaved bool channel, **the fill
+  bit in a packed plane**". The bit sibling is unaddressed → **B-03**.
+- **entry_count / extent_length**: unchanged under a padding-only shrink, but
+  §20.3's consequence sentence says they must fall → **B-01**.
+
+### Check 7 — analogies, verb against verb
+
+**Hunk 2** carries the only explicit analogies. Three of them:
+
+1. "A compactor **MUST follow** `[R-LIF-02]`'s creation path, **as §20.2
+   obliges a creator**."
+   - repair's governing verb: `MUST follow … [R-LIF-02]'s creation path`
+   - cited rule's governing verb ([R-WRT-02], §20.2): `A creator **MUST
+     follow** [R-LIF-02]'s creation path`
+   - Same verb, same object, same modality. The two range over different
+     actors, which is the point of the analogy, not a defect in it. **PASS.**
+2. "the output has no prior trailer and stands at generation 1, **which is the
+   case that path states**."
+   - repair: `has no prior trailer` / `stands at generation 1`
+   - [R-LIF-02]: `On creation there **is** no prior trailer … **with**
+     generation 1`
+   - Same predicates. The one gap the analogy has to jump is that R-LIF-02's
+     opening subject is "A writer performing a **commit**", and §20.5 itself
+     says a compaction is "a whole-file rewrite rather than a commit". The
+     repair does not need the analogy to carry that weight: it states its own
+     `MUST`, so the creation path is imported by §20.5's authority, not by
+     R-LIF-02's own reach. **PASS.**
+3. "The pad of step 5 and the barriers of steps 4 and 6 — both, not one — **are
+   owed here as they are of a creator**."
+   - repair: `are owed here`
+   - §20.2: `the barrier, the pad, the generation-1 trailer …, and the barrier
+     that makes the trailer durable ([R-LIF-02] steps 4–6 — both barriers, not
+     one)`
+   - Identical scope: steps 4, 5, 6. **PASS.**
+
+Tested separately for each member the one sentence carries (pad; barrier 4;
+barrier 6): the analogy holds for all three, because §20.2 states all three of
+a creator and the compaction output satisfies the creation path's case
+condition for all three.
+
+**Hunk 3** has one: "§20.3 step 4 **permits** that shrink **only where** those
+bytes already hold the channel's recorded fill".
+- repair's verb: `permits … only where those **bytes** already **hold** the
+  channel's recorded **fill**`
+- cited rule's verb (§20.3): `a new padding position whose stored **byte**
+  already **holds** the **fill `[R-SER-05]` fixes** … is not one`
+- Same verb ("holds"). Same unit ("byte"/"bytes"). But **[R-SER-05]**, which
+  §20.3 names as the thing that fixes it, does not range over bytes uniformly:
+  "the recorded fill **bytes** for a numeric channel, the recorded fill **byte**
+  for an interleaved bool channel, **the fill bit in a packed plane**." So the
+  analogy is sound for two of the three units R-SER-05 distinguishes and
+  unsound for the third → **B-03**. This is the check-7 shape exactly: one
+  sentence supplying a quantifier for several instances individuated
+  differently.
+
+**Hunk 1** argues by no analogy; its relation to §20.3 is restatement, handled
+under check 1.
 
 ---
 
-## 4. Reverse check — does any repaired sentence duplicate or contradict something
-   that already existed?
+## 3. The downstream sweep — passages outside every hunk
 
-- "two conforming compactors given one input MAY emit outputs of different lengths"
-  duplicates §2.3 `[R-CNF-05]` line 181-183: "this specification does not promise
-  canonical bytes, and two conforming writers given identical input MAY produce
-  different conforming files." Harmless restatement, no contradiction. Not reported.
-- "A compactor SHOULD make its output durable before anything discards the input;
-  what discards it is outside this specification" restates `[R-PRV-02]` line
-  3950-3953 from the durability side. Consistent.
-- Hunk 1's "this sentence answers the rescue question rather than restating the
-  test" is self-describing and adds no rule. It does not duplicate anything.
-- Hunk 1's "What counts as such an alteration is the bar above and nothing else"
-  restates line 3007-3012's "The test is the effect on such a tile, and the list
-  names where that effect arises rather than standing on its own". Consistent.
+### 3.1 FINDING B-01 — §20.3 step 4's shrink-consequence sentence, quietly invalidated
 
-## 5. Checks that passed with nothing to report
+Grep (whitespace-normalised, because the sentence wraps four times):
 
-Hunk 1: checks 1, 2, 3, 5, 6, 7 pass; check 4 fails (B-01).
-Hunk 2: checks 1, 3 pass; check 2 fails on one of six citations (B-06); check 4
-fails (B-07); check 5 fails on one of four flagged claims (B-05); check 6 finds
-the write-order gap (folded into B-07); check 7 fails on the §2.3 comparison (B-06).
-Downstream sweep produces B-02, B-03, B-04 in addition.
+```
+$ tr '\n' ' ' < spec/tarn.md | grep -o "Where a shrink is permitted[^.]*\."
+Where a shrink is permitted the de-addressed tiles' extents become slack
+(`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller entry_count and so a
+re-emitted index region, and every surviving stored tile is untouched.
+```
 
-## 6. Byte-level determinations
+That sentence is at spec/tarn.md:3055–3058, three sentences below the
+carve-out both repairs now lean on, and in neither hunk.
 
-- B-01 **YES**. Implementation A reads line 3053 as universal and, on a
-  grid-count-preserving fill-holding shrink, re-emits the layer's whole tile-index
-  region at a new placement and re-points the extent slot; implementation B reads
-  §20.3's "A layer whose record alone changes keeps its extent slot, pointing at
-  the existing region" and re-emits only the directory. A's file contains a second
-  index region for that layer plus the old one as slack; B's does not. Both files
-  are conforming — nothing in either records which operation produced it — so
-  `[R-CNF-05]` does not close the fork, and only one reading permits an actor to
-  produce A's bytes. The set moves.
-- B-02 no. Non-normative ">" block per `[R-CNF-01]`; it cannot bar a writer, so the
-  emittable set is the same under both readings.
-- B-03 no. A count in explanatory position; the MUST NOT that follows is quantified
-  over "any commit" independently.
-- B-04 no. Appendix H disclaims its own authority.
-- B-05 no. `[R-CNT-09]` and `[R-CNT-03]` are SHOULDs, so a file violating them is
-  conforming under both readings; `[R-CNT-05]` and F mod 64 = 0 are MUSTs that
-  `[R-CNF-05]` enforces on every conforming writer under both readings. The
-  emittable set does not move; what moves is only how the paragraph reads.
-- B-06 no. The disputed verdict is about the *actor* (conforming writer or not),
-  not about bytes: a long-gap file is conforming under both readings.
-- B-07 no. For a completed output the bytes are identical either way; the fork
-  appears only in crash residue, whose accept/reject verdict is determined by its
-  own bytes and on which no two readers disagree.
+It states, universally over permitted shrinks, three consequences:
+(i) de-addressed tiles' extents become slack; (ii) [R-CNT-17] obliges a
+smaller entry_count and therefore a re-emitted index region; (iii) surviving
+stored tiles are untouched.
+
+Under the padding-only shrink that hunks 1 and 3 promote, (ii) is **false**:
+
+- [R-CNT-17] / §7.4: `entry_count` "equals the addressed-tile count (§11.2)";
+  §11.2: the addressed-tile count is N (interleaved) or C·N (planar) with
+  N = ∏ Gᵢ and Gᵢ = ⌈Eᵢ / Tᵢ⌉.
+- A padding-only shrink is by construction one where no Gᵢ falls. Concretely:
+  d = 1, T = 4, E from 10 to 9. G = ⌈10/4⌉ = 3 before and ⌈9/4⌉ = 3 after.
+  Tile 2 covers positions 8–11; position 9 was real and is now padding. No
+  tile leaves the addressed set. entry_count stays 3. extent_length stays
+  3 × 20 + 4 = 64.
+- So [R-CNT-17] obliges *nothing*, and the index region need not move. §20.3
+  says so twice, itself, in the same step:
+  - "**Every layer whose stored-tile set or index content this commit changes**
+    has its tile-index region re-emitted in full" — this commit changes
+    neither.
+  - "A layer **whose record alone changes keeps its extent slot, pointing at
+    the existing region**".
+  A padding-only shrink is precisely the "record alone changes" case: the
+  dimension entry's `extent u64` changes and nothing else does.
+
+And (i) is vacuous under that shrink (the de-addressed set is empty), so the
+sentence's whole apparatus describes only the de-addressing case. That is what
+the pre-repair §11.1 Rationale also described — "permitted where it **only**
+drops tiles out of the addressed set". Hunk 1 removed that framing from §11.1
+and hunk 3 promoted the other case in §23.1; the §20.3 consequence sentence was
+left standing at the old framing. Classic unswept restatement.
+
+Two readings a competent implementer can take:
+
+- **R1:** "Where a shrink is permitted … a re-emitted index region" is an
+  obligation. An appender doing a padding-only shrink re-emits the layer's
+  whole index region at a new placement (entries byte-identical), strands the
+  old one as slack, re-points the extent slot.
+- **R2:** the sentence describes the de-addressing case only; a padding-only
+  shrink keeps its extent slot, and the file grows by a directory, a pad and a
+  trailer alone.
+
+Both outputs are conforming files: entry_count and extent_length are correct
+in both, and re-emitting an identical index region at a new placement is
+permitted (placement is free; the old region becomes slack, [R-CNT-21]). So the
+**disputed file — the R2 output — is conforming**, and only R2 permits a
+conforming appender to produce it. By the stated discriminating test, the
+emittable set moves: **byte-level.** Two implementations given the identical
+call ("shrink E from 10 to 9") differ on whether the appended bytes include a
+64-byte index region and a re-pointed extent slot, and on the file's length.
+
+A third reading is worse: an implementer may take the consequence sentence as
+*definitional* of a permitted shrink — since its consequences cannot hold for a
+padding-only shrink, that shrink is not permitted — which flatly contradicts
+the two sentences above it and the two repairs.
+
+Repair: bound the sentence to the case it describes, and state the other case's
+consequences. E.g. "Where a permitted shrink drops tiles out of the addressed
+set, their extents become slack ([R-CNT-21]) and [R-CNT-17] obliges the smaller
+entry_count and so a re-emitted index region; where it only converts real
+positions to padding, no grid count falls, entry_count is unchanged, and the
+layer keeps its extent slot (§20.3's shape (c)). In both, every surviving
+stored tile is untouched."
+
+Related, and worth sweeping in the same edit: §20.3's **Example — shape (c)**
+enumerates the directory-only commits as "clearing a slab declaration, renaming
+a layer, or changing a channel's fill value on a layer with no padding position
+and no pad bit". A padding-only shrink is now a fourth member of that list and
+is not named. Non-normative, so I report it here rather than as its own
+finding.
+
+### 3.2 FINDING B-02 — §6.2 [R-CNT-05] stranded by hunk 2's reversal
+
+```
+$ tr '\n' ' ' < spec/tarn.md | grep -o "a longer gap is conforming[^.]*\."
+a longer gap is conforming, and no conforming commit produces one.
+```
+
+spec/tarn.md:753–763, in [R-CNT-05]:
+
+> "Those bytes — the **pre-trailer pad** — are slack (§5.2): … this
+> specification does not constrain their content, and **bounds their number
+> only through step 5 of the commit protocol**, which pads to the next 64-byte
+> boundary (`[R-LIF-02]`) — **a longer gap is conforming, and no conforming
+> commit produces one**."
+
+The word "commit" there is load-bearing and deliberately narrow: §9.1 makes
+commit and whole-file rewrite disjoint ("every conforming mutation of a file is
+either a commit (§9.2) or a whole-file rewrite under a new file_id (compaction,
+§20)"), and §20.5 itself says "a compaction is a whole-file rewrite rather than
+a commit". Under the paragraph hunk 2 reverted, that narrowing had exact
+residue — the reverted text said, in so many words, "two conforming compactors
+given one input MAY emit outputs of different lengths, and a gap longer than a
+commit would have produced is conforming — one of the writer obligations §2.3
+names as no file-conformance violation." The two sentences were companions.
+
+After the reversal, the compactor owes step 5's pad, so **no conforming actor
+of any tier produces a longer gap**, and §6.2's exclusion of non-commits is
+empty. The sentence remains literally true and its implicature — that
+something conforming *does* produce one — is now false. §2.3's [R-CNF-02],
+which names "§6.2's pre-trailer gap longer than `[R-LIF-02]` step 5's pad" as
+one of the two conduct carve-outs "this text states", still works: the carve-out
+now says only that a file with an over-long gap is conforming even though the
+writer that made it violated a writer obligation. That is coherent, so I do not
+report §2.3.
+
+Not byte-level: §20.5 now says `MUST`, and a descriptive sentence in §6.2 about
+what a *commit* produces cannot be read as a licence overriding it. The cost is
+a reader who consults §6.2 for the pad's scope and infers a compactor freedom
+that no longer exists.
+
+Repair: "…and no conforming writer produces one — a commit pads under
+[R-LIF-02] step 5, and a compactor is held to the same step (§20.5,
+[R-WRT-06])."
+
+I also checked the two places that *were* wrong under the reverted paragraph
+and are right again after it, as evidence the reversal is the correct
+direction:
+
+- **Appendix H, "Conforming writer"**: "follows the commit protocol **including
+  both barriers** (§9.2)". Under the reverted paragraph a compactor owed
+  neither barrier and this checklist line over-claimed for that tier. Now
+  correct.
+- **Appendix G item 8**: "A compactor's output is therefore reproducible **only
+  modulo its trailer**". Under the reverted paragraph the output's *length* was
+  free as well, so "modulo its trailer" was false. Now correct.
+
+Neither needs an edit.
+
+### 3.3 FINDING B-03 — the carve-out is stated in bytes; R-SER-05 has a bit
+
+Both repairs state the padding carve-out over bytes:
+
+- hunk 1: "a new padding position whose **stored byte** already holds the fill"
+- hunk 3: "permits that shrink only where **those bytes** already hold the
+  channel's recorded fill"
+
+§14.5 [R-SER-05], the rule that fixes the content in question:
+
+> "at every padding position, a writer MUST encode, for each channel the
+> position carries, that channel's fill value — the recorded fill **bytes** for
+> a numeric channel, the recorded fill **byte** for an interleaved bool
+> channel, **the fill bit in a packed plane**."
+
+And §21.4's row T4 enumerates the four instances explicitly:
+
+> "| T4 | A padding position does not encode, for each channel it carries, that
+> channel's recorded fill value | interleaved numeric fill bytes; interleaved
+> bool fill byte; planar numeric plane fill bytes; **packed planar bool plane
+> fill bit** | verifier | certification | `[R-SER-05]` |"
+
+In a planar bool layer (§14.3) the decoded plane is "the tile's P values
+bit-packed LSB-first: value k occupies bit k mod 8 of byte k div 8", so a
+padding position there has **no stored byte of its own** — it is one bit of a
+byte shared with up to seven other positions, real ones included. A shrink
+that turns a real position into padding in such a plane is perfectly reachable:
+extents (10,), tile extent (16,), one bool channel, fill false, one stored
+tile; shrink E to 9. Position 9 becomes padding; R-SER-05 requires its *bit* to
+be the fill bit; if that bit is already 0, nothing §14 fixes for the stored
+tile changes and §20.3's carve-out ought to apply.
+
+But the carve-out as restated names a byte. Two readings:
+
+- **R1:** "stored byte" is loose for "the stored bits at that position"; the
+  shrink is permitted whenever the governing bit already holds the fill bit.
+- **R2:** the carve-out speaks of a byte because it means a byte; a packed
+  plane has no per-position byte, so the carve-out names no case there and any
+  shrink creating a new padding position in a bool plane is barred, forcing a
+  new layer or a whole-file rewrite ([R-LIF-01], §20.5).
+
+The disputed file — layer at E = 9, the stored plane's bytes unchanged, its
+padding bits all fill — is **conforming**: T4 and T5 are satisfied and no other
+row fires. Only R1 lets a conforming appender produce it as a commit. The set
+moves: **byte-level.** Implementation A appends a directory, pad and trailer;
+implementation B refuses the commit and rewrites the file under a fresh file_id
+at generation 1.
+
+The document is precise about this distinction everywhere else — §14.3's Note
+("Pad bits are not padding positions … A plane can have many padding positions
+and no pad bits — §14.5 gives both their content"), §21.7's triple ("a padding
+position, a pad bit, or an interleaved boolean"), T4's four-instance list — so
+the byte framing reads as an oversight rather than a deliberate narrowing.
+
+Repair: in both repaired sentences and in §20.3's two normative occurrences,
+replace "whose stored byte already holds the fill" with "whose stored content
+at that position already holds the fill `[R-SER-05]` fixes there — the fill
+bytes, the fill byte, or the fill bit, per §14.5". (§20.3's occurrences are
+outside the hunks but must be swept in the same edit or the normative text and
+the restatements diverge again.)
+
+Note this is also the check-6 shape in its pure form: the repair pinned the
+numeric and interleaved-bool members of a set and left the packed-plane sibling
+governed by nothing, and the text reads as perfectly correct about the members
+it mentions.
+
+### 3.4 FINDING B-04 — hunk 1's "the other" is a closed list with a third member
+
+Hunk 1: "…and permitted wherever it does not: dropping tiles out of the
+addressed set, whose extents then become slack, **is the ordinary case, and** a
+new padding position whose stored byte already holds the fill **is the other**."
+
+Two items, presented as covering the field. §20.3's bar is quantified over
+"any tile the layer **stores** in the generation this commit supersedes", so a
+third case is permitted with no fill precondition at all: **a shrink whose new
+padding positions all fall in tiles the superseded generation did not store**
+(sentinel entries, §15.2). Such a tile "carries no §14 obligation" — §20.3's own
+words for the de-addressed case apply a fortiori to a tile that was never
+stored — so the shrink alters nothing §14 fixes for any stored tile and is
+permitted outright.
+
+Worked instance: d = 1, T = 4, E from 10 to 9, tiles 0 and 1 stored, tile 2
+(covering 8–11) unstored. Position 9 becomes padding. No tile leaves the
+addressed set, so item one does not apply; there is no stored byte at that
+position, so item two does not apply. Yet the shrink is plainly permitted.
+
+Also, the two named items are presented as alternatives ("the ordinary case …
+the other") when they routinely co-occur: E from 10 to 5 at T = 4 drops tile 2
+*and* turns positions 5–7 of tile 1 into padding.
+
+Not byte-level: [R-CNF-01] makes the Rationale non-normative, so an
+implementer may conform while ignoring it, and §20.3's normative text is
+correct. It is still a false statement in the document, in the exact block this
+round repaired, and this project's stated history is that Rationale/normative
+divergence is how rounds are lost.
+
+Repair: drop the closure. "…and permitted wherever it does not — a tile dropped
+out of the addressed set carries no §14 obligation and its extent becomes
+slack; neither does a tile the superseded generation did not store; and a new
+padding position whose stored content already holds the fill alters nothing.
+A shrink can do several of these at once."
+
+### 3.5 FINDING B-05 — hunk 2's "as §20.2 obliges a creator" is wider than its next sentence
+
+The repair's first sentence is blanket:
+
+> "A compactor MUST follow `[R-LIF-02]`'s **creation path**, as §20.2 obliges
+> a creator"
+
+§20.2's [R-WRT-02] does not stop at the path. It closes:
+
+> "Content obligations travel with the structures: fill-encoded edge padding
+> (`[R-SER-05]`), boolean byte values (`[R-SER-08]`), and gaps zeroed as
+> `[R-CNT-03]` advises."
+
+Does "as §20.2 obliges a creator" import those? The next sentence narrows to
+"the pad of step 5 and the barriers of steps 4 and 6", which argues no. But the
+narrowing sentence is offered as a *consequence* ("The pad … and the barriers …
+are owed here"), not as a limit, and a reader can take the blanket sentence at
+its word.
+
+If imported, it collides with two statements in the same passage, neither
+touched:
+
+> "a violation latent in a structure it carries forward verbatim travels into
+> its output (`[R-WRT-01]`) — its verification depth is `[R-WRT-09]`'s and
+> **reaches no decoded content**."
+
+A creator owing [R-SER-05] must get its padding right; a compactor that must
+*guarantee* [R-SER-05] for tiles it copies would have to decode every tile,
+which [R-WRT-09] expressly does not require, and would have to refuse an input
+whose padding is wrong, which §20.5's own "a violation … travels into its
+output" says it does not.
+
+Not byte-level: the output at issue carries a T4 or T5 register-row violation,
+so it is nonconforming under both readings and the emittable set does not move.
+The fork is over whether the compactor emits it or refuses — a behaviour
+difference on a nonconforming input, which the stated test excludes.
+
+Repair: make the blanket sentence explicit about what it imports. "A compactor
+MUST follow `[R-LIF-02]`'s **creation path** — its ordering, not §20.2's
+content obligations, which [R-WRT-01] and [R-WRT-09] already settle for a
+compactor — the output having no prior trailer and standing at generation 1,
+which is the case that path states."
+
+### 3.6 FINDING B-06 — hunk 3's "three ways" and §23.2's cross-reference
+
+§20.3 step 4 distinguishes two dispositions of a stored tile in the same
+clause:
+
+> "with entries for tiles this commit **stores or supersedes** written to their
+> new state, entries for tiles that **become unstored** written as the
+> sentinel"
+
+Unstoring a tile — writing the sentinel where a payload was addressed — makes
+its samples read as fill and drops its payload to slack. It is neither
+superseding (no new bytes are written for it), nor a shrink, in that clause's
+vocabulary. §23.2 [R-PRV-03] treats it as a distinct case and sends the reader
+to §23.1 for it:
+
+```
+$ tr '\n' ' ' < spec/tarn.md | grep -o "unstored by a later commit[^;]*;"
+unstored by a later commit leaves its earlier payload in the file as slack
+(§23.1) — so the index publishes which regions were written without disclosing
+what is in them;
+```
+
+Hunk 3's enumeration is "three ways — superseding it, a shrink that
+de-addresses tiles, and a shrink that turns a stored tile's real positions into
+padding without de-addressing it". Unstoring is in none of them unless
+"superseding it" is read in §5.2's broad sense ("everything an earlier commit
+superseded"), which conflicts with §20.3's narrow use two sections earlier.
+
+This is pre-existing — the "two ways" text had the same gap — but the repair
+re-authored the count and had the sweep in front of it, and §23.2's citation
+into §23.1 now points at a list that does not contain the case it cites for.
+
+Not byte-level: [R-PRV-01]'s `MUST NOT` is quantified over "any commit that
+makes sample data unreachable", which covers unstoring regardless of the
+enumeration, so no implementation's accept/reject or emitted bytes turn on it.
+
+Repair: "A commit removes sample data four ways — superseding a stored tile's
+bytes, unstoring it (§20.3 step 4 writes the sentinel), a shrink that
+de-addresses tiles, and a shrink that turns a stored tile's real positions into
+padding without de-addressing it — and a dropped ancillary record's extent
+(§20.4) goes the same way… The first three leave the bytes in the file as slack
+([R-CNT-21])…"
+
+### 3.7 Dependent passages checked and found still correct
+
+Every place I could reach that could plausibly have depended on the old
+answers, with the verdict:
+
+Depending on hunk 2's reversed paragraph (compactor freedoms):
+
+- **§2.3 [R-CNF-02]**, the two named conduct carve-outs. Still correct: a
+  writer that over-pads still violates a writer obligation without making the
+  file nonconforming. **Still correct.**
+- **§6.3 [R-CNT-08]**, "A compactor, though its output is a new file, carries
+  the input's unknown ignore-lane bits into its output trailer rather than
+  writing flags = 0". Survives the creation-path binding, because §20.2's own
+  text does not mention flags and §20.5 states the carry-forward explicitly.
+  **Still correct.**
+- **§9.4 [R-LIF-04]** ("A writer beginning a commit against an existing file
+  MUST establish F…"). Scoped to commits against an existing file; a compactor
+  writes a new file. **Still correct.**
+- **§21.6's slack row** ("alignment gaps, the pre-trailer pad, superseded
+  structures | Slack: unconstrained content, no conformance requirement").
+  About content, not length. **Still correct.**
+- **§5.2 [R-CNT-21] / [R-CNT-03]** ("Writers SHOULD zero the gaps they
+  create — … and the pre-trailer pad"). Unaffected by pinning the pad's length.
+  **Still correct.**
+- **§21.7's compactor accounting**: "§20.5's **four** obligations on a
+  compacted file's trailer (`[R-WRT-06]`) — its fresh `file_id` draw, its
+  generation, the unknown ignore-lane bits it MUST carry forward, and the floor
+  its version_minor SHOULD take — are unwitnessed…". I counted §20.5's trailer
+  obligations after the repair: fresh file_id, generation 1, ignore-lane
+  carry-forward, version_minor floor. Still exactly four; the pad is not a
+  trailer field and the barriers are not bytes. And the shared reason ("the
+  output carries no record that it is a compaction output at all") still holds
+  for all four. The two obligations the repair adds are unwitnessed too, but
+  they are unwitnessed for reasons §21.7 does not owe an entry for — a commit's
+  step-5 pad and its barriers are equally unwitnessed for creators and
+  appenders and §21.7 lists neither, so no new *class* appears. **Still
+  correct.** Checked deliberately, because this is the passage the charter
+  flags and because it names rules by identifier.
+- **§20.5's own "Neither obligation has a witness in the output alone
+  (§21.7)"** — refers to the two version_minor obligations, unchanged.
+  **Still correct.**
+- **Appendix H, "Conforming updater"** — lists no compaction-specific
+  obligation, so the reversal does not reach it. **Still correct.**
+- **Appendix H, "Conforming writer"** and **Appendix G item 8** — see §3.2;
+  the reversal restores both. **Still correct.**
+- The removed `SHOULD` ("A compactor SHOULD make its output durable before
+  anything discards the input; what discards it is outside this
+  specification"). Its first half is subsumed by step 6's barrier, which now
+  applies; its second half survives verbatim in spirit at §23.1 [R-PRV-02] —
+  "the input persists, unmodified, until something outside this specification
+  deletes it". **No gap left.**
+
+Depending on hunks 1 and 3 (the promoted padding-only shrink):
+
+- **§20.3 step 4's shrink-consequence sentence** — **B-01**, invalidated.
+- **§20.3's Example shape (c)** — now under-enumerates; folded into B-01.
+- **§20.3's "Every layer whose stored-tile set or index content this commit
+  changes has its tile-index region re-emitted in full"** — correct, and it is
+  what B-01's sentence contradicts.
+- **§21.7's account of the step-4 bar** ("witnessed only where the affected
+  tiles remain stored, and then only for part of what it bars … A change
+  reaching a byte §14 structurally constrains — a padding position, a pad bit,
+  or a boolean byte — fires §21.4's content rows"). A permitted padding-only
+  shrink produces no violation, so there is nothing for it to witness, and the
+  passage does not claim otherwise. **Still correct**, though I note in passing
+  that §21.7's closing clause covers only "a commit that **supersedes** every
+  tile it would have damaged", while §20.3 sends the reader to §21.7 for the
+  de-addressing and unstoring rescue cases too ("§21.7 records the
+  consequence"). That is a pre-existing narrowness with no connection to these
+  three repairs, so I record it here rather than as a finding.
+- **§23.2 [R-PRV-03]** — the disclosure inventory. The third way discloses
+  nothing new (the bytes were already the published fill), so no line needs
+  adding; its unstoring cross-reference is **B-06**.
+- **§13.3, §15.2, §21.6's sentinel row** — about unstored tiles reading as
+  fill; untouched by any of this. **Still correct.**
+- **§11.2, §11.3, §11.4** — grid arithmetic, padding positions, ordinals. A
+  shrink that leaves every Gᵢ unchanged renumbers no ordinal ([R-GEO-06]), so
+  nothing there moves. **Still correct.**
+- **§16 slab/alignment consequences in step 4** ("an aligned layer's stored
+  tiles — every one the new state keeps … satisfy its invariant"). A
+  padding-only shrink moves no tile, so the invariant is preserved
+  automatically. **Still correct.**
+
+### 3.8 The reverse direction — does any repaired sentence duplicate or contradict what existed?
+
+- Hunk 1 duplicates §20.3 step 4 by design; a Rationale restating its
+  normative rule is this document's convention and [R-CNF-01] handles the
+  force question. No contradiction with §20.3's text, only with §20.3's
+  consequence sentence (B-01) and only by way of under-enumeration (B-04).
+- Hunk 2's "It MUST mint a fresh file_id … and generation 1" (retained) and the
+  new "stands at generation 1" say the same thing twice within four lines.
+  Harmless: the second is the premise of the case argument, not a second rule.
+- Hunk 2's new material does not contradict §20.5's placement freedom, its
+  refusal rules, its regeneration rules, or [R-WRT-09]'s depth — checked each.
+  The one live tension is B-05.
+- Hunk 3 does not duplicate §20.3; it accounts for it in privacy terms, which
+  is §23's job.
+
+---
+
+## 4. Verdict
+
+Six findings. One (B-01) is a passage in no hunk, unchanged, and made false by
+the repairs — the shape this role exists to catch; it is byte-level. Two more
+are byte-level (B-03) or stranded-by-reversal (B-02). Three are documentation
+defects in or beside the repaired text (B-04, B-05, B-06).
+
+Checks that passed cleanly, per hunk: citations (all 18 opened, all resolve),
+normative placement (all three land where they must, and hunk 1's Rationale has
+a correct normative home), tense and quantifier (all three), analogy verbs (all
+four analogies, member by member).
