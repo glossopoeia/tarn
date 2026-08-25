@@ -103,6 +103,18 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0085](0085-a-metadata-frames-window-is-the-readers-capability.md) | A metadata frame's window is the reader's capability, not the file's defect | Accepted (resolves round 20's byte-level finding; follows `[R-MTA-09]`'s model for the neighbouring quantity) |
 | [0086](0086-the-limits-tables-per-instance-rows.md) | §21.9's per-instance rows range over instances, not declarations | Accepted (resolves round 21's unanimous byte-level finding; aligns the table with `[R-COD-07]`'s existing quantifier) |
 | [0087](0087-the-content-size-mismatch-is-an-r4-constraint.md) | A metadata frame's content-size mismatch is an R4 constraint, with four instances | Accepted (closes round 22's register debt; revises ADR-0085's R3 routing; 273 → 277 instances, four vectors) |
+| [0088](0088-the-pinned-frame-fields-stay-and-the-carry-over-becomes-exhaustive.md) | The pinned frame fields stay enforced, and §18.2's carry-over becomes exhaustive | Accepted (resolves Q-E4; re-closes Q-E1's zstd half) |
+| [0089](0089-the-round-23-audit-repairs.md) | §18.2's carry-over gets its four missing sentences, and R4's clause stops overclaiming | Accepted (resolves the round-23 repair audit's five confirmed findings; revises the trailing clause ADR-0087 gave R4, and three sentences ADR-0088) |
+| [0090](0090-round-23s-repairs.md) | §21.7's enumerations stop overclaiming, and three register cells name what defines them | Accepted (dispositions cleanroom round 23) |
+| [0091](0091-the-round-24-audit-repairs.md) | ADR-0090's F5 addition is reverted, and three of its claims are corrected | Accepted (resolves the round-24 repair audit's confirmed findings; revises four claims ADR-0090 wrote, one of which is reverted outright) |
+| [0092](0092-the-r24b-audit-repairs.md) | R8's warrant is removed rather than replaced, and three clauses are corrected | Accepted (resolves the ADR-0091 re-audit's confirmed findings; revises three claims ADR-0091 wrote; corrects one pre-existing overclaim) |
+| [0093](0093-round-24s-two-byte-level-defects.md) | A compactor is outside the commit protocol, and the shrink bar has one test | Accepted (resolves round 24's two byte-level ambiguities) |
+| [0094](0094-the-compactor-binding-reversed.md) | ADR-0093's compactor half is reversed: `[R-LIF-02]` binds | Accepted (resolves the round-25 repair audit's confirmed findings; revises ADR-0093's compactor half, reverted outright. ADR-0093's shrink half) |
+| [0095](0095-the-closed-counts-become-exhaustive.md) | Two closed counts are replaced by statements exhaustive by construction | Accepted (resolves the round-25 re-audit's confirmed findings; revises the counts ADR-0094 wrote in both places) |
+| [0096](0096-round-24s-disposition.md) | Round 24's register cells are corrected, and §21.7 goes to the ledger whole | Accepted (dispositions round 24's non-byte-level findings) |
+| [0097](0097-two-audits-and-a-contaminated-refute-pass.md) | Two glosses, F33's row list, and §23.1's superseded extent | Accepted (resolves the ADR-0096 and ADR-0095 audits) |
+| [0098](0098-round-25s-disposition.md) | Round 25's four checkable repairs, and §21.2 goes to the ledger whole | Accepted (dispositions round 25's findings; revises a citation ADR-0097 wrote) |
+| [0099](0099-the-entry-count-restatement.md) | §11.1 states its rule by `entry_count`, and `[R-SLB-03]` loses the pronoun | Accepted (resolves the ADR-0098 audit; revises two repairs ADR-0098 wrote) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).
