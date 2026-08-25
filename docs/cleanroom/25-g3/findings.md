@@ -100,6 +100,49 @@ Both parts of the lineage gate return clean.
 
 ## Disposition
 
-Not decided here. 17 distinct main-round defects (5 design-decision, 8
-editorial, 3 register-bookkeeping, 1 figure, 1 graded not-a-defect) plus the
-five recovered, of which `verifier-01` is the substantial one.
+The document was swept first, before any repair or menu — the step ADR-0094
+recorded as missing. **Four findings needed no action:**
+
+| Finding | Sweep result |
+|---|---|
+| reader-01 / diagrams-02 / register-01 | **Already Q-H4**, opened by ADR-0091. Three reporters found it independently this round |
+| diagrams-03 / adversary-02 | **Already Q-I4**, opened by ADR-0092. Third independent report across three rounds |
+| adversary-03 | **Already deferred** in round 24 (`reader-03`/`adversary-02`), owning section §2.3 |
+| quiz-03 | Graded **not-a-defect** by triage — §20.5's citation is correct in context |
+
+**Fixed — ADR-0098.** Each is checkable against a named rule or against
+arithmetic, which is the class of repair this project's audits have not been
+finding defects in.
+
+| Finding | Repair |
+|---|---|
+| reader-02 | §23.1 cited "§20.3's shape (c)" for a user-metadata edit. §20.3 says in terms: "Editing user metadata **is not this shape** … as in (b)." **A defect ADR-0097 introduced the previous day**, citing the one shape the document rules out |
+| register-02 | §9.6 cited rows F8 and F17 for a failure of `[R-CNT-06]`'s gates and omitted **F14**, the trailer CRC — one of the three ordered gates, and squarely a way the final 64 bytes are not a valid trailer |
+| writer-02 | §11.1's Rationale said growth raising a grid count changes `entry_count`. False where another dimension's grid count is 0: (2,0) → (3,0) leaves the product at 0 |
+| quiz-02 | L41's "that tile's length" had two antecedents, one of which makes the row unsatisfiable. Now "the previous stored tile's length" |
+
+**Sent to the ledger.** §21.2's preamble is not dispositioned finding by
+finding: it has drawn findings in **three consecutive rounds**, and Q-H4 and
+Q-H5 already carve pieces off it without asking whether its design can work.
+**Q-H6** asks what the paragraph is *for* — its excusing property ("geometry")
+and its excepting property ("fixed across every major") are not complements, and
+`[R-CNT-27]`'s floor satisfies neither, which is why ADR-0090 placed it,
+ADR-0091 reverted that, and round 25 found it again from three walks at once.
+That is the §21.7 → Q-I5 pattern in a different section.
+
+The recovered `verifier-01` becomes **Q-C7** (what a partial slack total is when
+the rejection is at file scope, with the three candidate values and the
+exact-versus-partial label axis). The remaining design-decisions become **Q-B6**
+(does step 4's bar reach a channel's sample type and the channel order),
+**Q-B7** (is adding a record an independent change licensing a drop) and
+**Q-I6** (why Appendix G pins some degrees of freedom and not others).
+
+**Deferred, with named owning sections.** quiz-01 (§21.2's two properties — held
+with Q-H6); writer-01 (§20.3 step 4's enumeration names padding-position content
+but not pad-bit content or interleaved boolean bytes — §20.3); diagrams-05
+(§20.3's shrink sentence states three consequences, two holding only where a
+grid count falls — §20.3); diagrams-01 (shape (c)'s condition against step 4's
+per-tile bar — §20.3); diagrams-04 (§4.7's Note against §7.2's field table —
+§4.7); register-03 (§21.9's "Two do not" omits the power-of-two form of A and
+A_slab — §21.9); verifier-02 through verifier-05 (§21.2, §5.2, §21.6 and §21.9
+respectively).

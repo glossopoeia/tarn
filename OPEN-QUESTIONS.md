@@ -933,6 +933,95 @@ That pattern is about the section's contract, not its sentences.
   cluster; if it cannot, (b) is the only form that stays true, and the
   cost is a second checked artifact.
 
+### Q-H6. What is §21.2's opening paragraph for, and can it do that job? [shaping]
+**Question:** §21.2's preamble decides which file-scope rows reach a file
+declaring a foreign major. It has now drawn findings in **three consecutive
+rounds** — round 23's `verifier-01`, round 24's `register-01` and `quiz-03`,
+and round 25's `reader-01`/`diagrams-02`/`register-01` (three reporters
+independently) plus `quiz-01`. Two ledger entries already carve pieces off it:
+**Q-H4** (can detection order settle reach at all, given `[R-RDR-02]`'s "MAY
+detect any violation earlier") and **Q-H5** (which of §2.3's three verdicts
+follows once a row does reach). Neither asks whether the paragraph's *design*
+can work.
+- **What the rounds keep finding.** The paragraph offers two properties and
+  they are not complements: an *excusing* property ("rows whose subject is that
+  file's geometry do not reach it") and an *excepting* property ("their subject
+  is a field fixed across every major, `[R-CNT-24]`"). A row can satisfy
+  neither. `[R-CNT-27]`'s 128-byte floor is the standing example — its subject
+  is a physical size, not geometry and not a `[R-CNT-24]` field — and ADR-0090
+  tried to place it, ADR-0091 reverted that, and round 25 found it again from
+  three walks at once.
+- **Why a fourth patch is the wrong move.** §21.7 took four repairs in four days
+  and kept drawing clusters until ADR-0096 sent it to the ledger whole as Q-I5.
+  This is the same shape in a different section, and the same answer is
+  available.
+- **Options:** (a) State the paragraph as a **test** rather than a partition — a
+  row reaches such a file exactly where its condition can be established without
+  consulting any field a future major may redefine — and let the row list follow
+  from it rather than be enumerated. (b) Keep the partition but make the two
+  properties genuine complements, which requires naming what a subject can be
+  besides geometry and a fixed field. (c) Drop the reach question from §21.2
+  entirely and answer it once in §2.3, where `[R-CNF-02]` already states the
+  foreign-major premise. Q-H4 and Q-H5 fold into whichever is chosen.
+- **What settles it:** whether any property decides membership for an arbitrary
+  row without naming it. If none does, (c) is the honest form.
+
+### Q-C7. What is a partial slack total when the rejection is at file scope? [shaping]
+**Question:** §5.2 and §9.7 fix which claimants survive into a partial total when
+a **layer** is rejected. Every clause is written about a layer. Nothing says what
+survives when the rejection is at **file** scope — and F20 (directory CRC), F33
+(cross-scope overlap) and F7 (a structure in the pre-trailer gap) all reject
+there *after* a live trailer is established, while §5.2's excusal from reporting
+a total covers only rejection *before* one is. So a total is owed and its value
+is unfixed. From round 25's recovered verifier walk.
+- **Three defensible answers on one file** (F = 576, directory CRC corrupted):
+  **387** (front block, directory and trailer were enumerated before the failure,
+  since §9.7 enumerates and *then* verifies), **576** (a file-scope rejection
+  ends the file's enumeration as a layer-scope one ends a layer's, and the
+  stated rationale discards what was enumerated), or **496** (only the failing
+  claimant is discarded).
+- **And a second axis.** For F33 the walk *did* enumerate every claimant —
+  overlap detection requires it — so "tightening to the exact total when the walk
+  completes" says **exact** while "a scope-level rejection ends that scope's
+  enumeration" says **partial**. The label is normative: §5.2 calls the partial
+  figure "not the file's slack total but a bound on it".
+- **Not byte-level**, confirmed by three triage passes and a refuter: §2.3's
+  `[R-CNF-11]` gives an established violation priority, so both readings report
+  *nonconforming* and no certification flips. But §22.3 makes the slack total a
+  security-relevant signal and §20.3's note makes it the compaction trigger, and
+  two tools differing by a factor of 1.5 on it is not a signal.
+- **Options:** (a) State the file-scope rule explicitly — a file-scope rejection
+  the walk itself established after complete enumeration yields an *exact* total;
+  any other incomplete walk yields F less the claimants actually enumerated,
+  front block and live trailer included. (b) Transpose the layer clause: discard
+  everything, total = F. (c) Excuse the total entirely for file-scope rejections,
+  widening §5.2's narrow excusal.
+
+### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [shaping]
+**Question:** Step 4 bars declaration changes that alter what §14 fixes for a
+tile the superseded generation stored, and lists the things that can be altered.
+Round 25's adversary found a channel's declared **sample type** and the
+channels' declared **order** both alter a stored tile's decoded image, and
+neither is in the list nor accounted for in §21.7. Options: add them to the
+list; state the bar as a property rather than a list, as ADR-0095 did for §23.1;
+or show they are already reached by an item that names them implicitly. Owning
+section §20.3.
+
+### Q-B7. Is adding a record an "independent change" that licenses a drop? [shaping]
+**Question:** §20.4's MU = 0 / PE = 0 row licenses dropping a record where the
+commit changes the scope it attaches to. Round 25's writer walk found the row
+does not say whether *adding* a non-layer top-level record is such a change.
+Options: say it is; say it is not; or state the test the row is applying. Owning
+section §20.4.
+
+### Q-I6. Why does Appendix G pin some degrees of freedom and not others? [shaping]
+**Question:** Appendix G's reproducible-writer profile pins codec, filter,
+alignment and slab because each changes bytes and no content implies it. Round
+25's writer walk found **tile extents** and **channel layout** satisfy the same
+argument and are not pinned — two writers agreeing on everything else emit
+different files. Options: pin them; state why they are excluded; or restate the
+profile's criterion so the list follows from it. Owning section Appendix G.
+
 ### Q-A7. Can a compactor obtain the fact §20.5's version_minor floor turns on? [shaping]
 **Question:** §20.5 makes the output's `version_minor` SHOULD be at least
 the input's where the output carries a feature a later minor defines and

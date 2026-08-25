@@ -1296,7 +1296,8 @@ file. A recovery tool enumerating a file's commit states continues
 the same probe to offset 0; coverage verification does not (§9.7,
 `[R-LIF-08]`), and no verdict turns on the probe: a file whose final
 64 bytes are not a valid trailer fails `[R-CNT-06]`'s gates on the
-bytes handed over (§21.2 rows F8 and F17), and the earlier state the
+bytes handed over (§21.2 rows F8, F14 and F17 — the magic, the
+trailer CRC and the length cross-check), and the earlier state the
 probe finds is a different artifact, reached only through the
 whole-file re-verification below. For a verifier the probe is
 diagnosis — which commit state is recoverable — not a finding about
@@ -1495,7 +1496,9 @@ region of it returns no samples. `[R-GEO-02]`
 > that leaves
 > every grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) unchanged touches the directory
 > alone; growth that raises one changes entry_count and with it
-> extent_length (`[R-CNT-17]`), so the layer's whole tile-index region
+> extent_length (`[R-CNT-17]`) — save where another dimension's grid
+> count is 0, which holds the product at 0 and adds no entry — so where
+> it does change, the layer's whole tile-index region
 > is re-emitted and disk ordinals renumber wherever `[R-GEO-06]` moves
 > them (§20.3, `[R-WRT-04]`) — the first growth of a zero-extent layer included.
 
@@ -3515,7 +3518,7 @@ layer unaffected. 49 conditions.
 | L38 | A segment CRC ≠ CRC-32C over that segment's entry bytes as stored, entries [s·2¹⁶, min((s+1)·2¹⁶, entry_count)) — a partial segment covers only its actual bytes, and the all-sentinel constant 0xEECB3BB2 never substitutes for comparison | — | reader | tile use | `[R-IDX-04]` (R-IDX-05, R-CNT-20, R-ENC-10) |
 | L39 | Layer record declares a nonzero alignment A that is not a power of two in 512 … 2^62 | A not a power of two; A below 512; A above 2^62 | reader | layer access | `[R-SLB-01]` (R-CNT-23) |
 | L40 | Alignment A declared and a stored tile's index-entry offset is not a multiple of A | — | verifier | certification | `[R-SLB-01]` (R-IDX-03) |
-| L41 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels and entries §15.3 classifies reject-tile on a structural ground are transparent, an entry failing only its stored bytes' crc is not) | gap; overlap; out-of-ordinal placement | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
+| L41 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus the previous stored tile's length (gap, overlap, or out-of-ordinal placement; sentinels and entries §15.3 classifies reject-tile on a structural ground are transparent, an entry failing only its stored bytes' crc is not) | gap; overlap; out-of-ordinal placement | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
 | L42 | A slab run's first stored tile's offset is not a multiple of A_slab | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
 | L43 | Layer record's codec is a value other than 1 … 4 — 0, reserved 5–0x7FFF, or experimental ≥ 0x8000 | codec 0; reserved 5-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-03]` (R-CNT-23) |
 | L44 | Codec 4 (lz4) declared on a layer any of whose addressed tiles' decoded size exceeds 0x7E000000 bytes — in a planar layer the largest channel plane governs | interleaved P·Q; planar numeric P·Bᶜ; packed planar bool ⌈P/8⌉ | reader | layer access | `[R-COD-07]` |
@@ -3933,7 +3936,8 @@ and a shrink that either drops tiles out of the addressed set or turns
 real positions into padding (§20.3 step 4) all do it, and a record's
 extent goes the same way whether a commit drops the record (§20.4) or
 supersedes it — editing a user-metadata document appends a new extent
-and strands the old one (§20.3's shape (c)), which is the case most
+and strands the old one (§20.3 places this with shape (b)), which is
+the case most
 likely to strand content a caller believes it deleted; no commit
 removes a layer at all. **Where the structure carrying the bytes leaves the
 live state**, they remain in the file as slack (`[R-CNT-21]`),
