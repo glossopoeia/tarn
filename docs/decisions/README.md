@@ -115,6 +115,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0097](0097-two-audits-and-a-contaminated-refute-pass.md) | Two glosses, F33's row list, and §23.1's superseded extent | Accepted (resolves the ADR-0096 and ADR-0095 audits) |
 | [0098](0098-round-25s-disposition.md) | Round 25's four checkable repairs, and §21.2 goes to the ledger whole | Accepted (dispositions round 25's findings; revises a citation ADR-0097 wrote) |
 | [0099](0099-the-entry-count-restatement.md) | §11.1 states its rule by `entry_count`, and `[R-SLB-03]` loses the pronoun | Accepted (resolves the ADR-0098 audit; revises two repairs ADR-0098 wrote) |
+| [0100](0100-the-audit-chain-becomes-checkable.md) | The audit-chain invariant becomes mechanically checkable, and is corrected | Accepted (revises ADR-0097's statement of the invariant, which is too strong as written) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).
