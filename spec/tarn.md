@@ -140,9 +140,11 @@ Conformance is defined for five classes.
   on bytes: it does not depend on any reader, writer, or environment.
   It is always conformance to a stated format major version. This
   document defines format major 1, and a file declaring another major
-  is neither conforming nor nonconforming under it: a reader refuses
-  such a file on capability grounds (§6.3, `[R-CNT-07]`), and that
-  refusal is not a finding about its bytes.
+  is neither conforming nor nonconforming under it save as to the
+  requirements that reach it (`[R-CNF-13]`): a reader refuses such a
+  file on capability grounds (§6.3, `[R-CNT-07]`), and that refusal is
+  not a finding about its bytes, while the failure of a reaching
+  requirement is.
   A few obligations this specification places on writers govern their
   *conduct* rather than their output — where a value is published, or
   which registry version a writer targets (§10.3, §18.3) — and a file
@@ -221,6 +223,40 @@ Conformance is defined for five classes.
   verdict nor *cannot establish* — it constrains the report, not the
   verdict.
   `[R-CNF-11]`
+
+A requirement of this specification **reaches** a file declaring a
+format major other than 1 when, and only when, the invariant its
+condition violates is one `[R-CNT-24]` fixes in every format major
+version. The test is the invariant asserted, not the bytes read: a
+check that consumes bytes a future major is free to redefine can still
+assert only a fixed invariant. A reader MUST apply every reaching
+requirement to a file whatever major it declares, and MUST treat its
+failure as
+reject-file on that requirement's own ground rather than on capability
+grounds; the distinct diagnostic `[R-CNT-07]` asks for is owed where
+every reaching requirement is satisfied and the declared major is one
+the reader does not implement. A verifier that establishes such a
+failure reports *nonconforming*, whatever major the file declares and
+whether or not it implements that major: the invariant broken is one
+that major shares (`[R-CNT-24]`), so the finding is not relative to
+format major 1. Every other requirement of this specification governs
+a structure this text defines for format major 1 alone; it is not
+assessed against a file declaring another major, no violation of it is
+established there, and no §21 row restating it records such a file.
+`[R-CNF-13]`
+
+> **Note.** The test is the invariant a condition violates, not the
+> fields it reads, and three rows show why the distinction carries the
+> weight. §21.2's F14 reaches although the bytes it checksums include
+> fields a future major may redefine: it consumes them as CRC input
+> and asserts only `[R-CNT-24]`'s CRC-32C at F − 4 over
+> [F − 64, F − 4). F5 does not reach although its subject is the
+> physical file size, which no major can redefine: the 128-byte floor
+> it asserts is derived from a directory of at least 4 bytes at an
+> offset of at least 16 and a 64-aligned F (`[R-CNT-27]`), and those
+> are format major 1's. F15 does not reach although its Governing rule
+> cell cites `[R-CNT-24]`: the trailer bytes it requires be zero are
+> inside the 48 that rule lets a future major redefine.
 
 #### 2.4 Outcome classes and owning scope
 
@@ -3429,21 +3465,14 @@ calls it the sole resolved byte in this format.
 
 #### 21.2 File-scope violations
 
-Outcome: reject-file. 36 conditions. A file declaring a format major
-other than 1 is neither conforming nor nonconforming under this text
-(§2.3, `[R-CNF-02]`), and the rows below whose subject is that
-file's *geometry* do not reach it: §6.2 puts the version gate ahead
-of every check but the trailer magic and the trailer CRC, so such a
-file is refused on capability grounds first. Four rows are outside
-that reasoning and do reach it, because their subject is a field
-fixed across every major (`[R-CNT-24]`): F8 and F1's trailer-magic
-instance, F14's trailer CRC — the two checks §6.2 places before the
-gate — and F6 with F1's front-block instance, which `[R-CNT-04]`
-places before other processing for a reader that already holds those
-bytes, one that would have to fetch them being free to defer or omit
-the check. F18 is not an exception but a case
-outside the premise: version_major = 0 declares no major at all and
-is permanently invalid in every one (§21.6).
+Outcome: reject-file. 36 conditions. Which rows reach a file declaring
+a format major other than 1 is decided by `[R-CNF-13]` (§2.3), and
+deriving it there yields F8, F14, F6 and both of F1's instances — each
+asserting an invariant `[R-CNT-24]` fixes in every major — and no
+other row; where this restatement and that rule diverge, the rule
+governs (§21.1). F18 is not an exception but a case outside the
+premise: version_major = 0 declares no major at all and is permanently
+invalid in every one (§21.6).
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|

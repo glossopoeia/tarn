@@ -779,7 +779,15 @@ an external format, or the value domain forces one.
 - **What settles it:** Decide per-limit during the security-section draft;
   each chosen number gets an at-limit conformance vector.
 
-### Q-H4. Which register rows reach a file declaring a foreign major, and can detection order settle it? [shaping]
+### Q-H4. Which register rows reach a file declaring a foreign major, and can detection order settle it? [Resolved → ADR-0105]
+**Resolution:** neither by detection order nor by a row list. `[R-CNF-13]`
+(§2.3) decides reach by the invariant a condition violates — a requirement
+reaches such a file exactly where that invariant is one `[R-CNT-24]` fixes in
+every major. Option (a) was already law: `[R-CNT-06]` says "A reader MUST
+validate, **in order**". It did not help, because the front-block check is not
+in that ordered list and `[R-RDR-02]` licenses earlier detection anyway. F5 is
+excluded on the invariant it asserts, not on its subject: the 128-byte floor
+derives from major 1's directory minimums.
 **Question:** §21.2's preamble decides which rows reach a file declaring a
 format major other than 1 by **procedural priority** — "§6.2 puts the
 version gate ahead of every check but the trailer magic and the trailer
@@ -933,7 +941,14 @@ That pattern is about the section's contract, not its sentences.
   cluster; if it cannot, (b) is the only form that stays true, and the
   cost is a second checked artifact.
 
-### Q-H6. What is §21.2's opening paragraph for, and can it do that job? [shaping]
+### Q-H6. What is §21.2's opening paragraph for, and can it do that job? [Resolved → ADR-0105]
+**Resolution:** option (c), as the entry predicted — the reach question moves to
+§2.3 as `[R-CNF-13]` and §21.2's preamble becomes a restatement subordinate to
+it under §21.1. The diagnosis was understated: the excusing property was not
+merely non-complementary but **empty**, a walk of all 36 rows finding no sense
+of "geometry" any of them satisfies, and the warrant cited `[R-CNT-24]` for four
+rows governed by `[R-CNT-06]`, `[R-CNT-04]` and `[R-ENC-02]`. The count was not
+wrong: four rows reach, F18 being outside the premise.
 **Question:** §21.2's preamble decides which file-scope rows reach a file
 declaring a foreign major. It has now drawn findings in **three consecutive
 rounds** — round 23's `verifier-01`, round 24's `register-01` and `quiz-03`,
@@ -1031,7 +1046,15 @@ them. Options: narrow the rule to the case a compactor can decide; state
 the floor unconditionally; or make the undecidable case an explicit
 carve-out. Owning section §20.5.
 
-### Q-H5. Which verdict does a verifier report for a foreign-major file a register row reaches? [shaping]
+### Q-H5. Which verdict does a verifier report for a foreign-major file a register row reaches? [Resolved → ADR-0105]
+**Resolution:** *nonconforming*, and not relative to format major 1. The
+invariant broken is one the file's own major shares (`[R-CNT-24]`), so the
+finding stands whatever major is declared and whether or not the verifier
+implements it. `[R-CNF-02]`'s "neither conforming nor nonconforming" is bounded
+to requirements that do not reach. The contradiction this closed was sharper
+than the entry stated: §21.1 makes a row a violation and `[R-CNF-11]` gives an
+established violation priority, so the old text forced *nonconforming* and
+forbade it in the same breath.
 **Question:** §21.2's preamble says four rows reach a file declaring a
 format major other than 1, without saying which of §2.3's three verdicts
 the verifier then reports — conforming, nonconforming, or cannot
