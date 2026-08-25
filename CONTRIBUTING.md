@@ -17,6 +17,13 @@ add test vectors are the most valuable kind.
   final calls are recorded, with reasoning, in the ADR trail.
 - **Spec changes cite their ADR.** After the first spec draft exists, every
   pull request that changes normative text links the ADR that governs it.
+  **Editorial and placement changes are exempt**, per
+  [ADR-0104](docs/decisions/0104-editorial-changes-need-a-check-not-an-adr.md):
+  run `conformance/tools/tarn_editorial.py`, and if it reports `EDITORIAL` or
+  `PLACEMENT`, commit with an `editorial:` subject and no ADR. It reports
+  `CONTENT` — and the change needs an ADR — whenever any section's normative
+  prose or any table row differs. Note that Note, Rationale and Example blocks
+  are non-normative (`[R-CNF-01]`) and were never covered by this rule at all.
 - **No implementation dependencies.** Nothing in this repository may depend
   on any particular implementation, vendor, or AI product. Agent-facing
   instructions live in [AGENTS.md](AGENTS.md) only.
