@@ -53,7 +53,7 @@ stale.
 **Three design questions become ledger entries** rather than spec text, per
 AGENTS.md rule 3: **Q-A7** (§20.5's version_minor floor turns on a fact a
 compactor cannot obtain for one of the two cases the rule names), **Q-H5**
-(above), and **Q-C5** (§8.1's one live region under no checksum carries no
+(above), and **Q-C8** (§8.1's one live region under no checksum carries no
 verifier reporting duty, unlike `[R-MTA-10]`'s uninspected extents, which §22.3
 requires be counted and named).
 

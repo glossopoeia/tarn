@@ -1069,7 +1069,7 @@ only sample data.
   metadata edit as a deletion today. If it can, the rule is short of its
   own section's purpose.
 
-### Q-C5. Does the one live region under no checksum owe a verifier report? [shaping]
+### Q-C8. Does the one live region under no checksum owe a verifier report? [shaping]
 **Question:** §8.1's coverage map ends with a live region covered by no
 checksum. Round 24's verifier walk found it carries no verifier reporting
 duty, unlike the better-protected structures around it and unlike

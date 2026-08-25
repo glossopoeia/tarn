@@ -131,7 +131,7 @@ five consecutive rounds, so **Q-I5** asks what the section is *for* and what
 its account must cover, with three options priced. The three design-decisions
 become **Q-A7** (§20.5's version_minor floor turns on a fact a compactor cannot
 obtain), **Q-H5** (which verdict a verifier reports for a foreign-major file a
-row reaches — distinct from Q-H4, which asks which rows reach), and **Q-C5**
+row reaches — distinct from Q-H4, which asks which rows reach), and **Q-C8**
 (whether §8.1's one unchecksummed live region owes a verifier report).
 
 **Deferred, with named owning sections.** reader-03/adversary-02 and verifier-02
