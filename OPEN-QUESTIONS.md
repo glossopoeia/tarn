@@ -1100,6 +1100,59 @@ file and every vector built from §21's register is nonconforming."
   record, *without* an intact sibling. If the record's absence is itself
   the witness, (b) is right and costs nothing.
 
+### Q-B8. Can §11.1's growth Rationale carry the re-emission rule? [shaping]
+**Question:** §11.1's Rationale and §13.3's sparse-writing Note both state when
+a commit re-emits a layer's whole tile-index region. The rule is stated
+normatively once, in §20.3 step 4 (`[R-WRT-04]`): "Every layer whose stored-tile
+set **or index content** this commit changes". §5.1's Example restates that
+correctly and has never been touched. The two blocks in §11.1 and §13.3 have now
+been rewritten in **three consecutive repair cycles** — ADR-0095 (the shrink
+half), ADR-0098 (the growth claim), ADR-0099 (both re-keyed onto `entry_count`)
+— and the audit of the third found seven of its eleven findings in them, from
+three auditors reading independently.
+- **What the cycles keep finding.** `entry_count` is ∏ Gᵢ, a **product**, while
+  `[R-GEO-06]` computes each disk ordinal from the **individual** grid counts,
+  s = Σᵢ tᵢ · ∏_{j>i} Gⱼ. A product does not determine its factors. Under a
+  growth-only commit it does — grid counts are monotone — which is why the
+  formulation reads as sound. §20.3 permits one commit to grow and shrink
+  together, and §11.1's own untouched sentence says "One shrink can do several
+  of these at once." A rank-2 interleaved layer, C = 1, T = (1, 1), E = (2, 3)
+  with one stored tile at (1, 0): grow E₀ 2→3 and shrink E₁ 3→2, and
+  `entry_count` stands at 6 while that tile's ordinal moves 3 → 2. Index content
+  changes, `entry_count` does not, and §20.3 step 4 requires re-emission — which
+  §11.1 now denies in terms, saying such a commit "touches the directory alone".
+  The wording ADR-0099 replaced in §13.3, "grows its extents across a grid
+  boundary", **did** reach that case, so that half is a regression.
+- **And the trailing clause carries a second reading.** "A zero-extent layer's
+  **last** zero grid count" needs the depletion sense — the one after which none
+  is 0. A census of the document's sixteen bare uses of *last* finds thirteen
+  meaning *final member of an ordered sequence*, two meaning *most recent
+  committed state*, and **none** in the depletion sense; the clause attaches to
+  an i-indexed sequence named in the same sentence, and §11.4 and `[R-GEO-06]`
+  make declared dimension order load-bearing for exactly those grid counts. The
+  ordinal reading is false, and the sentence four lines above contradicts it
+  rather than curing it.
+- **Why a fourth patch is the wrong move.** §21.7 took four repairs in four days
+  before ADR-0096 sent it to Q-I5 whole; §21.2 drew findings in three
+  consecutive rounds before ADR-0098 sent it to Q-H6. This is the same shape in
+  a third passage, and ADR-0099's own Consequences already named the right
+  model — §5.1's "stored-tile set or index content" — and then did not use it.
+- **Options:** (a) **Delete the account from both blocks.** §20.3 step 4 states
+  the rule normatively and §5.1's Example restates it correctly; neither block
+  needs to carry it, and a non-normative restatement that has been wrong three
+  cycles running is a liability rather than an aid. (b) **Restate both on
+  §20.3's own key** — "stored-tile set or index content" — so all four passages
+  agree word for word, and drop `entry_count` and the growth-case enumeration.
+  (c) **Key it on the individual grid counts**, the quantity `[R-GEO-06]`
+  actually reads: growth leaving every ⌈Eᵢ / Tᵢ⌉ unchanged touches the directory
+  alone. That is sufficient under mixed commits too, and is close to what
+  ADR-0098 replaced.
+- **What settles it:** whether either block needs to say anything about
+  re-emission at all. If the answer is no, (a) is the honest form and removes
+  the restatement this passage keeps getting wrong. If a geometry-side gloss is
+  wanted, only (b) and (c) key on a quantity that survives a commit that grows
+  and shrinks at once.
+
 ### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
 **Resolution:** a non-normative Appendix G — codec 1 or a named codec
 build (byte-identity across implementations is unattainable for

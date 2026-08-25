@@ -1,0 +1,50 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index a39e91b..cad01e9 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -1493,14 +1493,14 @@ region of it returns no samples. `[R-GEO-02]`
+ > padding position whose stored byte already holds the fill alters
+ > nothing. One shrink can do several of these at once. A layer that stored nothing may be re-declared
+ > freely. Growth
+-> that leaves
+-> every grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) unchanged touches the directory
+-> alone; growth that raises one changes entry_count and with it
+-> extent_length (`[R-CNT-17]`) — save where another dimension's grid
+-> count is 0, which holds the product at 0 and adds no entry — so where
+-> it does change, the layer's whole tile-index region
+-> is re-emitted and disk ordinals renumber wherever `[R-GEO-06]` moves
+-> them (§20.3, `[R-WRT-04]`) — the first growth of a zero-extent layer included.
++> that leaves **entry_count** unchanged touches the directory alone —
++> a growth raising one grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) while another
++> stays 0 among them, the product holding at 0. Growth that changes
++> entry_count changes extent_length with it (`[R-CNT-17]`), so the
++> layer's whole tile-index region is re-emitted and disk ordinals
++> renumber wherever `[R-GEO-06]` moves them (§20.3, `[R-WRT-04]`) —
++> the growth that raises a zero-extent layer's **last** zero grid
++> count included.
+ 
+ #### 11.2 Grid arithmetic
+ 
+@@ -1788,9 +1788,9 @@ rejection is never satisfied by returning fill (`[R-CNF-09]`).
+ > segment of sentinels even the segment CRC is a known constant
+ > (`[R-IDX-05]`). Declare-then-fill workflows append tiles as data
+ > arrives, generation by generation (§9); each commit that changes a
+-> layer's stored-tile set, or that grows its extents across a grid
+-> boundary, re-emits that layer's whole tile-index region (§11.1,
+-> §20.3, `[R-WRT-04]`).
++> layer's stored-tile set, or that grows its extents so that
++> entry_count changes, re-emits that layer's whole tile-index region
++> (§11.1, §20.3, `[R-WRT-04]`).
+ 
+ ### 14. Tile Serialization
+ 
+@@ -2156,7 +2156,8 @@ block_start + r·S. `[R-SLB-02]`
+ 
+ When declared, for every run: the run's stored tiles are contiguous
+ and packed in ordinal order — each stored tile's offset equals the
+-previous stored tile's offset plus its length — and the first stored
++previous stored tile's offset plus that previous tile's length — and
++the first stored
+ tile's offset satisfies offset mod A_slab = 0. The runs themselves
+ are not mutually ordered or joined: between runs, placement freedom
+ (`[R-SLB-05]`) governs, and the bytes left between them are slack

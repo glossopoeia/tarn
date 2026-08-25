@@ -2335,9 +2335,11 @@ error at layer scope, checkable from declarations alone.
 > **Note.** The cap is quantified over the layer's *addressed* tiles,
 > so a layer that addresses none — any dimension extent 0
 > (`[R-GEO-02]`, §21.6) — satisfies it whatever its tile shape
-> declares, and codec 4 is conforming there. The escape is not
-> durable: a later commit that grows an extent addresses tiles, and
-> the same declarations are then measured against the cap.
+> declares, and codec 4 is conforming there. The escape ends exactly
+> when the layer's addressed-tile count rises above 0, which takes
+> every dimension's extent nonzero (§11.2) — a growth that leaves any
+> extent at 0 holds the count at 0 and the escape with it — and the
+> same declarations are then measured against the cap.
 > `[R-ENC-04]`'s overflow rule carries no such quantifier — it binds
 > any sum or product a file yields — so P·Q and P·Bᶜ are checked in
 > an empty layer even though this cap is not.
