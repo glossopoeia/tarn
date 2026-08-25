@@ -3461,9 +3461,9 @@ is permanently invalid in every one (§21.6).
 | F28 | A non-layer top-level record of a type §7.3 registers carries a stored MU or PE bit differing from the value the registry fixes; readers apply the type's fixed semantics regardless | flags bit 0; flags bit 1 | verifier | certification | `[R-CNT-22]` (R-CNF-05) |
 | F29 | A top-level record's 24-byte header or its inline payload extends past the end of the directory's record sequence (dir_offset + dir_length - 4), or bytes remain after the last complete record | record header; inline_length; trailing residue | reader | open | `[R-CNT-12]` (R-ENC-07) |
 | F30 | A non-layer top-level record's extent slot has exactly one half zero (offset 0 with length != 0, or offset != 0 with length 0) | extent_offset; extent_length | reader | open | `[R-CNT-13]` |
-| F31 | A non-layer top-level record's nonzero extent slot has extent_offset in 1-15, placing the extent inside the front signature block | extent_offset | reader | open | `[R-CNT-13]` |
+| F31 | A non-layer top-level record's nonzero extent slot has extent_offset in 1-15, pointing into the front signature block | extent_offset | reader | open | `[R-CNT-13]` |
 | F32 | A non-layer top-level record's extent_offset + extent_length exceeds F - 64, so the extent touches or passes the live trailer | — | reader | open | `[R-CNT-13]` |
-| F33 | A byte of the live committed state is claimed by two structures that do not belong to the same layer — across two layers, a layer structure against another scope's structure, or two structures neither of which belongs to a layer; a claimant reaching the front signature block or the live trailer is instead caught by the bounds rows F9/F10, F31/F32, L16/L17 and T8/T9, each at its own tier | stored-tile extents; tile-index regions; record extents; sub-record extents; directory region | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03) |
+| F33 | A byte of the live committed state is claimed by two structures that do not belong to the same layer — across two layers, a layer structure against another scope's structure, or two structures neither of which belongs to a layer; a claimant reaching the front signature block or the live trailer is instead caught by the bounds rows F9/F10, F30/F31/F32, L15/L16/L17 and T8/T9, each at its own tier — the half-zero rows F30 and L15 among them, since a record extent slot of (0, N) with N nonzero reaches the block through its zero offset and is theirs rather than F31's or L16's | stored-tile extents; tile-index regions; record extents; sub-record extents; directory region | verifier | certification | `[R-CNT-13]` (R-CNT-02, R-IDX-03) |
 | F34 | The directory's top-level record sequence contains two or more user-metadata records (type 0x0002) | type | reader | open | `[R-CNT-14]` |
 | F35 | A top-level record has a reserved-range type value (0x0003-0x7FFF, §10.2) with MUST_UNDERSTAND (flags bit 0) set to 1 | — | reader | open | `[R-CNT-15]` |
 | F36 | A top-level record carries a type value from the reserved range 0x0003-0x7FFF, which this specification has not assigned; emitting one is a violation whatever its MU bit | — | verifier | certification | `[R-CNT-15]` |
@@ -3490,7 +3490,7 @@ layer unaffected. 49 conditions.
 | L13 | A sub-record of a layer record has type 0x0000 | — | reader | layer access | `[R-CNT-12]` (R-CNT-18) |
 | L14 | A sub-record does not fit in the layer record's inline payload: its 24-byte header is truncated at the payload end, or its inline_length runs past that end | sub-record header; sub-record inline_length; trailing residue | reader | layer access | `[R-CNT-12]` (R-CNT-18, R-ENC-07) |
 | L15 | A layer record's or sub-record's extent slot has exactly one of extent_offset and extent_length zero | layer record extent_offset; layer record extent_length; sub-record extent_offset; sub-record extent_length | reader | layer access | `[R-CNT-13]` |
-| L16 | A layer record's or sub-record's nonzero extent slot has extent_offset in 1-15, placing the extent inside the front signature block | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
+| L16 | A layer record's or sub-record's nonzero extent slot has extent_offset in 1-15, pointing into the front signature block | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
 | L17 | A layer record's or sub-record's extent reaches the live trailer or beyond: extent_offset + extent_length > F - 64 | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
 | L18 | Two structures of one and the same layer claim overlapping bytes in the live committed state | stored-tile extents; tile-index region; layer sub-record extents | verifier | certification | `[R-CNT-13]` (R-IDX-03) |
 | L19 | A layer record's sub-record sequence contains more than one user-metadata sub-record (type 0x0002) | — | reader | layer access | `[R-CNT-14]` |
@@ -3930,9 +3930,12 @@ removes only from *reachability*. It removes sample data by making it
 unreachable and never by erasing it: superseding a stored tile's
 payload, unstoring a tile so its entry becomes the sentinel (§15.2),
 and a shrink that either drops tiles out of the addressed set or turns
-real positions into padding (§20.3 step 4) all do it, and a dropped
-ancillary record's extent (§20.4) goes the same way; no commit removes
-a layer at all. **Where the structure carrying the bytes leaves the
+real positions into padding (§20.3 step 4) all do it, and a record's
+extent goes the same way whether a commit drops the record (§20.4) or
+supersedes it — editing a user-metadata document appends a new extent
+and strands the old one (§20.3's shape (c)), which is the case most
+likely to strand content a caller believes it deleted; no commit
+removes a layer at all. **Where the structure carrying the bytes leaves the
 live state**, they remain in the file as slack (`[R-CNT-21]`),
 readable by anyone with the bytes and a hex editor, and recoverable
 by any tool that scans backward for an earlier trailer (§9.6).

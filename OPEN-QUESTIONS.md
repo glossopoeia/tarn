@@ -951,6 +951,35 @@ under this text", so a row that reaches it and establishes a violation
 sits across that line. **Distinct from Q-H4**, which asks *which rows*
 reach; this asks *what follows* when one does. Owning section §21.2.
 
+### Q-C6. Does `[R-PRV-01]`'s MUST NOT reach a user-metadata document? [shaping]
+**Question:** §23.1 bars a writer from representing a commit that makes
+**sample data** unreachable as erasure of it. The round-25 audit found the
+section describes a second stranding it does not bar: a superseded record
+extent, of which the user-metadata document is the privacy-relevant one —
+§20.3's shape (c) says editing metadata appends a new extent and the old
+one becomes slack. §23.1 now names that case; the MUST NOT still reaches
+only sample data.
+- **Why it matters.** A user-metadata document is where names, descriptions
+  and free-text live — the content a caller is most likely to believe it
+  deleted, and the content a deletion request most often concerns. A tool
+  that reports "metadata removed" after a commit that stranded the old
+  extent is doing exactly what the rule bars for samples.
+- **Why it is a ledger entry and not a repair.** Widening a MUST NOT
+  changes what a conforming actor may do. ADR-0091's rule applies — a
+  repair that must decide a rule's reach is a decision — and the last time
+  a scope question was settled inside a repair slot it took two ADRs to
+  unwind.
+- **Options:** (a) Widen the MUST NOT to any commit that makes sample data
+  **or a user-metadata document** unreachable. Smallest edit; the reason
+  transfers intact. (b) Widen it to any *stranded content*, covering every
+  record extent including future types — broadest, and it commits the rule
+  to types not yet defined. (c) Leave it, on the ground that §23.1's
+  descriptive sentence now warns and `[R-PRV-02]` already puts erasure on
+  the storage layer — cheapest, and it leaves the asymmetry stated.
+- **What settles it:** whether a conforming tool can honestly report a
+  metadata edit as a deletion today. If it can, the rule is short of its
+  own section's purpose.
+
 ### Q-C5. Does the one live region under no checksum owe a verifier report? [shaping]
 **Question:** §8.1's coverage map ends with a live region covered by no
 checksum. Round 24's verifier walk found it carries no verifier reporting
