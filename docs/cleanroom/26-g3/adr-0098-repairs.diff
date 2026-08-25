@@ -1,0 +1,100 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 55e04f0..a39e91b 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -1289,21 +1289,22 @@ backward. `[R-LIF-05]`
+ 
+ Recovery tools and verifiers — never conforming readers on the default
+ path — locate commit states as follows: probe backward at 64-aligned
+ offsets o for the trailer magic; on a match, require the trailer CRC
+ to verify and committed_file_length = o + 64. The nearest-to-end valid
+ candidate is the last committed state; truncating to it recovers the
+ file. A recovery tool enumerating a file's commit states continues
+ the same probe to offset 0; coverage verification does not (§9.7,
+ `[R-LIF-08]`), and no verdict turns on the probe: a file whose final
+ 64 bytes are not a valid trailer fails `[R-CNT-06]`'s gates on the
+-bytes handed over (§21.2 rows F8 and F17), and the earlier state the
++bytes handed over (§21.2 rows F8, F14 and F17 — the magic, the
++trailer CRC and the length cross-check), and the earlier state the
+ probe finds is a different artifact, reached only through the
+ whole-file re-verification below. For a verifier the probe is
+ diagnosis — which commit state is recoverable — not a finding about
+ the file it was given. Two cautions are normative for
+ tools: a tile payload can deliberately contain a byte string that
+ mimics a valid trailer, so recovery output MUST be re-verified as a
+ whole file (§8) before being trusted; and truncation of a file to an
+ earlier commit boundary is indistinguishable in-format from that
+ earlier version — rollback detection requires out-of-band state (an
+ expected generation or a detached hash). The probe begins at the
+@@ -1488,21 +1489,23 @@ region of it returns no samples. `[R-GEO-02]`
+ > tile — whether or not the new state still stores it — and permitted
+ > wherever it does not: a tile dropped out of the addressed set
+ > carries no §14 obligation and its extent becomes slack, a tile the
+ > superseded generation did not store carries none either, and a new
+ > padding position whose stored byte already holds the fill alters
+ > nothing. One shrink can do several of these at once. A layer that stored nothing may be re-declared
+ > freely. Growth
+ > that leaves
+ > every grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) unchanged touches the directory
+ > alone; growth that raises one changes entry_count and with it
+-> extent_length (`[R-CNT-17]`), so the layer's whole tile-index region
++> extent_length (`[R-CNT-17]`) — save where another dimension's grid
++> count is 0, which holds the product at 0 and adds no entry — so where
++> it does change, the layer's whole tile-index region
+ > is re-emitted and disk ordinals renumber wherever `[R-GEO-06]` moves
+ > them (§20.3, `[R-WRT-04]`) — the first growth of a zero-extent layer included.
+ 
+ #### 11.2 Grid arithmetic
+ 
+ For each dimension, the **grid count** Gᵢ is the ceiling division
+ ⌈Eᵢ / Tᵢ⌉, equal to Eᵢ/Tᵢ plus 1 if Eᵢ mod Tᵢ ≠ 0 (integer division).
+ The layer's **spatial-tile count** is N = ∏ Gᵢ, and its
+ **sample-position count per tile** is P = ∏ Tᵢ. The layer's
+ **addressed-tile count** — the number of its tile-index entries (§15) —
+@@ -3508,21 +3511,21 @@ layer unaffected. 49 conditions.
+ | L31 | Layer record's index_encoding is a value other than 1 — 0, reserved 2–0x7F, or experimental ≥ 0x80 | index_encoding 0; reserved 2-0x7F; experimental >= 0x80 | reader | layer access | `[R-CNT-23]` (§15.1) |
+ | L32 | A layer geometry field whose floor is 1 is 0 | rank d; channel count C; tile extent Tᵢ | reader | layer access | `[R-GEO-01]` (R-CNT-23) |
+ | L33 | Layer record's linearization is a value other than 1 — 0, reserved 2–3, reserved 4–0x7FFF, or experimental ≥ 0x8000 | linearization 0; reserved 2-3; reserved 4-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-GEO-05]` (R-CNT-23) |
+ | L34 | A channel entry's type is outside 1 … 13 — 0, reserved 14–19, reserved 20–0x7FFF, or experimental ≥ 0x8000 | type 0; reserved 14-19; reserved 20-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-TYP-03]` (R-CNT-23, R-CNF-04) |
+ | L35 | A bool channel's one-byte fill holds a byte other than 0x00 or 0x01 | — | reader | layer access | `[R-TYP-07]` (R-CNT-23) |
+ | L36 | Layer record's layout is a value other than 1 or 2 — 0 or reserved 3–255 | layout 0; reserved 3-255 | reader | layer access | `[R-SER-06]` (R-CNT-23) |
+ | L37 | The layer record's crc_of_crc_array ≠ CRC-32C over the segment-CRC array as stored at the tail of the tile-index region | — | reader | tile use | `[R-IDX-04]` (R-CNT-20, R-ENC-10) |
+ | L38 | A segment CRC ≠ CRC-32C over that segment's entry bytes as stored, entries [s·2¹⁶, min((s+1)·2¹⁶, entry_count)) — a partial segment covers only its actual bytes, and the all-sentinel constant 0xEECB3BB2 never substitutes for comparison | — | reader | tile use | `[R-IDX-04]` (R-IDX-05, R-CNT-20, R-ENC-10) |
+ | L39 | Layer record declares a nonzero alignment A that is not a power of two in 512 … 2^62 | A not a power of two; A below 512; A above 2^62 | reader | layer access | `[R-SLB-01]` (R-CNT-23) |
+ | L40 | Alignment A declared and a stored tile's index-entry offset is not a multiple of A | — | verifier | certification | `[R-SLB-01]` (R-IDX-03) |
+-| L41 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus that tile's length (gap, overlap, or out-of-ordinal placement; sentinels and entries §15.3 classifies reject-tile on a structural ground are transparent, an entry failing only its stored bytes' crc is not) | gap; overlap; out-of-ordinal placement | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
++| L41 | Inside a slab run, a stored tile's offset ≠ the previous stored tile's offset plus the previous stored tile's length (gap, overlap, or out-of-ordinal placement; sentinels and entries §15.3 classifies reject-tile on a structural ground are transparent, an entry failing only its stored bytes' crc is not) | gap; overlap; out-of-ordinal placement | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
+ | L42 | A slab run's first stored tile's offset is not a multiple of A_slab | — | verifier | certification | `[R-SLB-03]` (R-IDX-03) |
+ | L43 | Layer record's codec is a value other than 1 … 4 — 0, reserved 5–0x7FFF, or experimental ≥ 0x8000 | codec 0; reserved 5-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-03]` (R-CNT-23) |
+ | L44 | Codec 4 (lz4) declared on a layer any of whose addressed tiles' decoded size exceeds 0x7E000000 bytes — in a planar layer the largest channel plane governs | interleaved P·Q; planar numeric P·Bᶜ; packed planar bool ⌈P/8⌉ | reader | layer access | `[R-COD-07]` |
+ | L45 | Layer record's filter is a value other than 1 or 2 — 0, reserved 3–0x7FFF, or experimental ≥ 0x8000 | filter 0; reserved 3-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-COD-09]` (R-CNT-23) |
+ | L46 | A layer record's or sub-record's flags carry MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0 | layer record; sub-record | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
+ | L47 | Any of a layer record's or sub-record's reserved flag bits 2-15 is set | layer record flags bits 2-15; sub-record flags bits 2-15 | verifier | certification | `[R-CNT-12]` (R-CNT-13) |
+ | L48 | A layer sub-record's user-metadata document has object members, at any nesting depth, not in ascending order of their keys' UTF-8 bytes; the document stays readable and readers process it unchanged | — | verifier | certification | `[R-MTA-05]` (R-CNF-05) |
+ | L49 | A layer record, or a sub-record of a type §7.3 registers, carries a stored MU or PE bit differing from the value the registry fixes; readers apply the type's fixed semantics regardless | layer record flags bit 0; layer record flags bit 1; sub-record flags bit 0; sub-record flags bit 1 | verifier | certification | `[R-CNT-22]` (R-CNF-05) |
+ 
+ #### 21.4 Tile-scope violations
+@@ -3926,21 +3929,22 @@ file a reader opens later. `[R-SEC-07]`
+ #### 23.1 Deletion is not erasure
+ 
+ The append-only model (§9.1) means that what a commit removes, it
+ removes only from *reachability*. It removes sample data by making it
+ unreachable and never by erasing it: superseding a stored tile's
+ payload, unstoring a tile so its entry becomes the sentinel (§15.2),
+ and a shrink that either drops tiles out of the addressed set or turns
+ real positions into padding (§20.3 step 4) all do it, and a record's
+ extent goes the same way whether a commit drops the record (§20.4) or
+ supersedes it — editing a user-metadata document appends a new extent
+-and strands the old one (§20.3's shape (c)), which is the case most
++and strands the old one (§20.3 places this with shape (b)), which is
++the case most
+ likely to strand content a caller believes it deleted; no commit
+ removes a layer at all. **Where the structure carrying the bytes leaves the
+ live state**, they remain in the file as slack (`[R-CNT-21]`),
+ readable by anyone with the bytes and a hex editor, and recoverable
+ by any tool that scans backward for an earlier trailer (§9.6).
+ **Where it does not** — a shrink turning real positions into padding
+ of a tile the new state still stores — they remain inside that tile
+ as its padding content, and disclose nothing a reader could not
+ already derive: §20.3 step 4 permits that shrink only where those
+ bytes already hold the channel's recorded fill, which the layer
