@@ -117,6 +117,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0099](0099-the-entry-count-restatement.md) | §11.1 states its rule by `entry_count`, and `[R-SLB-03]` loses the pronoun | Accepted (resolves the ADR-0098 audit; revises two repairs ADR-0098 wrote) |
 | [0100](0100-the-audit-chain-becomes-checkable.md) | The audit-chain invariant becomes mechanically checkable, and is corrected | Accepted (revises ADR-0097's statement of the invariant, which is too strong as written) |
 | [0101](0101-the-lz4-escape-and-11-1-to-the-ledger.md) | §17.2's lz4 escape is stated by the addressed-tile count, and §11.1's growth Rationale goes to the ledger whole | Accepted (resolves the ADR-0099 audit; opens Q-B8) |
+| [0102](0102-the-overflow-ceiling-reaches-designated-quantities.md) | The overflow ceiling reaches designated quantities, and §11.3 stops forming a product | Accepted (resolves round 26's byte-level ambiguity) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

@@ -398,11 +398,15 @@ scope. `[R-ENC-03]`
 > without unsigned arithmetic gymnastics.
 
 A reader — including any updater or verifier, which are readers of the
-files they process — MUST treat any quantity this specification defines
-as a sum or product of integers obtained from a file (offsets plus
-lengths, grid counts, tile counts, sample-position counts, ordinals)
-whose mathematical value would exceed 2⁶³ − 1 as a validity error at
-the owning scope, and MUST NOT act on a wrapped or truncated value.
+files they process — MUST treat any quantity this specification
+**designates** a declaration-derived sum or product of integers obtained
+from a file (offsets plus lengths, grid counts, tile counts,
+sample-position counts, ordinals) whose mathematical value would exceed
+2⁶³ − 1 as a validity error at the owning scope, and MUST NOT act on a
+wrapped or truncated value. A designation is express, made by the
+section that defines the quantity; an expression this specification
+writes only inside a comparison, and names nowhere, is not a designated
+quantity and no reader is obliged to form it.
 `[R-ENC-04]` A reader MUST NOT allocate, seek, or
 issue I/O based on any integer obtained from a file before the checksum
 covering it has been verified (§4.5, §8). `[R-ENC-05]`
@@ -1511,8 +1515,8 @@ The layer's **spatial-tile count** is N = ∏ Gᵢ, and its
 **addressed-tile count** — the number of its tile-index entries (§15) —
 is N for an interleaved layer and C · N for a planar layer, where C is
 the channel count, and its **total sample-position count** is N · P.
-These products, like all geometry arithmetic, are
-subject to `[R-ENC-04]`: a reader MUST treat a product exceeding
+These products are declaration-derived quantities under
+`[R-ENC-04]`: a reader MUST treat one exceeding
 2⁶³ − 1 as a validity error at layer scope. `[R-GEO-03]`
 
 > **Note.** The stated form of the ceiling division avoids the idiom
@@ -1530,9 +1534,11 @@ subject to `[R-ENC-04]`: a reader MUST treat a product exceeding
 #### 11.3 Uniform tiles and edge padding
 
 Every tile of a layer has the same logical shape (T₀, …, T_{d−1}).
-Where Gᵢ · Tᵢ > Eᵢ, the tiles at the high edge of dimension i contain
-**padding positions** — sample positions whose coordinate along that
-axis would be ≥ Eᵢ. Padding positions are serialized like any other
+Where Eᵢ mod Tᵢ ≠ 0 — equivalently, where the grid overhangs the
+extent, stated in a form that forms no product (§4.2) — the tiles at
+the high edge of dimension i contain **padding positions** — sample
+positions whose coordinate along that axis would be ≥ Eᵢ. Padding
+positions are serialized like any other
 position (byte-level rules and padding content: §14) but are not part
 of the reference array (§3.2); a reader MUST NOT return padding
 positions as samples. `[R-GEO-04]`
@@ -2341,7 +2347,8 @@ error at layer scope, checkable from declarations alone.
 > extent at 0 holds the count at 0 and the escape with it — and the
 > same declarations are then measured against the cap.
 > `[R-ENC-04]`'s overflow rule carries no such quantifier — it binds
-> any sum or product a file yields — so P·Q and P·Bᶜ are checked in
+> every quantity it designates, whether or not the layer addresses a
+> tile — so P·Q and P·Bᶜ are checked in
 > an empty layer even though this cap is not.
 
 For every codec: the stored bytes MUST decode to exactly the
@@ -3034,8 +3041,8 @@ An appender MUST, in order:
    layer's own declarations impose, `[R-COD-07]`'s lz4 decoded-size
    cap among them (L44), which an
    empty layer escapes only because that cap is quantified over
-   addressed tiles. `[R-ENC-04]`'s 2⁶³ − 1 ceiling on every derived
-   product is another, and the list is not offered as exhaustive:
+   addressed tiles. `[R-ENC-04]`'s 2⁶³ − 1 ceiling on every quantity
+   it designates is another, and the list is not offered as exhaustive:
    a growth is permitted exactly where the geometry it produces
    satisfies every rule that geometry is subject to.
 
@@ -3839,8 +3846,8 @@ a length embedded in a payload — a compressed stream that expands
 beyond the declared decoded size is a tile-scope error
 (`[R-COD-08]`), which is this format's decompression-bomb defense
 and the reason no codec's embedded size field is ever an allocation
-source (`[R-COD-06]`). Every sum and product taken from a file is
-overflow-checked before use (`[R-ENC-04]`). And nothing is
+source (`[R-COD-06]`). Every declaration-derived sum and product
+`[R-ENC-04]` designates is overflow-checked before use. And nothing is
 allocated, sought, or fetched on the strength of a field before the
 checksum covering it verifies (`[R-ENC-05]`). A reader MUST
 NOT size an allocation, fetch, or index walk in proportion to a
