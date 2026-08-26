@@ -47,8 +47,13 @@ happened to change in the same commit.
 This version needs no attribution. It compares **the normative prose of each
 section, concatenated and whitespace-normalised**:
 
-  · Blockquote lines are excluded — [R-CNF-01] puts Note, Rationale and Example
-    outside normative text, and they are 18.5% of the document.
+  · A blockquote is excluded only when it is LABELLED. [R-CNF-01] exempts "any
+    text labeled *Note*, *Example*, or *Rationale*" — by label, not by markdown
+    syntax. The document contains an unlabelled blockquote that is therefore
+    normative (§15.1's region-layout block), and an earlier version of this
+    tool excluded every ">" line, so an edit there graded EDITORIAL. That is a
+    false negative, the one direction this check must not fail in. Found by an
+    auditor reading its own briefing critically, not by any test here.
   · Table rows are excluded from the prose and compared separately, exactly.
   · Fenced code blocks are excluded.
 
@@ -102,6 +107,10 @@ REQ = re.compile(r"\[(R-[A-Z]{3}-\d{2})\]")
 HEADING = re.compile(r"^(#{2,6})\s+(.*)$")
 SECNUM = re.compile(r"^((?:\d+\.)*\d+|Appendix\s+[A-Z])")
 SENTENCE = re.compile(r"(?<=[.:;])\s+")
+# [R-CNF-01] exempts text *labelled* Note, Example or Rationale — not every
+# blockquote. An unlabelled one is normative and must be compared.
+BLOCK_LABEL = re.compile(r"\*\*(Note|Example|Rationale)\b", re.I)
+NON_NORMATIVE = re.compile(r"non-normative", re.I)
 KEYWORD = re.compile(
     r"\b(MUST NOT|SHALL NOT|SHOULD NOT|MUST|SHALL|SHOULD|MAY|REQUIRED|RECOMMENDED|OPTIONAL)\b"
 )
@@ -122,11 +131,29 @@ def norm(s: str) -> str:
 
 
 def parse(text: str) -> tuple[dict[str, str], Counter]:
-    """-> (section -> normalised normative prose, table rows as a multiset)"""
+    """-> (section -> normalised normative prose, table rows as a multiset)
+
+    A blockquote is excluded only when it is *labelled*. [R-CNF-01] exempts
+    "any text labeled *Note*, *Example*, or *Rationale*" — the exemption is by
+    label, not by markdown syntax, and the document contains a blockquote that
+    carries no label and is therefore normative (§15.1's region-layout block).
+    Excluding every ">" line, as an earlier version did, made an edit to that
+    block grade EDITORIAL — a false negative, the one direction this check must
+    not fail in.
+    """
     prose: dict[str, list[str]] = {}
     tables: Counter = Counter()
     section = "(front matter)"
     fenced = False
+    block: list[str] = []       # the blockquote being accumulated
+    labelled = False
+
+    def flush() -> None:
+        """an unlabelled blockquote is normative and joins the prose"""
+        nonlocal block, labelled
+        if block and not labelled:
+            prose.setdefault(section, []).extend(block)
+        block, labelled = [], False
 
     for line in text.split("\n"):
         if line.strip().startswith("```"):
@@ -135,6 +162,15 @@ def parse(text: str) -> tuple[dict[str, str], Counter]:
         if fenced:
             continue
 
+        stripped = line.lstrip()
+
+        if stripped.startswith(">"):
+            block.append(line)
+            if BLOCK_LABEL.search(line) or NON_NORMATIVE.search(line):
+                labelled = True
+            continue
+        flush()
+
         h = HEADING.match(line)
         if h:
             title = h.group(2).strip()
@@ -142,9 +178,6 @@ def parse(text: str) -> tuple[dict[str, str], Counter]:
             section = m.group(1) if m else title
             continue
 
-        stripped = line.lstrip()
-        if stripped.startswith(">"):        # non-normative, [R-CNF-01]
-            continue
         if stripped.startswith("|"):        # compared separately, exactly
             cells = tuple(norm(c) for c in line.strip().strip("|").split("|"))
             if all(set(c) <= set("-: ") for c in cells):
@@ -154,6 +187,7 @@ def parse(text: str) -> tuple[dict[str, str], Counter]:
 
         prose.setdefault(section, []).append(line)
 
+    flush()
     return {k: norm(" ".join(v)) for k, v in prose.items()}, tables
 
 
@@ -338,13 +372,41 @@ def synthetic(spec: str) -> list[tuple[str, str, str]]:
         w.insert(i + 1, "")
         out.append(("split a §11.3 paragraph", "EDITORIAL", "\n".join(w)))
 
-    # 3. edit a blockquote. Non-normative under [R-CNF-01].
+    # 3. edit a *labelled* blockquote. Non-normative under [R-CNF-01].
     for i, l in enumerate(lines):
         if l.startswith("> ") and len(l) > 30:
+            j = i
+            while j >= 0 and lines[j].lstrip().startswith(">"):
+                if BLOCK_LABEL.search(lines[j]):
+                    break
+                j -= 1
+            else:
+                continue
+            if j < 0 or not lines[j].lstrip().startswith(">"):
+                continue
             w = lines[:]
             w[i] = l + " Wording added to a Note."
-            out.append(("add a sentence to a Note", "EDITORIAL", "\n".join(w)))
+            out.append(("add a sentence to a labelled Note", "EDITORIAL", "\n".join(w)))
             break
+
+    # 4. edit an UNLABELLED blockquote — normative under [R-CNF-01], because the
+    # exemption is by label. §15.1's region-layout block is the live instance.
+    for i, l in enumerate(lines):
+        if not l.lstrip().startswith(">"):
+            continue
+        j = i
+        while j >= 0 and lines[j].lstrip().startswith(">"):
+            j -= 1
+        blk = []
+        k = j + 1
+        while k < len(lines) and lines[k].lstrip().startswith(">"):
+            blk.append(lines[k]); k += 1
+        if any(BLOCK_LABEL.search(x) or NON_NORMATIVE.search(x) for x in blk):
+            continue
+        w = lines[:]
+        w[i] = l + " x"
+        out.append(("edit an UNLABELLED blockquote", "CONTENT", "\n".join(w)))
+        break
 
     # 4. change one word of normative prose.
     i = find_prose("#### 11.3")

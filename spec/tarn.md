@@ -141,10 +141,10 @@ Conformance is defined for five classes.
   It is always conformance to a stated format major version. This
   document defines format major 1, and a file declaring another major
   is neither conforming nor nonconforming under it save as to the
-  requirements that reach it (`[R-CNF-13]`): a reader refuses such a
+  conditions that reach it (`[R-CNF-13]`): a reader refuses such a
   file on capability grounds (§6.3, `[R-CNT-07]`), and that refusal is
   not a finding about its bytes, while the failure of a reaching
-  requirement is.
+  condition is.
   A few obligations this specification places on writers govern their
   *conduct* rather than their output — where a value is published, or
   which registry version a writer targets (§10.3, §18.3) — and a file
@@ -234,9 +234,12 @@ trailer magic and the trailer CRC assert invariants `[R-CNT-24]` fixes
 and the other eight do not. The test is the invariant asserted, not
 the bytes read: a check that consumes bytes a future major is free to
 redefine can still assert only a fixed invariant. A reader MUST apply
-every reaching condition to a file whatever major it declares, and
-MUST treat its failure as reject-file on the ground of the requirement
-stating it rather than on capability grounds; the distinct diagnostic
+every reaching condition to a file whatever major it declares — an
+exemption the condition's governing requirement grants on a ground
+other than the declared major applies unchanged, `[R-CNT-04]`'s
+residency exemption among them — and MUST treat its failure as
+reject-file on the ground of the requirement stating it rather than on
+capability grounds; the distinct diagnostic
 `[R-CNT-07]` asks for is owed where every reaching condition is
 satisfied and the declared major is one the reader does not implement.
 A verifier that establishes such a failure reports *nonconforming*,

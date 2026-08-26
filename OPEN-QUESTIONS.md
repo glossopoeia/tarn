@@ -1036,6 +1036,27 @@ alignment and slab because each changes bytes and no content implies it. Round
 argument and are not pinned — two writers agreeing on everything else emit
 different files. Options: pin them; state why they are excluded; or restate the
 profile's criterion so the list follows from it. Owning section Appendix G.
+- **The criterion is false for a member already on the list, and item 5 has now
+  failed three times trying to state it.** The filter does *not* always change
+  bytes. `[R-COD-10]` places byte *i* of group *j* at offset *i·n + j*, so the
+  permutation is the identity whenever the stride is 1 **or** the image is a
+  single group (n = L/s = 1, reachable at P = ∏ Tᵢ = 1, which `[R-GEO-01]`
+  permits) — and independently for any tile whose decoded image is invariant
+  under the permutation. Item 5 said "changes the stored bytes of every tile it
+  touches" (false at stride 1), then "any tile whose shuffle stride exceeds 1"
+  (ADR-0103, false at n = 1), then "elsewhere it changes the stored bytes of
+  every tile it touches" (ADR-0106, false for content-invariant tiles). Three
+  auditors reported the third independently.
+- **Why a fourth patch is the wrong move.** §21.7 took four repairs before Q-I5;
+  §21.2 three rounds before Q-H6; §11.1 three cycles before Q-B8. This is the
+  same shape, and the repeated failure is diagnostic: the item keeps asserting a
+  universal because **the profile's criterion demands one**, and the criterion is
+  what is wrong. That makes option (c) the leading option rather than one of
+  three — restate the criterion as a property of what the profile must fix, and
+  let membership follow.
+- **What settles it:** whether any property decides membership for a degree of
+  freedom the profile does not currently name. If the criterion cannot do that,
+  item 5's sentence has no true form to be repaired into.
 
 ### Q-A7. Can a compactor obtain the fact §20.5's version_minor floor turns on? [shaping]
 **Question:** §20.5 makes the output's `version_minor` SHOULD be at least
