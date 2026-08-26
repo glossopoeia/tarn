@@ -27,8 +27,8 @@ You are told none of what those instruments found, or where.
 ## The changed surface
 
 **Thirteen passages — §2.2, §2.3, §4.2, §6.2, §7.2, §7.4, §11.2, §11.3, §17 and
-§17.2, §20.3, §21.2, §22.2, and Appendix G** — 111 lines inserted, 52 deleted,
-over fifteen hunks. The document is 4,543 lines.
+§17.2, §20.3, §21.2, §22.2, and Appendix G** — 117 lines inserted, 52 deleted,
+over fifteen hunks. The document is 4,550 lines.
 
 That is the net of six commits, not one. Two of the changes are **deletions**: a
 scope sentence removed from a section preamble, and a precedence claim removed
