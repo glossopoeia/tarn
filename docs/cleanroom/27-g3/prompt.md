@@ -26,15 +26,20 @@ You are told none of what those instruments found, or where.
 
 ## The changed surface
 
-**Twelve passages — §2.3, §4.2, §6.2, §7.2, §7.4, §11.2, §11.3, §17 and §17.2,
-§20.3, §21.2, §22.2, and Appendix G** — 91 lines inserted, 43 deleted, over
-fourteen hunks. The document is 4,532 lines.
+**Thirteen passages — §2.2, §2.3, §4.2, §6.2, §7.2, §7.4, §11.2, §11.3, §17 and
+§17.2, §20.3, §21.2, §22.2, and Appendix G** — 111 lines inserted, 52 deleted,
+over fifteen hunks. The document is 4,543 lines.
 
-That is the net of five cycles, not one. Two of the changes are **deletions**: a
+That is the net of six commits, not one. Two of the changes are **deletions**: a
 scope sentence removed from a section preamble, and a precedence claim removed
 from a register preamble. For a deletion the question is not whether new words are
 right — there are none — but **what the deleted words were carrying that nothing
 now carries.**
+
+One of the thirteen is a **presentation change alone**: a list restated as a
+table, asserted to carry the same content. Check that assertion rather than
+granting it — the claim that a rewriting changed no meaning is the claim this
+document has most often had wrong.
 
 One passage is a new requirement added and then twice re-quantified. Three are
 one-clause designations added to existing rules. One is a register preamble
@@ -93,7 +98,7 @@ recent cycles taught, and both were learned expensively.
 And one question that applies everywhere: **for any rule you can only defend by
 reasoning you supply yourself, ask whether the document supplies it.**
 
-Read the twelve first — then do not stop there. **Rounds 18, 19, 20 and 22 each
+Read the thirteen first — then do not stop there. **Rounds 18, 19, 20 and 22 each
 found their survivor in text no recent round had touched**, round 21 found one of
 its two by building a legal-but-degenerate file, and the most recent audits have
 repeatedly found their clearest defects in passages that were in no hunk at all.
