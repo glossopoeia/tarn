@@ -121,15 +121,32 @@ requirement leaves its identifier permanently retired, and numbers above
 99 extend naturally (`[R-ENC-100]`) without renumbering. Identifier order
 carries no meaning.
 
-Prefixes: `CNF` (conformance), `MDL` (terminology and data model), `ENC`
-(encoding), `CNT` (container structures), `LIF` (lifecycle and
-consistency), `EXT` (extension points and registry), `GEO` (layers,
-dimensions, and tiling), `IDX` (tile index), `SLB` (slabs and
-alignment), `TYP` (types and fill), `SER` (tile serialization), `COD`
-(codecs and filters), `MTA` (user metadata), `RDR` (reading), `WRT`
-(writing and updating), `ERR` (error register), `SEC` (security), `PRV`
-(privacy), `VEC` (conformance vectors). New prefixes are added by ADR when a section needs one;
-existing prefixes are never reassigned.
+The prefixes:
+
+| Prefix | Abbreviates |
+|---|---|
+| `CNF` | conformance |
+| `MDL` | terminology and data model |
+| `ENC` | encoding |
+| `CNT` | container structures |
+| `LIF` | lifecycle and consistency |
+| `EXT` | extension points and registry |
+| `GEO` | layers, dimensions, and tiling |
+| `IDX` | tile index |
+| `SLB` | slabs and alignment |
+| `TYP` | types and fill |
+| `SER` | tile serialization |
+| `COD` | codecs and filters |
+| `MTA` | user metadata |
+| `RDR` | reading |
+| `WRT` | writing and updating |
+| `ERR` | error register |
+| `SEC` | security |
+| `PRV` | privacy |
+| `VEC` | conformance vectors |
+
+New prefixes are added by ADR when a section needs one; existing
+prefixes are never reassigned.
 
 #### 2.3 Conformance classes
 

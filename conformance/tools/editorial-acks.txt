@@ -13,3 +13,4 @@
 # stand for a section would be a licence, which this is not.
 #
 # Format:  <12-hex key>: <why this alters no normative content>
+5cbda6ac5d7c: §2.2's prefix list became a table with the same nineteen prefixes and the same nineteen glosses. The glosses were transcribed mechanically out of the existing sentence rather than retyped, so no gloss can have drifted. The whole word-level difference over the document is one word removed ("Prefixes") and four added ("The", "prefixes", and the column headers "Prefix" and "Abbreviates"); every other word is where it was. Cross-checked afterwards: the nineteen prefixes in the table are exactly the nineteen appearing in requirement identifiers, with none unused and none missing.
