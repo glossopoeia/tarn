@@ -1,0 +1,208 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 9ac4f89..59715b7 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -140,9 +140,11 @@ Conformance is defined for five classes.
+   on bytes: it does not depend on any reader, writer, or environment.
+   It is always conformance to a stated format major version. This
+   document defines format major 1, and a file declaring another major
+-  is neither conforming nor nonconforming under it: a reader refuses
+-  such a file on capability grounds (§6.3, `[R-CNT-07]`), and that
+-  refusal is not a finding about its bytes.
++  is neither conforming nor nonconforming under it save as to the
++  requirements that reach it (`[R-CNF-13]`): a reader refuses such a
++  file on capability grounds (§6.3, `[R-CNT-07]`), and that refusal is
++  not a finding about its bytes, while the failure of a reaching
++  requirement is.
+   A few obligations this specification places on writers govern their
+   *conduct* rather than their output — where a value is published, or
+   which registry version a writer targets (§10.3, §18.3) — and a file
+@@ -222,6 +224,40 @@ Conformance is defined for five classes.
+   verdict.
+   `[R-CNF-11]`
+ 
++A requirement of this specification **reaches** a file declaring a
++format major other than 1 when, and only when, the invariant its
++condition violates is one `[R-CNT-24]` fixes in every format major
++version. The test is the invariant asserted, not the bytes read: a
++check that consumes bytes a future major is free to redefine can still
++assert only a fixed invariant. A reader MUST apply every reaching
++requirement to a file whatever major it declares, and MUST treat its
++failure as
++reject-file on that requirement's own ground rather than on capability
++grounds; the distinct diagnostic `[R-CNT-07]` asks for is owed where
++every reaching requirement is satisfied and the declared major is one
++the reader does not implement. A verifier that establishes such a
++failure reports *nonconforming*, whatever major the file declares and
++whether or not it implements that major: the invariant broken is one
++that major shares (`[R-CNT-24]`), so the finding is not relative to
++format major 1. Every other requirement of this specification governs
++a structure this text defines for format major 1 alone; it is not
++assessed against a file declaring another major, no violation of it is
++established there, and no §21 row restating it records such a file.
++`[R-CNF-13]`
++
++> **Note.** The test is the invariant a condition violates, not the
++> fields it reads, and three rows show why the distinction carries the
++> weight. §21.2's F14 reaches although the bytes it checksums include
++> fields a future major may redefine: it consumes them as CRC input
++> and asserts only `[R-CNT-24]`'s CRC-32C at F − 4 over
++> [F − 64, F − 4). F5 does not reach although its subject is the
++> physical file size, which no major can redefine: the 128-byte floor
++> it asserts is derived from a directory of at least 4 bytes at an
++> offset of at least 16 and a 64-aligned F (`[R-CNT-27]`), and those
++> are format major 1's. F15 does not reach although its Governing rule
++> cell cites `[R-CNT-24]`: the trailer bytes it requires be zero are
++> inside the 48 that rule lets a future major redefine.
++
+ #### 2.4 Outcome classes and owning scope
+ 
+ Every detectable file-conformance violation named by this
+@@ -398,11 +434,15 @@ scope. `[R-ENC-03]`
+ > without unsigned arithmetic gymnastics.
+ 
+ A reader — including any updater or verifier, which are readers of the
+-files they process — MUST treat any quantity this specification defines
+-as a sum or product of integers obtained from a file (offsets plus
+-lengths, grid counts, tile counts, sample-position counts, ordinals)
+-whose mathematical value would exceed 2⁶³ − 1 as a validity error at
+-the owning scope, and MUST NOT act on a wrapped or truncated value.
++files they process — MUST treat any quantity this specification
++**designates** a declaration-derived sum or product of integers obtained
++from a file (offsets plus lengths, grid counts, tile counts,
++sample-position counts, ordinals) whose mathematical value would exceed
++2⁶³ − 1 as a validity error at the owning scope, and MUST NOT act on a
++wrapped or truncated value. A designation is express, made by the
++section that defines the quantity; an expression this specification
++writes only inside a comparison, and names nowhere, is not a designated
++quantity and no reader is obliged to form it.
+ `[R-ENC-04]` A reader MUST NOT allocate, seek, or
+ issue I/O based on any integer obtained from a file before the checksum
+ covering it has been verified (§4.5, §8). `[R-ENC-05]`
+@@ -1511,8 +1551,8 @@ The layer's **spatial-tile count** is N = ∏ Gᵢ, and its
+ **addressed-tile count** — the number of its tile-index entries (§15) —
+ is N for an interleaved layer and C · N for a planar layer, where C is
+ the channel count, and its **total sample-position count** is N · P.
+-These products, like all geometry arithmetic, are
+-subject to `[R-ENC-04]`: a reader MUST treat a product exceeding
++These products are declaration-derived quantities under
++`[R-ENC-04]`: a reader MUST treat one exceeding
+ 2⁶³ − 1 as a validity error at layer scope. `[R-GEO-03]`
+ 
+ > **Note.** The stated form of the ceiling division avoids the idiom
+@@ -1530,9 +1570,11 @@ subject to `[R-ENC-04]`: a reader MUST treat a product exceeding
+ #### 11.3 Uniform tiles and edge padding
+ 
+ Every tile of a layer has the same logical shape (T₀, …, T_{d−1}).
+-Where Gᵢ · Tᵢ > Eᵢ, the tiles at the high edge of dimension i contain
+-**padding positions** — sample positions whose coordinate along that
+-axis would be ≥ Eᵢ. Padding positions are serialized like any other
++Where Eᵢ mod Tᵢ ≠ 0 — equivalently, where the grid overhangs the
++extent, stated in a form that forms no product (§4.2) — the tiles at
++the high edge of dimension i contain **padding positions** — sample
++positions whose coordinate along that axis would be ≥ Eᵢ. Padding
++positions are serialized like any other
+ position (byte-level rules and padding content: §14) but are not part
+ of the reference array (§3.2); a reader MUST NOT return padding
+ positions as samples. `[R-GEO-04]`
+@@ -2220,7 +2262,10 @@ of `[R-SLB-03]` are: by a verifier. `[R-SLB-04]`
+ 
+ The owning scope of a layer's codec and filter declarations is the
+ layer; the owning scope of one stored tile's payload under them is
+-the tile (§2.4).
++the tile (§2.4). Every rule in this section ranges over **stored**
++tiles — a tile whose index entry is the sentinel is not stored (§3.1,
++`[R-IDX-02]`), carries no payload under any codec, and satisfies these
++rules vacuously.
+ 
+ #### 17.1 The pipeline
+ 
+@@ -2253,9 +2298,9 @@ included — as a validity error at layer scope (`[R-CNT-23]`).
+ `[R-COD-03]`
+ 
+ **Codec 1 — none.** The stored bytes are the filtered image
+-verbatim. The index entry's length therefore MUST equal the tile's
+-decoded size (§14.2, §14.3); a reader MUST treat a mismatch as a
+-validity error at tile scope — checkable from the entry and the
++verbatim. A **non-sentinel** index entry's length therefore MUST equal
++the tile's decoded size (§14.2, §14.3); a reader MUST treat a mismatch
++as a validity error at tile scope — checkable from the entry and the
+ layer record alone, before any payload fetch. `[R-COD-04]`
+ 
+ **Codec 2 — deflate.** The stored bytes are exactly one DEFLATE
+@@ -2341,7 +2386,8 @@ error at layer scope, checkable from declarations alone.
+ > extent at 0 holds the count at 0 and the escape with it — and the
+ > same declarations are then measured against the cap.
+ > `[R-ENC-04]`'s overflow rule carries no such quantifier — it binds
+-> any sum or product a file yields — so P·Q and P·Bᶜ are checked in
++> every quantity it designates, whether or not the layer addresses a
++> tile — so P·Q and P·Bᶜ are checked in
+ > an empty layer even though this cap is not.
+ 
+ For every codec: the stored bytes MUST decode to exactly the
+@@ -3034,8 +3080,8 @@ An appender MUST, in order:
+    layer's own declarations impose, `[R-COD-07]`'s lz4 decoded-size
+    cap among them (L44), which an
+    empty layer escapes only because that cap is quantified over
+-   addressed tiles. `[R-ENC-04]`'s 2⁶³ − 1 ceiling on every derived
+-   product is another, and the list is not offered as exhaustive:
++   addressed tiles. `[R-ENC-04]`'s 2⁶³ − 1 ceiling on every quantity
++   it designates is another, and the list is not offered as exhaustive:
+    a growth is permitted exactly where the geometry it produces
+    satisfies every rule that geometry is subject to.
+ 
+@@ -3419,21 +3465,14 @@ calls it the sole resolved byte in this format.
+ 
+ #### 21.2 File-scope violations
+ 
+-Outcome: reject-file. 36 conditions. A file declaring a format major
+-other than 1 is neither conforming nor nonconforming under this text
+-(§2.3, `[R-CNF-02]`), and the rows below whose subject is that
+-file's *geometry* do not reach it: §6.2 puts the version gate ahead
+-of every check but the trailer magic and the trailer CRC, so such a
+-file is refused on capability grounds first. Four rows are outside
+-that reasoning and do reach it, because their subject is a field
+-fixed across every major (`[R-CNT-24]`): F8 and F1's trailer-magic
+-instance, F14's trailer CRC — the two checks §6.2 places before the
+-gate — and F6 with F1's front-block instance, which `[R-CNT-04]`
+-places before other processing for a reader that already holds those
+-bytes, one that would have to fetch them being free to defer or omit
+-the check. F18 is not an exception but a case
+-outside the premise: version_major = 0 declares no major at all and
+-is permanently invalid in every one (§21.6).
++Outcome: reject-file. 36 conditions. Which rows reach a file declaring
++a format major other than 1 is decided by `[R-CNF-13]` (§2.3), and
++deriving it there yields F8, F14, F6 and both of F1's instances — each
++asserting an invariant `[R-CNT-24]` fixes in every major — and no
++other row; where this restatement and that rule diverge, the rule
++governs (§21.1). F18 is not an exception but a case outside the
++premise: version_major = 0 declares no major at all and is permanently
++invalid in every one (§21.6).
+ 
+ | # | Condition | Instances | Detector | Detected | Governing rule |
+ |---|---|---|---|---|---|
+@@ -3839,8 +3878,8 @@ a length embedded in a payload — a compressed stream that expands
+ beyond the declared decoded size is a tile-scope error
+ (`[R-COD-08]`), which is this format's decompression-bomb defense
+ and the reason no codec's embedded size field is ever an allocation
+-source (`[R-COD-06]`). Every sum and product taken from a file is
+-overflow-checked before use (`[R-ENC-04]`). And nothing is
++source (`[R-COD-06]`). Every declaration-derived sum and product
++`[R-ENC-04]` designates is overflow-checked before use. And nothing is
+ allocated, sought, or fetched on the strength of a field before the
+ checksum covering it verifies (`[R-ENC-05]`). A reader MUST
+ NOT size an allocation, fetch, or index walk in proportion to a
+@@ -4353,9 +4392,10 @@ the file.
+ 5. **No declared alignment and no slab**, or fixed declared values —
+    both change placement and neither is implied by content. **A fixed
+    filter value** likewise: §17.3 leaves the choice to the writer, it
+-   changes the stored bytes of every tile it touches, and no content
+-   implies it, so two writers agreeing on everything else still
+-   disagree on bytes without it pinned.
++   changes the stored bytes of any tile whose shuffle stride exceeds 1
++   — §17.3 makes it the identity where the stride is 1, as for a packed
++   boolean plane — and no content implies it, so two writers agreeing
++   on everything else still disagree on bytes without it pinned.
+ 6. **The sentinel for every all-fill tile**, so that a tile whose
+    samples all equal fill is never stored; otherwise two writers
+    agreeing on content still disagree on bytes.

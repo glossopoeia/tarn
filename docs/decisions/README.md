@@ -121,6 +121,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0103](0103-round-26s-disposition.md) | Round 26's remaining findings: `[R-COD-04]`'s subject, and Appendix G's filter argument | Accepted (dispositions round 26's non-byte-level findings) |
 | [0104](0104-editorial-changes-need-a-check-not-an-adr.md) | Editorial and placement changes need a check, not an ADR | Accepted (adds `tarn_editorial.py`; relaxes CONTRIBUTING's cite-your-ADR rule for changes that alter no normative content) |
 | [0105](0105-reach-is-an-invariant-test-stated-in-2-3.md) | Reach is a test on the invariant violated, stated in §2.3 | Accepted (resolves Q-H4, Q-H5, Q-H6; adds `[R-CNF-13]`) |
+| [0106](0106-the-r27-audit-repairs.md) | Six defects from the round-27 audit, five of them this week's own repairs | Accepted (revises ADR-0102, ADR-0103 and ADR-0105) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).
