@@ -123,6 +123,7 @@ never rewritten — a new ADR supersedes it and both link to each other.
 | [0105](0105-reach-is-an-invariant-test-stated-in-2-3.md) | Reach is a test on the invariant violated, stated in §2.3 | Accepted (resolves Q-H4, Q-H5, Q-H6; adds `[R-CNF-13]`) |
 | [0106](0106-the-r27-audit-repairs.md) | Six defects from the round-27 audit, five of them this week's own repairs | Accepted (revises ADR-0102, ADR-0103 and ADR-0105) |
 | [0107](0107-the-r28-audit-repairs.md) | `[R-CNF-02]`'s stale quantifier, `[R-CNF-13]`'s swallowed exemption, and a tooling defect an auditor found | Accepted (revises ADR-0106; corrects `tarn_editorial.py`; amends Q-I6) |
+| [0108](0108-an-acknowledgement-file-for-editorial-over-flags.md) | An acknowledgement file for editorial over-flags | Accepted (adds `editorial-acks.txt`; closes a gap ADR-0104 left) |
 
 Supporting evidence for many Precedent sections lives in
 [docs/research/reference-format-lessons.md](../research/reference-format-lessons.md).

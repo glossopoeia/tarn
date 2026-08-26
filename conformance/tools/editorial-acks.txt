@@ -1,0 +1,15 @@
+# Acknowledged over-flags of tarn_editorial.py, per ADR-0108.
+#
+# The check compares each section's normative prose and every table row. It
+# cannot prove that content which moved BETWEEN prose and a table is the same
+# content, because that equivalence is semantic rather than textual — so a
+# faithful list-to-table conversion grades CONTENT. This file is where such a
+# judgement is recorded, on the same discipline propagation-acks.txt uses: an
+# exception is a judgement on the record, not silence.
+#
+# Each key is a digest of one exact difference, printed by the tool when it
+# flags. An acknowledgement is therefore SINGLE-USE: any further edit to the
+# same passages yields a different key and is flagged again. A key that could
+# stand for a section would be a licence, which this is not.
+#
+# Format:  <12-hex key>: <why this alters no normative content>

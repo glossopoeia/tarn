@@ -94,6 +94,7 @@ Exit status is 1 on CONTENT, and on PLACEMENT under --strict.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import subprocess
 import sys
@@ -102,6 +103,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 SPEC = "spec/tarn.md"
+ACKS = "conformance/tools/editorial-acks.txt"
 
 REQ = re.compile(r"\[(R-[A-Z]{3}-\d{2})\]")
 HEADING = re.compile(r"^(#{2,6})\s+(.*)$")
@@ -226,7 +228,42 @@ def report_diff(before: str, after: str, limit: int = 3) -> None:
         print(f"      … {extra} more sentence(s)")
 
 
-def compare(before: str, after: str, strict: bool, verbose: bool) -> int:
+def load_acks(path: Path | None = None) -> dict[str, str]:
+    """key -> reason, from editorial-acks.txt. Missing file means no acks."""
+    f = path or (REPO / ACKS)
+    out: dict[str, str] = {}
+    if not f.exists():
+        return out
+    for line in f.read_text(encoding="utf-8").split("\n"):
+        line = line.strip()
+        if not line or line.startswith("#") or ":" not in line:
+            continue
+        key, reason = line.split(":", 1)
+        if reason.strip():
+            out[key.strip()] = reason.strip()
+    return out
+
+
+def ack_key(changed: list[str], pb: dict, pa: dict, gone: list, new: list) -> str:
+    """A digest of exactly this difference.
+
+    Keyed on the change, not on the section, so an acknowledgement is
+    single-use: any later edit to the same section produces a different key and
+    is flagged again. An ack that could stand for a section would be a licence,
+    which is not what this is.
+    """
+    h = hashlib.sha256()
+    for s in changed:
+        h.update(f"§{s}\x00{pb.get(s,'')}\x00{pa.get(s,'')}\x00".encode())
+    for r in sorted(" | ".join(x) for x in gone):
+        h.update(b"-" + r.encode() + b"\x00")
+    for r in sorted(" | ".join(x) for x in new):
+        h.update(b"+" + r.encode() + b"\x00")
+    return h.hexdigest()[:12]
+
+
+def compare(before: str, after: str, strict: bool, verbose: bool,
+            acks: dict[str, str] | None = None) -> int:
     pb, tb = parse(before)
     pa, ta = parse(after)
 
@@ -304,9 +341,23 @@ def compare(before: str, after: str, strict: bool, verbose: bool) -> int:
                 report_diff(b, a, limit=1)
         print()
 
+    acks = load_acks() if acks is None else acks
+    key = ack_key(changed_sections, pb, pa, tbl_gone, tbl_new)
+    if key in acks:
+        print(f"ACKNOWLEDGED — over-flag {key} is recorded in {ACKS}:")
+        print(f"  {acks[key]}")
+        print()
+        print("EDITORIAL by acknowledgement (ADR-0108). Commit with an `editorial:`")
+        print("subject. The acknowledgement is keyed to this exact difference, so any")
+        print("further edit to these passages is flagged again.")
+        return 0
+
     print("CONTENT — this changes normative text and needs an ADR (CONTRIBUTING,")
-    print("AGENTS.md rule 2). If the diff above is only markup, restore the markup")
-    print("and re-run, or record the judgement in the ADR.")
+    print("AGENTS.md rule 2). If the diff above is only markup — content moved")
+    print("between prose and a table, say — record the judgement instead by adding")
+    print(f"this line to {ACKS}, with a real reason:")
+    print()
+    print(f"  {key}: <why this alters no normative content>")
     return 1
 
 
@@ -437,6 +488,66 @@ def synthetic(spec: str) -> list[tuple[str, str, str]]:
     return out
 
 
+def keyfor(before: str, after: str) -> str:
+    pb, tb = parse(before)
+    pa, ta = parse(after)
+    changed = sorted(x for x in set(pb) | set(pa) if pb.get(x, "") != pa.get(x, ""))
+    return ack_key(changed, pb, pa, list((tb - ta).elements()), list((ta - tb).elements()))
+
+
+def selftest_acks(bad: int) -> int:
+    """An acknowledgement must cover exactly one difference and nothing else.
+
+    A key that survived an unrelated edit would be a standing licence over a
+    passage, which is the failure this design exists to avoid.
+    """
+    print()
+    print("  acknowledgements (single-use property):")
+    before = git("show", "HEAD:" + SPEC)
+    after = (REPO / SPEC).read_text(encoding="utf-8")
+    if not before or not after:
+        print("    SKIP  cannot read both revisions")
+        return bad
+
+    k1 = keyfor(before, after)
+    acks = load_acks()
+
+    # the key is stable across runs
+    ok = k1 == keyfor(before, after)
+    bad += 0 if ok else 1
+    print(f"    {'ok  ' if ok else 'FAIL'} key is deterministic ({k1})")
+
+    # a DIFFERENT change must not reuse the key
+    lines = after.split("\n")
+    for i, l in enumerate(lines):
+        if l.startswith("Normative requirements carry identifiers"):
+            lines[i] = l.replace("carry identifiers", "carry the identifiers", 1)
+            break
+    else:
+        print("    SKIP  could not build a second mutation")
+        return bad
+    k2 = keyfor(before, "\n".join(lines))
+    ok = k2 != k1 and k2 not in acks
+    bad += 0 if ok else 1
+    print(f"    {'ok  ' if ok else 'FAIL'} a different edit yields a different, unacked key ({k2})")
+
+    # an empty ack file acknowledges nothing
+    ok = load_acks(Path("/nonexistent-editorial-acks")) == {}
+    bad += 0 if ok else 1
+    print(f"    {'ok  ' if ok else 'FAIL'} a missing ack file acknowledges nothing")
+
+    # a reasonless line is not an acknowledgement
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as fh:
+        fh.write("# comment\n" + k1 + ":\n" + k1 + "x: a reason\n")
+        tmp = fh.name
+    got = load_acks(Path(tmp))
+    ok = k1 not in got and (k1 + "x") in got
+    bad += 0 if ok else 1
+    print(f"    {'ok  ' if ok else 'FAIL'} a key with no reason is not an acknowledgement")
+    return bad
+
+
 def selftest() -> int:
     print("self-test — historical commits, then mutations of the current document\n")
     bad = 0
@@ -475,6 +586,8 @@ def selftest() -> int:
         ok = got == expect
         bad += 0 if ok else 1
         print(f"    {'ok  ' if ok else 'FAIL'} want {expect:9s} got {got:9s}  {name}")
+
+    bad = selftest_acks(bad)
 
     print()
     print("self-test PASSED" if not bad else f"self-test FAILED — {bad} case(s)")
