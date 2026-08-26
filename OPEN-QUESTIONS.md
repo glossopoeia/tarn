@@ -1028,6 +1028,29 @@ commit changes the scope it attaches to. Round 25's writer walk found the row
 does not say whether *adding* a non-layer top-level record is such a change.
 Options: say it is; say it is not; or state the test the row is applying. Owning
 section §20.4.
+- **Round 27 found it again, cold, and graded it byte-level.** A writer walk that
+  had never seen this entry reached the same silence and supplied what the entry
+  lacked: a construction. The asymmetry is the hinge — item one names a **set**
+  ("the file's layer set") and the row extends it to addition in terms ("A commit
+  changes the layer set by adding a layer"); item three names an **individual
+  record** ("another *non-layer* top-level record"), and changing a record
+  presupposes one existing before and after. The row resolves item three for one
+  operation only ("Dropping the record, or dropping another record in the same
+  commit, is not itself such a change") and never for addition.
+- **The construction.** Generation *n*+1 of a given input, carrying a newly added
+  file-scope user-metadata record and not carrying a dropped PE = 0 record, is an
+  ordinary conforming file. A creator emits generation 1 and a compactor mints a
+  fresh `file_id` at generation 1 (§20.1, §20.5), so only an appender can produce
+  it, and only the set reading permits that. Two conforming updaters, one input,
+  one instruction, directories differing by one 24-byte header plus its inline
+  payload — and so differing in `dir_length` at trailer offset 32, in
+  `committed_file_length` at offset 40, and in F.
+- **Standing:** byte-level, so it **gates G3**. The implementer triage pass
+  upheld the grade against two downgrades, the refute phase returned
+  DOWNGRADE_REFUTED, and the hand-check confirmed the producer enumeration
+  independently.
+- **This is the fifth byte-level defect in this cell**, after rounds 10, 14, 16
+  and 17. ADR-0081 measured it as the document's most defect-prone passage.
 
 ### Q-I6. Why does Appendix G pin some degrees of freedom and not others? [shaping]
 **Question:** Appendix G's reproducible-writer profile pins codec, filter,
@@ -1196,6 +1219,49 @@ three auditors reading independently.
   the restatement this passage keeps getting wrong. If a geometry-side gloss is
   wanted, only (b) and (c) key on a quantity that survives a commit that grows
   and shrinks at once.
+
+### Q-B9. Which writers does the flags = 0 obligation bind? [shaping]
+**Question:** `[R-CNT-08]` says "a writer **creating a file** under this text MUST
+write flags = 0", and the next sentence carves out a compactor expressly because
+"its output is a new file" — which shows the phrase is read as *producing a new
+file*, and an appender does not. An appender's only stated flags obligation is
+the one that follows: copy unknown ignore-lane bits forward and MUST NOT clear
+them. **Nothing bars an appender from originating an ignore-lane bit its input
+did not carry.** Round 27's writer walk found it and graded it byte-level; the
+implementer triage pass upheld the grade, the refute phase overturned the two
+downgrades, and the hand-check confirmed it. Owning section §6.3.
+- **Why the emittable set moves.** §21.6 makes the resulting file conforming in
+  terms ("An ignore-lane flag bit (16–31) is set | Ignored; the file is
+  conforming"), so `[R-CNF-05]` bars nothing under either reading. The producer
+  enumeration then closes: a creator emits generation 1 (§20.1), a compactor
+  mints a fresh `file_id` and generation 1 (§20.5, `[R-WRT-06]`), and
+  `[R-LIF-01]` freezes bytes [0, F), so the input trailer carrying flags = 0
+  stays inside the output. A generation-2 file whose live trailer sets a bit its
+  own embedded generation-1 trailer does not is producible **only** by an
+  appender, and only on the strict-scope reading. Two conforming appenders, one
+  input, one instruction, trailers differing at offset 12 and at offset 60.
+- **`[R-CNF-02]` sharpens rather than settles it.** It lists "§6.3's flags = 0
+  against a set ignore-lane bit" among the obligations that "bind the actor"
+  while "the predicate binds the bytes" — so the file stays conforming and the
+  *writer* does not, which is exactly a claim about what a conforming writer may
+  emit.
+- **Options:** (a) **State the obligation over every writer producing a trailer
+  under this text** — no flag bit originates here — with copy-forward as the
+  stated addition for updaters and compactors. One sentence, and it disturbs
+  neither §21.6's non-violation row nor the later-minor story. (b) **Bind
+  creators only, and say so**, licensing an appender to originate a bit; then
+  `[R-WRT-06]` obliges every later compactor to propagate a bit naming a feature
+  no minor version defines, forever, with no verifier able to flag it. (c)
+  **Make §20.3 step 6's enumeration expressly exhaustive as to the flags field**,
+  which reaches appenders without touching §6.3 but leaves a compactor's route
+  stated in two places.
+- **What settles it:** whether an ignore-lane bit is meant to be a claim about
+  the *file's* feature floor or about the *commit* that wrote it. Under the
+  first, only a writer that knows what the bit means may set it, and (a)
+  follows; under the second, (b) is coherent but owes an account of what a
+  reader is meant to do with a bit no minor version has defined. A sweep found
+  every occurrence of `flags = 0` in the document (four) and every mention of
+  the ignore lane; none binds an appender.
 
 ### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
 **Resolution:** a non-normative Appendix G — codec 1 or a named codec
