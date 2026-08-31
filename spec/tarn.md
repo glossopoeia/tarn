@@ -3247,7 +3247,7 @@ PE = 0 is read as PE = 1, `[R-CNT-12]`), and carry these obligations:
 
 | Stored flags | Updater obligation |
 |---|---|
-| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. At either scope a compactor MUST refuse the file, on `[R-WRT-06]`'s own ground: such a type can define references this specification does not (§7.2), so its bytes cannot be safely relocated. |
+| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. At either scope a compactor MUST refuse to compact the file, on `[R-WRT-06]`'s own ground: such a type can define references this specification does not (§7.2), so its bytes cannot be safely relocated. |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
 | MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender MUST NOT drop it except in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, the entry set of its index, or which of its tiles are stored; for a top-level record, the file's layer set, any layer record's content, or another *non-layer* top-level record. A commit changes the layer set by adding a layer; an appender never removes one (`[R-CNT-22]`, §7.3). Superseding a stored tile's bytes re-places that layer's index region (§20.3, `[R-WRT-04]`), moving its extent slot (§7.4) and so modifying that layer's record, which is such a change: an appender superseding a tile MAY drop a top-level such record, or such a sub-record of the layer whose tile it superseded, and the SHOULD-report below is what keeps the loss visible. Dropping the record, or dropping another record in the same commit, is not itself such a change, so a commit whose only effect would be the drop MUST retain it. A compactor MAY drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
@@ -3436,13 +3436,14 @@ from that scope — subject to the same exception stated above, a rule
 that assigns an outcome expressly — never from the severity of the
 corruption. Some
 rows are strict specializations of others: where every file
-exhibiting one row's condition necessarily exhibits another's, the
-file is recorded against the narrower row, whose detector and
-detection point are the ones that apply. F1 of F6 and of F8, F35 of
-F36, L24 of L25, F21 of F22 and L10 of L11 stand in that relation;
-the property decides any pair and this list is not offered as
-closed. Rows that merely overlap, each reachable without the other,
-do not stand in it. The subsections after §21.5 are not
+exhibiting one row's condition — at a given instance of it, where the
+row enumerates several — necessarily exhibits another's, the file is
+recorded against the narrower row, whose detector and detection point
+are the ones that apply. F1's front-block instance of F6 and its
+trailer-magic instance of F8, F35 of F36, L24 of L25, F21 of F22 and
+L10 of L11 stand in that relation; the property decides any pair and
+this list is not offered as closed. Rows that merely overlap, each
+reachable without the other, do not stand in it. The subsections after §21.5 are not
 part of the register and carry no rows: neither this completeness
 clause nor the instance arithmetic below reaches §21.6's defined
 non-violations, §21.7's account of what no check detects, or
