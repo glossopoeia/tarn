@@ -1263,6 +1263,51 @@ downgrades, and the hand-check confirmed it. Owning section §6.3.
   every occurrence of `flags = 0` in the document (four) and every mention of
   the ignore lane; none binds an appender.
 
+### Q-C9. What does `[R-SEC-02]`'s allocation prohibition reach? [shaping]
+**Question:** §22.2's `[R-SEC-02]` opens by promising that "a reader allocates
+from geometry and never from a length embedded in a payload", and closes, four
+sentences later, with "A reader MUST NOT size an allocation, fetch, or index walk
+in proportion to a **declared magnitude it has not corroborated against the
+file's actual length**". A tile's decoded size is a declared magnitude, and under
+codecs 2–4 §17.2's Note says outright that "no bound relates a stored length to
+its decoded size in either direction" — so nothing corroborates it. `[R-SER-07]`
+nevertheless commands that allocation: "readers allocate from those declarations,
+not from stored data." Read literally, the requirement's last sentence forbids
+what its first sentence and `[R-SER-07]` require. Owning section §22.2.
+- **Four round-27 readers reported it independently** — the reader, writer and
+  verifier walks and the quiz author — with two independently constructed
+  conforming files, the smaller being 1,280 bytes carrying a single tile whose
+  decoded size is exactly 256 MiB, §21.9's guaranteed minimum. A reader taking
+  the literal reading must decline an allocation 209,715 times the file's length,
+  on a file every quantity of which lies inside the guarantees.
+- **It is not byte-level, and the reason is worth keeping.** `[R-ERR-04]` says
+  "Software that declines **on that ground** a file whose every quantity lies
+  within the table is not a conforming reader (`[R-CNF-03]`)", and that such a
+  refusal "MUST be reported as a resource limit and not as a validity error" —
+  which is the ground the literal reader is on. So the document decides against
+  the literal reading and there are not two conforming readers. All three triage
+  passes graded it down, the refute phase returned DOWNGRADE_STANDS, and the
+  hand-check agreed.
+- **But it decides it only through a chain the reader has to assemble**, across
+  §22.2, §14.3, §17.2 and §21.9, and a census found that **"corroborated" and
+  "declared magnitude" each occur exactly once in the document** — in the
+  disputed sentence. The requirement defines neither term it turns on.
+- **Options:** (a) **Bound the prohibition** to magnitudes that determine how
+  many of the file's own bytes a reader fetches, walks or buffers — offsets,
+  lengths, extents, entry counts, which is all its own illustrative clause and
+  §22.2's Note are about — and exempt the decoded size by name, citing
+  `[R-SER-07]`. (b) **Exempt the decoded tile size by name only**, leaving the
+  general form otherwise untouched; smaller, but it leaves the boundary for the
+  next quantity undrawn. (c) **Restate the requirement as the three properties
+  its opening sentence promises**, so the prohibition follows from them rather
+  than standing beside them as a fourth thing.
+- **What settles it:** whether the closing sentence is meant to state a fourth
+  property or to summarise the three above it. If it summarises, (c) is the
+  honest form and the conflict cannot recur. **Note the hazard:** (a) states a
+  new universal over what the rule reaches, and two repairs written in that shape
+  this week each replaced a false universal with a narrower false one (ADR-0106),
+  so whichever option is taken owes the derivation a new rule owes.
+
 ### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
 **Resolution:** a non-normative Appendix G — codec 1 or a named codec
 build (byte-identity across implementations is unattainable for
