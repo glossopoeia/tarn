@@ -1052,6 +1052,41 @@ section §20.4.
 - **This is the fifth byte-level defect in this cell**, after rounds 10, 14, 16
   and 17. ADR-0081 measured it as the document's most defect-prone passage.
 
+**Priced by a spec-only consequence sweep, one agent per option, 2026-08-26.**
+
+- **The document does not decide between "yes" and "no", and both readings are
+  textual.** For "yes": the cell states expressly that addition counts, for the
+  layer-set limb — "A commit changes the layer set by adding a layer". For
+  "no": that limb's object is a *set*, changed by adding to it, while the third
+  limb's object is "another *non-layer* top-level record" — a record, and
+  *another* presupposes one already present.
+- **"Yes" has a decidability problem that "no" does not.** `[R-CNT-14]` says
+  readers MUST NOT infer meaning from a record's position in the sequence, and
+  no multiplicity rule constrains an unassigned type, so **both generations'
+  directories can be byte-identical** while one is "added and dropped" and the
+  other "modified". The licence would then turn on the appender's intent, which
+  nothing in the file records. Worse, the licensing record may itself be a
+  24-byte experimental-range record with PE = 0, so the licence renews
+  indefinitely and the MUST NOT costs 24 bytes to bypass — and the SHOULD-report
+  beside it is non-certifiable (§2.4: "Deviation from a SHOULD is not a
+  violation for this purpose"), so the MUST NOT is the entire protection.
+  "No" admits no such construction: its licensing act must modify a record
+  present in both generations, which necessarily changes the directory's bytes.
+- **The third option — "state the test the row is applying" — does NOT close
+  the fork, and this is the sweep's most valuable single result.** A property
+  phrased "the commit independently changes the scope the record attaches to"
+  is silent on whether adding to the file's top-level record set changes the
+  file's scope, *for exactly the reason the enumeration was silent*: the cell
+  models the layer set as a set (changed by addition) and the record limb as a
+  record (changed by modification). A property abstracting over both does not
+  say which model the record set follows, so both readings survive intact.
+  Worse, for a top-level record the scope **is** the file, and §9.2's mandatory
+  complete directory with §9.3's per-commit generation increment mean every
+  commit changes the file — so the property is satisfied by the bare drop and
+  the cell's own exclusion sentence becomes dead letter. **This is ADR-0095's
+  property-over-list move failing on this passage**, and ADR-0106's limit is why:
+  a property beats a list only where it is true and determinate.
+
 ### Q-I6. Why does Appendix G pin some degrees of freedom and not others? [shaping]
 **Question:** Appendix G's reproducible-writer profile pins codec, filter,
 alignment and slab because each changes bytes and no content implies it. Round
@@ -1262,6 +1297,50 @@ downgrades, and the hand-check confirmed it. Owning section §6.3.
   reader is meant to do with a bit no minor version has defined. A sweep found
   every occurrence of `flags = 0` in the document (four) and every mention of
   the ignore lane; none binds an appender.
+
+**Priced by a spec-only consequence sweep, one agent per option, 2026-08-26.**
+
+- **(a) cannot be adopted as written, and the redraft is stated.** "MUST write
+  flags = 0" constrains all 32 bits, so retaining copy-forward *as an addition*
+  makes two MUSTs jointly unsatisfiable whenever the input's ignore lane is
+  nonzero — and §20.5's "in place of the flags = 0 §6.3 requires of a file
+  created under this text" is precisely the resolution clause (a) removes. A
+  precedence sweep found **no clause anywhere ordering two of this document's own
+  normative requirements**, so the deadlock is unresolvable on the page. (a) is
+  adoptable **only if redrafted as a bar on *origination* rather than on the
+  field's value**. Note the deadlock bites only on nonzero-lane inputs, so it is
+  absent exactly where this question arises.
+- **(b) does not close the fork; it widens it, and its wording is ambiguous.**
+  Licensing an appender to originate a bit leaves both readings expressly
+  permitted. Separately, "creators only" is ambiguous in a way the document
+  makes material: §20.1 defines **creator** as a term of art distinct from
+  compactor, while §6.3's subject is "a writer creating a file" — and §6.3's own
+  next sentence concedes a compactor is one ("though its output is a new file"),
+  which is the only reason its carve-out exists. Under the tier reading the
+  compactor escapes flags = 0 entirely and silently gains origination. Any
+  drafting of (b) must say which it means. (b) also runs against §10.2
+  `[R-EXT-02]`, which withholds an experimental range from the lanes on the
+  stated ground that §6.3 partitions them — the allocation (b) removes.
+- **(c) closes the fork determinately**, for every appender and regardless of
+  the appender's capability, because "exactly the input's bits and nothing else"
+  **is** an origination bar. It leaves §6.3 and `[R-WRT-06]` intact and makes
+  nothing false. Its one drafting defect: the exhaustive formula reuses §6.3's
+  actor-relative word *unknown*, which on its face would require an appender
+  that recognises a bit to clear it — inverting `[R-CNT-08]`'s MUST NOT clear.
+  Fixable in the wording.
+- **(d), which no option above contains: give the fork a byte-level witness
+  instead of a fourth conduct rule.** Every option above is a conduct rule on a
+  field no verifier can check, which is why none moves any file's status.
+  `[R-CNT-08]` says a set ignore-lane bit means "such bits are defined by later
+  minor versions", and `[R-CNT-26]` has a writer emit "the lowest version_minor
+  that defines every feature present in the file — for a file expressible under
+  this text, 0". Register the pair: **an ignore-lane bit set with
+  version_minor = 0 is a file-conformance violation** — one new §21.2 row,
+  detector verifier, detected at certification, on the precedent `[R-CNT-12]`'s
+  reserved-flag rows (F26, L47) and `[R-CNT-22]`'s stored-flag rows (F28, L49)
+  already set. That closes it for every writer tier at once, needs no ruling on
+  what "creator" means, and is the only formulation a corpus can test. It is
+  the one option that would move the register, and it has not been swept.
 
 ### Q-C9. What does `[R-SEC-02]`'s allocation prohibition reach? [shaping]
 **Question:** §22.2's `[R-SEC-02]` opens by promising that "a reader allocates

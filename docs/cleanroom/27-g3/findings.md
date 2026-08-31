@@ -266,3 +266,41 @@ touch register cells and so need an ADR under ADR-0104.
 | `mta10-uninspected-bytes-aphorism` | §18.2 — split verdict (skeptic PARTIAL); the choice between bounding the aphorism and honouring it is the maintainer's |
 
 Zero findings are left without a disposition.
+
+---
+
+## Addendum — a challenge to this round's verdict, checked and not sustained
+
+The option-consequence sweep run over Q-B9 and Q-B7 after the round returned a
+synthesis that **denied both survivors are byte-level at all**. It argued from
+`[R-CNF-05]`: "Writer conformance is semantic: this specification does not
+promise canonical bytes, and two conforming writers given identical input MAY
+produce different conforming files" — so, it reasoned, two appenders emitting
+different trailers is expressly licensed and neither question is a byte fork;
+both are *conduct* forks about which appender is a conforming updater.
+
+**Checked against the text, and it does not survive.** `[R-CNF-05]`'s two
+sentences were read as one. The first is the emission gate: "**A writer MUST
+emit only conforming files.**" The second licenses divergence *within* what the
+rules leave open — it is a statement that the document does not pin bytes it has
+not pinned. It cannot license a writer to violate a rule, because on that
+reading no writer requirement could ever be byte-level and G3 would be vacuous.
+
+The charter's own discriminator settles it, and its second limb is this case
+exactly: "If the disputed file is conforming and only one reading permits an
+actor to produce it, the set moves." Both survivors are that: §21.6 makes the
+ignore-lane file conforming in terms, an ordinary appended generation is
+conforming, and under one reading of each no conforming actor may produce the
+disputed bytes. Reading `[R-CNF-05]`'s second sentence as absorbing the
+difference would make the charter's second limb unsatisfiable in every case.
+
+**Both verdicts stand.** The challenge is recorded because it was reached
+independently, because it is the strongest argument against this round's
+headline that anything has produced, and because of how it failed: **it quoted
+one sentence and not the one immediately before it.** That is the same shape
+round 26 recorded of a refuter — "a refuter is as exposed to a narrow reading as
+the pass it attacks" — now seen in a synthesis agent, and it is the reason the
+reconciler's HAND-CHECK REQUIRED line exists.
+
+The sweep's substantive results are recorded in Q-B9 and Q-B7 rather than here,
+since they price options rather than grade findings.
