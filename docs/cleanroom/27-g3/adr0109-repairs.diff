@@ -1,0 +1,106 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 5ba3c65..a62bbff 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -2012,9 +2012,11 @@ for its combination of layout and channel types. `[R-SER-09]`
+ 
+ > **Note.** A single-channel numeric layer produces byte-identical
+ > tile images under either layout. A single-channel bool layer does
+-> not — ⌈P/8⌉ packed bytes planar versus P bytes interleaved — and
+-> both forms are valid; writers wanting compact masks choose
+-> planar.
++> not, wherever ⌈P/8⌉ ≠ P — ⌈P/8⌉ packed bytes planar versus P bytes
++> interleaved — and both forms are valid; writers wanting compact
++> masks choose planar. At P = 1 the two are the same length and
++> `[R-SER-05]` fixes the planar pad bits to the channel's fill, so
++> the images coincide exactly when that fill is false.
+ 
+ > **Rationale.** Bits inside a mixed sample tuple would need
+ > per-sample packed sub-fields with their own offset arithmetic and
+@@ -3245,7 +3247,7 @@ PE = 0 is read as PE = 1, `[R-CNT-12]`), and carry these obligations:
+ 
+ | Stored flags | Updater obligation |
+ |---|---|
+-| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. Compaction is barred on the same ground (`[R-WRT-06]`). |
++| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. At either scope a compactor MUST refuse the file, on `[R-WRT-06]`'s own ground: such a type can define references this specification does not (§7.2), so its bytes cannot be safely relocated. |
+ | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
+ | MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender MUST NOT drop it except in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, the entry set of its index, or which of its tiles are stored; for a top-level record, the file's layer set, any layer record's content, or another *non-layer* top-level record. A commit changes the layer set by adding a layer; an appender never removes one (`[R-CNT-22]`, §7.3). Superseding a stored tile's bytes re-places that layer's index region (§20.3, `[R-WRT-04]`), moving its extent slot (§7.4) and so modifying that layer's record, which is such a change: an appender superseding a tile MAY drop a top-level such record, or such a sub-record of the layer whose tile it superseded, and the SHOULD-report below is what keeps the loss visible. Dropping the record, or dropping another record in the same commit, is not itself such a change, so a commit whose only effect would be the drop MUST retain it. A compactor MAY drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+ 
+@@ -3433,10 +3435,14 @@ attach to the finest structure they damage, and the outcome follows
+ from that scope — subject to the same exception stated above, a rule
+ that assigns an outcome expressly — never from the severity of the
+ corruption. Some
+-rows are strict specializations of others — F1 of F6 and of F8,
+-F35 of F36, L24 of L25 — and a file exhibiting a specialization is
+-recorded against the narrower row, whose detector and detection
+-point are the ones that apply. The subsections after §21.5 are not
++rows are strict specializations of others: where every file
++exhibiting one row's condition necessarily exhibits another's, the
++file is recorded against the narrower row, whose detector and
++detection point are the ones that apply. F1 of F6 and of F8, F35 of
++F36, L24 of L25, F21 of F22 and L10 of L11 stand in that relation;
++the property decides any pair and this list is not offered as
++closed. Rows that merely overlap, each reachable without the other,
++do not stand in it. The subsections after §21.5 are not
+ part of the register and carry no rows: neither this completeness
+ clause nor the instance arithmetic below reaches §21.6's defined
+ non-violations, §21.7's account of what no check detects, or
+@@ -3519,7 +3525,7 @@ invalid in every one (§21.6).
+ | F18 | Trailer version_major is 0, a permanently invalid major in every format major version | version_major | reader | open | `[R-CNT-07]` |
+ | F19 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-15 | reader | open | `[R-CNT-08]` |
+ | F20 | The final 4 bytes of the directory region do not equal the CRC-32C of the preceding dir_length - 4 bytes (the raw record sequence) | directory region CRC | reader | open | `[R-CNT-11]` (R-CNT-20, R-ENC-10) |
+-| F21 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0), placing its document inline | — | reader | open | `[R-CNT-25]` |
++| F21 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0) | — | reader | open | `[R-CNT-25]` |
+ | F22 | A top-level user-metadata record's extent_length is less than 5, too short to hold both a document and the terminal CRC-32C of its final 4 bytes | — | reader | open | `[R-CNT-25]` (R-ENC-07) |
+ | F23 | A top-level user-metadata record's inline_length is not 1; the encoding field is a fixed structure, not a growable one | inline_length 0, the encoding byte absent; inline_length ≥ 2 | reader | open | `[R-MTA-03]` (R-ENC-07) |
+ | F24 | A top-level record's type field is 0x0000; type 0 is invalid and is never treated as an unknown type | type | reader | open | `[R-CNT-12]` |
+@@ -3596,7 +3602,10 @@ layer unaffected. 49 conditions.
+ #### 21.4 Tile-scope violations
+ 
+ Outcome: reject-tile — that tile's read reports failure, and never
+-returns fill in place of data (`[R-CNF-09]`). 26 conditions.
++returns fill in place of data, for a rejection the reader is obliged
++to detect (`[R-CNF-09]`); where a row's Detector is *verifier* no
++reader is obliged to detect the condition, and the governing rule
++states what a reader does. 26 conditions.
+ 
+ | # | Condition | Instances | Detector | Detected | Governing rule |
+ |---|---|---|---|---|---|
+@@ -3652,8 +3661,8 @@ blast radius and never makes the file conforming (`[R-CNF-12]`);
+ |---|---|---|---|---|---|
+ | R1 | A user-metadata record declares a document encoding of 0, or a reserved-range value (3-0x7F) | encoding 0, top-level record; encoding 0, layer sub-record; reserved 3–0x7F, top-level record; reserved 3–0x7F, layer sub-record | reader | open (top-level); layer access (sub-record) | `[R-CNT-25]` (R-MTA-03, R-EXT-03) |
+ | R2 | A user-metadata extent's final 4 bytes do not equal the CRC-32C of the preceding bytes | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-20]` (R-CNT-25) |
+-| R3 | A user-metadata document's stored bytes fail to decode under its declared assigned encoding — under an experimental-range one this specification defines no decoding and §21.6 governs (`[R-MTA-10]`); encoding 0 and a reserved value are unassigned too and R1 registers both | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
+-| R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 states or carries over from `[R-COD-06]` — the single frame occupying the extent's bytes before its terminal CRC included; unlike R3, a constraint of this row is broken by what the frame declares rather than by whether the bytes decode, so a reader that only tries decoding establishes none of them, and the content-size field breaks its constraint exactly when it is present and does not equal the decoded document's byte length | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent; bytes remaining after the frame, top-level extent; bytes remaining after the frame, layer sub-record extent; the content-size field declared larger than the decoded length, top-level extent; the content-size field declared larger than the decoded length, layer sub-record extent; the content-size field declared smaller than the decoded length, top-level extent; the content-size field declared smaller than the decoded length, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
++| R3 | A user-metadata document's stored bytes fail to decode under its declared assigned encoding — under an experimental-range one this specification defines no decoding and §21.6 governs (`[R-MTA-10]`); encoding 0 and a reserved value are unassigned too and R1 registers both; where the encoding is 2 and what fails is one of the frame constraints R4 registers, R4 is the row, whether or not the bytes also fail to decode | top-level extent; layer sub-record extent | reader | extent use | `[R-CNT-25]` |
++| R4 | A user-metadata document stored under encoding 2 breaks one of the frame constraints §18.2 states or carries over from `[R-COD-06]` — the single frame occupying the extent's bytes before its terminal CRC included; unlike R3, a constraint of this row is checkable from the extent's bytes without relying on a decoder's tolerance, and a reader that only tries decoding does not establish which of them is broken — several, the content-size field among them, are broken by what the frame declares while the bytes decode; the content-size field breaks its constraint exactly when it is present and does not equal the decoded document's byte length | missing frame magic, top-level extent; missing frame magic, layer sub-record extent; a skippable frame, top-level extent; a skippable frame, layer sub-record extent; a second frame, top-level extent; a second frame, layer sub-record extent; a nonzero dictionary ID, top-level extent; a nonzero dictionary ID, layer sub-record extent; the content-checksum flag set, top-level extent; the content-checksum flag set, layer sub-record extent; bytes remaining after the frame, top-level extent; bytes remaining after the frame, layer sub-record extent; the content-size field declared larger than the decoded length, top-level extent; the content-size field declared larger than the decoded length, layer sub-record extent; the content-size field declared smaller than the decoded length, top-level extent; the content-size field declared smaller than the decoded length, layer sub-record extent | reader | extent use | `[R-MTA-09]` (R-COD-06, R-CNT-25) |
+ | R5 | A decoded user-metadata document violates the document's own content rules — a key or string value whose UTF-8 is ill-formed in the source bytes, or that resolves a `\uXXXX` escape denoting an unpaired surrogate | ill-formed source bytes in a key, top-level document; ill-formed source bytes in a key, layer sub-record document; ill-formed source bytes in a string value, top-level document; ill-formed source bytes in a string value, layer sub-record document; unpaired-surrogate escape in a key, top-level document; unpaired-surrogate escape in a key, layer sub-record document; unpaired-surrogate escape in a string value, top-level document; unpaired-surrogate escape in a string value, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-MTA-04, R-ENC-11) |
+ | R6 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25, R-ENC-12) |
+ | R7 | A decoded user-metadata document is not well-formed JSON, its top-level value is not an object, or it carries a leading U+FEFF byte-order mark | not well-formed JSON, top-level document; not well-formed JSON, layer sub-record document; top-level value not an object, top-level document; top-level value not an object, layer sub-record document; leading U+FEFF, top-level document; leading U+FEFF, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+@@ -3668,7 +3677,7 @@ of them as a failure is the nonconforming party.
+ 
+ | Condition | Defined behavior | Rule |
+ |---|---|---|
+-| An index entry is the sentinel | The tile is addressed but not stored; every sample position it carries reads as the channel's fill | `[R-IDX-02]`, `[R-TYP-08]` |
++| An index entry is the sentinel | The tile is addressed but not stored; every sample position it carries inside the layer's extents reads, for each channel the tile carries, as that channel's fill | `[R-IDX-02]`, `[R-TYP-08]` |
+ | A requested coordinate lies outside the layer's extents | The request fails as a request, with no verdict on the file; a region request returns the intersection, empty if disjoint | `[R-MDL-01]`, `[R-GEO-02]`, `[R-RDR-04]` |
+ | A dimension has extent 0 | A valid, empty layer: zero addressed tiles, an empty index, reads returning no samples | `[R-GEO-02]` |
+ | The file contains zero layers | A conforming file with an empty directory | `[R-CNT-14]` (R-CNT-02) |
+@@ -4452,11 +4461,12 @@ the file.
+    pinning the producer.
+ 
+ 10. **Names normalized to Unicode Normalization Form C**, which
+-   `[R-ENC-14]` states as a SHOULD. A caller-supplied decomposed name
+-   is a different name under `[R-ENC-13]` and a different length —
+-   §4.6's `température` is 12 bytes in NFC and 13 in NFD — so a writer
+-   that does not normalize emits a different layer record, a different
+-   `inline_length`, and a different `dir_length`.
++   `[R-ENC-14]` states as a SHOULD. A caller-supplied decomposed name is a
++   different name under `[R-ENC-13]`, because its bytes differ — whether or
++   not its length differs with them. §4.6's `température` is 12 bytes in NFC
++   and 13 in NFD, while a name differing only by canonical reordering is the
++   same length in both forms. So a writer that does not normalize emits a
++   different layer record.
+ 
+ Everything else the profile needs is already mandatory — fill-encoded
+ edge padding (`[R-SER-05]`) and explicitly recorded fill
