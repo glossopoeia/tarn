@@ -155,7 +155,7 @@ class Record:
 
 
 def build_with_layout(layers: list[Layer], records: list[Record] | None = None,
-                      file_id: int = 0x0123456789ABCDEF, generation: int = 1,
+                      file_id: int = 0x0123456789ABCDEF,
                       version_minor: int = 0) -> tuple[bytes, dict]:
     """`build`, plus a map naming where every field landed.
 
@@ -165,7 +165,7 @@ def build_with_layout(layers: list[Layer], records: list[Record] | None = None,
     offsets in a recipe would be a restatement site of exactly the kind
     ADR-0049 came out of.
     """
-    blob = build(layers, records, file_id, generation, version_minor)
+    blob = build(layers, records, file_id, version_minor)
     F = len(blob)
     t = F - 64
     layout: dict[str, tuple[int, int]] = {
@@ -175,15 +175,14 @@ def build_with_layout(layers: list[Layer], records: list[Record] | None = None,
         "trailer.version_major": (t + 8, 2),
         "trailer.version_minor": (t + 10, 2),
         "trailer.flags": (t + 12, 4),
-        "trailer.generation": (t + 16, 8),
-        "trailer.dir_offset": (t + 24, 8),
-        "trailer.dir_length": (t + 32, 8),
-        "trailer.committed_file_length": (t + 40, 8),
-        "trailer.file_id": (t + 48, 8),
-        "trailer.reserved": (t + 56, 4),
+        "trailer.dir_offset": (t + 16, 8),
+        "trailer.dir_length": (t + 24, 8),
+        "trailer.committed_file_length": (t + 32, 8),
+        "trailer.file_id": (t + 40, 8),
+        "trailer.reserved": (t + 48, 12),
         "trailer.crc": (t + 60, 4),
     }
-    d0, dl = struct.unpack("<QQ", blob[t + 24:t + 40])
+    d0, dl = struct.unpack("<QQ", blob[t + 16:t + 32])
     layout["directory"] = (d0, dl)
     layout["directory.crc"] = (d0 + dl - 4, 4)
 
@@ -260,7 +259,7 @@ def build_with_layout(layers: list[Layer], records: list[Record] | None = None,
 
 
 def build(layers: list[Layer], records: list[Record] | None = None,
-          file_id: int = 0x0123456789ABCDEF, generation: int = 1,
+          file_id: int = 0x0123456789ABCDEF,
           version_minor: int = 0) -> bytes:
     """Emit one complete generation, per §9.2's ordering.
 
@@ -348,8 +347,8 @@ def build(layers: list[Layer], records: list[Record] | None = None,
     out += b"\x00" * (F - 64 - end)                # pre-trailer pad, zeroed by advice
 
     trailer = (TRAILER_MAGIC + struct.pack("<HHI", 1, version_minor, 0)
-               + u64(generation) + u64(dir_offset) + u64(dir_length) + u64(F)
-               + u64(file_id) + b"\x00" * 4)
+               + u64(dir_offset) + u64(dir_length) + u64(F)
+               + u64(file_id) + b"\x00" * 12)
     out += trailer + u32(crc32c(trailer))
     assert len(out) == F, (len(out), F)
     return bytes(out)

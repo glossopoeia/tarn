@@ -246,9 +246,9 @@ A **condition** this specification names — one malformed state, as
 **reaches** a file declaring a format major other than 1 when, and
 only when, the invariant it violates is one `[R-CNT-24]` fixes in
 every format major version. Reach is per condition because a single
-requirement can state several: `[R-CNT-06]` states ten, of which the
+requirement can state several: `[R-CNT-06]` states nine, of which the
 trailer magic and the trailer CRC assert invariants `[R-CNT-24]` fixes
-and the other eight do not. The test is the invariant asserted, not
+and the other seven do not. The test is the invariant asserted, not
 the bytes read: a check that consumes bytes a future major is free to
 redefine can still assert only a fixed invariant. A reader MUST apply
 every reaching condition to a file whatever major it declares — an
@@ -392,8 +392,10 @@ these meanings.
   generation (§6); each commit appends one, and the *live* trailer
   occupies the final 64 bytes of the file.
 - **front signature block** — the constant 16 bytes at offset 0 (§6).
-- **generation** — one committed state of a file, and the counter,
-  carried in its trailer, that numbers it (§9).
+- **generation** — one committed state of a file (§9). No field
+  numbers generations; successive generations of one file are ordered
+  by the strictly increasing committed file length their trailers
+  carry (§9.3).
 - **user metadata** — the structured document carrying non-structural,
   application-level information (§18).
 
@@ -806,12 +808,11 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 | 8 | 2 | u16 | version_major | structural | 1 (0 invalid; others: §6.3) |
 | 10 | 2 | u16 | version_minor | descriptive | any (see §6.3) |
 | 12 | 4 | u32 | flags | structural | bits 0–15 incompat lane; bits 16–31 ignore lane (§6.3) |
-| 16 | 8 | u64 | generation | structural | 1 ≤ generation ≤ 2⁶³ − 1 (`[R-ENC-03]`) |
-| 24 | 8 | u64 | dir_offset | structural | ≥ 16 |
-| 32 | 8 | u64 | dir_length | structural | ≥ 4; dir_offset + dir_length ≤ F − 64 |
-| 40 | 8 | u64 | committed_file_length | structural | = F; multiple of 64 |
-| 48 | 8 | u64 | file_id | structural | ≠ 0 |
-| 56 | 4 | bytes | reserved | structural | zero |
+| 16 | 8 | u64 | dir_offset | structural | ≥ 16 |
+| 24 | 8 | u64 | dir_length | structural | ≥ 4; dir_offset + dir_length ≤ F − 64 |
+| 32 | 8 | u64 | committed_file_length | structural | = F; multiple of 64 |
+| 40 | 8 | u64 | file_id | structural | ≠ 0 |
+| 48 | 12 | bytes | reserved | structural | zero |
 | 60 | 4 | u32 | trailer CRC | structural | CRC-32C over trailer bytes [0, 60) |
 
 Writers MUST place the directory so that no structure lies between
@@ -833,13 +834,13 @@ A reader MUST validate, in order: the trailer magic; the trailer CRC;
 the version gate (§6.3) — only these touch fields whose positions are
 fixed across all majors (`[R-CNT-24]`) — and then, those gates passed,
 MUST validate all of the following before acting on the fields
-involved: the flag gates (§6.3); committed_file_length equals the file
-size (for a remote reader, the size reported by its transport) and is
-a multiple of 64; dir_offset ≥ 16; dir_length ≥ 4; dir_offset +
-dir_length ≤ F − 64, that sum being a declaration-derived quantity
-under `[R-ENC-04]`; 1 ≤ generation ≤ 2⁶³ − 1; file_id ≠ 0; reserved
-bytes zero. Any failure is reject-file. The owning scope of the front
-signature block and the trailer is the file. `[R-CNT-06]`
+involved: the flag gates (§6.3); committed_file_length equals the
+file size (for a remote reader, the size reported by its transport)
+and is a multiple of 64; dir_offset ≥ 16; dir_length ≥ 4; dir_offset
++ dir_length ≤ F − 64, that sum being a declaration-derived quantity
+under `[R-ENC-04]`; file_id ≠ 0; reserved bytes zero. Any failure is
+reject-file. The owning scope of the front signature block and the
+trailer is the file. `[R-CNT-06]`
 
 > **Note.** A payload byte-string that mimics a trailer and happens to
 > sit at exact physical end of file can pass every check above; it is
@@ -1241,21 +1242,35 @@ retained record per §20's preservation rules — followed by its CRC;
 (4) make steps 1–3 durable (a storage barrier such as fdatasync, or
 the platform equivalent needed to order writes against power loss);
 (5) append the pad to the next 64-byte boundary — zeroed by advice,
-`[R-CNT-03]` — and the new
-trailer, with generation one greater than the prior trailer's and
-committed_file_length equal to the new end; (6) make the trailer
-durable. `[R-LIF-02]`
+`[R-CNT-03]` — and the new trailer, with committed_file_length equal
+to the new end; (6) make the trailer durable. A commit's
+committed_file_length is strictly greater than the prior trailer's,
+by at least 128, so the committed file length orders a file's
+generations (§9.3). `[R-LIF-02]`
 
 On creation there is no prior trailer: the writer first emits the
 front signature block (§6.1) — whose durability the barriers of steps
 4 and 6 cover — then performs steps 2–6, writing
-beginning at offset 16, with generation 1.
+beginning at offset 16. There being no prior committed file length,
+the strict increase above binds from the second commit onward.
 
 > **Note.** Step 3 is not discharged by a directory an earlier
 > generation appended: each commit appends its own complete
 > directory, and the trailer of step 5 addresses that one. A writer
 > that re-points a new trailer at a prior generation's directory
 > region has left step 3 unperformed.
+
+> **Note.** Step 5's strict increase is forced by the steps before
+> it, not an extra obligation on the writer. Step 1 begins writing at
+> exactly the prior F, and `[R-LIF-01]` holds every byte below it
+> immutable, so this commit's directory lies at dir_offset ≥ the
+> prior F; the Note above forbids reusing an earlier generation's, so
+> there is such a directory; and `[R-CNT-06]` requires dir_length ≥ 4
+> and dir_offset + dir_length ≤ the new F − 64. The new F is
+> therefore at least the prior F plus 68, and since `[R-CNT-06]`
+> makes every committed file length a multiple of 64, at least the
+> prior F plus 128. It is `[R-CNT-27]`'s 128-byte floor argument run
+> from F rather than from offset 0.
 
 > **Note.** Where barriers are weaker than assumed, safety degrades
 > from "torn commits are invisible" to "torn commits are detected":
@@ -1288,25 +1303,46 @@ beginning at offset 16, with generation 1.
 
 #### 9.3 Generations, file_id, caching
 
-Each commit's trailer carries generation g ≥ 1, increasing by exactly
-1 per commit, and the file_id chosen at creation (nonzero; the
-creating writer SHOULD draw it from a cryptographically random source
-— a predictable or reused file_id lets two distinct files collide in
-the (file_id, range)-keyed caches this rule licenses, serving bytes
-from the wrong file). Because committed bytes are immutable, any byte range fetched under generation g remains
-byte-correct under every later generation of the same file_id: caches
-keyed (file_id, range) never invalidate, and revalidation is one
-64-byte trailer read — same generation, everything cached remains
-valid; higher generation, refetch the directory; different file_id or
-lower generation, treat as a different file. `[R-LIF-03]`
+Each commit's trailer carries the committed file length F of the
+generation it commits and the file_id chosen at creation (nonzero;
+the creating writer SHOULD draw it from a cryptographically random
+source — a predictable or reused file_id lets two distinct files
+collide in the (file_id, range)-keyed caches this rule licenses,
+serving bytes from the wrong file). Within one file_id, F strictly
+increases per commit — by at least 128 (`[R-LIF-02]`) — so it orders
+that file's generations and identifies each of them. Because
+committed bytes are immutable, any byte range fetched under the
+generation whose committed file length is F remains byte-correct
+under every later generation of the same file_id: caches keyed
+(file_id, range) never invalidate, and revalidation is one 64-byte
+trailer read — same F, everything cached remains valid; higher F,
+refetch the directory; different file_id or lower F, treat as a
+different file. `[R-LIF-03]`
 
-> **Note.** The counter is bounded above: the trailer's valid range
-> is 1 ≤ generation ≤ 2⁶³ − 1 (`[R-CNT-06]`) and each commit adds
-> exactly 1, so a file standing at 2⁶³ − 1 admits no further commit —
-> step 5 of `[R-LIF-02]` has no value left to write. Compaction
-> (§20.5) is the continuation from there: a fresh file_id at
-> generation 1. The bound is a statement of closure, not an
-> operational concern.
+> **Note.** The strict increase is what makes that revalidation
+> sound, and §9.2's second Note is what makes it checkable: no two
+> commits of one file share a committed file length, so a matching
+> (file_id, F) pair names the same committed prefix a cache already
+> holds. A lower F under a known file_id is not a stale read to
+> retry — it is a file that has lost committed bytes, which
+> `[R-LIF-01]` forbids — so it is treated as a different file.
+
+> **Note.** The ordering quantity is bounded above: F is a u64
+> offset under `[R-ENC-03]`, so F ≤ 2⁶³ − 1, and each commit adds at
+> least 128 bytes — a file at that ceiling admits no further commit.
+> Compaction (§20.5) is the continuation from there: a fresh file_id
+> whose first commit starts F over. The bound is a statement of
+> closure, not an operational concern.
+
+> **Note.** F counts bytes, not commits. It orders a file's
+> generations and tells a cache which one it holds, but it does not
+> number them: how many commits a file has undergone is not
+> recoverable from the live trailer, and no field records it — a
+> deployment needing that count keeps it out of band or in user
+> metadata (§18). The contract above also assumes a conforming
+> writer: a file truncated to an earlier commit and re-appended can
+> present an already-seen F over different bytes, which is the
+> rollback case §9.6 names as needing out-of-band state.
 
 #### 9.4 Recovery before re-append
 
@@ -1373,8 +1409,16 @@ tools: a tile payload can deliberately contain a byte string that
 mimics a valid trailer, so recovery output MUST be re-verified as a
 whole file (§8) before being trusted; and truncation of a file to an
 earlier commit boundary is indistinguishable in-format from that
-earlier version — rollback detection requires out-of-band state (an
-expected generation or a detached hash). The probe begins at the
+earlier version — rollback detection requires out-of-band state, and
+no field of this format supplies it. An expected committed file
+length is not a substitute: placement within a commit is free
+(`[R-SLB-05]`) and slack is unconstrained (`[R-CNT-21]`), so a party
+that truncates to an earlier commit and re-appends can bring the file
+back to any committed file length at or above the expected one while
+serving the rolled-back content. What still works is state the file
+cannot manufacture: a detached hash over the committed prefix, a
+signed (file_id, committed_file_length) pair held elsewhere, or an
+append-only transport that refuses a shortened object. The probe begins at the
 largest 64-aligned offset o with o + 64 ≤ the physical file length; a
 candidate whose whole-file re-verification fails was not a commit
 state, so the tool continues the probe past it, and MUST report the
@@ -2980,8 +3024,8 @@ governs it.
 
 #### 20.1 Writer tiers
 
-- **creator** — emits a complete file in one commit, generation 1:
-  the minimal conforming writer.
+- **creator** — emits a complete file in one commit, its first
+  generation: the minimal conforming writer.
 - **appender** — extends an existing file by commits (§9.2):
   adding layers or records, superseding tiles, growing extents,
   amending metadata.
@@ -3005,9 +3049,9 @@ any record extents, in any order satisfying §5.2's coverage
 classes (`[R-CNT-02]`, `[R-CNT-03]`) and every declared layout
 invariant (`[R-SLB-01]`, `[R-SLB-03]`) — placement is otherwise
 free (`[R-SLB-05]`); then the complete directory and its CRC; then
-the barrier, the pad, the generation-1 trailer with a fresh
-nonzero file_id (§9.3), and the barrier that makes the trailer
-durable (`[R-LIF-02]` steps 4–6 — both barriers, not one).
+the barrier, the pad, the trailer with a fresh nonzero file_id
+(§9.3), and the barrier that makes the trailer durable
+(`[R-LIF-02]` steps 4–6 — both barriers, not one).
 Content obligations travel with the structures:
 fill-encoded edge padding (`[R-SER-05]`), boolean byte values
 (`[R-SER-08]`), and gaps zeroed as `[R-CNT-03]` advises. `[R-WRT-02]`
@@ -3150,9 +3194,12 @@ An appender MUST, in order:
 5. **Re-emit the directory** per §20.4, followed by its CRC
    (`[R-LIF-02]` step 3).
 6. **Commit** (`[R-LIF-02]` steps 4–6): barrier; pad;
-   trailer with generation one greater, the same file_id, unknown
-   ignore-lane flag bits copied forward (`[R-CNT-08]`), and
-   version_minor per `[R-CNT-26]`; barrier. `[R-WRT-04]`
+   trailer with the same file_id, committed_file_length equal to
+   the new end — necessarily above the F step 1 established, this
+   commit having appended at least a directory, a pad and a
+   trailer — unknown ignore-lane flag bits copied forward
+   (`[R-CNT-08]`), and version_minor per `[R-CNT-26]`; barrier.
+   `[R-WRT-04]`
 
 > **Note.** A commit's cost is dominated by its index, not its data:
 > any change to a layer's stored-tile set re-emits that layer's whole
@@ -3269,11 +3316,20 @@ no-embedded-offsets rule (§7.2) makes safe for MU = 0 records.
 
 > **Rationale.** Complete-directory commits make re-emission the
 > preservation mechanism; byte-identity makes preservation
-> testable — the records of adjacent generations differ exactly by
-> those modified, added, or dropped (as a multiset: record order
-> carries no meaning, `[R-CNT-14]`) — and forecloses re-encode
-> drift: a re-serializer that renormalized a name would change the
-> name's identity (`[R-ENC-13]`).
+> testable — the directory a commit emits differs from the one it
+> supersedes exactly by the records modified, added, or dropped
+> (as a multiset: record order carries no meaning, `[R-CNT-14]`) —
+> and forecloses re-encode drift: a re-serializer that renormalized
+> a name would change the name's identity (`[R-ENC-13]`). Put that
+> way the claim is a commit's own and holds whether or not an
+> observer can pair the two directories. It cannot, from the
+> format: the live state names one generation, and two trailers of
+> one file_id are ordered by committed_file_length without being
+> counted, so nothing in either says how many commits separate
+> them. Adjacency is a fact about a file's history, which §9.7 does
+> not reconstruct; a tool that wants the pairing enumerates commit
+> states from the physical file (§9.6), and gets only the ones that
+> file still carries.
 
 #### 20.5 Compaction
 
@@ -3293,21 +3349,28 @@ the one disposal that answers, and only where §20.4's table licenses
 it: a record dropped is not in the output, so the output carries no
 violation and the prohibition — which bites on what the output
 carries — is satisfied. Where the table does not license a drop the
-compactor MUST refuse. It MUST mint a fresh file_id for the output — a new draw under §9.3's
-randomness advice, not merely a value compared against the input's —
-and generation 1: a
-compacted file is a whole-file rewrite under a new file_id by
-definition (`[R-LIF-01]`), and reusing the input's would break
-the (file_id, range) cache contract of `[R-LIF-03]`, since
-relocation puts different bytes at the same ranges. A compactor MUST
-follow `[R-LIF-02]`'s **creation path**, as §20.2 obliges a creator:
-the output has no prior trailer and stands at generation 1, which is
-the case that path states, and `[R-WRT-01]` already has a compactor
-satisfying every writer requirement for the bytes it produces. The pad
-of step 5 and the barriers of steps 4 and 6 — both, not one — are owed
-here as they are of a creator. That a compaction is a whole-file
-rewrite rather than a commit (`[R-LIF-01]`) fixes what the output *is*,
-not which rules govern the writing of it.
+compactor MUST refuse. It MUST mint a fresh file_id for the output
+— a new draw under §9.3's randomness advice, not merely a value
+compared against the input's: a compacted file is a whole-file
+rewrite under a new file_id by definition (`[R-LIF-01]`), and
+reusing the input's would break the (file_id, range) cache contract
+of `[R-LIF-03]`, since relocation puts different bytes at the same
+ranges. The fresh file_id is the whole of that mechanism: it is
+what makes the output a different file rather than a later state of
+its input, and `[R-LIF-03]` reaches that verdict on file_id alone,
+before any comparison of committed_file_length. What is lost is
+smaller and worth naming: nothing in the output's trailer records
+that it is a first committed state — no field counts commits — so a
+compacted file and a file appended to a hundred times are
+indistinguishable by their trailers alone. A compactor MUST follow
+`[R-LIF-02]`'s **creation path**, as §20.2 obliges a creator: the
+output has no prior trailer, which is the case that path states,
+and `[R-WRT-01]` already has a compactor satisfying every writer
+requirement for the bytes it produces. The pad of step 5 and the
+barriers of steps 4 and 6 — both, not one — are owed here as they
+are of a creator. That a compaction is a whole-file rewrite rather
+than a commit (`[R-LIF-01]`) fixes what the output *is*, not which
+rules govern the writing of it.
 
 The output
 trailer MUST copy the input's unknown ignore-lane flag bits forward,
@@ -3370,10 +3433,10 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
 >
 > ```
 > input  │front│ A │▓▓▓▓│ B │▓▓│ A: index │▓▓│ B: index │▓▓▓│ dir │pad│ tr │
->                                                  file_id = X, generation = 7
+>                                                  file_id = X
 >
 > output │front│ A │ B │ A: index′ │ B: index′ │ dir │pad│ tr │
->                                                  file_id = Y, generation = 1
+>                                                  file_id = Y
 > ```
 >
 > Every stored tile's bytes survive byte-for-byte, as does every
@@ -3388,7 +3451,7 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
 > cache keyed (file_id, range) is sound precisely because ranges never
 > change beneath a file_id (§9.3), and compaction is the one operation
 > that moves live bytes. Reusing the input's identifier would serve
-> generation 7's bytes for generation 1's ranges.
+> the input's bytes for the output's ranges.
 >
 > This is the only operation that reclaims slack; truncation past F
 > (`[R-LIF-04]`) and recovery to an earlier commit boundary
@@ -3496,7 +3559,7 @@ calls it the sole resolved byte in this format.
 
 #### 21.2 File-scope violations
 
-Outcome: reject-file. 36 conditions. Which rows reach a file declaring
+Outcome: reject-file. 35 conditions. Which rows reach a file declaring
 a format major other than 1 is decided by `[R-CNF-13]` (§2.3),
 condition by condition. Deriving it there yields F8, F14, F6 and both
 of F1's instances — each asserting an invariant `[R-CNT-24]` fixes in
@@ -3507,7 +3570,7 @@ invalid in every one (§21.6).
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
 | F1 | A signature constant is stored byte-reversed — never to be adapted as a foreign-endian TARN file; the front-block instance binds only a reader holding bytes [0, 16) resident (`[R-CNT-04]`), the trailer-magic instance every reader (`[R-CNT-06]`) | front signature block bytes [0,8); trailer magic at F-64 | reader | open | `[R-ENC-02]` (R-CNT-04, R-CNT-06) |
-| F2 | A u64 offset, length, or count field holds a value above 2^63 - 1 | dir_offset; dir_length; committed_file_length; generation; non-layer top-level record extent_offset; extent_length | reader | open | `[R-ENC-03]` (R-CNT-06, R-CNT-13) |
+| F2 | A u64 offset, length, or count field holds a value above 2^63 - 1 | dir_offset; dir_length; committed_file_length; non-layer top-level record extent_offset; extent_length | reader | open | `[R-ENC-03]` (R-CNT-06, R-CNT-13) |
 | F3 | A sum of a u64 offset and length taken from the file exceeds 2^63 - 1, so the sum wraps | dir_offset + dir_length; non-layer top-level record extent_offset + extent_length | reader | open | `[R-ENC-04]` (R-CNT-06, R-CNT-13) |
 | F4 | Two layer records in the live directory carry byte-identical name fields, both obtainable within their records' inline_length (comparison is raw bytes, no normalization) | layer record name | reader | open | `[R-ENC-15]` (R-ENC-13) |
 | F5 | File size is below the 128-byte minimum, so the front block, directory, pre-trailer pad and trailer cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-27]` (R-CNT-01, R-CNT-06) |
@@ -3516,11 +3579,10 @@ invalid in every one (§21.6).
 | F8 | The 8 bytes at F-64 are not exactly the trailer magic 8A 4E 52 41 54 0D 0A 1A | trailer magic | reader | open | `[R-CNT-06]` |
 | F9 | Trailer dir_offset is less than 16, pointing the directory into or before the front signature block | dir_offset | reader | open | `[R-CNT-06]` |
 | F10 | Trailer dir_offset + dir_length exceeds F - 64, so the declared directory region runs into or past the live trailer | — | reader | open | `[R-CNT-06]` |
-| F11 | Trailer generation is 0, below the live generation counter's floor of 1 | generation | reader | open | `[R-CNT-06]` |
 | F12 | Trailer file_id is 0 | file_id | reader | open | `[R-CNT-06]` |
 | F13 | Trailer committed_file_length is not a multiple of 64, so the trailer does not begin at a 64-aligned offset | committed_file_length | reader | open | `[R-CNT-06]` (R-CNT-01) |
 | F14 | The u32 at trailer offset 60 does not equal the CRC-32C of trailer bytes [0,60) | trailer CRC | reader | open | `[R-CNT-06]` (R-CNT-20, R-ENC-09) |
-| F15 | The 4 reserved bytes at trailer offset 56 are not all zero | trailer reserved [56,60) | reader | open | `[R-CNT-06]` (R-CNT-24) |
+| F15 | The 12 reserved bytes at trailer offset 48 are not all zero | trailer reserved [48,60) | reader | open | `[R-CNT-06]` (R-CNT-24) |
 | F16 | Trailer dir_length is less than 4, too small to hold the directory region's terminal CRC-32C | dir_length | reader | open | `[R-CNT-06]` (R-ENC-07) |
 | F17 | Trailer committed_file_length does not equal the transport-authoritative file size (physical file not truncated or extended to it) | committed_file_length, physical file shorter; committed_file_length, physical file longer | reader | open | `[R-CNT-06]` (R-LIF-04, R-CNT-10) |
 | F18 | Trailer version_major is 0, a permanently invalid major in every format major version | version_major | reader | open | `[R-CNT-07]` |
@@ -3542,6 +3604,12 @@ invalid in every one (§21.6).
 | F34 | The directory's top-level record sequence contains two or more user-metadata records (type 0x0002) | type | reader | open | `[R-CNT-14]` |
 | F35 | A top-level record has a reserved-range type value (0x0003-0x7FFF, §10.2) with MUST_UNDERSTAND (flags bit 0) set to 1 | — | reader | open | `[R-CNT-15]` |
 | F36 | A top-level record carries a type value from the reserved range 0x0003-0x7FFF, which this specification has not assigned; emitting one is a violation whatever its MU bit | — | verifier | certification | `[R-CNT-15]` |
+
+> **Note.** Row label F11 is struck, and the gap it leaves in this
+> table is deliberate. A row label is retired on the model §2.2
+> states for a withdrawn requirement identifier — never renumbered,
+> never reused — so every label here denotes the condition it has
+> always denoted (§24, `[R-VEC-02]`).
 
 #### 21.3 Layer-scope violations
 
@@ -3745,11 +3813,13 @@ the file is left undetermined and the verdict is unaffected.
 
 A second set of obligations is omitted from the register because a
 single file exhibits no witness of their violation. Committed-prefix
-immutability and the generation sequence (`[R-LIF-01]`,
-`[R-LIF-03]`) are properties of a file's history, which §9.7 does
-not reconstruct; the ordinal mappings of `[R-GEO-06]` and
-`[R-SER-01]` are satisfied by a structurally valid tile whatever
-values it carries, except where §14 constrains a byte's content —
+immutability and the strict growth of `committed_file_length` across
+the commits of one file_id (`[R-LIF-01]`, `[R-LIF-03]`) are
+properties of a file's history, which §9.7 does not reconstruct, and
+no field of a file records how many commits that history holds; the
+ordinal mappings of `[R-GEO-06]` and `[R-SER-01]` are satisfied by a
+structurally valid tile whatever values it carries, except where §14
+constrains a byte's content —
 a padding position, a pad bit, or an interleaved boolean — and a
 mis-ordered image is then witnessed by T2, T4 or T5, exactly as a
 mis-strided filter is; `[R-CNT-13]`'s prohibition on an MU = 0
@@ -3782,13 +3852,13 @@ quantity. And a
 commit that supersedes every tile it would have damaged leaves the
 live state clean, so the bar is unwitnessed there for the same
 reason `[R-LIF-01]` is: it is a property of the prior generation,
-which §9.7 does not reconstruct; §20.5's four obligations on a
+which §9.7 does not reconstruct; §20.5's three obligations on a
 compacted file's trailer (`[R-WRT-06]`) — its fresh `file_id` draw,
-its generation, the unknown ignore-lane bits it MUST carry forward,
-and the floor its version_minor SHOULD take — are unwitnessed for
-a reason all four share: the output carries no record that it is a
-compaction output at all, so no check can know that any of the four
-was owed. For the last two there is a second, the output carrying no
+the unknown ignore-lane bits it MUST carry forward, and the floor
+its version_minor SHOULD take — are unwitnessed for a reason all
+three share: the output carries no record that it is a compaction
+output at all, so no check can know that any of the three was owed.
+For the last two there is a second, the output carrying no
 record of its input's flags or its input's minor either; and `[R-ENC-06]`'s fixed field widths are not
 a state a
 file can be in, since the parse is always at the widths this
@@ -3798,7 +3868,7 @@ them. `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 121 conditions over 277
+Every row of §21.2 through §21.5 — 120 conditions over 275
 instances — has at least one conformance vector (§24) whose expected
 outcome is that row's outcome, and one vector per instance. A row without a vector is a
 gap in the corpus, not a licence to skip the check. `[R-ERR-02]`
@@ -3994,10 +4064,10 @@ the file, and a file that verifies proves only internal consistency
 signing, and no access control; deployments needing them wrap the
 file in a mechanism that does. Committed-prefix immutability (§9.1)
 makes that compose well: a detached signature over the committed
-prefix [0, F) of one generation, pinned to the file_id and
-generation its trailer names, stays valid over that prefix under
-every later append — though it attests that generation, not the
-file a reader opens later. `[R-SEC-07]`
+prefix [0, F) of one generation, pinned to the file_id its trailer
+names and to that F, stays valid over that prefix under every later
+append — though it attests that generation, not the file a reader
+opens later. `[R-SEC-07]`
 
 ### 23. Privacy Considerations
 
@@ -4050,8 +4120,14 @@ slack (§23.1) — so the index
 publishes which regions were written without disclosing what is in
 them; the user-metadata document,
 which is quarantined from structural interpretation (§7.1) but not
-hidden; and the shape of its own history — generation count,
-per-commit sizes, and the slack each commit left behind.
+hidden; and the shape of its own history — the size of each commit
+and the slack it left behind, recoverable by probing backward for
+the superseded trailers that committed-prefix immutability keeps in
+place (§9.1, §9.6). What the file no longer states is how many
+commits produced it: no field carries a count, so the number follows
+only from that probe, is unavailable to anyone holding just the live
+trailer, and is absent altogether from a compacted file (§20.5),
+which retains no earlier trailer to find.
 Writers handling sensitive material SHOULD treat names and metadata
 as published content, and SHOULD compact before publication when the
 history itself is sensitive. `[R-PRV-03]`
@@ -4103,9 +4179,11 @@ floating-point value written as a hexadecimal bit pattern so that no
 comparison depends on a number formatter; and, for each structure the
 file damages, the outcome class (§2.4), the scope, and the §21
 register row it exercises together with that row's governing
-requirement identifier — row labels are positional and renumber when a
-row is struck, while §2.2 makes the identifier permanent, so
-the pair is what survives a renumbering. The two axes are independent: a conforming
+requirement identifier — a row label is never renumbered and never
+reused, so it denotes one condition for the life of format major 1,
+exactly as §2.2 makes the identifier permanent, and recording both
+ties the vector to the rule as well as to the row.
+The two axes are independent: a conforming
 file can carry a record a reader ignores (§21.5, §21.6), and a
 nonconforming file can still read correctly outside the scope its
 violation damages. Naming the row is a constraint on how a vector is
@@ -4180,9 +4258,9 @@ contains no layers, which §21.6 records as valid.
 0020  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
 0030  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
 0040  8A 4E 52 41 54 0D 0A 1A  01 00 00 00 00 00 00 00
-0050  01 00 00 00 00 00 00 00  10 00 00 00 00 00 00 00
-0060  04 00 00 00 00 00 00 00  80 00 00 00 00 00 00 00
-0070  EF CD AB 89 67 45 23 01  00 00 00 00 D2 38 09 E0
+0050  10 00 00 00 00 00 00 00  04 00 00 00 00 00 00 00
+0060  80 00 00 00 00 00 00 00  EF CD AB 89 67 45 23 01
+0070  00 00 00 00 00 00 00 00  00 00 00 00 7E 15 2F 40
 ```
 
 | Bytes | Value | Meaning |
@@ -4195,13 +4273,12 @@ contains no layers, which §21.6 records as valid.
 | [72, 74) | `01 00` | version_major = 1 |
 | [74, 76) | `00 00` | version_minor = 0 |
 | [76, 80) | `00 00 00 00` | flags: no incompat bit set, no ignore-lane bit set |
-| [80, 88) | `01 00 …` | generation = 1 |
-| [88, 96) | `10 00 …` | dir_offset = 16 |
-| [96, 104) | `04 00 …` | dir_length = 4 |
-| [104, 112) | `80 00 …` | committed_file_length = 128 = the file size |
-| [112, 120) | `EF CD AB 89 67 45 23 01` | file_id = 0x0123456789ABCDEF, little-endian (any nonzero value; a real writer draws it randomly, §9.3) |
-| [120, 124) | `00 00 00 00` | trailer reserved, zero |
-| [124, 128) | `D2 38 09 E0` | trailer CRC-32C = 0xE00938D2, over trailer bytes [0, 60) |
+| [80, 88) | `10 00 …` | dir_offset = 16 |
+| [88, 96) | `04 00 …` | dir_length = 4 |
+| [96, 104) | `80 00 …` | committed_file_length = 128 = the file size |
+| [104, 112) | `EF CD AB 89 67 45 23 01` | file_id = 0x0123456789ABCDEF, little-endian (any nonzero value; a real writer draws it randomly, §9.3) |
+| [112, 124) | zero | trailer reserved, 12 bytes, zero |
+| [124, 128) | `7E 15 2F 40` | trailer CRC-32C = 0x402F157E, over trailer bytes [0, 60) |
 
 A remote reader opens this file in §6.4's two requests: the final 64
 bytes, validated per §6.2; then [16, 20), whose CRC it verifies. A
@@ -4293,8 +4370,9 @@ state intact. The cost is slack — and the decision that shaped
 this specification most is what slack *is not*: not a history to
 certify, not a log to audit, just waste awaiting compaction. Coverage
 therefore certifies the live state and counts the rest (§5.2, §9.7),
-which is why this document has no generation-attribution machinery
-and no trailer chain.
+which is why this document has no generation-attribution machinery,
+no trailer chain, and no counter in the trailer numbering the
+commits.
 
 **Checksums everywhere, with per-scope outcomes.** Integrity is not a
 mode. The cost is one CRC per structure and a strictly ordered chain
@@ -4421,7 +4499,10 @@ the file.
    structures is free in either extent or content.
 4. **One generation**, so that the file is the output of a single
    commit. Appending is reproducible only in the weaker sense that
-   the appended bytes are.
+   the appended bytes are. No field records how many commits a file
+   has had, so nothing refutes this item by reading a value: what
+   refutes it is §9.6's backward probe finding a superseded trailer
+   in the slack that committed-prefix immutability leaves in place.
 5. **No declared alignment and no slab**, or fixed declared values —
    both change placement and neither is implied by content. **A fixed
    filter value** likewise: §17.3 leaves the choice to the writer, and no

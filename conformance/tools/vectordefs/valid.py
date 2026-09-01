@@ -466,13 +466,13 @@ def _seed_slack():
 
 def _seed_mimic():
     """A stored tile whose 64 bytes are a byte-perfect trailer image — magic,
-    version 1.0, a plausible generation, directory bounds, a 64-multiple
-    committed length, a nonzero file_id, zero reserved bytes, and a correct
-    CRC-32C over its first 60. Nothing enumerates slack and no reader scans
-    for trailers, so the lookalike is inert (`[R-LIF-06]`, §21.6); only a
-    recovery tool sees it, and §9.6 makes it re-verify its output whole."""
-    t = (TRAILER_MAGIC + struct.pack("<HHI", 1, 0, 0) + u64(7) + u64(16)
-         + u64(4) + u64(128) + u64(0xDEADBEEFCAFEF00D) + b"\x00" * 4)
+    version 1.0, directory bounds, a 64-multiple committed length, a
+    nonzero file_id, zero reserved bytes, and a correct CRC-32C over its
+    first 60. Nothing enumerates slack and no reader scans for trailers,
+    so the lookalike is inert (`[R-LIF-06]`, §21.6); only a recovery tool
+    sees it, and §9.6 makes it re-verify its output whole."""
+    t = (TRAILER_MAGIC + struct.pack("<HHI", 1, 0, 0) + u64(16)
+         + u64(4) + u64(128) + u64(0xDEADBEEFCAFEF00D) + b"\x00" * 12)
     t += u32(crc32c(t))
     assert len(t) == 64
     ly = Layer("mimic", extents=(8, 8), tile_extents=(8, 8),
@@ -537,17 +537,15 @@ VECTORS = [
            repair=["trailer.crc"],
            serves=["ok", "bad"]),
     Vector("TV-0604", "pair",
-           "generation 2^63-1 and file_id 0xFFFFFFFFFFFFFFFF, both semantic "
-           "u64s at their ceilings [R-CNT-06], [R-ENC-03]", True,
-           patches=[Patch("trailer.generation", u64(MAX63)),
-                    Patch("trailer.file_id", u64(0xFFFFFFFFFFFFFFFF))],
+           "file_id 0xFFFFFFFFFFFFFFFF, its ceiling as a u64 with no upper "
+           "domain limit of its own [R-CNT-06]", True,
+           patches=[Patch("trailer.file_id", u64(0xFFFFFFFFFFFFFFFF))],
            repair=["trailer.crc"],
            serves=["ok", "bad"]),
     Vector("TV-0605", "pair",
-           "generation 1 and file_id 1, both at their floors [R-CNT-06]",
+           "file_id 1, its floor: the smallest value [R-CNT-06] permits",
            True,
-           patches=[Patch("trailer.generation", u64(1)),
-                    Patch("trailer.file_id", u64(1))],
+           patches=[Patch("trailer.file_id", u64(1))],
            repair=["trailer.crc"],
            serves=["ok", "bad"]),
 

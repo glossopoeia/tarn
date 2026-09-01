@@ -216,7 +216,7 @@ def _f7_reseal(buf: bytearray, t: int, d0: int, dl: int) -> bytes:
 
 def _f7_span(blob: bytes) -> tuple[int, int, int]:
     t = len(blob) - 64
-    d0, dl = struct.unpack("<QQ", blob[t + 24:t + 40])
+    d0, dl = struct.unpack("<QQ", blob[t + 16:t + 32])
     return t, d0, dl
 
 
@@ -279,10 +279,10 @@ def _f7_vec(vid, seed, title, serves):
 VECTORS = [
     # Seed `meta` rather than `minimal`: reversing 128 sets bit 63 and the
     # file would carry F2 as well, while reversing this seed's 320 lands on
-    # 0x4001000000000000 — in [R-ENC-03]'s domain and still a multiple of 64,
-    # generation's only gates are >= 1 (§6.2) and <= 2^63 - 1 ([R-ENC-03]),
-    # so a byte-reversed generation is detectable only when the true value's
-    # low byte sets bit 63 on reversal. 128 is the smallest such value.
+    # 0x4001000000000000 — in [R-ENC-03]'s domain and still a multiple of 64.
+    # (The trailing half of this note reasoned about a byte-reversed
+    # generation; ADR-0111 removed that field, and the seed choice above
+    # never depended on it.)
 
     # ------------------------------------------------------------------
     # F1 [R-ENC-02] — a signature constant stored byte-reversed.
@@ -455,20 +455,10 @@ VECTORS = [
            breaks_checksums=["trailer.gates"],
            row="F10", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    # F2's generation instance; F11 covers a
-    # generation of 0; neither puts the field above §4.2's domain. ADR-0058
-    # added the ceiling to `[R-CNT-06]`'s gate list, but no row registers the
-    # ceiling separately, so this is F2's.
-    Vector("TV-0930", "minimal", "F2 generation has bit 63 set", False,
-           patches=[Patch("trailer.generation", u64(0x8000000000000001))],
-           repair=["trailer.crc"],
-           row="F2", rule="R-ENC-03", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
-    Vector("TV-0123", "minimal", "F11 generation = 0", False,
-           patches=[Patch("trailer.generation")],
-           repair=["trailer.crc"],
-           row="F11", rule="R-CNT-06", outcome="reject-file",
-           scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
+    # TV-0930 ("F2 generation has bit 63 set") and TV-0123 ("F11
+    # generation = 0") retire: the trailer no longer carries a generation
+    # counter, so neither condition is buildable. F2's Instances cell and
+    # the F11 row itself are the register's call, not this file's.
     Vector("TV-0124", "minimal", "F12 file_id = 0", False,
            patches=[Patch("trailer.file_id")],
            repair=["trailer.crc"],
@@ -483,8 +473,8 @@ VECTORS = [
            row="F14", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),
     Vector("TV-0126", "minimal",
-           "F15 the 4 reserved bytes at trailer offset 56 are not zero", False,
-           patches=[Patch("trailer.reserved", b"\x01\x00\x00\x00")],
+           "F15 the 12 reserved bytes at trailer offset 48 are not zero", False,
+           patches=[Patch("trailer.reserved", b"\x01" + b"\x00" * 11)],
            repair=["trailer.crc"],
            row="F15", rule="R-CNT-06", outcome="reject-file",
            scope={"kind": "file"}, detected="open", must_not_serve=["file"]),

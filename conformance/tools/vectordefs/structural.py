@@ -133,13 +133,13 @@ _MIN_BLOB, _MIN = SEEDS["minimal"]()
 assert len(_MIN_BLOB) == 128
 
 
-def _trailer(dir_offset: int, dir_length: int, cfl: int, generation: int = 1,
+def _trailer(dir_offset: int, dir_length: int, cfl: int,
              file_id: int = FILE_ID) -> bytes:
     """§6.2's 64 bytes, CRC included — a whole trailer written by `append:`
     rather than patched in place, because the defect is *where it sits*."""
-    body = (TRAILER_MAGIC + struct.pack("<HHI", 1, 0, 0) + u64(generation)
+    body = (TRAILER_MAGIC + struct.pack("<HHI", 1, 0, 0)
             + u64(dir_offset) + u64(dir_length) + u64(cfl) + u64(file_id)
-            + b"\x00" * 4)
+            + b"\x00" * 12)
     return body + u32(crc32c(body))
 
 
@@ -206,7 +206,7 @@ def _bad_c0() -> bytes:
 FILE = {"kind": "file"}
 
 
-def _slab_vec(vid, title, patches, row, generation=None, serves=("ok",),
+def _slab_vec(vid, title, patches, row, l44=False, serves=("ok",),
               instance=None):
     """A verifier-detected reject-layer against seed `slabrun`'s slab layer.
 
@@ -217,9 +217,7 @@ def _slab_vec(vid, title, patches, row, generation=None, serves=("ok",),
     scope = {"kind": "layer", "name": "slab"}
     if instance:
         scope["instance"] = instance
-    if generation is not None:
-        patches = list(patches) + [Patch("trailer.generation", u64(generation),
-                                         "the commit this row ranges over")]
+    if l44:
         scope["co_violates"] = [
             ("L41" if instance == "S" else "L42") +
             " — unavoidable: [R-SLB-04]'s 'the invariants were not "
@@ -553,14 +551,18 @@ VECTORS = [
     # changed an affected run. Two instances: the run length S, and the
     # slab alignment A_slab.
     # ==================================================================
-    # Both files are generation 2 — the trailer's generation field is the
-    # only in-file evidence a commit happened, since a verifier walks the
-    # live state alone (§9.7, [R-LIF-08]) and the superseded generation is
-    # slack no reader interprets. Both supersede one tile of run 0 by
-    # sentinelling its entry, which is what a commit that drops a tile
-    # leaves: the tile is addressed, not stored, its former payload is
-    # slack ([R-CNT-21]), and the declaration was carried forward
-    # unchanged instead of being re-established or cleared.
+    # Both files are presented as the state after a commit that dropped a
+    # tile from an already slab-declared run. That framing is no longer
+    # verifiable from the bytes: dropping the counter removes the only
+    # field that ever let a lone file assert it was not the layer's first
+    # commit, and nothing in the format replaces it. Nothing here depends
+    # on that signal, though — a verifier's check is [R-SLB-03]'s
+    # invariant over the live state alone (§9.7, [R-LIF-08]), so the row's
+    # actual condition needs no such marker to hold. Both supersede one
+    # tile of run 0 by sentinelling its entry, which is what a commit that
+    # drops a tile leaves: the tile is addressed, not stored, its former
+    # payload is slack ([R-CNT-21]), and the declaration was carried
+    # forward unchanged instead of being re-established or cleared.
     #
     # Instance S: ordinal 1 goes. Ordinals 0 and 2 remain at 16 and 24,
     # and sentinels are transparent to run continuity, so the run is
@@ -568,22 +570,23 @@ VECTORS = [
     # tile is still 16-aligned, so the A_slab half of the invariant holds
     # and this file isolates the S half.
     _slab_vec("TV-0913",
-              "L44 generation 2 carries S = 3 forward after superseding "
+              "L44 a later commit carries S = 3 forward after superseding "
               "ordinal 1: run 0 is no longer packed (instance: S)",
               [Patch("layer[slab].entry[1]", SENTINEL,
                      "the commit dropped ordinal 1; its 4 bytes are slack")],
-              "L44", generation=2, instance="S"),
+              "L44", l44=True, instance="S"),
 
     # Instance A_slab: ordinal 0 goes, so run 0's first *stored* tile
     # becomes ordinal 1 at offset 20, and 20 mod 16 = 4. Ordinals 1 and 2
     # are still packed at 20 → 24, so the contiguity half of the
     # invariant holds and this file isolates the alignment half.
     _slab_vec("TV-0914",
-              "L44 generation 2 carries A_slab = 16 forward after superseding "
-              "ordinal 0: run 0's first stored tile is at 20 (instance: A_slab)",
+              "L44 a later commit carries A_slab = 16 forward after "
+              "superseding ordinal 0: run 0's first stored tile is at 20 "
+              "(instance: A_slab)",
               [Patch("layer[slab].entry[0]", SENTINEL,
                      "the commit dropped ordinal 0; its 4 bytes are slack")],
-              "L44", generation=2, instance="A_slab"),
+              "L44", l44=True, instance="A_slab"),
 ]
 
 
@@ -670,9 +673,12 @@ SPEC_FINDINGS = {
         "re-established', and those invariants are exactly [R-SLB-03]'s — "
         "so every L44 file is an L41 or L42 file. [R-LIF-08] then confines a "
         "verifier to the live state, and §9.3 keeps no record of what a "
-        "commit changed, so the generation counter is the only in-file trace "
-        "of the history the row ranges over. TV-0913 and TV-0914 carry "
-        "generation 2 for that reason and declare the co-violation. The row "
+        "commit changed, so nothing in the file evidences the history the "
+        "row ranges over. ADR-0111 sharpened this: the generation counter "
+        "was the last field by which a lone file could assert it was not "
+        "its layer's first commit, and it is gone, so TV-0913 and TV-0914 "
+        "now declare the co-violation without any in-file claim of "
+        "succession. Nothing the row turns on depended on that signal. The row "
         "is a genuine writer obligation; what it is not is an independently "
         "detectable file condition, and the register's Detector column says "
         "'verifier' as though it were."),

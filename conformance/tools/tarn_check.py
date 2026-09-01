@@ -45,6 +45,11 @@ from pathlib import Path
 # §2.2 permanently retires a withdrawn identifier and never reassigns it.
 WITHDRAWN_IDS = {"R-SER-04": "§14.4 records the withdrawal"}
 
+# §21 row labels are retired, never renumbered or reused, on the same discipline
+# §2.2 applies to requirement identifiers (ADR-0111; §24 [R-VEC-02]). A label
+# here is a permanent hole in its table, and REG-01 expects it to be absent.
+RETIRED_ROWS = {"F11"}  # ADR-0111 struck "Trailer generation is 0"
+
 # ADR-0048 replaced both with "slack". A term that is retired in one place and
 # alive in another is the exact defect class this tool exists to catch.
 RETIRED_TERMS = {
@@ -291,18 +296,33 @@ def check_register(spec: Spec, report: Report) -> None:
         report.add("REG-00", "error register present", ["§21.2–§21.5 hold no rows"])
         return
 
-    # REG-01 -- row identifiers are positional labels; a hole or a repeat means
-    # an edit shifted rows, which is how ADR-0049's damage entered.
+    # REG-01 -- a row label names one condition for the life of the major
+    # (ADR-0111, §24 [R-VEC-02]). Labels are NOT positional: striking a row
+    # retires its label permanently rather than renumbering every later row,
+    # exactly as §2.2 retires a withdrawn requirement identifier. So a hole at
+    # a retired label is expected; a hole anywhere else, a repeat, or the reuse
+    # of a retired label still means an edit shifted rows -- which is how
+    # ADR-0049's damage entered.
     failures = []
     for prefix, rows in rows_by_prefix.items():
         got = [r["id"] for r in rows]
-        want = [f"{prefix}{n}" for n in range(1, len(rows) + 1)]
+        retired = sorted(RETIRED_ROWS & {f"{prefix}{n}" for n in range(1, 400)},
+                         key=lambda x: int(x[len(prefix):]))
+        reused = [g for g in got if g in RETIRED_ROWS]
+        if reused:
+            failures.append(
+                f"§21 {prefix}-rows reuse retired label(s) {reused}: a struck "
+                f"label is never reassigned (ADR-0111)"
+            )
+        want = [f"{prefix}{n}" for n in range(1, len(rows) + len(retired) + 1)
+                if f"{prefix}{n}" not in RETIRED_ROWS]
         if got != want:
             missing = [w for w in want if w not in got]
-            extra = [g for g in got if g not in want]
+            extra = [g for g in got if g not in want and g not in RETIRED_ROWS]
             failures.append(
                 f"§21 {prefix}-rows are not contiguous: "
                 f"{len(rows)} rows, missing {missing or 'none'}, unexpected {extra or 'none'}"
+                + (f" (retired, expected absent: {retired})" if retired else "")
             )
     report.add("REG-01", "row ids contiguous", failures)
 
@@ -640,8 +660,8 @@ def _build_minimal_file() -> bytes:
     trailer = (
         b"\x8aNRAT\r\n\x1a"
         + struct.pack("<HHI", 1, 0, 0)                   # version_major/minor, flags
-        + struct.pack("<QQQQQ", 1, 16, 4, 128, 0x0123456789ABCDEF)
-        + b"\x00" * 4                                    # reserved
+        + struct.pack("<QQQQ", 16, 4, 128, 0x0123456789ABCDEF)
+        + b"\x00" * 12                                   # reserved
     )
     return front + directory + pad + trailer + struct.pack("<I", crc32c(trailer))
 
@@ -775,9 +795,11 @@ def check_coverage(spec: Spec, root: Path, report: Report) -> None:
     report.add("COV-02", "cited rows exist", failures)
 
     # COV-06 -- a vector's recorded `rule` must be the governing rule of the
-    # row it cites. Row labels are positional (ADR-0049): striking a row
-    # renumbers every later one, and a vector left pointing at its old label
-    # now names a different condition. COV-05 catches that only when the two
+    # row it cites. Labels are no longer positional: ADR-0111 retires a struck
+    # label instead of renumbering, so a vector pointing at a retired label
+    # names nothing rather than silently naming a different condition. This
+    # check still earns its keep, because a vector can cite a live row whose
+    # governing rule it has wrong. COV-05 catches that only when the two
     # rows' Instances text differs -- and 50 of the register's rows share the
     # instance `-`, so a fifth of the corpus keys on a token that
     # discriminates nothing. The governing rule identifier does not renumber

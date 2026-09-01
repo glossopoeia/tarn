@@ -7,7 +7,7 @@
       "id": "TV-0001",
       "file": "conforming/TV-0001.tarn",
       "title": "Appendix A's minimal file",
-      "sha256": "ab472cc357a2bfe273770c56386ed9f8087b63d8ad88e1df1431bcb496013136",
+      "sha256": "9d9298c1bd27d232d44f67487fb35bda9a76d73b99b046affa4220dd0337f517",
       "size": 128,
       "conforming": true,
       "derivation": {
@@ -24,7 +24,7 @@
       "id": "TV-0002",
       "file": "conforming/TV-0002.tarn",
       "title": "two layers, one float32 tile of edge values",
-      "sha256": "2dec25dcb6af6f8039bfdf217d28c88d195eaf733dfee395434540dc9c6e637a",
+      "sha256": "b734e44c2240bc4708eb6b13ccab32fe10661d6ce349f2878c84b70116043936",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -111,7 +111,7 @@
       "id": "TV-0003",
       "file": "reject-file/TV-0003.tarn",
       "title": "trailer magic corrupted",
-      "sha256": "6a5570d172403d7a41cae8386e5747bff1384aec85e38ebef683a355f06a97d1",
+      "sha256": "e980dfecb45af25534dceee19755e3310783fd9823389dc848a67e08ea7bc54a",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -150,7 +150,7 @@
       "id": "TV-0004",
       "file": "reject-file/TV-0004.tarn",
       "title": "trailer dir_offset = 15, inside the front block",
-      "sha256": "aed2f3ed8118d814aac9200459b5bba7ce37cec7ce96e010fe1239506d24bea3",
+      "sha256": "0e98ef69a31e31da47e644810703ab0a199fb0959aa9a0ca0b285a6006b56031",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -189,7 +189,7 @@
       "id": "TV-0005",
       "file": "reject-layer/TV-0005.tarn",
       "title": "layer `bad` declares index_encoding 0",
-      "sha256": "58f76a5ff49870036ce7f5fb265fc64ec19d360154d9b716f206f79095425a3c",
+      "sha256": "b9aea547b1fa37abd78a4e8ae43ca340c0e0c64517700e691d698cedd8cc023b",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -268,7 +268,7 @@
       "id": "TV-0006",
       "file": "reject-layer/TV-0006.tarn",
       "title": "layer `bad` declares linearization 2 (reserved)",
-      "sha256": "757749916b582cda096a07324637b6b8610f39b11dd202427274951c43eebfd9",
+      "sha256": "e45623fe66d124aa538eecb23d7c6060478e550bf5f8edb406052004952d2536",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -347,7 +347,7 @@
       "id": "TV-0007",
       "file": "reject-tile/TV-0007.tarn",
       "title": "layer `bad` entry 0 has length 0",
-      "sha256": "d2868dd510bbcb6c71a481cee825dc3cefa5649cdfb77562f4ad0ace2daf224b",
+      "sha256": "843cf760539a921f65d7f85a92c5c5ec22ee1c90566029356239ab3a8e85b292",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -428,7 +428,7 @@
       "id": "TV-0008",
       "file": "reject-tile/TV-0008.tarn",
       "title": "layer `bad` tile 0 fails its entry crc",
-      "sha256": "439aa9b06124ffd59572b463df04cf92eac50a984a1bc35f7e72c62ec9ef1e0c",
+      "sha256": "09954c59fe09669e59992067fb5d7cebe78df52da11886e14c6fccf8c4086ec8",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -509,7 +509,7 @@
       "id": "TV-0009",
       "file": "reject-layer/TV-0009.tarn",
       "title": "layer `bad` reserved flag bit 2 set",
-      "sha256": "8045e3d9afddd5c45a1bbc2daa4891a2f9e4c507df9d826994b57abad0883e68",
+      "sha256": "91c259b8b7fa345b3ac71660eda17ec827bbf6154260a63e178c0b3192bb5dba",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -620,7 +620,7 @@
       "id": "TV-0105",
       "file": "reject-file/TV-0105.tarn",
       "title": "F1 front signature block bytes [0,8) byte-reversed",
-      "sha256": "cee531650507c92a7141c515e30912115a3086a3340afd0737733a27196eb42d",
+      "sha256": "ef19d129dff9e0320ec62b7a2a2c0386ee511d061ecda2b34e714fadc79747f6",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -657,7 +657,7 @@
       "id": "TV-0106",
       "file": "reject-file/TV-0106.tarn",
       "title": "F1 trailer magic at F-64 byte-reversed",
-      "sha256": "aaed2b4dd290ea739a560d7dacd1d1813417f2347c714460af23d0f6d59428b3",
+      "sha256": "cdb3011b42688326e6986580b392df1906638b7ffb74b0347b881ea38ec21337",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -696,7 +696,7 @@
       "id": "TV-0107",
       "file": "reject-file/TV-0107.tarn",
       "title": "F2 dir_offset has bit 63 set",
-      "sha256": "4df31d1c33b08fb69bb100d5d583ed31557dd7b6a1d23c8827cdc98bd7e39ef6",
+      "sha256": "f51c8418de1bf65ee23bc47519f35d59d8a4fbd92d4f0ec7afeabd0d440a69ea",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -735,7 +735,7 @@
       "id": "TV-0108",
       "file": "reject-file/TV-0108.tarn",
       "title": "F2 dir_length has bit 63 set",
-      "sha256": "cc458a4a70ec82bd029a9d2397bdb71789b1506e7363d166dec457e30f68770d",
+      "sha256": "81b6c55a32418d8dc97c54712e88bca805ef7219a8effc3f5afb52ffd8c33acb",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -774,7 +774,7 @@
       "id": "TV-0109",
       "file": "reject-file/TV-0109.tarn",
       "title": "F2 committed_file_length has bit 63 set",
-      "sha256": "3fadd849f6ca6100b72a01fbbcbb14f2327d4195ae32e1a80cae495ac767af42",
+      "sha256": "c7f48b04f72404bf9fe1df52dad9effd6b3cb02464a03653e23c68774f4f8fcd",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -813,7 +813,7 @@
       "id": "TV-0110",
       "file": "reject-file/TV-0110.tarn",
       "title": "F2 non-layer top-level record extent_offset has bit 63 set",
-      "sha256": "689a66c9f7882109ac53b84ab81b5062b3d9af46d1264337bcfac7f1854fe54d",
+      "sha256": "fc2425f269c9e673edc01137f244f090195c8b4ee1de4d5cb5f3df48ceb36a66",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -853,7 +853,7 @@
       "id": "TV-0111",
       "file": "reject-file/TV-0111.tarn",
       "title": "F2 non-layer top-level record extent_length has bit 63 set",
-      "sha256": "52fb31545f80144935e1d4fe4a55d44fa78cada82f3a8da1f5c993311516986e",
+      "sha256": "195e6a463dbb7595a449c850647b91b455ea43a4abdd553559015782e7f01fb6",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -893,7 +893,7 @@
       "id": "TV-0112",
       "file": "reject-file/TV-0112.tarn",
       "title": "F3 dir_offset + dir_length exceeds 2^63 - 1, both fields in domain",
-      "sha256": "b61f4e7d9b91ebce3a460d8eab420634f8aca44642cb2505df7dfbc773b62cc4",
+      "sha256": "cb718d559de2f3093e3172b98714e60631cae0a12954d93d6c5d91ff1f7e67db",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -936,7 +936,7 @@
       "id": "TV-0113",
       "file": "reject-file/TV-0113.tarn",
       "title": "F3 non-layer top-level record extent_offset + extent_length exceeds 2^63 - 1, both fields in domain",
-      "sha256": "10886883da14a914509057604299e19a58b54cd6415b44a144380afb0703da17",
+      "sha256": "41ba0998728d8952ae64e19baab45d659cf1c7f6a3dc71260257bbfa08ad4c52",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -976,7 +976,7 @@
       "id": "TV-0116",
       "file": "reject-file/TV-0116.tarn",
       "title": "F4 both layer records carry the name field `ok`",
-      "sha256": "a691f860fccabacaddefcc9113ac382ec7202ed39c9d3530215ea52b2df27929",
+      "sha256": "36d8ede52356fff6e25d2e201879f40f3cf03ead0293d7306517fa71cb55e640",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -1016,7 +1016,7 @@
       "id": "TV-0117",
       "file": "reject-file/TV-0117.tarn",
       "title": "F6 front signature magic bytes [0,8): final byte 1A -> 1B",
-      "sha256": "514466fa1ae5f6d9548c12ce79129e00b39900eb6eceaf76b998037e0faad044",
+      "sha256": "719abbab451010b952eb1cf12f498584b91bae3da51ce20d7f051eb23e11f54d",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1053,7 +1053,7 @@
       "id": "TV-0118",
       "file": "reject-file/TV-0118.tarn",
       "title": "F6 front signature reserved bytes [8,16) are not zero",
-      "sha256": "e428398c8c63a134ef9cc4e66fa35f703ce2eb8020ca7d21d085eade4267216d",
+      "sha256": "ab2084017b18841cabb59fcc70e7d439b68d0e41dea8f598bf9399103faf9bf3",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1090,7 +1090,7 @@
       "id": "TV-0119",
       "file": "reject-file/TV-0119.tarn",
       "title": "F7 layer `bad`'s stored tile extent lies in the pre-trailer pad",
-      "sha256": "55a7fe6a22f32b77c26f51eb6940a098c3a894dfd334ea77c6f464fb3813abd4",
+      "sha256": "82fcff1a1301b8d3b6d3a5ebeac56475efed3981e7b1d6298e8b0dc769313abb",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -1167,7 +1167,7 @@
       "id": "TV-0120",
       "file": "reject-file/TV-0120.tarn",
       "title": "F8 the 8 bytes at F-64 are all zero",
-      "sha256": "fd0d745fe6e2ebe310d577bcf24a13eb3ac5b7c3e997e9643a8684953b8fa6c9",
+      "sha256": "8757519912d0ab4bed825df297524b5386b830cd674183bbed973d99f7c3eed3",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1206,7 +1206,7 @@
       "id": "TV-0121",
       "file": "reject-file/TV-0121.tarn",
       "title": "F9 dir_offset = 8, inside the front block",
-      "sha256": "368f7e799939d4a234ebe957805d7e12a43b72c03712da75a119672c95ee484d",
+      "sha256": "6b0803d6cde47855cddbed77637209a0d470820583e541a34c0f7ac401b330ea",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1245,7 +1245,7 @@
       "id": "TV-0122",
       "file": "reject-file/TV-0122.tarn",
       "title": "F10 dir_offset + dir_length = F - 63, one byte into the live trailer",
-      "sha256": "8bd5e7ff458c5f68443eccb57ad35cc862c5d65e4dca04ac25bbd7f1a51210f6",
+      "sha256": "7bc986147950823283190ddce1bdd850abe2e9ca646f9d88e3594c51c046fb6e",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -1281,49 +1281,10 @@
       ]
     },
     {
-      "id": "TV-0123",
-      "file": "reject-file/TV-0123.tarn",
-      "title": "F11 generation = 0",
-      "sha256": "046722fed24064c18dfa092b04941bc09f2e23c64a7c9e05b060743b3086c19b",
-      "size": 128,
-      "conforming": false,
-      "derivation": {
-        "seed": "minimal",
-        "patches": [
-          {
-            "field": "trailer.generation",
-            "value": "zero"
-          }
-        ],
-        "repair": [
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F11",
-          "instance": "generation",
-          "rule": "R-CNT-06",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
-    },
-    {
       "id": "TV-0124",
       "file": "reject-file/TV-0124.tarn",
       "title": "F12 file_id = 0",
-      "sha256": "a7cf670eea9763a9f392132ff2096b71cf84496a3dfcdbed052e81ed928a1c56",
+      "sha256": "57b564ed7d16ad463e4eab07f5240e41a04d3c7506cd8b9206e019bb9989ea93",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1362,7 +1323,7 @@
       "id": "TV-0125",
       "file": "reject-file/TV-0125.tarn",
       "title": "F14 the u32 at trailer offset 60 is not the CRC of [0,60)",
-      "sha256": "37ca5321adffbba11e31bcd4873dbe9a9b9dc80da72b8cffb7f538506b9973db",
+      "sha256": "701845fc6a0464f3a2d90e202e367df3742365beedac4562af9d48f3bd238019",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1398,8 +1359,8 @@
     {
       "id": "TV-0126",
       "file": "reject-file/TV-0126.tarn",
-      "title": "F15 the 4 reserved bytes at trailer offset 56 are not zero",
-      "sha256": "985fe013b74f87e400e04747662c8340024a2bd1173a916508583ee3d14cf054",
+      "title": "F15 the 12 reserved bytes at trailer offset 48 are not zero",
+      "sha256": "1501b52e82983c363741faa886d47e9b56c0dd6fe4f1f5d26bf061285516393e",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1407,7 +1368,7 @@
         "patches": [
           {
             "field": "trailer.reserved",
-            "value": "01000000"
+            "value": "010000000000000000000000"
           }
         ],
         "repair": [
@@ -1423,7 +1384,7 @@
       "violations": [
         {
           "row": "F15",
-          "instance": "trailer reserved [56,60)",
+          "instance": "trailer reserved [48,60)",
           "rule": "R-CNT-06",
           "outcome": "reject-file",
           "scope": {
@@ -1438,7 +1399,7 @@
       "id": "TV-0127",
       "file": "reject-file/TV-0127.tarn",
       "title": "F16 dir_length = 3, below the terminal CRC's 4 bytes",
-      "sha256": "f6751cf0407c504989378b9b795ddbb8696341119c25d3514e87af1f1fc873df",
+      "sha256": "7854e5c6105f32d1d7dffd269a6de36c58c4043433d53dab7d64f36a68d6e860",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1477,7 +1438,7 @@
       "id": "TV-0128",
       "file": "reject-file/TV-0128.tarn",
       "title": "F17 committed_file_length = 192 in a 128-byte file (instance: committed_file_length, physical file shorter)",
-      "sha256": "b7c5b2b276f92a32380bc7855fbb1c45321b0344a8cdc94a60136b82f6864edf",
+      "sha256": "349122f006be8e746b57827fae84721011b072168e47e03e75a31e9d4c17f247",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1516,7 +1477,7 @@
       "id": "TV-0129",
       "file": "reject-file/TV-0129.tarn",
       "title": "F18 version_major = 0",
-      "sha256": "59d27f4f64f5e4060ea95e32dac55fda18512550cc9c97121204513d9b51a61d",
+      "sha256": "120a7c75338f8c623c14174f36987fa90070f8e60f1b280aeab61c83e8fa795a",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1555,7 +1516,7 @@
       "id": "TV-0131",
       "file": "reject-file/TV-0131.tarn",
       "title": "F19 flags bit 0 set, an unimplemented incompat-lane bit",
-      "sha256": "e2a8a628f2bdd4963eee80edb0a63a4349059e8946bffbc2589adae1373b888b",
+      "sha256": "a34b357e3719f4bd78e2a8c5f32764ef48f783373b988d3c29011926e4b4c1c0",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -1594,7 +1555,7 @@
       "id": "TV-0132",
       "file": "reject-file/TV-0132.tarn",
       "title": "F20 the directory region's final 4 bytes are not the CRC of the record sequence",
-      "sha256": "0234e45da25914f3a7cceb0ea1312e2a9a181ade45b527eaec88de517671d494",
+      "sha256": "b459d3f71c1de90ba7e03a3a67c2e77c980209932f87161ed3771c9e395e2bfa",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -1631,7 +1592,7 @@
       "id": "TV-0133",
       "file": "reject-file/TV-0133.tarn",
       "title": "F21 top-level user-metadata record carries extent slot (0, 0)",
-      "sha256": "099d87017f25bf1baee752d75e144cdd76fe57ce79bf88832c9d1e5fb939baf9",
+      "sha256": "263b54acbfa3565070cf3df7928f80db8470618ecf92921d7a2fbc4e594eda6b",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -1671,7 +1632,7 @@
       "id": "TV-0134",
       "file": "reject-file/TV-0134.tarn",
       "title": "F22 top-level user-metadata record's extent_length is 4, below the terminal CRC's own size",
-      "sha256": "1d934c2b39a08beff09f92a2f3c57a11a304c868dbafbcfac7fa25f50570afbb",
+      "sha256": "81a6e0b97e9388ae524e11bff0653141e29d9e827bc41a9c1be41dc245c08a95",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -1711,7 +1672,7 @@
       "id": "TV-0135",
       "file": "reject-file/TV-0135.tarn",
       "title": "F23 top-level user-metadata record's inline_length is 2 (instance: inline_length >= 2)",
-      "sha256": "177f2785c370d2e2960fb1ac9b4cdfd1df4d7b5ce9fe0586ad15e23524dd45af",
+      "sha256": "746ed49fd38fe299bc7c28d0b985a178332eb304ba02a29534811f9b5a377cc8",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -1751,7 +1712,7 @@
       "id": "TV-0136",
       "file": "reject-file/TV-0136.tarn",
       "title": "F24 top-level record type = 0x0000",
-      "sha256": "37820dad6c491ba12ee8f0782202de88cd4c648bc59f3ad9f9d21d266ce6b897",
+      "sha256": "702ba966f8f3532860fc7995a19358f2de0ed56236a3da77992d3d19d783a3a7",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -1791,7 +1752,7 @@
       "id": "TV-0137",
       "file": "reject-file/TV-0137.tarn",
       "title": "F26 non-layer top-level record has reserved flag bit 2 set",
-      "sha256": "b24b6d73dd9f7ca41fbab640429a257aa38dd1bcb498b49691c18febfd44c32a",
+      "sha256": "44ecec1a0514ae15f5063a8792f00ebace269d592d744b800efe73a74e512ac3",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -1867,7 +1828,7 @@
       "id": "TV-0138",
       "file": "reject-file/TV-0138.tarn",
       "title": "F27 top-level user-metadata document's members are not in ascending key order",
-      "sha256": "ee9b4170385d1c5029f41e9d306f1c32716372e580aadb425ede9713d3ca1499",
+      "sha256": "0eb7545e9357c46b3099386d316f67ff056e38c2fc0e52acfa1aee641730b0ce",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -1940,7 +1901,7 @@
       "id": "TV-0139",
       "file": "reject-file/TV-0139.tarn",
       "title": "F28 registered type 0x0002 stores MU = 1 where \u00a77.3 fixes MU = 0 (flags bit 0)",
-      "sha256": "1cc6cc98161c299af8bc1a0132ebdfd8b63e9a451bf35fbb68c6e2a3a7a21b05",
+      "sha256": "171ca436a3236f94eb5114163846249c801d7e279dbddcf48b99c53da6ea8ed3",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2016,7 +1977,7 @@
       "id": "TV-0140",
       "file": "reject-file/TV-0140.tarn",
       "title": "F28 registered type 0x0002 stores PE = 0 where \u00a77.3 fixes PE = 1 (flags bit 1)",
-      "sha256": "6d915f80704a648eb7ed70abdbb25a5088fb6f16d38b93111bfc181329fa085a",
+      "sha256": "d97b6eb9bee6ac4b72dc985f4d77bf8c86189dbe1ded2e97d62182498bb5d258",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2092,7 +2053,7 @@
       "id": "TV-0141",
       "file": "reject-file/TV-0141.tarn",
       "title": "F29 the next record's 24-byte header extends past the end of the record sequence",
-      "sha256": "dbb7144d797e9a131729e67e10f728a3393821fbf4784b00218ca05c9a6a6508",
+      "sha256": "eec26fdef8f6c73923ddd38fe9db3b25fa1a9086f2a6be6516183ea8bceb7161",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -2132,7 +2093,7 @@
       "id": "TV-0142",
       "file": "reject-file/TV-0142.tarn",
       "title": "F29 the last record's inline payload extends past the end of the record sequence",
-      "sha256": "40e462cbd2dc4a12c98a859c303a1a10a0715a16053f5666f842258437d48cb6",
+      "sha256": "e051919788eaf8766562b1fb3d8e7a37d5d7447bf60aa09379a5002d8b9886a9",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -2172,7 +2133,7 @@
       "id": "TV-0143",
       "file": "reject-file/TV-0143.tarn",
       "title": "F30 non-layer top-level record extent slot (0, 27): offset zero, length nonzero",
-      "sha256": "a975a7dbe4f3eb2ecf7fd5c136b8a818fcfb616c238ca68ab3a02b96038e0807",
+      "sha256": "7c06ca4b83688d45e4b7aaa521928e628dd37baf60b338bea41220e0deb9b875",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2212,7 +2173,7 @@
       "id": "TV-0144",
       "file": "reject-file/TV-0144.tarn",
       "title": "F30 non-layer top-level record extent slot (64, 0): offset nonzero, length zero",
-      "sha256": "2a3694438e03372f9d5cbb42919be4d4469fccd603163c3392b9743780ea6824",
+      "sha256": "13ba0ca0171b889f2d32864cd11db236f377a9c2c5e77fbdf793c274f1463eaf",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2252,7 +2213,7 @@
       "id": "TV-0145",
       "file": "reject-file/TV-0145.tarn",
       "title": "F31 non-layer top-level record extent_offset = 8, inside the front signature block",
-      "sha256": "511d70f4657451e3f4bde45dbdc715baf09fb72c3686df78663ea2ca625c4c96",
+      "sha256": "64a8782fb0cdad1e20483ae1b2176b5f614a2ece1e9641e4b4c66431005abf01",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2292,7 +2253,7 @@
       "id": "TV-0146",
       "file": "reject-file/TV-0146.tarn",
       "title": "F32 non-layer top-level record extent ends 3 bytes into the live trailer",
-      "sha256": "7843726176d7c506c2651d6d0e7c11da73127403ed5e68d698064948d1b6fbf2",
+      "sha256": "18b87e68a9943ec18b4487d4e26bf6c8728733d223dd6792d6a29f69bfaa5af5",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2332,7 +2293,7 @@
       "id": "TV-0147",
       "file": "reject-file/TV-0147.tarn",
       "title": "F33 stored-tile extents: layer `bad`'s tile 0 extent lies inside layer `ok`'s stored tile",
-      "sha256": "c40cc71af2353d71a71713edbb50fdcfd9e9219fe1e54a4b77b26bf3de875030",
+      "sha256": "8c69c1eff0fa236d4865fafb6fc0275bf2d65dbf50ca7c7e7d6553df257b0c75",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -2409,7 +2370,7 @@
       "id": "TV-0148",
       "file": "reject-file/TV-0148.tarn",
       "title": "F33 tile-index regions: a top-level record's extent covers layer `ok`'s tile-index region",
-      "sha256": "202930c06e10510b28846dc5e0fc0c0c8fd47bc1c3d0f26b0a4bec7ebe469a83",
+      "sha256": "abb15a3691de22a4639afe1b9d82d4679ed558a675a94f84b93060431877c651",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2485,7 +2446,7 @@
       "id": "TV-0149",
       "file": "reject-file/TV-0149.tarn",
       "title": "F33 record extents: a top-level record's extent covers layer `ok`'s stored tile",
-      "sha256": "ce805dcc0db0148231452cfca8fa26c8748bbf1a4bcf338eab0d1d655247e773",
+      "sha256": "40f1455369e08309ef3b92d933b256e4d4380d4022926db26f158e51e6bf61ef",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2561,7 +2522,7 @@
       "id": "TV-0150",
       "file": "reject-file/TV-0150.tarn",
       "title": "F33 directory region: a top-level record's extent covers the first 20 bytes of the directory",
-      "sha256": "4a130aec538d3328931e5bf567e18e3392b132334149f5e373267eba84eda8d3",
+      "sha256": "8bcebef423a155af36f7fb3dfaedf4550a13bfb646c0d574963ce6c953840433",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2637,7 +2598,7 @@
       "id": "TV-0151",
       "file": "reject-file/TV-0151.tarn",
       "title": "F34 the record sequence carries two user-metadata records (type 0x0002)",
-      "sha256": "5a0a4935d03fd2c4fb9eb5be670ce4a1b9a26e36b08c5801118f6f875b15f6c5",
+      "sha256": "9960625e0f83338affaf7d3f1cf785e6e95b833290ad0d4d107ecbbf3aee1b3d",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2684,7 +2645,7 @@
       "id": "TV-0152",
       "file": "conforming/TV-0152.tarn",
       "title": "a conforming file a reader must refuse: top-level record of experimental type 0x8001 with MUST_UNDERSTAND = 1",
-      "sha256": "50ebb77709ded3d54b5914e60bd47f1d7648f7d04b03a60c9b830c446eb0c689",
+      "sha256": "b2f89d6203e3430eb37590fc80f054385c36baf377a808c948ae1de0328547e8",
       "size": 320,
       "conforming": true,
       "derivation": {
@@ -2709,7 +2670,7 @@
       "id": "TV-0153",
       "file": "reject-file/TV-0153.tarn",
       "title": "F7 layer `bad`'s tile-index region lies in the pre-trailer pad \u2014 a verbatim copy, every CRC intact",
-      "sha256": "73893397a7a7931684d2a04a3bff6f7fe268d32779c2f6a86f4e371e8213c56a",
+      "sha256": "7883ed347cb3b67d7ab7cb970d3e724546ff0ce9a938c7b04c33a670b7c62830",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -2811,7 +2772,7 @@
       "id": "TV-0154",
       "file": "reject-file/TV-0154.tarn",
       "title": "F7 an experimental-type record's extent lies in the pre-trailer pad",
-      "sha256": "ed28e8bfc80c2d19fbe8b9ca0b895b7daff76f46936c1c59367f76fa347bd2df",
+      "sha256": "2d419a2969251b9ee046fb52f1ecc22364b3fb07bf67101094b87d026ee92a71",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -2879,7 +2840,7 @@
       "id": "TV-0155",
       "file": "reject-file/TV-0155.tarn",
       "title": "F7 layer `host`'s experimental-type sub-record extent lies in the pre-trailer pad",
-      "sha256": "150c891ee46ff0e1232eebc1b9f11cfb04abc8b4402f39e3237654446583a99c",
+      "sha256": "bb3de3c4f2c36f9987f3c1d3a5e1869373598b096936b94823cd4f1077111153",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -2981,14 +2942,14 @@
       "id": "TV-0156",
       "file": "reject-file/TV-0156.tarn",
       "title": "F17 committed_file_length = 128 in a 192-byte file, the trailer copied verbatim to the physical end (instance: committed_file_length, physical file longer)",
-      "sha256": "e1a140ba92adde1a559a3b91b3c6b9ad7b33924a2851d8951dfdf8577dcfc6df",
+      "sha256": "7de381aa6c56c71b20ef54b2dfe202615917106b3717aeadcc409ed014a48f6d",
       "size": 192,
       "conforming": false,
       "derivation": {
         "seed": "minimal",
         "patches": [],
         "repair": [
-          "append:8a4e5241540d0a1a01000000000000000100000000000000100000000000000004000000000000008000000000000000efcdab896745230100000000d23809e0"
+          "append:8a4e5241540d0a1a0100000000000000100000000000000004000000000000008000000000000000efcdab89674523010000000000000000000000007e152f40"
         ]
       },
       "expect": {
@@ -3015,7 +2976,7 @@
       "id": "TV-0157",
       "file": "reject-file/TV-0157.tarn",
       "title": "F23 top-level user-metadata record's inline_length is 0, the encoding byte absent (instance: inline_length 0, the encoding byte absent)",
-      "sha256": "a5e8403907520e1bd44e57ff54ddb764a887b28aba74274cd513c6e7d8297f42",
+      "sha256": "8dc32cadb913cf2c06a473bfe6c7e00b7cf2ea1421a0a18caeffd1a7b510aa2e",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -3055,7 +3016,7 @@
       "id": "TV-0200",
       "file": "reject-layer/TV-0200.tarn",
       "title": "layer `bad` dimension extent E0 = 2^63 (instance: dimension extent Ei)",
-      "sha256": "0cdecfca997865837c1cc10eee6bb6e51a8cd1e546096bd26d321bc411a82ee4",
+      "sha256": "ef16ff1c6757f4d59004d7431160f1674b89fb19238ae28ace3ce06d15c8876a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3134,7 +3095,7 @@
       "id": "TV-0201",
       "file": "reject-layer/TV-0201.tarn",
       "title": "layer `bad` tile extent T0 = 2^63 (instance: tile extent Ti)",
-      "sha256": "42649c1744d928bdd70555222cb9d9329cecae69da42febea3332eb74c7dfead",
+      "sha256": "79f0c6b452ce99a4e768e4e1d29a5effb31a1d8b602f574e24e466ebccb49d5e",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3213,7 +3174,7 @@
       "id": "TV-0202",
       "file": "reject-layer/TV-0202.tarn",
       "title": "layer `bad` entry_count = 2^63 (instance: entry_count)",
-      "sha256": "dee8706936c2b03aaa4b33ffcb290bb5e6cdc9d732f633d21bf753532e99b63f",
+      "sha256": "49f4dac487eee3c6a6ac0924c9a9c530a812a9fd23239ebaea85a38c67ddc91c",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3292,7 +3253,7 @@
       "id": "TV-0203",
       "file": "reject-layer/TV-0203.tarn",
       "title": "layer `bad` slab run length S = 2^63 (instance: slab run length S)",
-      "sha256": "01c5052ed212e3f508044696c1fefdf44819c2badf63ca3d0f5c1e9bdd76451f",
+      "sha256": "380839d6c3de26c64cbc4eff4b86594a3200dee8640da65bf70c9b2f706f7256",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3375,7 +3336,7 @@
       "id": "TV-0204",
       "file": "reject-layer/TV-0204.tarn",
       "title": "layer `bad` N = prod ceil(Ei/Ti) = 2^122 (instance: N)",
-      "sha256": "f97f4abbbb713e9519f4d77b13fcfb181898b69ed72d2fc48a544631568a8a74",
+      "sha256": "eb37ce43c45d5e41b523347dacae5dc11ac1a41d652881d201b21b7ba1c56e52",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3458,7 +3419,7 @@
       "id": "TV-0205",
       "file": "reject-layer/TV-0205.tarn",
       "title": "layer `bad` P = prod Ti = 2^63, the first value past the domain (instance: P)",
-      "sha256": "2cdc211c2e6443786feb8bd292ff1d61979983619581b1b54ef462a2c738669d",
+      "sha256": "232cf7c6f141f7fdaca97ce9d96d691182d0b8d756c0d015f51fb5167d05924f",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3537,7 +3498,7 @@
       "id": "TV-0206",
       "file": "reject-layer/TV-0206.tarn",
       "title": "layer `bad` planar with C=4, N=2^62: C*N = 2^64 (instance: C*N)",
-      "sha256": "ecc4ffc6aa5e62c536d5040c45cbec042a0d92a6f946256e5e6cfeb3c4d94ac1",
+      "sha256": "6325e0b9981478e6d0b374f9aa349ea02c900cf71a8f1c05712dea18845b6fcd",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3616,7 +3577,7 @@
       "id": "TV-0207",
       "file": "reject-layer/TV-0207.tarn",
       "title": "layer `bad` interleaved P=2^60 with Q=8: P*Q = 2^63 (instance: P*Q)",
-      "sha256": "732d83ebea7bc5fc4ef3722717bf1328b042d49e2667b3a0b135d07a7d837c67",
+      "sha256": "35eb6928a8de972d4f00a3bd3fcd914f1c717a9fbffaf745b3c8093dceed685a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3695,7 +3656,7 @@
       "id": "TV-0208",
       "file": "reject-layer/TV-0208.tarn",
       "title": "layer `bad` planar P=2^60 with B^c=8: P*B^c = 2^63 (instance: P*B^c)",
-      "sha256": "dc2cb71df74442291e0ba3864f26f07c65b0091dd6187223ef932810cf1b8977",
+      "sha256": "08d1f7e98e5d83e6d25dcc7a0e617db9aaf43a447e0f7f66cd323b70d5be79b8",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3774,7 +3735,7 @@
       "id": "TV-0209",
       "file": "reject-layer/TV-0209.tarn",
       "title": "layer `bad` entry_count = 2^60: entry_count*20 + ceil(/2^16)*4 overflows (instance: index region size)",
-      "sha256": "1f442efb8f385cae192d5d25cf61af9ccb403e3a92f4715b8736673c4fedec86",
+      "sha256": "e89b6771f657695a7fc72c341ca8f372874560695784797a35da4a1086c325f2",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3869,7 +3830,7 @@
       "id": "TV-0211",
       "file": "reject-layer/TV-0211.tarn",
       "title": "layer `bad` name is ill-formed UTF-8 (03 62 FF 64)",
-      "sha256": "186f32f1bd36fa4b3b9858a37846359f4eb0a18d2f94cc600cb9b78ceb943df2",
+      "sha256": "8d3fb99afded8120ee510c08248a35723efe6de88545a075f3b59eb81d8e1aa3",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -3949,7 +3910,7 @@
       "id": "TV-0212",
       "file": "reject-layer/TV-0212.tarn",
       "title": "layer `bad` channel name is ill-formed UTF-8 (instance: channel entry name)",
-      "sha256": "8d8f186fc39b1dbde67f2d9c6f8712fc623f1f1ff1ba65ffa51e1cfb3d5af073",
+      "sha256": "c8d55234611ce0e193a3b5211beabbe3e624b3baf7baefe1d97bf216fbfb0605",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4028,7 +3989,7 @@
       "id": "TV-0213",
       "file": "reject-layer/TV-0213.tarn",
       "title": "layer `bad` dimension name is ill-formed UTF-8 (instance: dimension entry name)",
-      "sha256": "9020a4d66621c2f915c080d22007dead9902f3ea26aa0040f52b445d53a821e8",
+      "sha256": "6fc21b6d179bcfcc81608b33d9c3d74f89bc6d8acf185c59fd2161501f1cb5f8",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4107,7 +4068,7 @@
       "id": "TV-0214",
       "file": "reject-layer/TV-0214.tarn",
       "title": "layer `bad` name has length prefix 0 (empty name)",
-      "sha256": "2289832b2b2f30c03f3bcc07a6ccacda0bf54a318bddf459b4a50792180de9c9",
+      "sha256": "3ab5c8f965762c3aee341536171ffce49a3f0ca739bd2f936dfaadbd773bb9a7",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4187,7 +4148,7 @@
       "id": "TV-0215",
       "file": "reject-layer/TV-0215.tarn",
       "title": "layer `bad` name contains U+0001, a code point in U+0000-U+001F",
-      "sha256": "c46306d0b0b880c676f13e0e37c981cff09b87abd8e729c4038126885a8fef51",
+      "sha256": "5c3b0a3433238078741d92a39c30635beb088f6378dc737f16b0eb9538c04585",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4267,7 +4228,7 @@
       "id": "TV-0216",
       "file": "reject-layer/TV-0216.tarn",
       "title": "layer `bad` dimension name has length prefix 0 (instance: dimension entry name)",
-      "sha256": "fc02ecbd96b27dbe25054df4b5639e619f3ed2cb3036488a910ce29d76b8e2b9",
+      "sha256": "61157fd0801db8e484870a4d4301b2a1d94cf73f8449cfd639fd1da048c70a78",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4346,7 +4307,7 @@
       "id": "TV-0217",
       "file": "reject-layer/TV-0217.tarn",
       "title": "layer `bad` channel name has length prefix 0 (instance: channel entry name)",
-      "sha256": "115fa198fa7e2e1b1681be3f85731fcdbd053a849c7ac598668d8da4ada0f990",
+      "sha256": "fd9f1c12e270f416c6b7a26fdf2ca778a98f43f35e980d17fc4cb31c4897b599",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4425,7 +4386,7 @@
       "id": "TV-0218",
       "file": "reject-layer/TV-0218.tarn",
       "title": "layer `bad` dimension name contains U+0001 (instance: dimension entry name)",
-      "sha256": "b8fb9a27885b0b61b96187e38b437bfaad11ad6c3fd6928d24e15eae383c1e82",
+      "sha256": "e03c969c3cbc934ce17fdc214bc49b35e5828060870a5bbb04bf86e30662809a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4504,7 +4465,7 @@
       "id": "TV-0219",
       "file": "reject-layer/TV-0219.tarn",
       "title": "layer `bad` channel name contains U+0001 (instance: channel entry name)",
-      "sha256": "0c6e2c7e9438dea0203c1c9f8154019a15fc8198f152bddd58525d72f0ed3353",
+      "sha256": "aada165dcc5aeb1b21f5481dab69f3cb8ec8066e7b799b6d6f7856cb5c5944f8",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4583,7 +4544,7 @@
       "id": "TV-0220",
       "file": "reject-layer/TV-0220.tarn",
       "title": "layer `bad` declares two dimensions both named `y` (instance: dimension entry name)",
-      "sha256": "4ee7eadd78d5cfdc446761e072ddfc31a1fb8e06a4a19d9d0b0336d03aff7e7c",
+      "sha256": "cebe94ab908314cb7683b00c4ab6677d77f8704fa9368c7fbf0cbe18b46baf4a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4662,7 +4623,7 @@
       "id": "TV-0221",
       "file": "reject-layer/TV-0221.tarn",
       "title": "layer `bad` declares two channels both named `v` (instance: channel entry name)",
-      "sha256": "1551543b583f44bac8fcbbc36abf1808ab92507d55362a017b957128ee805c8e",
+      "sha256": "1ff7b2918faadb99adad22aee2b4c3dbc79a7417ae648d362274c1c9c484e757",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4741,7 +4702,7 @@
       "id": "TV-0222",
       "file": "reject-layer/TV-0222.tarn",
       "title": "layer `bad` sub-record header truncated at the payload end, 18 of 24 bytes (instance: sub-record header)",
-      "sha256": "c7be5315c91187b8ad63727a35659b389392cfcbf4e11659299dbca17a6938ea",
+      "sha256": "5434e3761debbfeeee8e26a2854dab6007e02f9cd2f733bc4de3847d2d95805d",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4820,7 +4781,7 @@
       "id": "TV-0223",
       "file": "reject-layer/TV-0223.tarn",
       "title": "layer `bad` extent slot is (68, 0), exactly one half zero (instance: layer record extent slot)",
-      "sha256": "188887de909c72dd0061c134168dc4001596be54bfba5ad69962b2fe8692c03c",
+      "sha256": "8f1418ee3bc1f64c2fcf2984d941bb7b7ff7a0a3f79be497b1fdfae011314bf6",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4899,7 +4860,7 @@
       "id": "TV-0224",
       "file": "reject-layer/TV-0224.tarn",
       "title": "layer `bad` extent_offset = 8, inside the front signature block (instance: layer record extent slot)",
-      "sha256": "52b29553dab6684c6a4dad19b07de2fa823657cb23347b4cc721d1a37830142c",
+      "sha256": "f6bf92ed3bc4428c118901ea3dd97dd70fa9246a15708e46d6f85569e8d5e9cd",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -4978,7 +4939,7 @@
       "id": "TV-0225",
       "file": "reject-layer/TV-0225.tarn",
       "title": "layer `bad` extent 376+24 = 400 reaches past F-64 = 384 (instance: layer record extent slot)",
-      "sha256": "c791aef279f87078ec28202a44eeb32c0093695a253d2354638160b53a689f84",
+      "sha256": "c4a572cf974da789deeb4bbd5e58528f07e68e9d5f04516e0e25a78ee59a532a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5057,7 +5018,7 @@
       "id": "TV-0226",
       "file": "reject-layer/TV-0226.tarn",
       "title": "layer `bad` stored tile [68,72) overlaps its own tile-index region (instance: tile-index region)",
-      "sha256": "d45ab33166c9f1914b9ee10e944c549030f8b06df5cbcaa666161652262001b5",
+      "sha256": "df0a398f1f7cb96f74748fe5521cfa7422e28e687f6b83d460ef8e0bb5c2ddb2",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5143,7 +5104,7 @@
       "id": "TV-0227",
       "file": "reject-layer/TV-0227.tarn",
       "title": "layer `bad` declares both A = 512 and S = 1",
-      "sha256": "87184028e97cc1ad78cec90bd848fd46a9d466318c9cd5945e2df98d47708459",
+      "sha256": "3969a3513e670d227fd10681c4a1cdb310cfd61fb28de59bf6cfbc55b6483961",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5235,7 +5196,7 @@
       "id": "TV-0228",
       "file": "reject-layer/TV-0228.tarn",
       "title": "layer `bad` addresses N = 2 tiles but declares entry_count = 1 (instance: interleaved N)",
-      "sha256": "ae57ac5b55327896634e8e9027ef57c41c138615047017cc3d8e927c002986d0",
+      "sha256": "8d2c68871b16a3862be66d2940c0dd0ca0630cf4f6ea34c7647b810bd60c4a5d",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5314,7 +5275,7 @@
       "id": "TV-0229",
       "file": "reject-layer/TV-0229.tarn",
       "title": "layer `bad` extent_length = 20, not entry_count*20 + 4 = 24 (instance: extent_length against the formula, extent_length smaller)",
-      "sha256": "a16a3f928cf5385dbbbee8d9217a25e56c27b36cf6c9a4b1e6f2426a26ebae9c",
+      "sha256": "cdeb60f782ce31f41a9c0559c40a258d619f8d943cbf7fdb5c3397429d08d212",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5393,7 +5354,7 @@
       "id": "TV-0230",
       "file": "reject-layer/TV-0230.tarn",
       "title": "layer `bad` extent slot (0, 0) with entry_count = 1 (instance: extent_offset)",
-      "sha256": "4e2531c0caeec93566afc8f041878e2b1acd659cd06cc76e4ac06df44a5a7baa",
+      "sha256": "7cadb98fa6d0b55fe9144a8dc7ac2cc69ca7b6615a2e61cd58a05501495c64c7",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5476,7 +5437,7 @@
       "id": "TV-0231",
       "file": "reject-layer/TV-0231.tarn",
       "title": "layer `bad` has entry_count = 0 but a nonzero extent slot (instance: entry_count)",
-      "sha256": "434af06b0c012399013afb4f7c2a463079740b12d72dd47fd0949600ac1a6afd",
+      "sha256": "228f61dbc3d668e265c0acf7e022f8907f068f460914c05909411c8f09f60386",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5563,7 +5524,7 @@
       "id": "TV-0232",
       "file": "reject-layer/TV-0232.tarn",
       "title": "layer `bad` name declares 200 bytes, past the 93-byte payload (instance: leading fixed fields)",
-      "sha256": "78614bc59dab67633a8096560e92d9acacba5cc5ac5b2cf5d2f1cfbc1c49e31a",
+      "sha256": "5df0a8ec08c6f2c0bad888e39dc6886ee9a43cfa46d54c48079ff8983e9353ae",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5643,7 +5604,7 @@
       "id": "TV-0233",
       "file": "reject-layer/TV-0233.tarn",
       "title": "layer `bad` declares rank 3 with room for two dimension entries (instance: d dimension entries)",
-      "sha256": "2030d51a625d1e546f8a94d15dcb35bd4a40757cce6fa1697533f3a26ee47349",
+      "sha256": "1b3f4e2c61f4f819f3631c3bda6ac61e9b68652fb1ae6909cea1b724acf2bb8e",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5722,7 +5683,7 @@
       "id": "TV-0234",
       "file": "reject-layer/TV-0234.tarn",
       "title": "layer `bad` declares C = 9 with room for one channel entry (instance: C channel entries)",
-      "sha256": "5128f7a7af27df1133cf95f8668eb88be2f4adc57b5e9da418cbbb533588b912",
+      "sha256": "5d14b2d8ff28e100d7c2a8cc21667417c116bf602aa1874f70fe30a6f0f06a54",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5801,7 +5762,7 @@
       "id": "TV-0235",
       "file": "reject-layer/TV-0235.tarn",
       "title": "layer `bad` trailing fixed fields start at 85 and need 13 of the remaining 8 bytes (instance: trailing fixed fields)",
-      "sha256": "c893d28f686fbe9bff591a0409473c498f416f6b235b265ba4bcbe4dfac67de5",
+      "sha256": "4e73762db53ba3cf58acd4a55b011cdc8db4d21f1cf3a1f6032b023453326a76",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5880,7 +5841,7 @@
       "id": "TV-0236",
       "file": "reject-layer/TV-0236.tarn",
       "title": "layer `bad`, planar: addresses C\u00b7N = 2 tiles but declares entry_count = 1 (instance: planar C\u00b7N, entry_count smaller)",
-      "sha256": "8ae21f33f48f16d5d6d3aab38adad24592661f31396bed5070ef93cf5e5f818a",
+      "sha256": "fed4d2c10d400a1530505025715d3d2741b6488638dca5d091ad1e7dc025f859",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -5963,7 +5924,7 @@
       "id": "TV-0240",
       "file": "reject-layer/TV-0240.tarn",
       "title": "L21 layer `bad` declares entry_count = 2 but addresses N = 1 (instance: interleaved N, entry_count larger)",
-      "sha256": "a6e9793a582a0d26056010267d93316055de8a72ef678536679cab9cf0536fbe",
+      "sha256": "21a799aa44147e86d8bb04fdc27469ec16b51e91587fa7be130b9b88c1eaaf5b",
       "size": 576,
       "conforming": false,
       "derivation": {
@@ -6043,7 +6004,7 @@
       "id": "TV-0241",
       "file": "reject-layer/TV-0241.tarn",
       "title": "L21 layer `bad`, planar: declares entry_count = 2 but addresses C\u00b7N = 1 (instance: planar C\u00b7N, entry_count larger)",
-      "sha256": "ec3596d57c63c8f9d6a782509b3e225e5d2044c304610dfb5d7293fddbb69a7e",
+      "sha256": "adf413a44ded1f59ce95ced11dae365f611441f45a570555e5c02b595810148b",
       "size": 576,
       "conforming": false,
       "derivation": {
@@ -6127,7 +6088,7 @@
       "id": "TV-0242",
       "file": "reject-layer/TV-0242.tarn",
       "title": "L22 layer `bad` extent_length = 48, not entry_count*20 + 4 = 44 (instance: extent_length against the formula, extent_length larger)",
-      "sha256": "106192e99393c07d94738550840a9c2c644626cb192d6f73ac0827fc695330b9",
+      "sha256": "c3e277591c4e112db2f431cc495fd17cacf4ca9673c1e4e47cc8703e64842e5a",
       "size": 576,
       "conforming": false,
       "derivation": {
@@ -6207,7 +6168,7 @@
       "id": "TV-0270",
       "file": "reject-layer/TV-0270.tarn",
       "title": "layer `bad` has entry_count 0 with a nonzero crc_of_crc_array",
-      "sha256": "0af40f3cbc84d868d9859209655f1d8f8d7b8b84eeff71457f5e7f73b7caf6e1",
+      "sha256": "e93235192fa453c391a3c5b11b142cbeba2a685775e0a5cf33eaa2cf6d987d00",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -6302,7 +6263,7 @@
       "id": "TV-0271",
       "file": "reject-layer/TV-0271.tarn",
       "title": "layer `bad` declares slab alignment 4096 with slab S = 0",
-      "sha256": "864e9c879707b06de057d74652392a73c6925340bfc897c6e2b409e12d4015ca",
+      "sha256": "a5039fe63812b9e97376f0d6e98cfa7fa75326ae11d2b622f730a9361cb2b609",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -6381,7 +6342,7 @@
       "id": "TV-0272",
       "file": "reject-layer/TV-0272.tarn",
       "title": "layer `bad` declares S = 1 with A_slab 0 (the included case)",
-      "sha256": "e374c755c2370823c0b834f1af4e6a79fc546f20b5039cc044b91351357b8593",
+      "sha256": "ca186a298ecc4003d4477162d2d4527173dd525dcc7ccc49d7d02bd83106d858",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -6473,7 +6434,7 @@
       "id": "TV-0273",
       "file": "reject-layer/TV-0273.tarn",
       "title": "layer `bad` declares S = 1 with A_slab 3, not a power of two",
-      "sha256": "81bcd0b6d48fff0e8fe2ef4d8a4df2fa76851af2427715b88d12d089ed4cefcf",
+      "sha256": "4ca5893bee38d0b44c450ac26fa9c8778ea5e99961488a5cc77ca36c3716ed94",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -6569,7 +6530,7 @@
       "id": "TV-0274",
       "file": "reject-layer/TV-0274.tarn",
       "title": "layer `bad` declares S = 1 with A_slab 2^63, above the 2^62 ceiling",
-      "sha256": "a45581fd38ce51eafba51357ff8782e0356262298e1b80d5e9ce94a673fa1103",
+      "sha256": "574d75ba45bcdd85bea799c93c07780fe029f47e4022a202d8b56b6ba83a1b46",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -6665,7 +6626,7 @@
       "id": "TV-0275",
       "file": "reject-layer/TV-0275.tarn",
       "title": "layer `bad` channel `v` is uint64 with a 1-byte fill (instance: prefix shorter than the element size)",
-      "sha256": "1cff756bddf4859c6a06b9c98edf816714ea344bcff56b13c24de12142d0a22c",
+      "sha256": "2efa63fefecf336e4399ab7d60f23cb1c4c8b60bd0de2a8d4ca73eb81d21f9d6",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -6757,7 +6718,7 @@
       "id": "TV-0276",
       "file": "reject-layer/TV-0276.tarn",
       "title": "layer `bad` declares index_encoding 2 (reserved 2\u20130x7F)",
-      "sha256": "cc0886978ac03c751b2b26c2f53bd2e0052c7cb7d9cd3f7ab782e718f1452634",
+      "sha256": "8b579c2b526f96bd52ecd5f233a1d5c9791739d2a0b93c96b26ca2a579d454da",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -6836,7 +6797,7 @@
       "id": "TV-0277",
       "file": "reject-layer/TV-0277.tarn",
       "title": "layer `bad` declares index_encoding 0x80 (experimental \u2265 0x80)",
-      "sha256": "d2bffd965201c4b532b281fc69b41015bdf9b1b6210fe94bcdbb13bc18724daf",
+      "sha256": "afe9aa35178209ca298d7bb4c381214faa45889e680433fbdc081e9b5085c5d8",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -6915,7 +6876,7 @@
       "id": "TV-0278",
       "file": "reject-layer/TV-0278.tarn",
       "title": "layer `bad` has tile extent T\u2080 = 0 (instance: tile extent T\u1d62)",
-      "sha256": "15cb1c694a1973810cfb35ddb6e6f72ce6b9df20f51aa207b1b3b6655e3cd7df",
+      "sha256": "577af221b286551de7eae9eb88fe6b82dc3d5567f30a1d8d62e6d985592a141a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7007,7 +6968,7 @@
       "id": "TV-0279",
       "file": "reject-layer/TV-0279.tarn",
       "title": "layer `bad` declares rank d = 0 (instance: rank d)",
-      "sha256": "9c193f375b3c63d66b80a34ed0c5b9a1364d1d615f895157d781f55d85f98674",
+      "sha256": "0fd650d6c1204f691e34e748c8adc4a2983f8a1eaf8d9dc8289f2aab5dbbaee9",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7131,7 +7092,7 @@
       "id": "TV-0280",
       "file": "reject-layer/TV-0280.tarn",
       "title": "layer `bad` channel `v` is uint8 with a 4-byte fill (instance: prefix longer than the element size)",
-      "sha256": "fcf7b1cf75e09cd0961bd2e3b771ea7ee1cace95d02111ac0535a922a1db35f9",
+      "sha256": "ae50bdf9599900e148d4f63219c931ef4c5b931c3205d68f1b8107495fff162e",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7223,7 +7184,7 @@
       "id": "TV-0281",
       "file": "reject-layer/TV-0281.tarn",
       "title": "layer `bad` declares linearization 0 (invalid)",
-      "sha256": "f093a93f99e7c5a9476e70a5111b426413f9b21ce6963c26eea98f2c43f701b8",
+      "sha256": "ef736378e14c545e4d94e1ddaa8b41c9a6eef275d6f07bf3e79e4fbf12605d84",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7302,7 +7263,7 @@
       "id": "TV-0282",
       "file": "reject-layer/TV-0282.tarn",
       "title": "layer `bad` declares linearization 4 (reserved 4\u20130x7FFF)",
-      "sha256": "7c1d2d9383418d8d5901e3b1360565855f495b7d16114af577924ce898f69db5",
+      "sha256": "fe8d064e169dae01c96fbe2ccb8aa0977f876c5f86f5d4e968da73d2e5743bca",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7381,7 +7342,7 @@
       "id": "TV-0283",
       "file": "reject-layer/TV-0283.tarn",
       "title": "layer `bad` declares linearization 0x8000 (experimental)",
-      "sha256": "a732ea2c6a8ba44078a685a65327453254ff008897fc316b54f4ed1912d14255",
+      "sha256": "072dbb2a0fa2c96a37cbfd14cdad0eb4a9a12fdf4415b6837fd7bc9458a5a89b",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7460,7 +7421,7 @@
       "id": "TV-0284",
       "file": "reject-layer/TV-0284.tarn",
       "title": "layer `bad` channel `v` declares type 0 (invalid)",
-      "sha256": "074478d5712afad773829825388682e6aa5baf0acb5864e7870725eaddf370bc",
+      "sha256": "42c4900dfc00e384ac200e448e72d35e498f78b5c1990bd64dc23de5b3c5a2bc",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7539,7 +7500,7 @@
       "id": "TV-0285",
       "file": "reject-layer/TV-0285.tarn",
       "title": "layer `bad` channel `v` declares type 14 (reserved 14\u201319)",
-      "sha256": "8c3ab8e2d97e369636031de479dbf3a5c0074ec27c99be5718ed05f386191a30",
+      "sha256": "5ceb1f1b521e431cede367ca5e5aad0d2e19aa755cdaad6369de92b9b6e7dca8",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7618,7 +7579,7 @@
       "id": "TV-0286",
       "file": "reject-layer/TV-0286.tarn",
       "title": "layer `bad` channel `v` declares type 20 (reserved 20\u20130x7FFF)",
-      "sha256": "b6bff0ca3b11d2f0dc27540377458db9e1f982a30b7192c1b0e56b6c74403a04",
+      "sha256": "93be46baf13c9373ce843b71ce79b3c1fadd5dd41676ed0ed4ed2a8646068d21",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7697,7 +7658,7 @@
       "id": "TV-0287",
       "file": "reject-layer/TV-0287.tarn",
       "title": "layer `bad` channel `v` declares type 0x8000 (experimental)",
-      "sha256": "b522ed68503ced391f65f7f0410ef3c2e36b663caba2f47466d201ed3e189675",
+      "sha256": "deafdf441a45f5593562de0883743faed84b965fc4fc385d0da014cf2260256a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7776,7 +7737,7 @@
       "id": "TV-0288",
       "file": "reject-layer/TV-0288.tarn",
       "title": "layer `bad` channel `v` is bool with fill byte 0x02",
-      "sha256": "1791c7f141da8cb02f370be8adf31fbc585a1b0acbacf01a855d748e0e2cccb3",
+      "sha256": "dfae1c5aed3633feea447cde49e7865060bbeae504c7b7e409c564117d422d01",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7872,7 +7833,7 @@
       "id": "TV-0289",
       "file": "reject-layer/TV-0289.tarn",
       "title": "layer `bad` declares layout 0 (invalid)",
-      "sha256": "81d792bde890342cf77ea14e12aa71472f439deeb7d0e2ecb71466125fb52a6e",
+      "sha256": "9c257a177da113ee879d8624e73bcca1818282efeee5bce437de47717f77ce55",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -7951,7 +7912,7 @@
       "id": "TV-0290",
       "file": "reject-layer/TV-0290.tarn",
       "title": "layer `bad` declares layout 3 (reserved 3\u2013255)",
-      "sha256": "4ebb6c1af28b593f278a81e5c218f9e8eef8ab1ceb2ff3678ecff343f0cd8e7b",
+      "sha256": "25bfbcaeb38bb3f650485566d7e05a2ca74fd13c78c848ec1d910a9ca79325bb",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8030,7 +7991,7 @@
       "id": "TV-0291",
       "file": "reject-layer/TV-0291.tarn",
       "title": "layer `bad` crc_of_crc_array does not cover its segment-CRC array",
-      "sha256": "21a360cbfca6f1a6844b619ee4858a05465cb50379fde1337ae2af929a9f5812",
+      "sha256": "664ca41658c0c53ab35320840bfc1ea323103df030dd31c82404c448c524b053",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8109,7 +8070,7 @@
       "id": "TV-0292",
       "file": "reject-layer/TV-0292.tarn",
       "title": "layer `bad` segment 0's CRC does not cover its entry bytes",
-      "sha256": "c1be4dbbb7bd9e614547cce57cac60b68ba91b2f2583ba9956e16ad22244c29d",
+      "sha256": "3d93b8eb7d1e20416e73e30355a9994983a49fce65468e593261ca9a16d55317",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8192,7 +8153,7 @@
       "id": "TV-0293",
       "file": "reject-layer/TV-0293.tarn",
       "title": "layer `bad` declares alignment 1000, not a power of two",
-      "sha256": "da6a3b03d6b4bad838d0244e089c70c514bb7ba4b09104aded2250c3aa00d8e5",
+      "sha256": "1d068786ddb2e9917a9f0237cfc3893aff57b720e0cbdd256414809c4ae59c47",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8284,7 +8245,7 @@
       "id": "TV-0294",
       "file": "reject-layer/TV-0294.tarn",
       "title": "layer `bad` declares alignment 256, below the 512 floor",
-      "sha256": "a7da783dd440f8d7160fca9bfcd25d3e85069c429a40dc1716c16c87d5ff5de7",
+      "sha256": "f6c0d6a5c7fe91a31447ad296a9f3ee16cd75c1b7e7cf25fde22e81e6db100ac",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8376,7 +8337,7 @@
       "id": "TV-0295",
       "file": "reject-layer/TV-0295.tarn",
       "title": "layer `bad` declares alignment 2^63, above the 2^62 ceiling",
-      "sha256": "72cbd13ad55647c55a3c4233e5d422f4027af3df3dba4ff9572559f7646a4cf6",
+      "sha256": "b7d76d7ce0f2d6dce27f1729b21ff4510027def4f30fa4a0ea199fa9d9d76e5b",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8468,7 +8429,7 @@
       "id": "TV-0296",
       "file": "reject-layer/TV-0296.tarn",
       "title": "layer `bad` declares alignment 512; its stored tile is unaligned",
-      "sha256": "2870f3f38228af94f54a6c3a47250f3eddf5dc8e36e8cbebc855fee477587570",
+      "sha256": "09c66fba9fe9cb2511bd143c3c5f63eb981b4ff398c4514ff411793d088dac14",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8579,7 +8540,7 @@
       "id": "TV-0297",
       "file": "reject-layer/TV-0297.tarn",
       "title": "layer `bad` declares S = 1, A_slab 512; run 0 starts unaligned",
-      "sha256": "a0e7a5b979c58f42f54833ada88f39bcb776cb7cb9de36ab0341f931bf890938",
+      "sha256": "758174a5926b7508ad93d49a5763db8d7ae2476ca6c3ce4f16d68786d7d17061",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8694,7 +8655,7 @@
       "id": "TV-0298",
       "file": "reject-layer/TV-0298.tarn",
       "title": "layer `bad` declares codec 0 (invalid)",
-      "sha256": "12f97c44675a79a4688d2023c9c29ea041f057c0ffcaa5238301a45afd520066",
+      "sha256": "dab3fef82cd6b3a44e41d2ce4e23c0aa62655bc112cc46617b28ca6fca7d93f2",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8773,7 +8734,7 @@
       "id": "TV-0299",
       "file": "reject-layer/TV-0299.tarn",
       "title": "layer `bad` declares codec 5 (reserved 5\u20130x7FFF)",
-      "sha256": "f7d6350c8af6c441b840127781c3b3325c8c80d7a2eaf4610fe9608b1a48d180",
+      "sha256": "0bddf45640041f5ceccabd26eafc8474e31536970417206a23f69fba8301249e",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8852,7 +8813,7 @@
       "id": "TV-0300",
       "file": "reject-layer/TV-0300.tarn",
       "title": "layer `bad` declares codec 0x8000 (experimental)",
-      "sha256": "32c572197e365012b5a16f6c3a0bd1c459d5e7994318b06960c71cb2287d3b60",
+      "sha256": "814d3eccae6ef5fd441f6dccbf3ff7a38a071f6a48b31b4b34838a7b7e61241e",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -8931,7 +8892,7 @@
       "id": "TV-0301",
       "file": "reject-layer/TV-0301.tarn",
       "title": "layer `bad` declares codec 4 with decoded size 0x7E000002",
-      "sha256": "9c7a4f219517878bf4babc886afcf0cfbb703467c2a9e371142fad0f84cfbfe5",
+      "sha256": "3585e182c505b60c96db82726bb797ed214859ffd43646fbadb7bc9e2663c4e4",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9027,7 +8988,7 @@
       "id": "TV-0302",
       "file": "reject-layer/TV-0302.tarn",
       "title": "layer `bad` declares filter 0 (invalid)",
-      "sha256": "f98dc2a1ddd3a4f2602c7e6b6ab77842005a3b5a5fc80fb45ba32de9cc8bce15",
+      "sha256": "dbaecbcee89e21da98f11603ad150fe7bce5258a70ab2efd4ee0a794266b3910",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9106,7 +9067,7 @@
       "id": "TV-0303",
       "file": "reject-layer/TV-0303.tarn",
       "title": "layer `bad` declares filter 3 (reserved 3\u20130x7FFF)",
-      "sha256": "f1273fdf75ec242ba5ec1ad4c947caaf7aeccfba6762f7c09ccd8c90d01f282c",
+      "sha256": "785a7a172f86339759f9aa154f7c373ca54b94af91c263adcfa75823f2219c49",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9185,7 +9146,7 @@
       "id": "TV-0304",
       "file": "reject-layer/TV-0304.tarn",
       "title": "layer `bad` declares filter 0x8000 (experimental)",
-      "sha256": "1aba6af7ca73a0871ef514b35e1fa9e0c70ff2776f5c8e99df80fc85c208d6ac",
+      "sha256": "b170bdde71e7ac2b4c1583d64f05b2c9f53ff7367c851a1d04449678d4729d24",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9264,7 +9225,7 @@
       "id": "TV-0305",
       "file": "reject-layer/TV-0305.tarn",
       "title": "layer `bad` reserved flag bit 15 set (the lane's top bit)",
-      "sha256": "98e56bfbac5fe4d3e7914e02286bfae13eab3d1ef95d0212eb2dc199783650fd",
+      "sha256": "15f98aa7ae78f0dcdef4f7db4a3b0f4b18b6e28741cecd1b8096f9483a852fea",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9375,7 +9336,7 @@
       "id": "TV-0306",
       "file": "reject-layer/TV-0306.tarn",
       "title": "layer `bad` stores MU = 0 where the registry fixes MU = 1 (instance: layer record flags)",
-      "sha256": "fe14bc481cb89e5377af7052df5923748135b8d87a64a711b4ad839747276d18",
+      "sha256": "fcea2a47c0518c4935e035c9ce4fe53ff4553683c59a1bb340e36ba03414fa04",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9486,7 +9447,7 @@
       "id": "TV-0307",
       "file": "reject-layer/TV-0307.tarn",
       "title": "layer `bad`, planar: codec 4 with a uint8 plane's decoded size 0x7E000002",
-      "sha256": "566099231147fd68b2df9f27bb39f68c90785813986f793a9fc7f99c549c4a49",
+      "sha256": "89dad32fff9e2b5776c5e30bb95882b47e965b3bc70e69325bb32dbfb1944423",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9586,7 +9547,7 @@
       "id": "TV-0308",
       "file": "reject-layer/TV-0308.tarn",
       "title": "layer `bad`, packed planar bool: codec 4 with a plane of \u23080x3F0000002/8\u2309 = 0x7E000001 bytes",
-      "sha256": "e1a2bb1aac3db61136f71621e4164c28dbd5a8fbe6c1f069bb94167057270966",
+      "sha256": "4a17366e7bce42231ab813624eefa7ceafed9025b81a84f12e8d7ba622c04a6b",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9690,7 +9651,7 @@
       "id": "TV-0400",
       "file": "reject-tile/TV-0400.tarn",
       "title": "layer `bad` redeclared bool: interleaved value bytes 02, 03, 04 are neither 0x00 nor 0x01",
-      "sha256": "f8460985a25ad63bebbe6801fb4d12170c3c28b9bf716008f2fe7e1dcb9f18c2",
+      "sha256": "845702de6b53932a9b7b192dfd4097b616e2906f3e7913fa3c0b6008c43baae4",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9768,7 +9729,7 @@
       "id": "TV-0407",
       "file": "reject-tile/TV-0407.tarn",
       "title": "T4 interleaved numeric fill bytes: `bad` extents (1,1), padding ordinals 1-3 hold 02 03 04, fill is 0x00",
-      "sha256": "fde13e482405bd615661d8fb4043b2e66513e1d354f42ba5482639e1b4d6cabb",
+      "sha256": "1fc92452fec233b51136bd711e034ae7b43b54c2d244e8dff1ae99e6eb3e82eb",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9850,7 +9811,7 @@
       "id": "TV-0408",
       "file": "reject-tile/TV-0408.tarn",
       "title": "T4 planar numeric plane fill bytes: `bad` planar, extents (1,1), padding ordinals 1-3 hold 02 03 04, fill is 0x00",
-      "sha256": "570c3e795d076d5b079ddd992d5b99ec2abbfa8cf80a4e6550da596986926049",
+      "sha256": "b6a24f55b371fc9ff075428a8caa64320ee1544eaad1721db93aaf505a8223b8",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -9936,7 +9897,7 @@
       "id": "TV-0409",
       "file": "reject-tile/TV-0409.tarn",
       "title": "T4 packed planar bool plane fill bit: `bad` planar bool, tile extents (4,8), padding values 16, 17, 26 carry set bits",
-      "sha256": "9aa547dc7436913e9dfe97a4e6810b35b5bcb54e1d75cc9f4fef187b1006a166",
+      "sha256": "8087831d0aa525096de223eb4029d22f457c37bc863808a28a77b7d341118de1",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10026,7 +9987,7 @@
       "id": "TV-0410",
       "file": "reject-tile/TV-0410.tarn",
       "title": "T5 pad bit is not the fill bit: `bad` planar bool, P = 25, the set bit at position 26 lies in the final byte's pad bits",
-      "sha256": "8ab37fe38a9ac98d25b0bc619ad32e3582b4294766d996443eada2813bfc568d",
+      "sha256": "e11243bf975b8a42a4c9622e66195f2f7eea299e4c87358860d5fd61865b6ded",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10124,7 +10085,7 @@
       "id": "TV-0411",
       "file": "reject-tile/TV-0411.tarn",
       "title": "T6 sentinel entry with crc \u2260 0: `bad` entry 0 is FF\u00d716 with crc 1",
-      "sha256": "86332945aa9b51294cc534b0d0826816a4c63b04a4ea0161e99d93a2fe8c011f",
+      "sha256": "37d518f158b41abbc18ee758c625af51def0b29a871cb03e3824ccafc124356d",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10213,7 +10174,7 @@
       "id": "TV-0412",
       "file": "reject-tile/TV-0412.tarn",
       "title": "T7 offset is the sentinel, length is not: `bad` entry 0 offset FF\u00d78, length 4",
-      "sha256": "e505ebc158fac592839f7ea31283cd3dc393f125f72609df8540bdf51ad0daf6",
+      "sha256": "e4aad2262f4d900aa7c44dcc45af623c5ba46547fff38ddc049d08af93ea184f",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10294,7 +10255,7 @@
       "id": "TV-0413",
       "file": "reject-tile/TV-0413.tarn",
       "title": "T7 length is the sentinel, offset is not: `bad` entry 0 offset 64, length FF\u00d78",
-      "sha256": "c8a5d3123182943ff39dd8976f643b83cfeaea79459af10f6c33ebda45cbaabd",
+      "sha256": "5c132ceeb287ea37179e07c133efa4913c489ad10f2ca2d3d7c227f26d2cfb79",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10375,7 +10336,7 @@
       "id": "TV-0414",
       "file": "reject-tile/TV-0414.tarn",
       "title": "T8 non-sentinel entry offset 8, inside the front signature block",
-      "sha256": "4d8478ebbda183a787ecc8c5e90c58c18720f7f65e560d7726bb84964d65428b",
+      "sha256": "abcf493fd67feda547d446d1bf58e462e44e0727268738df7e5e1e470c2e03fb",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10456,7 +10417,7 @@
       "id": "TV-0415",
       "file": "reject-tile/TV-0415.tarn",
       "title": "T9 non-sentinel entry extent ends past F \u2212 64: offset 0x7FFFFFFFFFFFFF00, length 4",
-      "sha256": "7d774e1dca294f099a478d40725f13959e9f20c4700970d24046890a217fe7b0",
+      "sha256": "ad3e7bd844899e38ab123afa173dde1d18581ab30ab15419dc402acbf6e52d21",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10537,7 +10498,7 @@
       "id": "TV-0416",
       "file": "reject-tile/TV-0416.tarn",
       "title": "T11 offset exceeds 2\u2076\u00b3 \u2212 1: `bad` entry 0 offset 0x8000000000000000",
-      "sha256": "46c6cf1564cb1fe1b202ff90b48415c9d9bff60df6c45eabb78d8b313ad296c3",
+      "sha256": "cc015278acd37fd32dad4ed4c66de30434d4fb60889343b3e1c5d9baf14d0f16",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10618,7 +10579,7 @@
       "id": "TV-0417",
       "file": "reject-tile/TV-0417.tarn",
       "title": "T11 length exceeds 2\u2076\u00b3 \u2212 1: `bad` entry 0 length 0x8000000000000000",
-      "sha256": "f6be4ba3f7a1a12a00b99201ccdf6505244806014e569a67df5f60c4d12e44a5",
+      "sha256": "d946d16a7ca49ce45007c121751c5fe507954cc83424c66157c5e02c0d8d368d",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10699,7 +10660,7 @@
       "id": "TV-0418",
       "file": "reject-tile/TV-0418.tarn",
       "title": "T12 offset + length exceeds 2\u2076\u00b3 \u2212 1 with each field in domain: both 0x4000000000000000",
-      "sha256": "62bedbb033fbb4a9e3eb74186e68e4379ef4fb508c882adf4321a68253fb466a",
+      "sha256": "fb102368c5abe4a52e41c4a42cf2ea342b7929139cd73876cc5c3a7be1a32dbd",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10784,7 +10745,7 @@
       "id": "TV-0419",
       "file": "reject-tile/TV-0419.tarn",
       "title": "T14 codec 1 with entry length 4 against decoded size 6 (`bad` tile extents (3,2))",
-      "sha256": "88bd8fd0cbd4e948639c4cc83542f01e06b67531ba9e6570c120ed2f8793dfc2",
+      "sha256": "af4b59ae938ce364a3f16a013a73ebc76abd776ee5d0d6fa888bcb3320996a84",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10868,7 +10829,7 @@
       "id": "TV-0420",
       "file": "reject-tile/TV-0420.tarn",
       "title": "T17 codec 3 and the stored bytes do not begin with 28 B5 2F FD",
-      "sha256": "45610c07cc7049e73ca2011afb12fee8b1bad35f87e8d4206b7590387291f87e",
+      "sha256": "3a3f1172a85516d2469027e3ea3715c5053159296bbbd99611fc20f72dd903df",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -10948,7 +10909,7 @@
       "id": "TV-0421",
       "file": "reject-tile/TV-0421.tarn",
       "title": "T25 lz4 block whose match offset 770 reaches past produced output (codec 4 declared over 01 02 03 04)",
-      "sha256": "2d08943f22d21cfcda8290e7bb618d53a52c6dd6b7b70f447f27af4a2c64044c",
+      "sha256": "47b0227336c475afc265806c3b37cdf057b01b32768fc9fe8fff0c2189936158",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -11028,7 +10989,7 @@
       "id": "TV-0422",
       "file": "reject-tile/TV-0422.tarn",
       "title": "T14 codec 1 with entry length 4 against decoded size 2 (`bad` tile extents (2,1))",
-      "sha256": "4885994d8294d0669d2a5d34487eb30e8e7af6be8c99117c52ee75c7533b4f92",
+      "sha256": "4bdad5e58242c9877829f531b5038ce388b626736a187059da8c5cb87236093e",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -11112,7 +11073,7 @@
       "id": "TV-0423",
       "file": "reject-tile/TV-0423.tarn",
       "title": "T14 codec 1, planar: entry length 4 against a uint8 plane's decoded size 2 (`bad` tile extents (2,1))",
-      "sha256": "38baf4be7df1357fa165663a4ff53d5ea8b7670ac98926021eafcb2f7b0da8ad",
+      "sha256": "65c4f7186b64d56a5ecc5298a6a1997a1eb499ab3d04c27b4ffec8a06bd5ba68",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -11200,7 +11161,7 @@
       "id": "TV-0424",
       "file": "reject-tile/TV-0424.tarn",
       "title": "T14 codec 1, planar: entry length 4 against a uint8 plane's decoded size 6 (`bad` tile extents (2,3))",
-      "sha256": "e17e7012453ce2f253a31fd701fbf1d292b907c4e1c143856a0cbf962af85e0a",
+      "sha256": "c9325d7d9f78dca660de70611e5e5f22a344d81706ef114d29cb5d1c34d2b5b9",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -11288,7 +11249,7 @@
       "id": "TV-0425",
       "file": "reject-tile/TV-0425.tarn",
       "title": "T14 codec 1, packed planar bool: entry length 4 against a plane of \u23088/8\u2309 = 1 byte (`bad` tile extents (2,4))",
-      "sha256": "a6f57ccb4c92b1872c95017b916c0c274c47e6ebe7a49fb3e1ac06ad0a725b29",
+      "sha256": "7e12e0596dc233766cb69a3e228213475d23b601b3849220d2e3d10b412823ae",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -11380,7 +11341,7 @@
       "id": "TV-0426",
       "file": "reject-tile/TV-0426.tarn",
       "title": "T14 codec 1, packed planar bool: entry length 4 against a plane of \u230840/8\u2309 = 5 bytes (`bad` tile extents (2,20))",
-      "sha256": "d50543af95b8975981e71035f7bdb7c607786a8703385a6c9a1319f0aa13de12",
+      "sha256": "cfd6c1702574ebf22478fa3fed0a5a48f075ad2b94fba7d6585845dc8de48c51",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -11472,7 +11433,7 @@
       "id": "TV-0500",
       "file": "ignore-record/TV-0500.tarn",
       "title": "user-metadata encoding 0, top-level record",
-      "sha256": "17e225e0e4d21cf3656f9e89288d6acb99f513b181f94102e4fe7a60eac496d3",
+      "sha256": "7b17fe93add090dc844dee9f90773b9389cb17517bcea91de05b5a98ea700055",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -11552,7 +11513,7 @@
       "id": "TV-0501",
       "file": "ignore-record/TV-0501.tarn",
       "title": "user-metadata encoding 0, layer sub-record",
-      "sha256": "d8c36de286e69f9702b1841a99a2aaa5a68945830afd4c7865eb6b2d97581250",
+      "sha256": "2a2454a71b19ce1e049593e5a35082e51d8da58ec3e322f66d0ca95218ea3348",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -11637,7 +11598,7 @@
       "id": "TV-0502",
       "file": "ignore-record/TV-0502.tarn",
       "title": "user-metadata encoding 3 (reserved), top-level record",
-      "sha256": "8169f25d0e8da1997f77ad7de0d87a5363b2e9ca2daf0177bf4d3f9f9bd035ae",
+      "sha256": "320cc6bcacd4eaa62aa5275b6224ba7c95aefd11a093b4a1d813758cf4103399",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -11717,7 +11678,7 @@
       "id": "TV-0503",
       "file": "ignore-record/TV-0503.tarn",
       "title": "user-metadata encoding 3 (reserved), layer sub-record",
-      "sha256": "ca679914916a1d2f9c3b94a68a7f7be92961b13f76f030a9aeef242fccdf42ca",
+      "sha256": "9a7c19695c8cb4e4e8b7e7e2116d597801696800ca26fea39ca96d1d56f18b95",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -11802,7 +11763,7 @@
       "id": "TV-0504",
       "file": "conforming/TV-0504.tarn",
       "title": "user-metadata encoding 0x80 (experimental), top-level record \u2014 ignored, and the file is conforming (\u00a721.6)",
-      "sha256": "fdb06b34132075ec94bbbcb52e096e878b0603c21ac23d6e63ea883fc3f250fe",
+      "sha256": "bccaa27754e0bd22e280daa28507773c31fd2996ba9da98a62816eb169412cb8",
       "size": 320,
       "conforming": true,
       "derivation": {
@@ -11863,7 +11824,7 @@
       "id": "TV-0505",
       "file": "conforming/TV-0505.tarn",
       "title": "user-metadata encoding 0x80 (experimental), layer sub-record \u2014 ignored, and the file is conforming (\u00a721.6)",
-      "sha256": "454a99a938c5c7682cc0277115790fffef1bd45cda61bffe86a622109d87829b",
+      "sha256": "ac26f6bed12d912448da1c7afd89b6490f2d5feb8ccf1cec571df08c375adc50",
       "size": 320,
       "conforming": true,
       "derivation": {
@@ -11928,7 +11889,7 @@
       "id": "TV-0506",
       "file": "ignore-record/TV-0506.tarn",
       "title": "user-metadata extent CRC mismatch, top-level extent",
-      "sha256": "4c62f78d9e34e3068cc17f2d869d78b62c2d0a74bce14ac09f4777db3244bbd1",
+      "sha256": "c89a5cb96a9bc4830299e758bf3436df32d67089750b96cf6558d5c02d81e270",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12012,7 +11973,7 @@
       "id": "TV-0507",
       "file": "ignore-record/TV-0507.tarn",
       "title": "user-metadata extent CRC mismatch, layer sub-record extent",
-      "sha256": "4d785985d5635500e34c72e29aa3b302ad63b317415d274ffb1092cbd21ff865",
+      "sha256": "6d6751420cbb019bb5763df772a489c836258136c40a0050a207605c91ed9197",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12101,7 +12062,7 @@
       "id": "TV-0508",
       "file": "ignore-record/TV-0508.tarn",
       "title": "zstd document that fails to decode, top-level extent",
-      "sha256": "4694a2877f802901534cb9de51df7f60b5b85dff34d423dc2ec43d2e15a04509",
+      "sha256": "8e0574adfa7e564cbcf5b785c97fdbe9ba5bf24c3ec7ce9fbaae69a54c358a58",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12185,7 +12146,7 @@
       "id": "TV-0509",
       "file": "ignore-record/TV-0509.tarn",
       "title": "zstd document that fails to decode, layer sub-record extent",
-      "sha256": "916258d3a7994a4c839d1ee68a418cae20a7c247fb4809907122e5fc951786c2",
+      "sha256": "02210bcedf16ae2462d03823771273ec8a3ac83625c67a22d6de8ee4c1bf8c98",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12274,7 +12235,7 @@
       "id": "TV-0510",
       "file": "ignore-record/TV-0510.tarn",
       "title": "zstd document missing the frame magic, top-level extent",
-      "sha256": "486b006a1894f1dcf298c0f023172f4e35b8ec29adda6b5b6099d8a2282dd33a",
+      "sha256": "dd5aa9b71e73c907f0ac886d26809bc0cfa22c202a01aa67092540f7812726da",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12358,7 +12319,7 @@
       "id": "TV-0511",
       "file": "ignore-record/TV-0511.tarn",
       "title": "zstd document missing the frame magic, layer sub-record extent",
-      "sha256": "98b7a0a5f81ae2ee247eb7364b503427fc031ec75940addd2506ebc9dd586716",
+      "sha256": "d84b4ff2952044b95bf4065e096d246826936daa51f5411a0a2f18ffc45c574a",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12447,7 +12408,7 @@
       "id": "TV-0512",
       "file": "ignore-record/TV-0512.tarn",
       "title": "zstd document preceded by a skippable frame, top-level extent",
-      "sha256": "5d87425ccb1aaa26fc36c5c3b2b30b12a035b397598e408433b1a67f1c2e69d7",
+      "sha256": "1bb819477df1db304270f7cce1e8cc75d68d7784bd8c96087ff7968339c4ff9e",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12531,7 +12492,7 @@
       "id": "TV-0513",
       "file": "ignore-record/TV-0513.tarn",
       "title": "zstd document preceded by a skippable frame, layer sub-record extent",
-      "sha256": "6829c23e0cd9eb3d897871e6ecde3d81d86211dca114c2550863693afa183245",
+      "sha256": "03bbe41ee185863a71c9be6831b4befa01453aa2a07e996bb1be1649bc711add",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12620,7 +12581,7 @@
       "id": "TV-0514",
       "file": "ignore-record/TV-0514.tarn",
       "title": "zstd document carrying a second frame, top-level extent",
-      "sha256": "0bfce92da636c1f01134fc825fb0152cc8f545cabdd1e4288903ac717bed4cc9",
+      "sha256": "6429ec7c3cc46f31579efa7ba52cc6639eb31b45c9438e92850d3059397d282a",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12704,7 +12665,7 @@
       "id": "TV-0515",
       "file": "ignore-record/TV-0515.tarn",
       "title": "zstd document carrying a second frame, layer sub-record extent",
-      "sha256": "30830b0631121ac61b6ed8653cdb90490f3f972425f1b6673af5f3882c9b5389",
+      "sha256": "9b0f57d58187b7b409a6bb5cab40de2e542f51f8e48c42f19d0fa5aeb0c54ffb",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12793,7 +12754,7 @@
       "id": "TV-0516",
       "file": "ignore-record/TV-0516.tarn",
       "title": "zstd document with a nonzero dictionary ID, top-level extent",
-      "sha256": "86b5b0e2414cb303bb95460788f5b0c71559fb18dfbda788e90a9011442054b0",
+      "sha256": "ecdfea0389a9868219d8467414cf6d16289ec3f3ef055cecdaa97399d817cec4",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12877,7 +12838,7 @@
       "id": "TV-0517",
       "file": "ignore-record/TV-0517.tarn",
       "title": "zstd document with a nonzero dictionary ID, layer sub-record extent",
-      "sha256": "b2ad1d2edaadd958cecb5acb27610b398da1b8ea74fb350d51866ef5cacbd2e7",
+      "sha256": "85e5c794da1f29e896a36fd3f52f1e161f97ed0c2bfe28f35b4e864b1fadbb09",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -12966,7 +12927,7 @@
       "id": "TV-0518",
       "file": "ignore-record/TV-0518.tarn",
       "title": "zstd document with the content-checksum flag set, top-level extent",
-      "sha256": "f1976415f78ba607bd9867b317d8f73c87bda91ebf077a25c7c786081eaf90cc",
+      "sha256": "e87dc9755389acd16d5f58b8755210e353408a0acd8f844a5c8549e6afa68adf",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13050,7 +13011,7 @@
       "id": "TV-0519",
       "file": "ignore-record/TV-0519.tarn",
       "title": "zstd document with the content-checksum flag set, layer sub-record extent",
-      "sha256": "bdb1f6869f7a6dfd168364c5e46884eb4babaceac5b2e3ba5fee6994fe0a6f8c",
+      "sha256": "36d03e8cfa9aa1f94d1c185bfebafb762b23a62863d938921ebc00df3f4fc86b",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13139,7 +13100,7 @@
       "id": "TV-0520",
       "file": "ignore-record/TV-0520.tarn",
       "title": "string value containing ill-formed UTF-8, top-level document",
-      "sha256": "10334277b7a345e910564d726c8941ff2940a4f243d5170c37d456a786211b13",
+      "sha256": "22ebaf5c04fbf30c27426d729e0a1554757f13643248194e7b3c1cda8ab0f051",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13223,7 +13184,7 @@
       "id": "TV-0521",
       "file": "ignore-record/TV-0521.tarn",
       "title": "string value containing ill-formed UTF-8, layer sub-record document",
-      "sha256": "e308532e04846dbb5a0807791d5f4d2dfe8c3a7a0bc8111ad15089117d00ab08",
+      "sha256": "4a6d9fd20a19ab6ba13482d9ceaa1c16fedf86d7608ec2de7ef55229e3df675c",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13312,7 +13273,7 @@
       "id": "TV-0522",
       "file": "ignore-record/TV-0522.tarn",
       "title": "empty key, top-level document",
-      "sha256": "d2a99e39ae772d080bdf1a275459298f8d9d71584c8d03b76c8923440a5f1ce9",
+      "sha256": "b2759d388d3c5e8a03b3eb4bbc71594e542b6d629a62c508db829ddef7fbf981",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13396,7 +13357,7 @@
       "id": "TV-0523",
       "file": "ignore-record/TV-0523.tarn",
       "title": "empty key, layer sub-record document",
-      "sha256": "4fb8615bd25a421911dc1b4292277c5f8e94ac294425e78f3f53ed3f79939d78",
+      "sha256": "c9d97f67a7152c7d277a8961afb8e0d20b63babcdfc4c19b21bade0d62468a7e",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13485,7 +13446,7 @@
       "id": "TV-0524",
       "file": "ignore-record/TV-0524.tarn",
       "title": "key containing U+0001, top-level document",
-      "sha256": "d995e00825468af729617b7958bbe197953ddf81e605564ed1a4e8fe55710de2",
+      "sha256": "6d64183fb0cb7f4c76dc08788971058167d742e8f6a2aa492309fe48cf2eb3e5",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13569,7 +13530,7 @@
       "id": "TV-0525",
       "file": "ignore-record/TV-0525.tarn",
       "title": "key containing U+0001, layer sub-record document",
-      "sha256": "4ea21e141ff3c82eb4e2e85784f5c2424fcd8297910c4d973066f07a0d504da3",
+      "sha256": "881b3fe14ff132eb485dc70b6650529627cf738e60ab1f13af61a4bce0f7aa94",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13658,7 +13619,7 @@
       "id": "TV-0526",
       "file": "ignore-record/TV-0526.tarn",
       "title": "document that is not well-formed JSON, top-level document",
-      "sha256": "e3c11d889e174e6b80ee2aa92dc5080b65df9389d5eb751f6b1636085be27ab2",
+      "sha256": "1d3ae6bc78385d515f4ff883c6c6968c02e3068837044329396b54b53fe6bb59",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13742,7 +13703,7 @@
       "id": "TV-0527",
       "file": "ignore-record/TV-0527.tarn",
       "title": "document that is not well-formed JSON, layer sub-record document",
-      "sha256": "ac7a539e315dbfbb85c20a69965e6ca8819c46bf7db74a267a37b812a1c6e18c",
+      "sha256": "da8f5ad70e2f1ef06b7b71955a0f219c63d757d9d47fa98cafde8ca7f0426f01",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13831,7 +13792,7 @@
       "id": "TV-0528",
       "file": "ignore-record/TV-0528.tarn",
       "title": "top-level value is not an object, top-level document",
-      "sha256": "2d2019323c4e2cb35cbb098016b8d67d037126cedcb5bac24c2b2691cf660548",
+      "sha256": "5836ba89b04777a3bdb3058b74c324fdccb657cd71afe2c8fa74222dd97ebd20",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -13915,7 +13876,7 @@
       "id": "TV-0529",
       "file": "ignore-record/TV-0529.tarn",
       "title": "top-level value is not an object, layer sub-record document",
-      "sha256": "929ad03a31f16a2fe22f27729f92156a8b797db2900b801cc52b8fd93cc5c99b",
+      "sha256": "da90a3dff6df37f9c558ef5a519c088da455d655c7b7d94e033ad0c1cbcc2955",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -14004,7 +13965,7 @@
       "id": "TV-0530",
       "file": "ignore-record/TV-0530.tarn",
       "title": "leading U+FEFF, top-level document",
-      "sha256": "34beee9444eda37a45f14b953119c5bfd9c15f5456e2143bea3145511fc17822",
+      "sha256": "7a81e177905e9ac730672ac812658129e5c3e730f32f6f0a64716b94dc62d087",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -14088,7 +14049,7 @@
       "id": "TV-0531",
       "file": "ignore-record/TV-0531.tarn",
       "title": "leading U+FEFF, layer sub-record document",
-      "sha256": "7fe11ee3835519cc79a6894394b19c004fd19d4f5d458390e986e03ab612f48c",
+      "sha256": "25cdff08497183cab006721f27dd2a93e518ec0998ed762495799b2fa09f10db",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -14177,7 +14138,7 @@
       "id": "TV-0532",
       "file": "ignore-record/TV-0532.tarn",
       "title": "number whose binary64 value is not finite, top-level document",
-      "sha256": "57e2e64a9689e6376db6303b58fe5ec86f1e8e9605985497ff29cdb2d0373063",
+      "sha256": "96965d304f6e5d0df7a22c87b154858bdbf218e0a4694a6c775d221a23ff0584",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -14261,7 +14222,7 @@
       "id": "TV-0533",
       "file": "ignore-record/TV-0533.tarn",
       "title": "number whose binary64 value is not finite, layer sub-record document",
-      "sha256": "6640ca2ce2db66e7b44e9adb14255528ee0ba6255f1623ef4f51ca02ad345543",
+      "sha256": "50e269fc996f254c3657adf8c95c4234db177f590365764d991817e74669ac0f",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -14350,7 +14311,7 @@
       "id": "TV-0534",
       "file": "ignore-record/TV-0534.tarn",
       "title": "two members with the same decoded key, top-level document",
-      "sha256": "8f8738c265f4b953f06389f7a111904bf4b74237ca8c5fae08bdeae99d727262",
+      "sha256": "081c9543ddfe4b1dc5580ac381bfec082ca109e98023c967340664eb49a288d6",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -14434,7 +14395,7 @@
       "id": "TV-0535",
       "file": "ignore-record/TV-0535.tarn",
       "title": "two members with the same decoded key, layer sub-record document",
-      "sha256": "e51db175539af0123f0e3a91946f5619f2092b319d25f8d930b5491c71f0c94c",
+      "sha256": "dbce238610750c3c3826a56e528c886ee52f15bc83832910798b547d97d6c79c",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -14523,7 +14484,7 @@
       "id": "TV-0536",
       "file": "ignore-record/TV-0536.tarn",
       "title": "key of 256 bytes, top-level document",
-      "sha256": "4f88ff385eceae4712cb3e205795d1809af58b0562a829574aefd2cc45fb6fae",
+      "sha256": "671d115e19853d696992a54a7bb3723574a7ea437010c1487977c27a69b64d20",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -14607,7 +14568,7 @@
       "id": "TV-0537",
       "file": "ignore-record/TV-0537.tarn",
       "title": "key of 256 bytes, layer sub-record document",
-      "sha256": "8c7a18e07a7b7f49d3360a8e37fc26612efeb8b158f617d7cbf72110d526cb02",
+      "sha256": "1cc79785c69c785993c99fb61b33b7b63c9725b36e7984977e48653da7829487",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -14696,7 +14657,7 @@
       "id": "TV-0600",
       "file": "conforming/TV-0600.tarn",
       "title": "version_minor 0xFFFF, the u16 ceiling \u2014 minors never gate [R-CNT-07] (\u00a721.6)",
-      "sha256": "30cddf708176589173edae1e1f276d717bb33ae4e30011b3284e0839dd270eaf",
+      "sha256": "f6fa72ec5cbea8391f024aefc7ef7d8c309d3c7f6e88f0c1781fe6187d650c53",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -14790,7 +14751,7 @@
       "id": "TV-0601",
       "file": "conforming/TV-0601.tarn",
       "title": "flags bit 16 set, the ignore lane's lowest bit \u2014 ignored, file conforming [R-CNT-08] (\u00a721.6)",
-      "sha256": "b961f0244e9d1ff85d22c2095d4b1b8a32e390ccebf3229186f539a07ebcf84e",
+      "sha256": "c4f9952d21e960f191a59914507c1ff30a60086ad0842c486f0a1802e97d062c",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -14884,7 +14845,7 @@
       "id": "TV-0602",
       "file": "conforming/TV-0602.tarn",
       "title": "flags bit 31 set, the ignore lane's highest bit [R-CNT-08]",
-      "sha256": "75e7b68708616de65fef9102f0bb8294f6e111dae409af0879145180adb4e94a",
+      "sha256": "2952ee3f0034771f2fd51a776c5892254cf568b93c9664d139f95260064d2ab3",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -14978,7 +14939,7 @@
       "id": "TV-0603",
       "file": "conforming/TV-0603.tarn",
       "title": "flags 0xFFFF0000, the whole ignore lane set and the incompat lane clear [R-CNT-08]",
-      "sha256": "b54d3975e2184431eeaddb0942cbce2a196f6110ed23a8fab12660a4fcf2e2c4",
+      "sha256": "d134d34c816f29e1b3e0e9fc6440f5fe23c0ea0b35bbd6537630d29db8f3b4c9",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -15071,17 +15032,13 @@
     {
       "id": "TV-0604",
       "file": "conforming/TV-0604.tarn",
-      "title": "generation 2^63-1 and file_id 0xFFFFFFFFFFFFFFFF, both semantic u64s at their ceilings [R-CNT-06], [R-ENC-03]",
-      "sha256": "090eda67b82d14fb0c260f80fa77c5d19a8dc255fd377f755e400f89987ea915",
+      "title": "file_id 0xFFFFFFFFFFFFFFFF, its ceiling as a u64 with no upper domain limit of its own [R-CNT-06]",
+      "sha256": "3ee7be699177a0fdb58e5f61f1ea15a8b35b069358e6fa263f6fef62eb1a8410",
       "size": 448,
       "conforming": true,
       "derivation": {
         "seed": "pair",
         "patches": [
-          {
-            "field": "trailer.generation",
-            "value": "ffffffffffffff7f"
-          },
           {
             "field": "trailer.file_id",
             "value": "ffffffffffffffff"
@@ -15169,17 +15126,13 @@
     {
       "id": "TV-0605",
       "file": "conforming/TV-0605.tarn",
-      "title": "generation 1 and file_id 1, both at their floors [R-CNT-06]",
-      "sha256": "503c7826107181eff6bdb5650a77a2d130666048dcc8e3c0c8642bd0449feb7d",
+      "title": "file_id 1, its floor: the smallest value [R-CNT-06] permits",
+      "sha256": "32811eae7f701588f09d9adb47c9dee58e553da7c93af8d47f3479db8e9827f1",
       "size": 448,
       "conforming": true,
       "derivation": {
         "seed": "pair",
         "patches": [
-          {
-            "field": "trailer.generation",
-            "value": "0100000000000000"
-          },
           {
             "field": "trailer.file_id",
             "value": "0100000000000000"
@@ -15268,7 +15221,7 @@
       "id": "TV-0606",
       "file": "conforming/TV-0606.tarn",
       "title": "a sparse layer: one stored tile and three sentinel entries, reading as fill [R-IDX-02], [R-TYP-08] (\u00a721.6)",
-      "sha256": "22cd8329807e379c91afed728b343e6ada1bce69b3d475d57831edd247ed574c",
+      "sha256": "9bd2f5056d4057216ab34e64b1d98f7533322e1d270b6695af0a5ddad0797ad7",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -15321,7 +15274,7 @@
       "id": "TV-0607",
       "file": "conforming/TV-0607.tarn",
       "title": "an all-sentinel index, with alignment 0, slab 0 and slab alignment 0 \u2014 the 'none declared' encoding of each [R-IDX-02], [R-SLB-01], [R-SLB-02]",
-      "sha256": "efcfe143a6c2ef734556cb2bab02ee8564f8618440c4746598be55bd96cf4d30",
+      "sha256": "dcf43ded6dbf119ab4bea2e8142f0fc52759df08a70197cbd0f2a0b4bbee22c9",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -15374,7 +15327,7 @@
       "id": "TV-0608",
       "file": "conforming/TV-0608.tarn",
       "title": "alignment 512, the floor of [R-SLB-01]'s power-of-two range",
-      "sha256": "82ae22fd0cb9849a4de7501001633bbdeb66da3ad3203b80decea55c23484bf7",
+      "sha256": "fb49302344d8b9f96136a8e03e4f65af22697ff8181b3c0f0e135263f3c07c74",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -15435,7 +15388,7 @@
       "id": "TV-0609",
       "file": "conforming/TV-0609.tarn",
       "title": "alignment 2^62, the ceiling of [R-SLB-01]'s range",
-      "sha256": "c7cbff7abe48155d6286e60bb6b0614c570c05ab16fb616834d1b026ce17f1c5",
+      "sha256": "698704448d2c4193c868b6dc2827c9efd4f6cbbe690333dca32aa89a80ad8505",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -15496,7 +15449,7 @@
       "id": "TV-0610",
       "file": "conforming/TV-0610.tarn",
       "title": "slab run length 1 with slab alignment 1 \u2014 both floors, and A_slab = 1 is contiguity-only [R-SLB-02]",
-      "sha256": "02d574c6539eea7ae3b7b7853a787bcdc26fbad2b3ad42dd2a0ef24ad9a0e1fb",
+      "sha256": "932cd020e153e13a10b8faa0e515b7a4616ebb387442bcc1e80a0949d9e534c7",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -15561,7 +15514,7 @@
       "id": "TV-0611",
       "file": "conforming/TV-0611.tarn",
       "title": "slab run length 2^63-1 with slab alignment 2^62 \u2014 both ceilings [R-SLB-02], [R-ENC-03]",
-      "sha256": "56e365399c31b07f2fa7f027da8ade6780c21124615ba4925fa282f418665c3d",
+      "sha256": "a71b52fd89392043e077814a66b31752bb3874d21e9a32e63323387ff5ed79e8",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -15626,7 +15579,7 @@
       "id": "TV-0612",
       "file": "conforming/TV-0612.tarn",
       "title": "a dimension of extent 0: zero addressed tiles, extent slot (0,0), crc_of_crc_array 0, and dir_offset at its floor of 16 [R-GEO-02], [R-CNT-17], [R-CNT-23] (\u00a721.6)",
-      "sha256": "51ef107b6114958649767f7a8b333182dc7c33f2413ee744ac9e1ee641e0bd75",
+      "sha256": "72b481b6c404053e4fa7f283abbd3d80f0523e66cbd01fe663828aac76b1932c",
       "size": 256,
       "conforming": true,
       "derivation": {
@@ -15643,7 +15596,7 @@
       "id": "TV-0613",
       "file": "conforming/TV-0613.tarn",
       "title": "extent and tile extent both 2^63-1, so P and N.P sit exactly on [R-ENC-04]'s bound [R-ENC-03], [R-GEO-03]",
-      "sha256": "abc13e3bc9a166614fbc0b3360b35a5ac5968586387828a5299a56bdc0ad408c",
+      "sha256": "faafc8fc223db4aa62e00d0e2a4efbdfcfa8cbad2140ad94214dbe8f699decdf",
       "size": 384,
       "conforming": true,
       "derivation": {
@@ -15696,7 +15649,7 @@
       "id": "TV-0614",
       "file": "conforming/TV-0614.tarn",
       "title": "rank 32, \u00a721.9's minimum guarantee for rank [R-ERR-03]",
-      "sha256": "52775434244a3bd26fe1ad88feba091e4c8c24dd15dd25d056fa932b7efc8e94",
+      "sha256": "6ccdd0a2e12d47c22ef87a72084fffa0d771b9070034d0ea6d2d20854bebd5ac",
       "size": 1024,
       "conforming": true,
       "derivation": {
@@ -15840,7 +15793,7 @@
       "id": "TV-0615",
       "file": "conforming/TV-0615.tarn",
       "title": "rank 255, the hard limit the u8 rank field forces [R-ERR-05]",
-      "sha256": "76791025760dc474bcf0878c620325a2285dea067ce40493d13b6cab6e69c112",
+      "sha256": "ffb432abe543d4edce15cd8804f4f0c4aa66073a7e5172c079534729aedc01bf",
       "size": 5248,
       "conforming": true,
       "derivation": {
@@ -16430,7 +16383,7 @@
       "id": "TV-0616",
       "file": "conforming/TV-0616.tarn",
       "title": "4096 channels, \u00a721.9's minimum guarantee for C [R-ERR-03]",
-      "sha256": "438e1bbce10c6bb79a35bfb2b79540c237af3643368171fd28988fb1a4dbd341",
+      "sha256": "324f520871aa2fcf31eacde2d9f6629a9c486f620011022f35b3bca268a3ef29",
       "size": 33152,
       "conforming": true,
       "derivation": {
@@ -41082,7 +41035,7 @@
       "id": "TV-0617",
       "file": "conforming/TV-0617.tarn",
       "title": "65,535 channels, the hard limit the u16 channel-count field forces [R-ERR-05]",
-      "sha256": "09ea121260f8db08236e63c39ed412b741c6c71e4edcd6bf027e73b439959047",
+      "sha256": "eb9e2f8c43312d22b4fafba437b364e65cceb5b912c729cb111d72ed4f21f13b",
       "size": 524672,
       "conforming": true,
       "derivation": {
@@ -41135,7 +41088,7 @@
       "id": "TV-0618",
       "file": "conforming/TV-0618.tarn",
       "title": "64 layers in one directory \u2014 a scaled exercise of \u00a721.9's 65,536-layer guarantee, whose bound is in SKIPPED [R-ERR-03]",
-      "sha256": "e268abdf7cc397ec792bfef9ce19099c9b1f81d97a0434a961fc2066b9adc0aa",
+      "sha256": "5edca25c1273d2d941dbfad34c845e69aee9c5db3161c63d67a55cc69a025887",
       "size": 8192,
       "conforming": true,
       "derivation": {
@@ -43044,7 +42997,7 @@
       "id": "TV-0619",
       "file": "conforming/TV-0619.tarn",
       "title": "entry_count 65,537: a full all-sentinel segment whose CRC is [R-IDX-05]'s constant 0xEECB3BB2, plus a one-entry partial segment whose CRC must be computed [R-IDX-04]",
-      "sha256": "3aaefabe736283ef6604f0e104a6f69766ca02cb6f69f80c1ffc3f0b252bcd67",
+      "sha256": "2642017aac4f968ab9bb423d16b5b6f5d69ba34c172d34e5c9d50a3c769e3df1",
       "size": 1311104,
       "conforming": true,
       "derivation": {
@@ -43097,7 +43050,7 @@
       "id": "TV-0620",
       "file": "conforming/TV-0620.tarn",
       "title": "layer, dimension and channel names all exactly 255 bytes \u2014 the hard limit a u8 length prefix forces [R-ERR-05], [R-ENC-12]",
-      "sha256": "1596b709a0a529286af605aea9ef9aec812197d715c8c4ede7063b58d6b01fd4",
+      "sha256": "006ef4c23c13f8ab211bf5aacd9002b6ab76c3d20333f2f944c6729cb99f6491",
       "size": 1152,
       "conforming": true,
       "derivation": {
@@ -43150,7 +43103,7 @@
       "id": "TV-0621",
       "file": "conforming/TV-0621.tarn",
       "title": "names at the code-point edges: 1 byte (the length floor), U+0020, U+007F, and U+10FFFF [R-ENC-12], [R-ENC-13]",
-      "sha256": "ab0feb45f71a7ff0ce1c2df3888e2b28989172a44e5ca6db8cfb0de163fe9ba8",
+      "sha256": "130d2835ee2fe03bdbb754a220f00c671f33f541cb5ca5c1ac7c41c119ccc239",
       "size": 384,
       "conforming": true,
       "derivation": {
@@ -43233,7 +43186,7 @@
       "id": "TV-0622",
       "file": "conforming/TV-0622.tarn",
       "title": "one channel of each of the thirteen core types, every fill an edge bit pattern (NaN payload, -0.0, +Inf, the minima and maxima), tile unstored so every sample is fill [R-TYP-05], [R-TYP-06], [R-TYP-08]",
-      "sha256": "d877dac2fffca6be292388556dda06c1ade5b151220d185e02eaa102909b1431",
+      "sha256": "b335be5831e6b766faa47e3d2be14849f154128714df86192063b33f0f51756e",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -43286,7 +43239,7 @@
       "id": "TV-0623",
       "file": "conforming/TV-0623.tarn",
       "title": "one interleaved sample carrying all thirteen core types at element size, little-endian [R-TYP-01], [R-SER-02]",
-      "sha256": "213c6396bd389a176a95663e97b2635b13abed14d6eb16bc590e31933ea1df38",
+      "sha256": "21200a2f5eb58f5ec4fb43ff7fc101e2c229d458c6aa35c85efbb17b675d9462",
       "size": 576,
       "conforming": true,
       "derivation": {
@@ -43440,7 +43393,7 @@
       "id": "TV-0624",
       "file": "conforming/TV-0624.tarn",
       "title": "a planar layer mixing a numeric channel and a packed bool plane, P mod 8 = 0 so the plane has no pad bits [R-SER-09], [R-SER-03] (\u00a721.6)",
-      "sha256": "9808405c4460c9163a492f35061f612bea571b5ea48b6d14faae007c4456206b",
+      "sha256": "8b689718e8d0ade67adb02722d570fd4535ea456657bd2e9a83109c252e1c2e4",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -43543,7 +43496,7 @@
       "id": "TV-0625",
       "file": "conforming/TV-0625.tarn",
       "title": "bool fill 0x01 \u2014 the upper of the two bytes [R-TYP-07] admits",
-      "sha256": "cde4fd10cb5de75faffef80a41ba27f959514aa4f525d4e3dc131ee10e73d64b",
+      "sha256": "71bf7d009b0f792a92b2420d820ba26f372e9d31c7f2ed24f78f921ca5ea038e",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -43604,7 +43557,7 @@
       "id": "TV-0626",
       "file": "conforming/TV-0626.tarn",
       "title": "a packed bool plane with P = 12: four pad bits in the final byte, each carrying the channel's fill bit of 1 [R-SER-03], [R-SER-05]",
-      "sha256": "591d871dc4fcd1a1abb30033d833fadd5765500d324d12398744f0101f46bed2",
+      "sha256": "1fb36a83774a5e30fac12b413a23b5518713c0f8e25f25e0d280649e4941e699",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -43689,7 +43642,7 @@
       "id": "TV-0627",
       "file": "conforming/TV-0627.tarn",
       "title": "an interleaved layer mixing numeric and bool channels, the bool value a single byte [R-SER-09], [R-SER-08] (\u00a721.6)",
-      "sha256": "fbf127679b9826e9229a7ff5dbd62dfedfef31468692f173ceab47d7d075230f",
+      "sha256": "786273a12c53563282618e56fd976f40e6228051fa5617548172a7c6cc83aba6",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -43785,7 +43738,7 @@
       "id": "TV-0628",
       "file": "conforming/TV-0628.tarn",
       "title": "a tile extent above its dimension's extent: one padded tile, twelve padding positions, each carrying the channel's fill [R-GEO-01], [R-GEO-04], [R-SER-05]",
-      "sha256": "40c1092c7ea8dfb292107ac103e9c21ef6aeee784dca87e2c5450f73ed1b0fe7",
+      "sha256": "46521d3fbff0c0763ef9d785dfeaaab85f303210d813b278a0d67d8bc5ce8c35",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -43838,7 +43791,7 @@
       "id": "TV-0629",
       "file": "conforming/TV-0629.tarn",
       "title": "codec 2 in both directions: a stored tile shorter than its decoded image and one longer than it [R-COD-05], [R-COD-08] (\u00a721.6)",
-      "sha256": "5c15daa6a1ba3c6b1ff3419418d20221691a14f87015672a522e0a8c8f26dcfe",
+      "sha256": "73b27a3107ab54f5edda693ee0c2094b9019559deea923aeb35cf0b5529ed045",
       "size": 640,
       "conforming": true,
       "derivation": {
@@ -44026,7 +43979,7 @@
       "id": "TV-0630",
       "file": "conforming/TV-0630.tarn",
       "title": "codec 3 at every frame constraint: one frame, no dictionary ID, no content checksum, window equal to the decoded size, Frame_Content_Size present and equal [R-COD-06]",
-      "sha256": "bb817283d35c33e309391eaebfe0528d6bc3436f1ca4a7b31601e123ba069e46",
+      "sha256": "996d1fa0bca418298142663b6f0856146896f81ebbe27c64ef06c6315aa0be18",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -44126,7 +44079,7 @@
       "id": "TV-0631",
       "file": "conforming/TV-0631.tarn",
       "title": "filter 2 at each stride [R-COD-10] names: interleaved Q, planar element size, and the identity for a packed bool plane",
-      "sha256": "3df79723583f9431f9086d62d5c3b6a2219d8d91db90b058ca916b7ffd4ccd1f",
+      "sha256": "54cf7476538895ba2cac87e5194856d29ce1c0a625cb8f003618dec294be5c78",
       "size": 768,
       "conforming": true,
       "derivation": {
@@ -44287,7 +44240,7 @@
       "id": "TV-0632",
       "file": "conforming/TV-0632.tarn",
       "title": "codec 4 declared at a decoded tile size of exactly 0x7E000000, the bound [R-COD-07] forbids exceeding [R-ERR-05]",
-      "sha256": "550905d762799043b390354330b48fdbdbf14b05535bbaf3e2243525a65ceaaf",
+      "sha256": "9ddf089b43c46a8d116ebd752091debae589d49d101c7764dece8ead1d04dcc5",
       "size": 384,
       "conforming": true,
       "derivation": {
@@ -44340,7 +44293,7 @@
       "id": "TV-0633",
       "file": "conforming/TV-0633.tarn",
       "title": "a top-level user-metadata record: encoding 1, a registered tarn. key, one object member, extent CRC intact [R-MTA-03], [R-MTA-04], [R-MTA-07]",
-      "sha256": "ce19d8916845f32deaf5db085cecab453452e28db63573e1473e33745ea675d9",
+      "sha256": "974035878bc08b98fcc684c9160aed75232a8f5bf16c32bd993fae8e4ab9c4e2",
       "size": 320,
       "conforming": true,
       "derivation": {
@@ -44393,7 +44346,7 @@
       "id": "TV-0634",
       "file": "conforming/TV-0634.tarn",
       "title": "a user-metadata document carrying an unrecognized tarn.-prefixed key \u2014 the reader ignores the key, the file is conforming [R-MTA-06] (\u00a721.6)",
-      "sha256": "37e8e86a3a288d5cd710518a018f5d4bb2bdfe0ca702c6917eabad8ebd65075e",
+      "sha256": "e4d9cd1d0233f6b5197355a4d46ce457d7d202bc4a7c5711e36f87de2969961f",
       "size": 320,
       "conforming": true,
       "derivation": {
@@ -44451,7 +44404,7 @@
       "id": "TV-0635",
       "file": "conforming/TV-0635.tarn",
       "title": "a user-metadata document under encoding 2: one RFC 8878 frame, no dictionary ID, no content checksum [R-MTA-03], [R-MTA-09]",
-      "sha256": "0be7202f4e22a407bb3fbb8dc7cf2ef0b8a794771af5f01585572701d7e03fab",
+      "sha256": "ea277ccf9f9369d021707f1117abc50b73ec1d98ab13832e38651c556da61f59",
       "size": 384,
       "conforming": true,
       "derivation": {
@@ -44504,7 +44457,7 @@
       "id": "TV-0636",
       "file": "conforming/TV-0636.tarn",
       "title": "a record of an experimental type with MU = 0 \u2014 ignored as though absent, the file conforming [R-CNT-15], [R-EXT-03] (\u00a721.6)",
-      "sha256": "8e7dcef3f5da2b131efb2efa8784a851638901c93e9c8f1f9fc86abd025baefb",
+      "sha256": "c126ec86139a74d3b92f9ed527e6a395ef45bdc480dcb6c12b49b1d097044921",
       "size": 320,
       "conforming": true,
       "derivation": {
@@ -44565,7 +44518,7 @@
       "id": "TV-0637",
       "file": "conforming/TV-0637.tarn",
       "title": "an unknown record with MU = 0 and extent slot (0,0), the 'no extent' encoding [R-CNT-13], [R-CNT-15] (\u00a721.6)",
-      "sha256": "87d46123a33a53da7c0580c05c480f5e4614c58a2a42aabf0e8ff38da5a24e2a",
+      "sha256": "445eeb9618baf06baab53a9c13e5f2d211dc9bbbc4f8dae39b92d0f7e2ebbc83",
       "size": 320,
       "conforming": true,
       "derivation": {
@@ -44626,7 +44579,7 @@
       "id": "TV-0638",
       "file": "conforming/TV-0638.tarn",
       "title": "zero layers with a non-empty directory [R-CNT-14] (\u00a721.6)",
-      "sha256": "3a9e76701d14c6f92d5b1e564849cbc7cc149c7ce1374077b674ccbb239b76c9",
+      "sha256": "5881c67ba739b1489de1413dbb482dd4c44a336ac6c0d16e4c64e37223848f9c",
       "size": 192,
       "conforming": true,
       "derivation": {
@@ -44643,7 +44596,7 @@
       "id": "TV-0639",
       "file": "conforming/TV-0639.tarn",
       "title": "a pre-trailer pad of non-zero bytes: slack is unconstrained content under no checksum [R-CNT-21], [R-CNT-05] (\u00a721.6)",
-      "sha256": "1278a05fa48d2198cf4ff30e8ad376090335962439e180f3c68e164d4149aadb",
+      "sha256": "359c2a099556b893ac05aa2ac34d73a39f5678ea2542d45f3a6a517e81338004",
       "size": 256,
       "conforming": true,
       "derivation": {
@@ -44701,7 +44654,7 @@
       "id": "TV-0640",
       "file": "conforming/TV-0640.tarn",
       "title": "a stored tile whose 64 bytes are a valid-looking trailer \u2014 inert, since nothing enumerates slack [R-LIF-06] (\u00a721.6)",
-      "sha256": "7ac95be4970d4a5cff87b22a51d0fcad35ad0ed23e37582e71e54b9bb57cf28b",
+      "sha256": "370ad71b652ff75b0c0adbe755c8a3e675b07c8fad7a8d2d84cb025956863a1b",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -44754,7 +44707,7 @@
       "id": "TV-0700",
       "file": "reject-tile/TV-0700.tarn",
       "title": "T3 interleaved P\u00b7Q, payload longer: deflate stream decoding to 13 bytes against decoded size 12",
-      "sha256": "bd17bcbe3297bff42bffef36daecdad0c931f75dd7a2fec4bd5a12fd9a0aba68",
+      "sha256": "92edeb1e65a8828418cb656d99dc66d7495f4512b4a713afbe02f41aecc0bec2",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -44826,7 +44779,7 @@
       "id": "TV-0701",
       "file": "reject-tile/TV-0701.tarn",
       "title": "T3 interleaved P\u00b7Q, payload shorter: deflate stream decoding to 11 bytes against decoded size 12",
-      "sha256": "d9b2577be32545c6d830e23965688e16e2d7ba47687d8463798cdfaaac7c07ab",
+      "sha256": "056e0e11887f1bfe2378505feb9112b29d78e5f935bde75d111210c122160d25",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -44898,7 +44851,7 @@
       "id": "TV-0702",
       "file": "reject-tile/TV-0702.tarn",
       "title": "T3 planar numeric P\u00b7B\u1d9c, payload longer: deflate stream decoding to 17 bytes against decoded size 16",
-      "sha256": "e5f8f50ee8b38cd3206ab7b793059d74000619218b46f904b318fe546e526f46",
+      "sha256": "c69b23865ffa85c2cebe11bba3fc8fbcc77544598d0d2dc984bac47d894b35e4",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -44970,7 +44923,7 @@
       "id": "TV-0703",
       "file": "reject-tile/TV-0703.tarn",
       "title": "T3 planar numeric P\u00b7B\u1d9c, payload shorter: deflate stream decoding to 15 bytes against decoded size 16",
-      "sha256": "aa8c199a19b6603eb169b1b250833252d808588c3134d802e997e1ac20d3a402",
+      "sha256": "72351594a14df990d2047a23ace65808f7b691f6ef3aef24e4a957aa8cb6a543",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45042,7 +44995,7 @@
       "id": "TV-0704",
       "file": "reject-tile/TV-0704.tarn",
       "title": "T3 packed planar bool \u2308P/8\u2309, payload longer: deflate stream decoding to 3 bytes against decoded size 2",
-      "sha256": "feca8fe0a593cac00d7f9e394cccc4b07d2eef2a7924374feeee270c93cfac26",
+      "sha256": "fac66dbaff14c37aeb60175b705ef2d1ac9464e38987d10188a986f0ec9ab19b",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45114,7 +45067,7 @@
       "id": "TV-0705",
       "file": "reject-tile/TV-0705.tarn",
       "title": "T3 packed planar bool \u2308P/8\u2309, payload shorter: deflate stream decoding to 1 byte against decoded size 2",
-      "sha256": "38e0859eba7c2d6ad1eadfd1517bc7cb596fe0767cd6ceb3934183752605bf79",
+      "sha256": "57bb69236227f4081939d4c1152f4ff0cff96fb2267d10bd748243dbc1cf98bd",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45186,7 +45139,7 @@
       "id": "TV-0706",
       "file": "reject-tile/TV-0706.tarn",
       "title": "T4 interleaved bool fill byte: padding ordinal 2 carries 0x01 where the channel's fill byte is 0x00",
-      "sha256": "26dfe1d5e9d06de2d23ef65adb9019e0108b10ced2592fe4a6f92e0a161c7b0f",
+      "sha256": "aac5f2055fe5264449b548da901a3ba4ac903b41d6fc4018aa0cf4d8b7b632c8",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45290,7 +45243,7 @@
       "id": "TV-0707",
       "file": "reject-tile/TV-0707.tarn",
       "title": "T13 deflate stream carrying a previous tile's history window: match distance 7 with one byte produced",
-      "sha256": "564c3336b1087be264b647abb734fa48754bf4e4314e4172f27e67e99189038f",
+      "sha256": "6a066c2ef8aae3535a71b5117fd3995c163b852d571bf4680d7f7f18c9a27bee",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45362,7 +45315,7 @@
       "id": "TV-0708",
       "file": "reject-tile/TV-0708.tarn",
       "title": "T13 lz4 block whose match offset 1000 reaches before its own output start (20 bytes produced)",
-      "sha256": "11351794c09e49f0c4fefc99e50dc41a406b530112ab49b43b5cbffa301ad603",
+      "sha256": "80de31aec2466fa93680125c0ecca99defe436a083a3318181347a2e7aa03e8d",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45434,7 +45387,7 @@
       "id": "TV-0709",
       "file": "reject-tile/TV-0709.tarn",
       "title": "T15 codec 2 with a zlib RFC 1950 wrapper (CMF/FLG header, trailing Adler-32)",
-      "sha256": "27693bf04aeb1ae396466d9187b1cf25821392b633f1fa5a9f0346afad0b9046",
+      "sha256": "1281ddf12fda74b8f7602500d3264fa3624f8d53fde1bb81f6bab80532e668ec",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45506,7 +45459,7 @@
       "id": "TV-0710",
       "file": "reject-tile/TV-0710.tarn",
       "title": "T15 codec 2 with a gzip RFC 1952 member (1F 8B, trailing CRC32 and ISIZE)",
-      "sha256": "b024d4f0ebe5c7c092669d6862110b2610edef0af0190376c65e8eb20bd676a5",
+      "sha256": "12412b1d99271dbc053c6292bfe84ab61ea2e3f6085f76c0f73fb0c175f14250",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45578,7 +45531,7 @@
       "id": "TV-0711",
       "file": "reject-tile/TV-0711.tarn",
       "title": "T16 codec 2 with two DEFLATE streams: an empty second stream after the first BFINAL block",
-      "sha256": "24def45246ec19136df38d95390656aed2a747cd38a3526c02b2b3775efdfd1b",
+      "sha256": "164aeeda9a906322f4fa410260f11e070eb7dbc88afb42e59c9cf61c6c6b4a5f",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45650,7 +45603,7 @@
       "id": "TV-0712",
       "file": "reject-tile/TV-0712.tarn",
       "title": "T18 a second concatenated compressed frame (the second produces no output, so the extent still decodes to 4 bytes)",
-      "sha256": "33beaaa322983e393567f421bb17760eab024cfc12b0bdfd357ac78fcedfff3b",
+      "sha256": "86584fc518a57a687f0637cd01cd1e647ba0a3919111c6d5e001ad118794c98e",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45722,7 +45675,7 @@
       "id": "TV-0713",
       "file": "reject-tile/TV-0713.tarn",
       "title": "T18 a skippable frame before the frame (magic 0x184D2A50)",
-      "sha256": "ad328a4bc5563fcf102f17b861d407da4ccee58d40ed46508f041051a0368f9c",
+      "sha256": "398d849c602c5303c9d90e4f0ea948574609d149249f92ba8e55a2c4cc60b8c1",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45794,7 +45747,7 @@
       "id": "TV-0714",
       "file": "reject-tile/TV-0714.tarn",
       "title": "T18 a skippable frame after the frame",
-      "sha256": "8992ffa053544d4a32e0f40d8c54f8cb0da501887606bf2fe68a70fc63ba44fa",
+      "sha256": "dfb24fd71437306bc2bea47c6dd21b8292197803d2133e1d9a1d4ce9bd0c45f1",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45866,7 +45819,7 @@
       "id": "TV-0715",
       "file": "reject-tile/TV-0715.tarn",
       "title": "T18 a skippable frame between two frames",
-      "sha256": "84d91654f1e1beb8cb3ec414552f104793e1928fbec92dddd06d5ca517b0d663",
+      "sha256": "810143c7242f8892ce71ed338210577983729f8040eb1362b1bae3a538455ead",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -45938,7 +45891,7 @@
       "id": "TV-0716",
       "file": "reject-tile/TV-0716.tarn",
       "title": "T19 codec 3 and the frame header carries Dictionary_ID 1",
-      "sha256": "5a2e711935c39bae7ed703ea65ceac452b34c22018dd8a1dc281774e4fd19199",
+      "sha256": "a5220537afc29efac4e862930c28c1a5d995bb72644a8b70c90b3f552350fe74",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46010,7 +45963,7 @@
       "id": "TV-0717",
       "file": "reject-tile/TV-0717.tarn",
       "title": "T20 codec 3 and the frame header sets Content_Checksum_flag (the checksum itself is correct)",
-      "sha256": "81c1d27d79b4ec21bc0ceec1f8a991353181b5ce5ad35c4abd6b0c3113b96aa6",
+      "sha256": "3371969af878052f90597cb59780d5529fadd1c3265b55f43e25f511f993a0f0",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46082,7 +46035,7 @@
       "id": "TV-0718",
       "file": "reject-tile/TV-0718.tarn",
       "title": "T21 codec 3 and the frame declares Window_Size 1024 against a decoded size of 4",
-      "sha256": "6854d13b520c47cd3839185df4816b924b9c382159f4e5faa8caa21397410d0d",
+      "sha256": "44537ba9cdee3d9aa0b531e5fdbba76fffcb08abfa8c3daece33102a4d2c657c",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46154,7 +46107,7 @@
       "id": "TV-0719",
       "file": "reject-tile/TV-0719.tarn",
       "title": "T22 codec 3 and Frame_Content_Size 3 against a decoded size of 4",
-      "sha256": "a98226d5a8fe9b14ffe3ef6bf504136dd1d801fd50f8616df45db0706e970331",
+      "sha256": "450f629144b0ac1756c45d66cc6ed9845711ffcbc65eda3bcd55e01204b3e71c",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46226,7 +46179,7 @@
       "id": "TV-0720",
       "file": "reject-tile/TV-0720.tarn",
       "title": "T23 codec 4 and the stored bytes are an LZ4 frame (magic 04 22 4D 18) instead of one raw block",
-      "sha256": "552ef41933cb5677527e678765fa8ed93c37d14f5a6317d60dcb76a0d379c7c8",
+      "sha256": "eab631a2bd3ea2142a5b0ddb0584c9ac4fb5b34e3cdfa9a93e4551ad10424607",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46298,7 +46251,7 @@
       "id": "TV-0721",
       "file": "reject-tile/TV-0721.tarn",
       "title": "T24 codec 3 and four bytes remain in the stored extent after the frame ends",
-      "sha256": "969b4f26e5cec9e555392ebe681cb1a8847e48d8e1952520a76c534a4818b9a3",
+      "sha256": "25dd4f0c63eb6dbcca1241ff2fc114e45c1a79106e016c7ca890a8a17b100406",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46370,7 +46323,7 @@
       "id": "TV-0722",
       "file": "reject-tile/TV-0722.tarn",
       "title": "T25 deflate stream whose first block declares reserved block type 3",
-      "sha256": "f33a19f56b81b9252155034508fabefcb7fdc84e4978f72c209c5a751b35611d",
+      "sha256": "002486c264a52b72e4e823dc20de76bc0380b0b0e2709614e5074ebd4495b128",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46442,7 +46395,7 @@
       "id": "TV-0723",
       "file": "reject-tile/TV-0723.tarn",
       "title": "T25 corrupt zstd block header: a conforming frame header over a block declaring reserved Block_Type 3",
-      "sha256": "0ade617e3def8f8ded24df38e3800306d40ab628e42473ca277ca5107c84dacb",
+      "sha256": "968471328d655de6a020992b4e1670fe16c9a5dcf96eefd50e9f9f13601baed0",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46514,7 +46467,7 @@
       "id": "TV-0724",
       "file": "reject-tile/TV-0724.tarn",
       "title": "T26 planar numeric: shuffled at stride 4 where the mandated stride is the uint16 channel's element size 2",
-      "sha256": "0e19c6796058b62913d751cf6e07bacb58036570807b29a1889b0f666e856f51",
+      "sha256": "8cc2c42219ca10e098afcc1bae489bfe0a3d5d617208c458a1373de9725b6393",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46584,7 +46537,7 @@
       "id": "TV-0725",
       "file": "reject-tile/TV-0725.tarn",
       "title": "T26 interleaved: shuffled at stride 2 where the mandated stride is the sample stride Q = 3",
-      "sha256": "4a93f58c3f3a5c23466577eda14f6798d9dc1b46d8095f1cd80be53b87166477",
+      "sha256": "baa85d05bd010815226a71632913d25e457f4c10912d1223452bb8fe98420f23",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46654,7 +46607,7 @@
       "id": "TV-0726",
       "file": "reject-tile/TV-0726.tarn",
       "title": "T26 packed planar bool: shuffled at stride 2 where the mandated stride is the identity s = 1",
-      "sha256": "81a69cb4a6099fbe8418ae0dfe13d6326c14928d4004fecc2cf758e28e034ff2",
+      "sha256": "04d477da54d5c77994fcbd9ec809733eb2c01cde2b50d4de2cb1e2c48ee644a5",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46724,7 +46677,7 @@
       "id": "TV-0727",
       "file": "reject-tile/TV-0727.tarn",
       "title": "T21 codec 3, planar: Window_Size 1024 against a uint8 plane's decoded size of 4",
-      "sha256": "0250f474567d8d69b83e345ce759a1ac2b7dd4f0e4682aaa2a2347cb7ca8de3f",
+      "sha256": "78dc4b99d352815584cacbdb7d97664ed99fbbcfece50ee80663d311fb6a0010",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46796,7 +46749,7 @@
       "id": "TV-0728",
       "file": "reject-tile/TV-0728.tarn",
       "title": "T21 codec 3, packed planar bool: Window_Size 1024 against a plane of \u23088/8\u2309 = 1 byte",
-      "sha256": "029e002bc290fa49e1ac748d7037b64aba110c5eda1853fd4e2cb8ccb7ed859f",
+      "sha256": "097d0ee9c40dd10d08923e0e3cd970df39813606bb65bde3334dec5461978eee",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46868,7 +46821,7 @@
       "id": "TV-0729",
       "file": "reject-tile/TV-0729.tarn",
       "title": "T22 codec 3, planar: Frame_Content_Size 3 against a uint8 plane's decoded size of 4",
-      "sha256": "12ad4eaf3a572e66916fae13b8df64638972042fa20b3999d8c91b3d0d940a6f",
+      "sha256": "88f65aceae02d78f4f476d7ec88ffe7475b5ca96d142203e51428b24a38a108f",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -46940,7 +46893,7 @@
       "id": "TV-0730",
       "file": "reject-tile/TV-0730.tarn",
       "title": "T22 codec 3, packed planar bool: Frame_Content_Size 0 against a plane of \u23088/8\u2309 = 1 byte",
-      "sha256": "f404642b66bd42aa062473c493014c91c6a00609943a3915f09c0bfa9d49d8f1",
+      "sha256": "986a5a4cd4f97dd1ea95f627a95b0bed5ed062cec96d8742a093884ec2c241ed",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -47012,7 +46965,7 @@
       "id": "TV-0731",
       "file": "reject-tile/TV-0731.tarn",
       "title": "T22 codec 3: Frame_Content_Size 5 against a decoded size of 4",
-      "sha256": "a2fbf1bcb7f8f9d0caa97d8929a6c71a7deb8509b0a067460922cfde9db372b2",
+      "sha256": "87374d6e8c22cfbcb639c4bbefc8ee37f9c355fc73738842af895d04374c8639",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -47084,7 +47037,7 @@
       "id": "TV-0732",
       "file": "reject-tile/TV-0732.tarn",
       "title": "T22 codec 3, planar: Frame_Content_Size 5 against a uint8 plane's decoded size of 4",
-      "sha256": "0cbdfb5266d9b2f2d64079de2a4a53276f72e2222630a944f1c0f68aa62e56b6",
+      "sha256": "00aee97d552b2e7a02a73585bdea89204bdaf3e11c94702f2c2848cfecbc12bf",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -47156,7 +47109,7 @@
       "id": "TV-0733",
       "file": "reject-tile/TV-0733.tarn",
       "title": "T22 codec 3, packed planar bool: Frame_Content_Size 2 against a plane of \u23088/8\u2309 = 1 byte",
-      "sha256": "dcddb88f8b9ac6603872a2e0ea3d1857e76efa18723cb90748bc2fe74ad2855f",
+      "sha256": "bf4b4562a1dac1e624e3ad977c56203dd6572fb3def3e78046e9dacd222d8cdc",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -47228,7 +47181,7 @@
       "id": "TV-0800",
       "file": "conforming/TV-0800.tarn",
       "title": "layer `sub` carries a conforming user-metadata sub-record",
-      "sha256": "f75ebb2f92bdaa8fce3b2f4468c97e8911ae25e3ad44442b4a8e6c23ffe05d7c",
+      "sha256": "a1bdc6ea80ee4274f08e73b9aec81c60ed5853cb378f4d1bf84cc4bf4b3ff96f",
       "size": 448,
       "conforming": true,
       "derivation": {
@@ -47315,7 +47268,7 @@
       "id": "TV-0801",
       "file": "conforming/TV-0801.tarn",
       "title": "layer `sub` carries a sub-record of an experimental type with MU = 0 \u2014 \u00a721.6's defined ignore",
-      "sha256": "6457cef39dc3453062998c53051079317698d1b98bd36804adaf59857ef5c884",
+      "sha256": "a6809e60f5711dca3cb2ad602945275a21062ac486d45d6ec6d0cd6c7adff8bd",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -47402,7 +47355,7 @@
       "id": "TV-0802",
       "file": "reject-layer/TV-0802.tarn",
       "title": "user-metadata sub-record with extent slot (0, 0)",
-      "sha256": "436b6b438fc872b0b682ee56cd62c98d6422e049f07be64b2b8d5d4f8c1115b3",
+      "sha256": "b319e21ec1c58e402b268883ec089941dbb3574280076d4e1470ff8be6f61a21",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -47485,7 +47438,7 @@
       "id": "TV-0803",
       "file": "reject-layer/TV-0803.tarn",
       "title": "user-metadata sub-record with extent_length 4, one byte short of a document plus its terminal CRC",
-      "sha256": "7207882f5e060d427c4aee69b28937e0b051da54d172f3bea31c11c52183783b",
+      "sha256": "46108c03ec61db899729e3aca16f5d3a0c47704a69486b2ce7197eea0c4c9b59",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -47564,7 +47517,7 @@
       "id": "TV-0804",
       "file": "reject-layer/TV-0804.tarn",
       "title": "user-metadata sub-record with inline_length 2 (instance: inline_length >= 2)",
-      "sha256": "38d882f600ca1fc83b7d715f556d62720c2631fdc320e8110d1920390e8a7c1d",
+      "sha256": "24f569bbaa9c2b15e3a64be000a4ec996992e641b60dd24b37439f9bc234d337",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -47635,7 +47588,7 @@
       "id": "TV-0805",
       "file": "reject-layer/TV-0805.tarn",
       "title": "sub-record of type 0x0000",
-      "sha256": "807784e4149b56c1e0d10cf3934bd6aecb54d23129ea494a413c6ccb03f12e4f",
+      "sha256": "221962ffe917a701ec62920c3dc6c8fbbe6a539e7eb0cbda291469365d21f77a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -47714,7 +47667,7 @@
       "id": "TV-0806",
       "file": "reject-layer/TV-0806.tarn",
       "title": "L14 trailing residue: one complete sub-record, then 10 bytes the sequence cannot parse",
-      "sha256": "996789604031ef0aea6ba2b5a8c40b834f0a22d8910445af8cfac5c83d1bc3aa",
+      "sha256": "aad11fcd242fec6042ec2f62afefb1d569385fad41c77490869f73599ff8bae3",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -47785,7 +47738,7 @@
       "id": "TV-0807",
       "file": "reject-layer/TV-0807.tarn",
       "title": "L14 sub-record inline_length: the header parses, its declared payload runs past the layer record's inline payload",
-      "sha256": "b5285f616cc29fa78319e5bb348a2e333a956ac8ce5f2f8ee0be439effce43d7",
+      "sha256": "5d71176568d8e773a228b9e9baa8d7ba52c757fbbda2a57c204b39be978755c9",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -47864,7 +47817,7 @@
       "id": "TV-0808",
       "file": "reject-layer/TV-0808.tarn",
       "title": "sub-record extent slot with extent_length 0 and extent_offset nonzero",
-      "sha256": "ba978c990c408efee1be23c92f4df8cf2700bd4cc8882dbe2d9fb60b9282ecab",
+      "sha256": "b0b00b71ad28284d160a71f31c4fe889cc575411d8b208bb60ee8304393eab83",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -47943,7 +47896,7 @@
       "id": "TV-0809",
       "file": "reject-layer/TV-0809.tarn",
       "title": "sub-record extent at offset 8, inside the front signature block",
-      "sha256": "ae53316870239f890130137f0dd43cdbe771975acf18236d0cf8c2f51a65dda4",
+      "sha256": "051ca9ba37be34637ee54caee590b097a0f23e2a0f618197e30668a7ac4e2a4e",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -48026,7 +47979,7 @@
       "id": "TV-0810",
       "file": "reject-layer/TV-0810.tarn",
       "title": "sub-record extent begins at F - 64, on the live trailer",
-      "sha256": "18213efd79cd72d470572749a10f28b57b995f427116e5b31a48e2fd78aaac3d",
+      "sha256": "00708aa66748a0a1b16a70e2a2854a332dc095be72eb9ccc068441df5d72ca0a",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -48105,7 +48058,7 @@
       "id": "TV-0811",
       "file": "reject-layer/TV-0811.tarn",
       "title": "sub-record extent covers layer `sub`'s own tile-index region",
-      "sha256": "38f7f3beff55adee7fa7095a386352a6c9126349b25f19f35ddbdab8d5ab526f",
+      "sha256": "2328739ba78910cfd54442c5994986a5233d608a5ec498869b75b6a9b4093a58",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -48220,7 +48173,7 @@
       "id": "TV-0812",
       "file": "reject-layer/TV-0812.tarn",
       "title": "two user-metadata sub-records on one layer record",
-      "sha256": "4b8885df5288ea89585bc34dbea224e5444fd8e833f1007c583995120dae27b1",
+      "sha256": "44657041eb3cae31736bfe334f3e4f1fd5265814e48866fe847f2a9a6e2932c7",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -48291,7 +48244,7 @@
       "id": "TV-0813",
       "file": "conforming/TV-0813.tarn",
       "title": "a conforming layer a reader must refuse: sub-record of an experimental type with MU = 1",
-      "sha256": "7c4458801ea21b60d881d8a77eeea8743f2e2a65c55726aee0e8e63c23511980",
+      "sha256": "2797f7f79937b9949f2268f0572577111f761c89a7691187e7cd38b2fafe3932",
       "size": 512,
       "conforming": true,
       "derivation": {
@@ -48352,7 +48305,7 @@
       "id": "TV-0814",
       "file": "reject-layer/TV-0814.tarn",
       "title": "sub-record carrying reserved-range type 0x0003",
-      "sha256": "0c2f0266eed0bc6669f7c3e910c1b8a4325ce2d092289705d77e1f5d8c7b0b2a",
+      "sha256": "bff18fb50dd8d5ab986733e7d377db29a326dc1adf273b7688ee2013005f43ef",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -48463,7 +48416,7 @@
       "id": "TV-0815",
       "file": "reject-layer/TV-0815.tarn",
       "title": "a record of type 0x0001 in the sub-record sequence",
-      "sha256": "a1c137c96439e9d632ecafbe0402601674f6686a912109b7b4e7042bde40bd80",
+      "sha256": "457d10da382934e4ebb851064d5f75c224bd0d124a0d4a70df4dda4b72a89188",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -48534,7 +48487,7 @@
       "id": "TV-0816",
       "file": "reject-layer/TV-0816.tarn",
       "title": "sub-record reserved flag bit 2 set",
-      "sha256": "09306928d5be84f6f0c4f2eb2e9fba333c36d8af266da9e65ef2915750769ccc",
+      "sha256": "e63b7149b5ea99cd687a3466c44dcd9cca884ebc308bb20fad81d2163c586253",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -48645,7 +48598,7 @@
       "id": "TV-0817",
       "file": "reject-layer/TV-0817.tarn",
       "title": "sub-record user-metadata document with unsorted members",
-      "sha256": "10f97b079f6b82e7da5f663201e788d3ee23089572d64c94a642c0527d5ac8c1",
+      "sha256": "b260ca1fc49712f72e90eae5b2f1ce75ff38f0446774844dcd34e200e6801f4a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -48753,7 +48706,7 @@
       "id": "TV-0818",
       "file": "reject-layer/TV-0818.tarn",
       "title": "user-metadata sub-record with inline_length 0, the encoding byte absent (instance: inline_length 0, the encoding byte absent)",
-      "sha256": "3b734ad2e4f070e2357698aee8a2d1c455c4396681efbf3758f9309e281f9e98",
+      "sha256": "b319818355ca23226c604d69ac651b3cbc4900c3b57011d200c7d93ecccf5a10",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -48860,7 +48813,7 @@
       "id": "TV-0901",
       "file": "reject-file/TV-0901.tarn",
       "title": "F5 trailer committed_file_length 64, below the 128-byte minimum (instance: committed_file_length)",
-      "sha256": "a5156bd0d89bdca5a2b385928a4834b590308a1f53381c469f3f5d2ff2ec2902",
+      "sha256": "b142971b9b3ef5eac75c3d44f1f9ef2d33fcb5f91a5577e96c519cc457d2d312",
       "size": 128,
       "conforming": false,
       "derivation": {
@@ -48903,7 +48856,7 @@
       "id": "TV-0902",
       "file": "reject-file/TV-0902.tarn",
       "title": "F13 committed_file_length 200, equal to the physical size but not a multiple of 64: the trailer begins at 136",
-      "sha256": "d1ee36ec901c20d256d5dfa22087a044299485a8e704d4aef027224755fcc0ea",
+      "sha256": "fa91eb95ab11008ab5b4be3526fa4ba0ccde5d7dc2efd4c3ff0cb06a84d25752",
       "size": 200,
       "conforming": false,
       "derivation": {
@@ -48915,7 +48868,7 @@
           }
         ],
         "repair": [
-          "append:00000000000000008a4e5241540d0a1a0100000000000000010000000000000010000000000000000400000000000000c800000000000000efcdab896745230100000000360639b2"
+          "append:00000000000000008a4e5241540d0a1a010000000000000010000000000000000400000000000000c800000000000000efcdab896745230100000000000000000000000043455155"
         ]
       },
       "expect": {
@@ -48943,7 +48896,7 @@
       "id": "TV-0904",
       "file": "reject-file/TV-0904.tarn",
       "title": "F25 the user-metadata record carries MUST_UNDERSTAND = 1 with PRESERVE_ON_EDIT = 0",
-      "sha256": "e60f762900908c626d09eff02440909ea6297f8a1630aa89ac59ce5368d19359",
+      "sha256": "7f340fd0a1182963e27a4c542225ae390ebcb72dccffd6d2c8bd5cbbf04da241",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -49023,7 +48976,7 @@
       "id": "TV-0905",
       "file": "reject-file/TV-0905.tarn",
       "title": "F36 top-level record of reserved type 0x0003 with MU = 0",
-      "sha256": "7b51f32b0a68b89aa8b3359e0a0dce2c619e7585acc56dd1269640a19d93f6c0",
+      "sha256": "95aa3df0b39dcfd3ae3fd849607d17a49060881f8d9a8cd4f1ff932e3e7024fa",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -49099,7 +49052,7 @@
       "id": "TV-0906",
       "file": "reject-file/TV-0906.tarn",
       "title": "F33 layer `host`'s sub-record extent covers layer `ok`'s stored tile (instance: sub-record extents)",
-      "sha256": "0245f056bbdd9ca776fbd8466850c78743f7ed1661a3bdf7e6b1067b45a6d671",
+      "sha256": "408f023945afc9c97af53764591efc47b9f56ba7806138c96a308274973f6b5d",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -49214,7 +49167,7 @@
       "id": "TV-0907",
       "file": "reject-layer/TV-0907.tarn",
       "title": "L1 layer `host` sub-record extent_offset = 2^63 (instance: extent_offset, sub-record slot)",
-      "sha256": "5e8db88cb01fe9d9bdd3dd1e0b342f0f969927c23c57bbac6e1a5cd8d54aef82",
+      "sha256": "0b43abe2ba923e9b30397ed643ef61b51ba0ca68c3301504ee548da74095e1e1",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -49294,7 +49247,7 @@
       "id": "TV-0908",
       "file": "reject-layer/TV-0908.tarn",
       "title": "L1 layer `host` sub-record extent_length = 2^63 (instance: extent_length, sub-record slot)",
-      "sha256": "c8863f049c22cd7fcc6a144694979863a57efaaf2f28650e6ae4f6dad22e944c",
+      "sha256": "cb980d40635433d4189d2384706cf795e1c6dc9af0fc51f6022edfdada69a9c0",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -49374,7 +49327,7 @@
       "id": "TV-0909",
       "file": "reject-layer/TV-0909.tarn",
       "title": "L2 layer `slab` T\u2081 = 2^62 with N = 3: N\u00b7P = 3\u00b72^62 (instance: N\u00b7P)",
-      "sha256": "98cab8be05692b735e26ebe625eee80db3bc39a695892578f39a51c94a59564c",
+      "sha256": "c9aa3680a786dc9f5482d05c7bcd15b40871438189efee93bbb697a4f942266f",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -49454,7 +49407,7 @@
       "id": "TV-0910",
       "file": "reject-file/TV-0910.tarn",
       "title": "F35 top-level record of reserved type 0x0003 with MU = 1",
-      "sha256": "882de63165a4db7854e768ed0b00d476d69245f348fa9556cec5e3affb343cad",
+      "sha256": "d8ff914d40b20ed2eec4039d5efabee2cd6aca8d30b7756ee2b238b8f5d3ae2b",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -49494,7 +49447,7 @@
       "id": "TV-0911",
       "file": "reject-layer/TV-0911.tarn",
       "title": "L32 layer `bad` declares channel count C = 0 (instance: channel count C)",
-      "sha256": "b2dbcb5e88d4df189270a1ab48f9e0929425469dfbad348c0ce8ca0ee16f6a45",
+      "sha256": "60415473485b6f742e36fa2f93fbd252128350c3aa2dafe075015e317a16ec87",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -49579,7 +49532,7 @@
       "id": "TV-0912",
       "file": "reject-layer/TV-0912.tarn",
       "title": "L41 layer `slab` run 0: ordinals 1 and 2 exchange offsets, so ordinal 1 begins 4 bytes past the previous stored tile's end",
-      "sha256": "97b1cf9fa98454a1780a7d4510a6f1c3c74cd2cac1700cb31f78e91f20488ffb",
+      "sha256": "d210ca0a31843378cff182b9c462601427146a985478daa240f9648218298aff",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -49715,7 +49668,7 @@
       "id": "TV-0915",
       "file": "reject-layer/TV-0915.tarn",
       "title": "L24 sub-record carrying reserved-range type 0x0003 with MUST_UNDERSTAND = 1",
-      "sha256": "403b80581393928f3fb951d2ab1aa6c60a8c36c3bf06c249b17e8020a883a288",
+      "sha256": "ca671aebd89d93a800819d45f6c9606127281be4726cee133ad639f4cadf24c7",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -49798,7 +49751,7 @@
       "id": "TV-0916",
       "file": "ignore-record/TV-0916.tarn",
       "title": "zstd document with bytes remaining after the frame, top-level extent",
-      "sha256": "48d2865b0950daca7ff737846ef3fc1a6e0f28116f4130f801cca03bd1ebdbe2",
+      "sha256": "02f5481b8fcbd792624006a8cf7479e5fbb3ce2ada103ef32eff0243be20cf27",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -49882,7 +49835,7 @@
       "id": "TV-0917",
       "file": "ignore-record/TV-0917.tarn",
       "title": "zstd document with bytes remaining after the frame, layer sub-record extent",
-      "sha256": "09c50a148fe1c0b79dcc546cd85eb2f0516155cae51bb67ff24b47c66f684ce5",
+      "sha256": "26c6845e3790949e5ece4e6c801e23f98f8f0c7b2b95b3412502d7cdef17ba6c",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -49971,7 +49924,7 @@
       "id": "TV-0918",
       "file": "ignore-record/TV-0918.tarn",
       "title": "key containing ill-formed UTF-8, top-level document",
-      "sha256": "e29c389d121066b7e66f8f419ad47a3e1ef0122b5ea7c1e4c4a7ec757fb81cf6",
+      "sha256": "0e5c42e67e2e3ec5d72750f3f27ab6c9410d4d3fcf1c509a346193b37324d6f3",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -50055,7 +50008,7 @@
       "id": "TV-0919",
       "file": "ignore-record/TV-0919.tarn",
       "title": "key containing ill-formed UTF-8, layer sub-record document",
-      "sha256": "7bd30aeaeac4a55d67adbf56a8a0888e4d95d59d2d7e64d15c7351ce80ba01c0",
+      "sha256": "8ebc42e0397a4b37bf205212af7df9713cda6df3f7d0b71b59d7ec8533422bb3",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -50144,7 +50097,7 @@
       "id": "TV-0920",
       "file": "ignore-record/TV-0920.tarn",
       "title": "key with an unpaired-surrogate escape, top-level document",
-      "sha256": "739847a20ea72cac238b91967678ba39bea48bfd3845bffc56c0c90a83bd33c5",
+      "sha256": "aaf4546d7b5b67fdfdb4bd2ee3a1b00074d3ae9ebbd8aad9fde66dcaf11e39e7",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -50228,7 +50181,7 @@
       "id": "TV-0921",
       "file": "ignore-record/TV-0921.tarn",
       "title": "key with an unpaired-surrogate escape, layer sub-record document",
-      "sha256": "dbbbd92d07f4a231358be39a76891e35f262ac3a88343a54627408a215a757d4",
+      "sha256": "e9bef2f39e13bc6ffebabc5c0963e5e8fa2fdd067bbcd2e6aaddf9f783453b6b",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -50317,7 +50270,7 @@
       "id": "TV-0922",
       "file": "ignore-record/TV-0922.tarn",
       "title": "string value with an unpaired-surrogate escape, top-level document",
-      "sha256": "58cc790ea98e41f8161949ce6be3cbbbbdf562e6149a02367e28fb9ca7f459b5",
+      "sha256": "9e2c2c77968edefc07c7f1efc550d01ded22ee3d33237379a591a42d61fb7e22",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -50401,7 +50354,7 @@
       "id": "TV-0923",
       "file": "ignore-record/TV-0923.tarn",
       "title": "string value with an unpaired-surrogate escape, layer sub-record document",
-      "sha256": "8b7b148c38272191de4a934e3d55a601a4c91ec59c5889e00086df3c3aab2b47",
+      "sha256": "6326a62496a8d3bc82c8124f55840a50e882ed22249dc721ad5c9dac89abc53f",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -50490,7 +50443,7 @@
       "id": "TV-0924",
       "file": "reject-layer/TV-0924.tarn",
       "title": "layer `bad` extent_offset = 2^63 (instance: layer record extent_offset)",
-      "sha256": "c696f29245b50aa0383f48d12a6530db1f251e7122c7a4f1e7754e3928590a85",
+      "sha256": "a66dc4aefe2066d4d70b5d02ac0ba3e72afaa27ac8853cc706eb02318859669a",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -50569,7 +50522,7 @@
       "id": "TV-0925",
       "file": "reject-layer/TV-0925.tarn",
       "title": "layer `bad` extent_length = 2^63 (instance: layer record extent_length)",
-      "sha256": "1eb430a2dc1947477bee45204d3bfc14010b79411d8fac455a8e41d1c5ab37f2",
+      "sha256": "c3b54a85640bb57efd75ff34bc6f69856dc39e0663e8b43c8c3d302a434cf6a8",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -50648,7 +50601,7 @@
       "id": "TV-0926",
       "file": "reject-layer/TV-0926.tarn",
       "title": "layer `bad` extent slot is (0, 24), exactly one half zero (instance: layer record extent_offset)",
-      "sha256": "a86083dc329f50a6cb9c9ca8b56062b6687466a14499ecd33744dc02db2163ad",
+      "sha256": "434dbe5dec6c9a9fc3b472cb61b9a331b577eb5d2a7d71265075598ce1c24626",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -50727,7 +50680,7 @@
       "id": "TV-0927",
       "file": "reject-layer/TV-0927.tarn",
       "title": "layer `bad` extent slot (2^62, 2^62): both halves in domain, their sum 2^63 (instance: extent_offset + extent_length)",
-      "sha256": "5c997e916ec4e4b52cb956b666ceeb44bd67388dc6a277738683e892e4b1d7f6",
+      "sha256": "3a86f8e2608423a7cc262b21e3b8f41c73e4108b0695e92137a20cb75cf929a4",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -50810,7 +50763,7 @@
       "id": "TV-0928",
       "file": "reject-layer/TV-0928.tarn",
       "title": "sub-record extent slot with extent_offset 0 and extent_length nonzero",
-      "sha256": "b6b7770be8bdf56ac49e9c0685183c5d54159ccf108d3c01b7c0429a2d988764",
+      "sha256": "1a2a9ae82e54b627429e27ab8707a210698cf98d514ab9de3e958de845079f96",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -50889,7 +50842,7 @@
       "id": "TV-0929",
       "file": "reject-layer/TV-0929.tarn",
       "title": "sub-record of registered type 0x0002 stores PE = 0 where the registry fixes PE = 1",
-      "sha256": "0cfcb0c95e4b38bd5bc41d63291f715cfae3c3b712c35779d8b738e5cdfb30bb",
+      "sha256": "bfee4e76b2c011c22be0bde247b8df1b6802994b6316b5db9db36337d04003d6",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -50997,49 +50950,10 @@
       ]
     },
     {
-      "id": "TV-0930",
-      "file": "reject-file/TV-0930.tarn",
-      "title": "F2 generation has bit 63 set",
-      "sha256": "770ddf067cf7ffecc0a876bf99098682b7b487bd00f104bfd36f8e11bdfca417",
-      "size": 128,
-      "conforming": false,
-      "derivation": {
-        "seed": "minimal",
-        "patches": [
-          {
-            "field": "trailer.generation",
-            "value": "0100000000000080"
-          }
-        ],
-        "repair": [
-          "trailer.crc"
-        ]
-      },
-      "expect": {
-        "must_not_serve": [
-          "file"
-        ],
-        "may_escalate_to": "file"
-      },
-      "violations": [
-        {
-          "row": "F2",
-          "instance": "generation",
-          "rule": "R-ENC-03",
-          "outcome": "reject-file",
-          "scope": {
-            "kind": "file"
-          },
-          "detector": "reader",
-          "detected": "open"
-        }
-      ]
-    },
-    {
       "id": "TV-0931",
       "file": "reject-file/TV-0931.tarn",
       "title": "F29 one byte remains after the last complete record",
-      "sha256": "1f758fce68017b18dab9980bf82c7bb92aaec52721a7f75a9ad2c2f166e151e7",
+      "sha256": "e22c76e7bcea105a27fb04c0d92f4d50dce49b0b88dd03272c05d380731633ba",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -51079,7 +50993,7 @@
       "id": "TV-0932",
       "file": "reject-layer/TV-0932.tarn",
       "title": "L41 layer `slab` run 0: ordinal 1 unstored, so ordinal 2 at 24 begins 4 bytes past the previous stored tile's end at 20",
-      "sha256": "be5e50f6a02c5132d0f877579d1dbbfefca3060cdbc9db84fdb1f2d8876c15e0",
+      "sha256": "11ff2137afc76de5677d4fd0a1ecfd490b268526c2ca0d1b7814704dd195401b",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -51157,7 +51071,7 @@
       "id": "TV-0933",
       "file": "reject-layer/TV-0933.tarn",
       "title": "L41 layer `slab` run 0: ordinal 2's offset is 20, inside ordinal 1's extent \u2014 the run overlaps where it should pack",
-      "sha256": "a6371e22ddb0fa295c30a386a189aade54ba5a5cb4e190a8c5c1e2a5e19a0a3c",
+      "sha256": "0ecc44ece3feec3ad53258aba4261dabf7d94ef52bf46bd5b54aed69e8bd382d",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -51289,7 +51203,7 @@
       "id": "TV-0950",
       "file": "reject-layer/TV-0950.tarn",
       "title": "L18 stored-tile extents: entry[1] redirected onto entry[0]'s extent",
-      "sha256": "01385a25d6320d16b7fccfb4aec90213c49f52d2a5fbaf4c2ba00361c95bd4d9",
+      "sha256": "3979eb34c1f58cbada3bb1de14d7d23f4ed9dc1c12a23fca75419bdf54891e03",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -51368,7 +51282,7 @@
       "id": "TV-0951",
       "file": "reject-layer/TV-0951.tarn",
       "title": "L46 layer record flags MU = 1 with PE = 0",
-      "sha256": "ec76f729847b22745363c6dda28debaca41ce4d9a93ec05103cd321990925bb1",
+      "sha256": "08dd0de1072e1e757d0e04472660dd0b1c4b3a7f97d510b4a82611b0fb788166",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -51448,7 +51362,7 @@
       "id": "TV-0952",
       "file": "reject-layer/TV-0952.tarn",
       "title": "sub-record extent slot (2^62, 2^62): both halves in domain, their sum 2^63",
-      "sha256": "c785a14ed9f450e21313d0fe18771bbee188bfcdc7c160cdf96b8626ab226921",
+      "sha256": "627ef3e50823ceb7681146b3cf396bd5e11c37288513b5c711573b53bdce2808",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -51531,7 +51445,7 @@
       "id": "TV-0954",
       "file": "reject-layer/TV-0954.tarn",
       "title": "sub-record of an unassigned type carries MU = 1 with PE = 0",
-      "sha256": "1aad681db1cd78621a7e811f21cd0e5a9b995de5f169c362870a8295a5e1146a",
+      "sha256": "08745fbbd2d5b9ba90b718a957d1f797c18125b3992a7625db3f13dbb5adaf4a",
       "size": 512,
       "conforming": false,
       "derivation": {
@@ -51610,7 +51524,7 @@
       "id": "TV-0955",
       "file": "reject-layer/TV-0955.tarn",
       "title": "sub-record of registered type 0x0002 stores MU = 1 where the registry fixes MU = 0",
-      "sha256": "feb7e886d13a03be2cc2441c5b74ec54b98d8da9448ce3ee050b73fbcc16abdd",
+      "sha256": "887b67dcea2df8b4daabd3ede254c8b8f8cf79ab2cb858001998871abee4d00c",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -51721,7 +51635,7 @@
       "id": "TV-0956",
       "file": "reject-layer/TV-0956.tarn",
       "title": "layer `bad` stores flags = 0 where the registry fixes MU = 1, PE = 1 (instance: layer record flags bit 1)",
-      "sha256": "ebfd474f212dd946a50f7be799d6254da6d2786abc8704ab9e4b5687897aa655",
+      "sha256": "b51bf2170927fff95f62c8cf2555065ce2f59dfa79df60fda2dd26e50ff6205c",
       "size": 448,
       "conforming": false,
       "derivation": {
@@ -51832,7 +51746,7 @@
       "id": "TV-0957",
       "file": "ignore-record/TV-0957.tarn",
       "title": "zstd document whose content-size field is declared larger than the decoded length, top-level extent",
-      "sha256": "98ad8bcc6f16f008b6da7bc1809d7edd0d58c18cc0386d82daa6eb5790ed266b",
+      "sha256": "d1db4f91ab4d56f0f3bba40db8be71f4f15a63d1399988ffbd66945f0cffaa48",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -51916,7 +51830,7 @@
       "id": "TV-0958",
       "file": "ignore-record/TV-0958.tarn",
       "title": "zstd document whose content-size field is declared larger than the decoded length, layer sub-record extent",
-      "sha256": "2ca2bb2d627e4bcd63f2afc3e075f8e15fc5105dc523761b0fbbdbbe175124be",
+      "sha256": "7883a7163191addbb003494a5352d18ecd99289ffe35d95025979c272d1f058b",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -52005,7 +51919,7 @@
       "id": "TV-0959",
       "file": "ignore-record/TV-0959.tarn",
       "title": "zstd document whose content-size field is declared smaller than the decoded length, top-level extent",
-      "sha256": "e43aee8757f51c10e7239c4898287f6f46ca2eed637ede18e4c6cce75bf806d6",
+      "sha256": "433d24cba5621c815f5b33f0308c769b5f86471329c75bf3ffb90b8e3cb4eb39",
       "size": 320,
       "conforming": false,
       "derivation": {
@@ -52089,7 +52003,7 @@
       "id": "TV-0960",
       "file": "ignore-record/TV-0960.tarn",
       "title": "zstd document whose content-size field is declared smaller than the decoded length, layer sub-record extent",
-      "sha256": "ccce636c6108bcc71e77c374cb0b636010b074b7f03935561d207f7af2633159",
+      "sha256": "23f4f5b51c756db54bc4f18bf0539dbb59a610eb9c0e29c1ae0d6ead940d2747",
       "size": 320,
       "conforming": false,
       "derivation": {

@@ -194,10 +194,10 @@ def _parse_trailer(t: bytes) -> dict:
         raise ValueError(f"unimplemented format major {vmaj}")
     if flags & 0xFFFF:
         raise ValueError("unimplemented incompat flag")
-    gen, do, dl, cfl, fid = struct.unpack("<QQQQQ", t[16:56])
-    if gen < 1 or fid == 0 or do < 16 or dl < 4 or cfl % 64 or t[56:60] != b"\x00" * 4:
+    do, dl, cfl, fid = struct.unpack("<QQQQ", t[16:48])
+    if fid == 0 or do < 16 or dl < 4 or cfl % 64 or t[48:60] != b"\x00" * 12:
         raise ValueError("trailer field gate")
-    return dict(dir_offset=do, dir_length=dl, F=cfl, generation=gen, file_id=fid)
+    return dict(dir_offset=do, dir_length=dl, F=cfl, file_id=fid)
 
 
 def _walk_directory(region: bytes) -> int:

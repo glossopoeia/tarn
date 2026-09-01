@@ -173,8 +173,8 @@ def _with_residue(subs: list, residue: bytes):
     body = bytes(buf[:d0]) + seq + u32(crc32c(seq))
     F = ((len(body) + 63) // 64 + 1) * 64
     out = bytearray(body + bytes(F - 64 - len(body)))
-    tr = (TRAILER_MAGIC + struct.pack("<HHI", 1, 0, 0) + u64(1) + u64(d0)
-          + u64(dl2) + u64(F) + u64(0x0123456789ABCDEF) + bytes(4))
+    tr = (TRAILER_MAGIC + struct.pack("<HHI", 1, 0, 0) + u64(d0)
+          + u64(dl2) + u64(F) + u64(0x0123456789ABCDEF) + bytes(12))
     out += tr + u32(crc32c(tr))
     assert len(out) == F, (len(out), F)
 

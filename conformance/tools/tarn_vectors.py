@@ -254,8 +254,8 @@ def checksum_report(blob: bytes, layers: list[str]) -> dict[str, bool]:
         return out
     t = F - 64
     out["trailer.crc"] = crc32c(blob[t:t + 60]) == struct.unpack("<I", blob[t + 60:t + 64])[0]
-    d0, dl = struct.unpack("<QQ", blob[t + 24:t + 40])
-    cfl = struct.unpack("<Q", blob[t + 40:t + 48])[0]
+    d0, dl = struct.unpack("<QQ", blob[t + 16:t + 32])
+    cfl = struct.unpack("<Q", blob[t + 32:t + 40])[0]
     gates = (d0 >= 16 and dl >= 4 and d0 + dl <= t and cfl == F and cfl % 64 == 0)
     out["trailer.gates"] = gates
     if not gates:
@@ -443,7 +443,6 @@ INSTANCE_OF: dict[str, str] = {
     'TV-0927': 'layer record extent_offset + extent_length',
     'TV-0928': 'sub-record extent_offset',
     'TV-0929': 'sub-record flags',
-    'TV-0930': 'generation',
     'TV-0931': 'trailing residue',
     'TV-0003': 'trailer magic',
     'TV-0004': 'dir_offset',
@@ -455,6 +454,7 @@ INSTANCE_OF: dict[str, str] = {
     'TV-0101': 'dir_offset',
     'TV-0102': 'dir_length',
     'TV-0103': 'committed_file_length',
+    # TV-0104 names no vector in vectordefs/ and predates ADR-0111; left as found.
     'TV-0104': 'generation',
     'TV-0105': 'front signature block bytes [0,8)',
     'TV-0106': 'trailer magic at F-64',
@@ -477,10 +477,9 @@ INSTANCE_OF: dict[str, str] = {
     'TV-0120': 'trailer magic',
     'TV-0121': 'dir_offset',
     'TV-0122': '—',
-    'TV-0123': 'generation',
     'TV-0124': 'file_id',
     'TV-0125': 'trailer CRC',
-    'TV-0126': 'trailer reserved [56,60)',
+    'TV-0126': 'trailer reserved [48,60)',
     'TV-0127': 'dir_length',
     'TV-0128': 'committed_file_length, physical file shorter',
     'TV-0129': 'version_major',
