@@ -1021,6 +1021,63 @@ neither is in the list nor accounted for in §21.7. Options: add them to the
 list; state the bar as a property rather than a list, as ADR-0095 did for §23.1;
 or show they are already reached by an item that names them implicitly. Owning
 section §20.3.
+- **Round 28 found it again, cold, from a different clause of the same step, and
+  the refute phase graded it byte-level.** A writer walk that had never seen this
+  entry reported that step 4's renumbering gloss — "every other entry
+  byte-identical at its **disk-ordinal position** (a geometry change renumbers
+  ordinals wherever `[R-GEO-06]` moves them)" — does not cover a planar layer's
+  channel order. All three triage passes graded it *editorial*; a refuter
+  overturned that with a construction, and every number in it was re-derived by
+  hand.
+- **The sub-question this entry's options must now dispose of: what individuates
+  a carried-forward index entry across a commit.** Reading (1), *name identity*:
+  an entry belongs to a named channel, so when that channel's index moves
+  `[R-GEO-06]` moves the entry and the parenthetical is under-inclusive. Reading
+  (2), *position identity*: the entry at position *k* is the entry for tile
+  (k div N, k mod N), `[R-GEO-06]` over the new declarations returns it to *k*,
+  and the parenthetical is exact — ordinals renumber iff N moves. **Every rule
+  individuating a planar tile's channel does so positionally** — `[R-GEO-06]`
+  ("where c is the channel's index (§3.1)"), §3.1 ("its 0-based position in that
+  order"), `[R-SER-01]`, `[R-IDX-01]`, §19.4 step 2 — and **no rule ties a
+  channel's identity across generations to its name.** Reading (2) needs no
+  unstated premise; reading (1) does.
+- **This entry's own premise is reading-dependent, which it did not record.** It
+  says the channels' declared order "alters a stored tile's decoded image". Under
+  reading (1) it does not: each channel's tiles keep their own decoded size and
+  merely move. So the sample-type limb and the channel-order limb are not the
+  same question, and an option resolving one may leave the other open.
+- **The construction.** Planar, rank 1, E = 2, T = 1, so G = 2, N = 2, P = 1 and
+  the grid covers the extent exactly — **no padding position**, making
+  `[R-SER-05]`, T4 and T5 vacuous. Channels `a` and `b`, both uint8, so every
+  tile's decoded size is P·B = 1 whichever channel it is taken to carry.
+  `entry_count` = C·N = 4, `extent_length` = 4·20 + ⌈4/2¹⁶⌉·4 = 84
+  (`[R-CNT-17]`). Four tiles stored, one byte each at offsets 16–19, holding
+  `11 22 33 44`. Commit K: emit the next generation whose layer record carries
+  its channel entries as **[b, a]**; store no tile, supersede no tile, change
+  nothing else. §20.3's bar permits K under both readings. Reading (1) permutes
+  the entries, re-emits the region at F, re-points the extent slot and writes
+  `crc_of_crc_array` = `cb 83 76 80`; reading (2) appends no region, keeps the
+  slot at (20, 84) and keeps `crc_of_crc_array` = `21 3e a9 bc`, with
+  `committed_file_length` 84 lower plus the pad delta. **Both files are
+  conforming** and a reader MUST accept both (`[R-CNF-03]`); their reference
+  arrays differ and §21.7 is why no check separates them. Each reading bars the
+  other's file under the clause in dispute.
+- **A second construction makes it MUST NOT versus MAY.** With `a` uint8 and `b`
+  uint16, reading (1) permits the swap and yields a conforming file; reading (2)
+  changes the decoded size of the tile stored at ordinal 0 from 1 to 2, which is
+  one of the four effects the bar names, so the commit is forbidden outright and
+  the operation becomes a new layer or a whole-file rewrite.
+- **Standing:** byte-level, so it **gates G3**. Reached by the refute phase over
+  a round that returned zero, and confirmed by an independent hand-check that
+  re-derived all four entry CRCs, both segment CRCs, both `crc_of_crc_array`
+  values and `extent_length`.
+- **§21.7 does not decide it.** All three passes read "the ordinal mappings of
+  `[R-GEO-06]` and `[R-SER-01]` are satisfied by a structurally valid tile
+  whatever values it carries" as licensing the writer. §21.7's own opening scopes
+  it to obligations listed "because a single file exhibits no witness of their
+  violation", and it names §20.3 step 4's bar among them. Undetectable is not
+  permitted; `[R-CNF-06]` binds an updater to every writer requirement for the
+  bytes it produces, and step 4 is a MUST.
 
 ### Q-B7. Is adding a record an "independent change" that licenses a drop? [shaping]
 **Question:** §20.4's MU = 0 / PE = 0 row licenses dropping a record where the
@@ -1115,6 +1172,20 @@ profile's criterion so the list follows from it. Owning section Appendix G.
 - **What settles it:** whether any property decides membership for a degree of
   freedom the profile does not currently name. If the criterion cannot do that,
   item 5's sentence has no true form to be repaired into.
+- **Round 28: the fourth failure, three reporters again.** The current sentence,
+  "elsewhere it changes the stored bytes of every tile it touches", was falsified
+  independently by a verifier walk, a diagram audit and an adversary — by any
+  tile whose decoded image the permutation fixes, which is the case this entry
+  already anticipated in terms. Two rounds running, three reporters each. **A
+  fifth patch is not the move**, and the convergence is this entry's own
+  diagnosis being confirmed rather than new information.
+- **A member the entry does not yet name: the channels' declared order.** Round
+  28's writer walk found item 5 pins the *filter* — a u16 layer-record field —
+  with a three-part argument the profile applies to neither layout, tile extents,
+  nor declaration order, while item 4's one-generation clause is stated in terms
+  no field of the format can refute. Whatever criterion option (c) produces must
+  decide declaration order too, and see **Q-B6**, where a channel-order change is
+  now a byte-level fork in its own right.
 
 ### Q-A7. Can a compactor obtain the fact §20.5's version_minor floor turns on? [shaping]
 **Question:** §20.5 makes the output's `version_minor` SHOULD be at least
