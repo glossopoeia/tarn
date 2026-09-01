@@ -3150,12 +3150,18 @@ An appender MUST, in order:
    (`[R-LIF-01]`, §20.5).
 
    The §14 bar reaches a change to a channel's declared **sample
-   type** only where the element size moves with it, through the
-   decoded size and the sample byte offsets. It does not reach a
-   change between two types of equal element size — uint8 to int8,
-   or any two of the four-byte types — where no stored byte and no
-   offset changes, and every value those bytes carry means something
-   else. That change is barred too: a commit MUST NOT change the
+   type** wherever that change moves the decoded size or a sample's
+   byte offset. The element sizes of §12.1 usually decide it, and for
+   a **planar** layer a change to or from `bool` can decide it alone,
+   a packed bool plane being ⌈P/8⌉ bytes where a numeric plane is
+   P · Bᶜ (§14.3) — the two coinciding only where ⌈P/8⌉ = P · Bᶜ, as
+   at P = 1 with a one-byte type. That same change leaves an
+   interleaved tile alone, bool contributing 1 to the sample stride
+   exactly as `uint8` does (§14.2). What the §14 bar does not reach
+   is a change between two **numeric** types of one element size —
+   `int8` to `uint8`, `float32` to `int32` — where no stored byte and
+   no offset moves and the same bytes are read under a different
+   type. That change is barred too: a commit MUST NOT change the
    declared sample type of any channel of a layer that stores a tile
    in the generation this commit supersedes, whatever the layer's
    layout and whether or not the element size moves. Reinterpreting a
@@ -3171,15 +3177,15 @@ An appender MUST, in order:
    commit MUST NOT change the channel declarations in a way that
    alters the disk ordinal `[R-GEO-06]` assigns any tile the layer
    stores in the generation this commit supersedes. Reordering the
-   channels, or inserting or removing one other than after the last,
-   is such a change; appending a channel, or removing the last, is
-   not — a disk ordinal is c · N + s, and N is the spatial-tile
-   count, so the channel count enters the addressed-tile count C · N
-   (§11.2) but no individual ordinal. A layer with N = 2 and channels
-   (`a`, `b`) places `a` at ordinals 0 and 1 and `b` at 2 and 3;
-   appending `c` leaves those four where they are and adds 4 and 5,
-   while exchanging `a` and `b` moves all four.
-   An interleaved layer is unaffected, its disk ordinal being s,
+   channels, inserting one other than after the last, or removing one
+   other than the last, is such a change; appending a channel, or
+   removing the last, is not — a disk ordinal is c · N + s, and N is
+   the spatial-tile count, so the channel count enters the
+   addressed-tile count C · N (§11.2) but no individual ordinal. A
+   layer with N = 2 and channels (`a`, `b`) places `a` at ordinals 0
+   and 1 and `b` at 2 and 3; appending `c` leaves those four where
+   they are and adds 4 and 5, while exchanging `a` and `b` moves all
+   four. An interleaved layer is unaffected, its disk ordinal being s,
    which no channel declaration enters. Where this bars a change the
    operation is a new layer or a whole-file rewrite, exactly as
    above. A layer that stores no tile **in the

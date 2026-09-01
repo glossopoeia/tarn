@@ -46,10 +46,20 @@ stores a tile.
 
 **Q-B6's other limb had the same shape and had not been graded.** The entry, open
 since round 25, also asks whether the bar reaches a channel's declared **sample
-type**. It does — but only where the element size moves with it, through the
-decoded size and the sample byte offsets. A change between two types of equal
-width (uint8 to int8; any two of the four-byte types) changes no stored byte and
-no offset, and reinterprets every value those bytes carry.
+type**. It does — but only where the change moves the decoded size or a sample's
+byte offset. A change between two **numeric** types of one element size
+(`int8` to `uint8`, `float32` to `int32`) moves neither, and the same bytes are
+then read under a different type.
+
+**Element size is not the test, and the first draft of this repair said it was.**
+`bool` carries element size 1, exactly as `int8` and `uint8` do, but a packed
+planar bool plane is ⌈P/8⌉ bytes where a numeric plane is P · Bᶜ — so a planar
+`uint8` → `bool` change moves the decoded size with the element size standing
+still, and the §14 bar reaches it. The same change leaves an *interleaved* tile
+alone, bool contributing 1 to the sample stride like any one-byte type. And the
+bool carve-out is itself not universal: ⌈P/8⌉ = P · Bᶜ at P = 1, which is the
+degenerate case round 28 found §14.4's Note failing on. The text states the test
+as the effect and names the element sizes as what usually decides it.
 
 ## Decision
 
