@@ -1321,18 +1321,24 @@ different file. `[R-LIF-03]`
 
 > **Note.** The strict increase is what makes that revalidation
 > sound, and §9.2's second Note is what makes it checkable: no two
-> commits of one file share a committed file length, so a matching
-> (file_id, F) pair names the same committed prefix a cache already
-> holds. A lower F under a known file_id is not a stale read to
-> retry — it is a file that has lost committed bytes, which
-> `[R-LIF-01]` forbids — so it is treated as a different file.
+> commits of one file share a committed file length, so where no
+> other file has drawn the same file_id, a matching (file_id, F) pair
+> names the same committed prefix a cache already holds. Where one
+> has, the collision this requirement's randomness advice exists to
+> prevent is what the cache serves, and no comparison of F detects
+> it. A lower F under a known file_id is not a stale read to retry —
+> it is a file that has lost committed bytes, which `[R-LIF-01]`
+> forbids — so it is treated as a different file.
 
-> **Note.** The ordering quantity is bounded above: F is a u64
-> offset under `[R-ENC-03]`, so F ≤ 2⁶³ − 1, and each commit adds at
-> least 128 bytes — a file at that ceiling admits no further commit.
-> Compaction (§20.5) is the continuation from there: a fresh file_id
-> whose first commit starts F over. The bound is a statement of
-> closure, not an operational concern.
+> **Note.** The ordering quantity is bounded above, and by two rules
+> rather than one: F is a u64 offset under `[R-ENC-03]`, so
+> F ≤ 2⁶³ − 1, and `[R-CNT-06]` requires it to be a multiple of 64.
+> The reachable ceiling is therefore 2⁶³ − 64, the largest multiple
+> of 64 that bound admits, and each commit adds at least 128 bytes,
+> so a file there admits no further commit. Compaction (§20.5) is
+> the continuation from there: a fresh file_id whose first commit
+> starts F over. The bound is a statement of closure, not an
+> operational concern.
 
 > **Note.** F counts bytes, not commits. It orders a file's
 > generations and tells a cache which one it holds, but it does not
@@ -1416,9 +1422,10 @@ length is not a substitute: placement within a commit is free
 that truncates to an earlier commit and re-appends can bring the file
 back to any committed file length at or above the expected one while
 serving the rolled-back content. What still works is state the file
-cannot manufacture: a detached hash over the committed prefix, a
-signed (file_id, committed_file_length) pair held elsewhere, or an
-append-only transport that refuses a shortened object. The probe begins at the
+cannot manufacture: a detached hash over the committed prefix, or an
+append-only transport that refuses a shortened object. A signed
+committed file length is not among them — the value is exactly what
+the re-append reproduces. The probe begins at the
 largest 64-aligned offset o with o + 64 ≤ the physical file length; a
 candidate whose whole-file re-verification fails was not a commit
 state, so the tool continues the probe past it, and MUST report the
@@ -3195,11 +3202,11 @@ An appender MUST, in order:
    (`[R-LIF-02]` step 3).
 6. **Commit** (`[R-LIF-02]` steps 4–6): barrier; pad;
    trailer with the same file_id, committed_file_length equal to
-   the new end — necessarily above the F step 1 established, this
-   commit having appended at least a directory, a pad and a
-   trailer — unknown ignore-lane flag bits copied forward
-   (`[R-CNT-08]`), and version_minor per `[R-CNT-26]`; barrier.
-   `[R-WRT-04]`
+   the new end — necessarily at least 128 above the F step 1
+   established, this commit having appended at least a directory and
+   a trailer (`[R-LIF-02]`) — unknown ignore-lane flag bits copied
+   forward (`[R-CNT-08]`), and version_minor per `[R-CNT-26]`;
+   barrier. `[R-WRT-04]`
 
 > **Note.** A commit's cost is dominated by its index, not its data:
 > any change to a layer's stored-tile set re-emits that layer's whole
@@ -3362,7 +3369,7 @@ before any comparison of committed_file_length. What is lost is
 smaller and worth naming: nothing in the output's trailer records
 that it is a first committed state — no field counts commits — so a
 compacted file and a file appended to a hundred times are
-indistinguishable by their trailers alone. A compactor MUST follow
+indistinguishable by their live trailers alone. A compactor MUST follow
 `[R-LIF-02]`'s **creation path**, as §20.2 obliges a creator: the
 output has no prior trailer, which is the case that path states,
 and `[R-WRT-01]` already has a compactor satisfying every writer
@@ -3814,7 +3821,7 @@ the file is left undetermined and the verdict is unaffected.
 A second set of obligations is omitted from the register because a
 single file exhibits no witness of their violation. Committed-prefix
 immutability and the strict growth of `committed_file_length` across
-the commits of one file_id (`[R-LIF-01]`, `[R-LIF-03]`) are
+the commits of one file_id (`[R-LIF-01]`, `[R-LIF-02]`) are
 properties of a file's history, which §9.7 does not reconstruct, and
 no field of a file records how many commits that history holds; the
 ordinal mappings of `[R-GEO-06]` and `[R-SER-01]` are satisfied by a
@@ -4123,11 +4130,11 @@ which is quarantined from structural interpretation (§7.1) but not
 hidden; and the shape of its own history — the size of each commit
 and the slack it left behind, recoverable by probing backward for
 the superseded trailers that committed-prefix immutability keeps in
-place (§9.1, §9.6). What the file no longer states is how many
-commits produced it: no field carries a count, so the number follows
-only from that probe, is unavailable to anyone holding just the live
-trailer, and is absent altogether from a compacted file (§20.5),
-which retains no earlier trailer to find.
+place (§9.1, §9.6). No field carries a count of the commits that
+produced a file, so their number follows only from that probe: it is
+unavailable to anyone holding just the live trailer, and absent
+altogether from a compacted file (§20.5), which retains no earlier
+trailer to find.
 Writers handling sensitive material SHOULD treat names and metadata
 as published content, and SHOULD compact before publication when the
 history itself is sensitive. `[R-PRV-03]`
