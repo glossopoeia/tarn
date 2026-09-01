@@ -818,7 +818,7 @@ def check_coverage(spec: Spec, root: Path, report: Report) -> None:
                 failures.append(
                     f"{v['id']} cites row {viol['row']} with rule {viol['rule']}, "
                     f"but that row's governing rule is {primary.group(1)} - "
-                    f"the label may have been renumbered under it")
+                    f"the vector names a row it does not exercise")
     report.add("COV-06", "vector rule matches its row", failures)
 
     # COV-03 -- coverage itself. Reported, never failed: a partial corpus is
