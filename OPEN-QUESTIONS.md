@@ -1093,10 +1093,10 @@ section §20.3.
   changes the decoded size of the tile stored at ordinal 0 from 1 to 2, which is
   one of the four effects the bar names, so the commit is forbidden outright and
   the operation becomes a new layer or a whole-file rewrite.
-- **Standing:** byte-level, so it **gates G3**. Reached by the refute phase over
-  a round that returned zero, and confirmed by an independent hand-check that
-  re-derived all four entry CRCs, both segment CRCs, both `crc_of_crc_array`
-  values and `extent_length`.
+- **Standing when it was resolved:** byte-level, and it gated G3 until ADR-0113
+  closed it. Reached by the refute phase over a round that returned zero, and
+  confirmed by an independent hand-check that re-derived all four entry CRCs,
+  both segment CRCs, both `crc_of_crc_array` values and `extent_length`.
 - **§21.7 does not decide it.** All three passes read "the ordinal mappings of
   `[R-GEO-06]` and `[R-SER-01]` are satisfied by a structurally valid tile
   whatever values it carries" as licensing the writer. §21.7's own opening scopes
