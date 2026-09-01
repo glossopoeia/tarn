@@ -3149,19 +3149,20 @@ An appender MUST, in order:
    new layer, or a whole-file rewrite under a fresh file_id
    (`[R-LIF-01]`, §20.5).
 
-   The §14 bar reaches a change to a channel's declared **sample
-   type** wherever that change moves the decoded size or a sample's
-   byte offset. The element sizes of §12.1 usually decide it, and for
-   a **planar** layer a change to or from `bool` can decide it alone,
-   a packed bool plane being ⌈P/8⌉ bytes where a numeric plane is
-   P · Bᶜ (§14.3) — the two coinciding only where ⌈P/8⌉ = P · Bᶜ, as
-   at P = 1 with a one-byte type. That same change leaves an
-   interleaved tile alone, bool contributing 1 to the sample stride
-   exactly as `uint8` does (§14.2). What the §14 bar does not reach
-   is a change between two **numeric** types of one element size —
-   `int8` to `uint8`, `float32` to `int32` — where no stored byte and
-   no offset moves and the same bytes are read under a different
-   type. That change is barred too: a commit MUST NOT change the
+   The §14 bar already reaches many changes to a channel's declared
+   **sample type**: any that alters, for a tile the layer stores,
+   what §14 fixes for its bytes or how they decode. It does not reach
+   all of them. `int8` to `uint8`, or `float32` to `int32`, moves no
+   stored byte, no decoded size and no sample offset, leaves every
+   content rule §14 states over those bytes satisfied exactly as
+   before, and simply has the same bytes read under a different type.
+
+   Which type changes fall on which side is not worth enumerating
+   here, and the element sizes of §12.1 do not settle it — a planar
+   `uint8` channel re-declared `bool` keeps its element size of 1
+   while its plane goes from P · Bᶜ bytes to ⌈P/8⌉ (§14.3), and the
+   two coincide at P = 1. So the change is barred outright rather
+   than by cases: a commit MUST NOT change the
    declared sample type of any channel of a layer that stores a tile
    in the generation this commit supersedes, whatever the layer's
    layout and whether or not the element size moves. Reinterpreting a
@@ -3176,16 +3177,22 @@ An appender MUST, in order:
    effect on any stored tile's bytes: for a **planar** layer, a
    commit MUST NOT change the channel declarations in a way that
    alters the disk ordinal `[R-GEO-06]` assigns any tile the layer
-   stores in the generation this commit supersedes. Reordering the
-   channels, inserting one other than after the last, or removing one
-   other than the last, is such a change; appending a channel, or
-   removing the last, is not — a disk ordinal is c · N + s, and N is
-   the spatial-tile count, so the channel count enters the
-   addressed-tile count C · N (§11.2) but no individual ordinal. A
-   layer with N = 2 and channels (`a`, `b`) places `a` at ordinals 0
-   and 1 and `b` at 2 and 3; appending `c` leaves those four where
-   they are and adds 4 and 5, while exchanging `a` and `b` moves all
-   four. An interleaved layer is unaffected, its disk ordinal being s,
+   stores in the generation this commit supersedes. A channel's tiles
+   move exactly when its index does: reordering moves those channels
+   the reorder re-indexes, and inserting or removing one moves every
+   channel after the affected position. Either is such a change
+   wherever the layer stores a tile for a channel that moved.
+   Appending a channel, or removing the last, re-indexes nothing and
+   moves no ordinal at all — a disk ordinal is c · N + s,
+   and N is the spatial-tile count, so the channel count enters the
+   addressed-tile count C · N (§11.2) but no individual ordinal. **The
+   test is the effect on a stored tile, not the shape of the edit**: a
+   commit that moves only the ordinals of channels the superseded
+   generation stored no tile for alters nothing this bars. A layer
+   with N = 2 and channels (`a`, `b`) places `a` at ordinals 0 and 1
+   and `b` at 2 and 3; appending `c` leaves those four where they are
+   and adds 4 and 5, while exchanging `a` and `b` moves all four.
+   An interleaved layer is unaffected, its disk ordinal being s,
    which no channel declaration enters. Where this bars a change the
    operation is a new layer or a whole-file rewrite, exactly as
    above. A layer that stores no tile **in the
@@ -3880,13 +3887,17 @@ reader parses as a record sequence (§7.4's closing Note);
 §20.3 step 4's bar on a declaration change is witnessed only where
 the affected tiles remain stored, and then only for part of what it
 bars, and its two companion bars are witnessed not at all where the
-element size does not move — the prior generation's channel
-declarations are not recoverable from the file, so no check can know
-which ordinal a stored tile used to occupy, or which type of the same
-width its channel used to be declared. A change reaching a byte §14
-structurally constrains — a padding position, a pad bit, or a boolean
-byte — fires §21.4's
-content rows. A change reaching the decoded size is witnessed by T3
+change leaves untouched everything §14 fixes for a tile the layer
+stores — the prior generation's channel declarations are not
+recoverable from the file, so no check can know which ordinal a
+stored tile used to occupy, or which type its channel carried
+before. Where the change does touch one of those the rows below
+witness it, and which case a type change falls in is not decided by
+the element sizes of §12.1: a planar `uint8` channel re-declared
+`bool` keeps its element size of 1 while its plane goes from
+P · Bᶜ bytes to ⌈P/8⌉. A change reaching a byte §14 structurally
+constrains — a padding position, a pad bit, or a boolean byte — fires
+§21.4's content rows. A change reaching the decoded size is witnessed by T3
 or T14, which test a length rather than the decoded image's content
 — T14 the entry's declared length, T3 the decoded payload's own. A
 change reaching the codec is *sometimes* witnessed by the rows for
