@@ -1012,7 +1012,33 @@ is unfixed. From round 25's recovered verifier walk.
   everything, total = F. (c) Excuse the total entirely for file-scope rejections,
   widening §5.2's narrow excusal.
 
-### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [shaping]
+### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [Resolved → ADR-0113]
+**Resolution:** Neither, as the bar stood — and both are now barred outright
+rather than folded into it. A commit MUST NOT change the declared sample type of
+any channel of a layer that stores a tile in the superseded generation, whatever
+the layout and whether or not the element size moves; and for a planar layer a
+commit MUST NOT change the channel declarations in a way that alters the disk
+ordinal `[R-GEO-06]` assigns any tile that layer stores. Both take the escape the
+bar beside them already names: a new layer, or a whole-file rewrite.
+
+The type limb is barred on the maintainer's ground rather than on the fork: a
+type change without rewriting the data is a silent reinterpretation, and the
+caller should have to decide what becomes of the values the new type cannot carry
+— the magnitude the narrower type will not hold, the negative the unsigned type
+will not. Writing the tiles is how that decision is expressed.
+
+The order limb was the byte-level one, and it is narrower than it reads:
+`[R-GEO-06]`'s c · N + s takes N, the *spatial*-tile count, so the channel count
+enters the addressed-tile count C · N and no individual ordinal. **Appending a
+channel, or removing the last, moves nothing and was never ambiguous**; only a
+permutation of channel indices is barred. An interleaved layer is untouched
+throughout, its ordinal being s.
+
+**The renumbering parenthetical was left exactly as it was.** With a permutation
+barred wherever a tile is stored, a geometry change is the only thing that can
+renumber a carried-forward entry, so the sentence round 28 found ambiguous is
+true as written. Neither bar is witnessed and §21.7 now says so.
+
 **Question:** Step 4 bars declaration changes that alter what §14 fixes for a
 tile the superseded generation stored, and lists the things that can be altered.
 Round 25's adversary found a channel's declared **sample type** and the

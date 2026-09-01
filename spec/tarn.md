@@ -3126,7 +3126,7 @@ An appender MUST, in order:
    appender's. A commit MUST NOT change a
    layer's declarations in a way that alters, for any tile that layer
    stores **in the generation this commit supersedes**, what §14
-   fixes for its stored bytes or how they decode —
+   fixes for its stored bytes or how they decode — the **§14 bar** —
    the set of padding positions (§11.3) and the content
    `[R-SER-05]` fixes there, the decoded size, the byte offset of any
    sample within the decoded tile image, or the codec and filter that
@@ -3147,10 +3147,45 @@ An appender MUST, in order:
    `[R-LIF-01]` freezes them where they lie — leaving the file larger
    for a change that reads like a directory edit. Such a change is a
    new layer, or a whole-file rewrite under a fresh file_id
-   (`[R-LIF-01]`, §20.5). A layer that stores no tile **in the
+   (`[R-LIF-01]`, §20.5).
+
+   The §14 bar reaches a change to a channel's declared **sample
+   type** only where the element size moves with it, through the
+   decoded size and the sample byte offsets. It does not reach a
+   change between two types of equal element size — uint8 to int8,
+   or any two of the four-byte types — where no stored byte and no
+   offset changes, and every value those bytes carry means something
+   else. That change is barred too: a commit MUST NOT change the
+   declared sample type of any channel of a layer that stores a tile
+   in the generation this commit supersedes, whatever the layer's
+   layout and whether or not the element size moves. Reinterpreting a
+   stored array is not an appender's operation. The caller decides
+   what becomes of the values the new type cannot carry — a magnitude
+   the narrower type cannot hold, a negative the unsigned type cannot
+   — and expresses that decision by writing the tiles, which is a new
+   layer or a whole-file rewrite.
+
+   A further effect is barred on the same tense and for the same
+   reason, and the §14 bar does not reach it because it is not an
+   effect on any stored tile's bytes: for a **planar** layer, a
+   commit MUST NOT change the channel declarations in a way that
+   alters the disk ordinal `[R-GEO-06]` assigns any tile the layer
+   stores in the generation this commit supersedes. Reordering the
+   channels, or inserting or removing one other than after the last,
+   is such a change; appending a channel, or removing the last, is
+   not — a disk ordinal is c · N + s, and N is the spatial-tile
+   count, so the channel count enters the addressed-tile count C · N
+   (§11.2) but no individual ordinal. A layer with N = 2 and channels
+   (`a`, `b`) places `a` at ordinals 0 and 1 and `b` at 2 and 3;
+   appending `c` leaves those four where they are and adds 4 and 5,
+   while exchanging `a` and `b` moves all four.
+   An interleaved layer is unaffected, its disk ordinal being s,
+   which no channel declaration enters. Where this bars a change the
+   operation is a new layer or a whole-file rewrite, exactly as
+   above. A layer that stores no tile **in the
    generation this commit supersedes** MAY be re-declared freely,
    which is what schema-first creation needs (§11.1) — the tense is
-   the bar's, so a commit does not earn this permission by emptying
+   these bars', so a commit does not earn this permission by emptying
    the layer as it re-declares it; and an extent MAY **grow**, since a position that
    becomes real held that channel's fill and fill is a legal sample
    value — provided the grown geometry stays within every bound the
@@ -3162,8 +3197,8 @@ An appender MUST, in order:
    a growth is permitted exactly where the geometry it produces
    satisfies every rule that geometry is subject to.
 
-   An extent MAY also **shrink**, and the bar above is the whole of
-   the test, **in the bar's own tense**: a shrink is permitted
+   An extent MAY also **shrink**, and the §14 bar is the whole of
+   the test, **in that bar's own tense**: a shrink is permitted
    exactly where it alters nothing §14 fixes for any tile the layer
    stores in the generation this commit supersedes. Dropping a tile
    out of the addressed set (§11.2's grid count falls) is not itself
@@ -3174,14 +3209,16 @@ An appender MUST, in order:
    and for the same reason: the quantifier is the superseded
    generation's, so a shrink that alters what §14 fixes for a tile
    stored there is barred whether or not the new state still stores
-   it. What counts as such an alteration is the bar above and nothing
+   it. What counts as such an alteration is the §14 bar and nothing
    else, its carve-out included — a new padding position whose stored
    byte already holds the fill `[R-SER-05]` fixes is not one, so a
    shrink producing only those is permitted here exactly as it is
    there, and this sentence answers the rescue question rather than
-   restating the test. §21.7 records the consequence — that this is
-   precisely where the bar has no witness, the live state being clean
-   — which is why the rule is stated here and not left to the rows.
+   restating the test. The two bars beside the §14 bar govern
+   declaration changes, which a shrink is not. §21.7 records the
+   consequence — that this is precisely where the §14 bar has no
+   witness, the live state being clean — which is why the rule is
+   stated here and not left to the rows.
    Where a shrink is permitted the de-addressed tiles' extents become slack
    (`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller entry_count and
    so a re-emitted index region, and every surviving stored tile is
@@ -3836,8 +3873,13 @@ records is detectable only by parsing a payload no format-major-1
 reader parses as a record sequence (§7.4's closing Note);
 §20.3 step 4's bar on a declaration change is witnessed only where
 the affected tiles remain stored, and then only for part of what it
-bars. A change reaching a byte §14 structurally constrains — a
-padding position, a pad bit, or a boolean byte — fires §21.4's
+bars, and its two companion bars are witnessed not at all where the
+element size does not move — the prior generation's channel
+declarations are not recoverable from the file, so no check can know
+which ordinal a stored tile used to occupy, or which type of the same
+width its channel used to be declared. A change reaching a byte §14
+structurally constrains — a padding position, a pad bit, or a boolean
+byte — fires §21.4's
 content rows. A change reaching the decoded size is witnessed by T3
 or T14, which test a length rather than the decoded image's content
 — T14 the entry's declared length, T3 the decoded payload's own. A
@@ -3857,7 +3899,7 @@ length: both filter values are length-preserving (§17.3), and moving
 a sample within an image of unchanged length alters no declared
 quantity. And a
 commit that supersedes every tile it would have damaged leaves the
-live state clean, so the bar is unwitnessed there for the same
+live state clean, so the §14 bar is unwitnessed there for the same
 reason `[R-LIF-01]` is: it is a property of the prior generation,
 which §9.7 does not reconstruct; §20.5's three obligations on a
 compacted file's trailer (`[R-WRT-06]`) — its fresh `file_id` draw,
