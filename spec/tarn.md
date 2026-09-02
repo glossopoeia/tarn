@@ -1603,7 +1603,7 @@ region of it returns no samples. `[R-GEO-02]`
 > layers at creation, grow extents as data arrives. §20.3 states
 > normatively, and governs, what a commit may do to a layer that
 > already stored tiles in the generation a commit supersedes. Of its
-> three bars the one reaching a shrink or a growth is the §14 bar: a
+> two bars the one reaching a shrink or a growth is the §14 bar: a
 > shrink is barred wherever it alters what §14 fixes for such a
 > tile — whether or not the new state still stores it — and permitted
 > wherever it does not: a tile dropped out of the addressed set
@@ -1613,10 +1613,11 @@ region of it returns no samples. `[R-GEO-02]`
 > nothing. One shrink can do several of these at once. A layer that
 > stored no tile in the generation the commit supersedes may be
 > re-declared freely; a layer the commit itself empties does not
-> qualify. The other two bars reach neither a shrink nor a growth:
-> they bar a change to a channel's declared sample type, and a change
-> to a planar layer's channel declarations that moves a stored tile's
-> disk ordinal. Growth
+> qualify. Re-typing a channel is the §14 bar's own subject, barred
+> wherever the layer stores a tile that channel carries and free
+> where it does not. The other bar reaches neither a shrink nor a
+> growth: it bars a change to a planar layer's channel declarations
+> that moves a stored tile's disk ordinal. Growth
 > that leaves **entry_count** unchanged touches the directory alone —
 > a growth raising one grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) while another
 > stays 0 among them, the product holding at 0. Growth that changes
@@ -3147,7 +3148,21 @@ An appender MUST, in order:
    what they meant — a filter whose mandated stride makes it
    the identity (`[R-COD-10]`), or a new padding position whose
    stored byte already holds the fill `[R-SER-05]` fixes — is not
-   what this bars. Where a
+   what this bars.
+
+   A channel's declared **sample type** is such a declaration, and
+   changing it is such a change wherever the layer stores a tile that
+   channel carries: the type is what fixes the value a stored bit
+   pattern denotes, so under a new one the same bytes denote
+   different values. **The test is on the declared types and not on
+   the values a tile happens to hold** — `0x80` denotes −128 as
+   `int8` and 128 as `uint8` whether or not any tile stores that
+   byte, and an updater decides the question from the layer record
+   alone rather than by inspecting stored bytes. Where the
+   superseded generation stored no tile the channel carries there is
+   nothing to reinterpret, and this bars nothing: re-typing a channel
+   of a layer that stores nothing, or a planar channel none of whose
+   own tiles are stored, is a declaration edit like any other. Where a
    change does reach them it makes each stored tile it reaches
    nonconforming, and re-emitting those tiles would
    strand the originals as slack — the whole layer's worth, since
@@ -3156,49 +3171,11 @@ An appender MUST, in order:
    new layer, or a whole-file rewrite under a fresh file_id
    (`[R-LIF-01]`, §20.5).
 
-   The §14 bar already reaches many changes to a channel's declared
-   **sample type**: any that alters, for a tile the layer stores,
-   what §14 fixes for its bytes or how they decode. It does not reach
-   all of them. `int8` to `uint8`, or `float32` to `int32`, moves no
-   stored byte, no decoded size and no sample offset, leaves every
-   content rule §14 states over those bytes satisfied exactly as
-   before, and simply has the same bytes read under a different type.
-
-   Which type changes fall on which side is not worth enumerating
-   here, and the element sizes of §12.1 do not settle it — a planar
-   `uint8` channel re-declared `bool` keeps its element size of 1
-   while its plane goes from P · Bᶜ bytes to ⌈P/8⌉ (§14.3), and the
-   two coincide at P = 1. So the change is barred outright rather
-   than by cases: a commit MUST NOT change the
-   declared sample type of any channel of a layer that stores a tile
-   in the generation this commit supersedes, whatever the layer's
-   layout and whether or not the element size moves. The scope is the
-   layer and not the channel, and deliberately so. In an interleaved
-   layer every stored tile depends on **every** channel's type, since
-   the sample stride Q is a sum over every channel's element size
-   (§14.2) and the decoded size is P · Q, so a channel storing
-   nothing still governs the tiles that do. The rule could have been split — bound to the layer
-   for an interleaved layout and to the channel for a planar one — and
-   is not. Under the uniform rule a caller has one answer: changing a
-   sample type means writing the tiles. Under the split rule it means
-   writing the tiles *except* on a planar layer whose channel happens
-   to have had nothing stored, where the same call would instead
-   succeed in place — a distinction an interface above this format
-   would hide, and a surprise it would surface later as one operation
-   behaving two ways. The bar therefore reaches a planar channel
-   storing nothing, where it disturbs no byte and costs a rewrite the
-   format did not strictly need. Reinterpreting a
-   stored array is not an appender's operation. The caller decides
-   what becomes of the values the new type cannot carry — a magnitude
-   the narrower type cannot hold, a negative the unsigned type cannot
-   — and expresses that decision by writing the tiles, which is a new
-   layer or a whole-file rewrite.
-
-   A further effect is barred on the same tense, though on its own
+   One effect is barred beside it, on the same tense and on its own
    ground: the §14 bar does not reach it, an ordinal move being no
    effect on any stored tile's bytes, and what it disturbs is instead
-   the re-emission rule above, which licenses a renumbering only for
-   a geometry change. For a **planar** layer, a
+   the re-emission rule above, whose only stated occasion for a
+   renumbering is a geometry change. For a **planar** layer, a
    commit MUST NOT change the channel declarations in a way that
    alters the disk ordinal `[R-GEO-06]` assigns any tile the layer
    stores in the generation this commit supersedes. A channel's tiles
@@ -3222,7 +3199,7 @@ An appender MUST, in order:
    above. A layer that stores no tile **in the
    generation this commit supersedes** MAY be re-declared freely,
    which is what schema-first creation needs (§11.1) — the tense is
-   these bars', so a commit does not earn this permission by emptying
+   both bars', so a commit does not earn this permission by emptying
    the layer as it re-declares it; and an extent MAY **grow**, since a position that
    becomes real held, for each channel the position carries, that
    channel's fill (§14.5), and fill is a legal sample value — provided the grown geometry stays within every bound the
@@ -3256,11 +3233,10 @@ An appender MUST, in order:
    byte already holds the fill `[R-SER-05]` fixes is not one, so a
    shrink producing only those is permitted here exactly as it is
    there, and this sentence answers the rescue question rather than
-   restating the test. Neither of the two bars beside the §14 bar
-   reaches a shrink: one bars a change to a channel's declared sample
-   type, the other a change to a planar layer's channel declarations
-   that moves a stored tile's disk ordinal, and a shrink is neither.
-   §21.7 records the
+   restating the test. The bar beside the §14 bar does not reach a
+   shrink either: it bars a change to a planar layer's channel
+   declarations that moves a stored tile's disk ordinal, and a shrink
+   is not one. §21.7 records the
    consequence — that this is precisely where the §14 bar has no
    witness, the live state being clean — which is why the rule is
    stated here and not left to the rows.
@@ -3918,19 +3894,17 @@ construction; `[R-CNT-18]`'s prohibition on a sub-record containing
 records is detectable only by parsing a payload no format-major-1
 reader parses as a record sequence (§7.4's closing Note);
 §20.3 step 4's **§14 bar** is witnessed only where the affected tiles
-remain stored, and then only for part of what it bars. Its two
-companion bars — on a channel's declared sample type, and on a planar
-layer's disk ordinals — are unwitnessed on different terms, and the
-prior generation's channel declarations are not part of the live
-state, which is all §9.7 walks, so no check can know which ordinal a
-stored tile used to occupy or which type its channel carried before.
-The sample-type bar has no witness at all where the change leaves
-untouched everything §14 fixes for a tile stored in the generation
-the commit supersedes. The ordinal bar is witnessed indirectly and
-only sometimes: a permutation among channels whose planes are the
-same length disturbs nothing a row can see, while one that leaves a
-plane of one length at an ordinal the new declarations size
-differently is caught by T3, or by T14 under codec 1. Where
+remain stored, and then only for part of what it bars — a re-typed
+channel among the cases it does not reach, since the prior
+generation's declarations are not part of the live state, which is
+all §9.7 walks, and no check can know which type a channel carried
+before. Its companion bar on a planar layer's disk ordinals is
+witnessed indirectly and only sometimes, and for the same reason no
+check knows which ordinal a stored tile used to occupy: a permutation
+among channels whose planes are the same length disturbs nothing a
+row can see, while one that leaves a plane of one length at an
+ordinal the new declarations size differently is caught by T3, or by
+T14 under codec 1. Where
 the change does touch something §14 fixes, the rows below reach it
 on the terms they state there and no better, and a commit that
 supersedes every tile it would have damaged escapes them exactly as

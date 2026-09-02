@@ -1012,20 +1012,36 @@ is unfixed. From round 25's recovered verifier walk.
   everything, total = F. (c) Excuse the total entirely for file-scope rejections,
   widening §5.2's narrow excusal.
 
-### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [Resolved → ADR-0113]
-**Resolution:** Neither, as the bar stood — and both are now barred outright
-rather than folded into it. A commit MUST NOT change the declared sample type of
-any channel of a layer that stores a tile in the superseded generation, whatever
-the layout and whether or not the element size moves; and for a planar layer a
-commit MUST NOT change the channel declarations in a way that alters the disk
-ordinal `[R-GEO-06]` assigns any tile that layer stores. Both take the escape the
-bar beside them already names: a new layer, or a whole-file rewrite.
+### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [Resolved → ADR-0113, amended by ADR-0114]
+**Resolution:** The sample type: **yes, it always did**, and saying otherwise was
+the error. The §14 bar's own gloss states its test as "a change that leaves every
+one of those tiles' stored bytes meaning exactly what they meant", with the
+enumeration after it naming "where that effect arises rather than standing on its
+own". A byte that meant −128 as `int8` means 128 as `uint8`, so a re-typed
+channel was already barred wherever the layer stores a tile that channel carries,
+and already free where it does not. ADR-0113 added a separate sample-type bar on
+the premise that the §14 bar reached only the structural cases; ADR-0114
+withdraws it and makes the type case explicit in the gloss instead, because the
+misreading is available to any reader and cost this project four defective
+drafts.
 
-The type limb is barred on the maintainer's ground rather than on the fork: a
-type change without rewriting the data is a silent reinterpretation, and the
-caller should have to decide what becomes of the values the new type cannot carry
-— the magnitude the narrower type will not hold, the negative the unsigned type
-will not. Writing the tiles is how that decision is expressed.
+**The test is on the declared types, not on the values a tile holds.** A
+per-value test would permit `int8` → `uint8` on a tile whose bytes happen to lie
+in [0, 127] and bar it on the tile beside it, so an updater could decide only by
+inspecting every stored byte. `0x80` denotes −128 as `int8` and 128 as `uint8`
+whether or not any tile stores that byte.
+
+**"A tile that channel carries" settles the layout question without a layout
+branch.** An interleaved tile carries every channel, so a layer storing any tile
+has every channel's type pinned; a planar tile carries one, so only a channel
+with stored tiles is pinned. ADR-0113 reached the interleaved half by fixing the
+bar's scope to the layer, which also barred re-typing a planar channel storing
+nothing — an operation that changes no value a reader can extract. That scope
+decision is reversed.
+
+The channel order: a planar layer's disk ordinals get their own bar, which
+ADR-0114 leaves standing. It takes the escape the §14 bar already names: a new
+layer, or a whole-file rewrite.
 
 The order limb was the byte-level one, and it is narrower than it reads:
 `[R-GEO-06]`'s c · N + s takes N, the *spatial*-tile count, so the channel count
