@@ -941,6 +941,49 @@ That pattern is about the section's contract, not its sentences.
   cluster; if it cannot, (b) is the only form that stays true, and the
   cost is a second checked artifact.
 
+**The ADR-0113/0114 cycle, four audit runs, 2026-09-02.** The cluster did not
+stop. §21.7 drew findings in every one of four consecutive repair audits over one
+decision, and the maintainer's own reading is that it is among the least readable
+sections in the document.
+
+- **It escalated from inventory error to byte-level contradiction.** Previous
+  findings here were members missing from or wrongly attached to a list. The
+  fourth audit found §21.7 asserting that "a commit that supersedes every tile it
+  would have damaged **escapes** … the §14 bar", where §20.3 step 4 says of the
+  same actor, tense and operation: "a commit does **not** escape this by
+  unstoring in the same breath … and this bars it." Two writers, two files,
+  differing from the first appended byte, the disputed file conforming by §21.7's
+  own words. **An account of what checks miss became a rule about what a writer
+  may do, and contradicted the rule it was accounting for.** The adversarial
+  verifier upheld it byte-level and could not kill it.
+- **The measured shape of the section, which the entry did not record.** §21.7 is
+  **926 words, about 2% of the document, and imposes no obligation on any
+  actor** — its only MUST and SHOULD are quotations of §20.5's, belonging to
+  `[R-WRT-06]`. It carries no `>` marker and no *Note*, *Example* or *Rationale*
+  label, so `[R-CNF-01]` makes all 926 words **normative**. §21.1 expressly
+  places it outside the register's completeness clause and its instance
+  arithmetic, so no mechanical check reaches it either. Full normative force,
+  no obligation to discharge it against, and every claim a closed universal over
+  161 requirements and 120 rows.
+- **Six passages cite it**, all in the form "X is undetectable (§21.7)":
+  `[R-COD-10]`, `[R-COD-06]`'s neighbour at §17.4, §20.3 step 4, §20.5, §21.1
+  twice, and row T26. None cites a member of its inventory; every one cites the
+  thesis. **The load-bearing content is the opening claim — this format detects
+  corruption of structure, not incorrectness of content — and that is one
+  sentence.**
+- **A fourth option the entry does not list: (d) label the walk-through.** Keep
+  the thesis normative and put the itemised account inside a block labelled
+  *Rationale*, which `[R-CNF-01]` then makes non-normative. This does not stop
+  the inventory going stale, and a non-normative block that disagrees with the
+  normative text it glosses is still a finding — but it removes the inventory's
+  ability to contradict a rule *with force*, which is what made this cycle's
+  defect byte-level rather than editorial. For a gate whose criterion is zero
+  byte-level, that changes the class of every future failure here.
+- **Weighing (a) against (d).** They are not exclusive: (a) states the membership
+  test as a property and (d) demotes whatever illustration remains. The evidence
+  now favours doing both, since four audits have shown that the illustration
+  regenerates errors no matter how the test above it is phrased.
+
 ### Q-H6. What is §21.2's opening paragraph for, and can it do that job? [Resolved → ADR-0105]
 **Resolution:** option (c), as the entry predicted — the reach question moves to
 §2.3 as `[R-CNF-13]` and §21.2's preamble becomes a restatement subordinate to
