@@ -97,6 +97,25 @@ a stored tile used to occupy, or which type of the same width its channel used t
 be declared. A width-changing type change stays witnessed by T3 or T14, as §21.7
 already recorded.
 
+**The sample-type bar is scoped to the layer, not the channel, and the audit of
+this decision made that a deliberate choice rather than an unexamined one.** An
+auditor found the two bars differing in granularity with no stated reason: the
+ordinal bar carves out channels the superseded generation stored no tile for,
+while the sample-type bar reaches every channel of a layer that stores any tile.
+Layer scope is forced for an interleaved layout — the sample stride Q and every
+in-sample offset Fᶜ are sums over all channels (§14.2), so a channel storing
+nothing still governs the tiles that do — and the question was whether to split
+the rule by layout.
+
+**It is not split, and the maintainer's ground is workflow predictability rather
+than byte economy.** Under the uniform rule a caller has one answer: changing a
+sample type means writing the tiles. Under the split rule it means writing the
+tiles *except* on a planar layer whose channel happens to have had nothing
+stored, where the same call succeeds in place. That is a distinction an
+interface above this format would hide, and a surprise it would surface later as
+one operation behaving two ways. The bar therefore reaches a case where it
+disturbs no byte, and the document says so.
+
 ## Consequences
 
 **The register does not move**: 120 conditions, 275 instances, 329 vectors,

@@ -3173,13 +3173,21 @@ An appender MUST, in order:
    declared sample type of any channel of a layer that stores a tile
    in the generation this commit supersedes, whatever the layer's
    layout and whether or not the element size moves. The scope is the
-   layer and not the channel, and deliberately so: in an interleaved
+   layer and not the channel, and deliberately so. In an interleaved
    layer every stored tile depends on **every** channel's type, since
    the sample stride Q and each in-sample offset Fᶜ are sums over all
-   of them (§14.2), so a channel that stores nothing still governs
-   the tiles that do. Rather than split the rule by layout it holds
-   over the layer, which bars a change to a planar channel storing
-   nothing that would in fact disturb no byte. Reinterpreting a
+   of them (§14.2), so a channel storing nothing still governs the
+   tiles that do. The rule could have been split — bound to the layer
+   for an interleaved layout and to the channel for a planar one — and
+   is not. Under the uniform rule a caller has one answer: changing a
+   sample type means writing the tiles. Under the split rule it means
+   writing the tiles *except* on a planar layer whose channel happens
+   to have had nothing stored, where the same call would instead
+   succeed in place — a distinction an interface above this format
+   would hide, and a surprise it would surface later as one operation
+   behaving two ways. The bar therefore reaches a planar channel
+   storing nothing, where it disturbs no byte and costs a rewrite the
+   format did not strictly need. Reinterpreting a
    stored array is not an appender's operation. The caller decides
    what becomes of the values the new type cannot carry — a magnitude
    the narrower type cannot hold, a negative the unsigned type cannot
