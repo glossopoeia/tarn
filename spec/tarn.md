@@ -1614,8 +1614,8 @@ region of it returns no samples. `[R-GEO-02]`
 > stored no tile in the generation the commit supersedes may be
 > re-declared freely; a layer the commit itself empties does not
 > qualify. Re-typing a channel is the §14 bar's own subject, barred
-> wherever the layer stores a tile that channel carries and free
-> where it does not. The other bar reaches neither a shrink nor a
+> wherever the layer stores a tile that carries that channel, and
+> free where it does not. The other bar reaches neither a shrink nor a
 > growth: it bars a change to a planar layer's channel declarations
 > that moves a stored tile's disk ordinal. Growth
 > that leaves **entry_count** unchanged touches the directory alone —
@@ -3152,14 +3152,14 @@ An appender MUST, in order:
 
    A channel's declared **sample type** is such a declaration, and
    changing it is such a change wherever the layer stores a tile that
-   channel carries: the type is what fixes the value a stored bit
+   carries that channel: the type is what fixes the value a stored bit
    pattern denotes, so under a new one the same bytes denote
    different values. **The test is on the declared types and not on
    the values a tile happens to hold** — `0x80` denotes −128 as
    `int8` and 128 as `uint8` whether or not any tile stores that
    byte, and an updater decides the question from the layer record
    alone rather than by inspecting stored bytes. Where the
-   superseded generation stored no tile the channel carries there is
+   superseded generation stored no tile carrying that channel there is
    nothing to reinterpret, and this bars nothing: re-typing a channel
    of a layer that stores nothing, or a planar channel none of whose
    own tiles are stored, is a declaration edit like any other. Where a

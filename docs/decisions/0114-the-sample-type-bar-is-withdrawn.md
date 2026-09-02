@@ -46,7 +46,7 @@ the §14 bar and the disk-ordinal bar.
 **The §14 bar's gloss gains the type case concretely**, because the misreading
 that produced ADR-0113 is available to any reader. A channel's declared sample
 type is such a declaration; changing it is such a change **wherever the layer
-stores a tile that channel carries**; and where the superseded generation stored
+stores a tile that carries that channel**; and where the superseded generation stored
 no such tile there is nothing to reinterpret and the bar reaches nothing.
 
 **That phrasing settles the layout question without splitting the rule**, which

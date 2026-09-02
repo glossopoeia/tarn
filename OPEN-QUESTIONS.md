@@ -1018,7 +1018,8 @@ the error. The §14 bar's own gloss states its test as "a change that leaves eve
 one of those tiles' stored bytes meaning exactly what they meant", with the
 enumeration after it naming "where that effect arises rather than standing on its
 own". A byte that meant −128 as `int8` means 128 as `uint8`, so a re-typed
-channel was already barred wherever the layer stores a tile that channel carries,
+channel was already barred wherever the layer stores a tile that carries that
+channel,
 and already free where it does not. ADR-0113 added a separate sample-type bar on
 the premise that the §14 bar reached only the structural cases; ADR-0114
 withdraws it and makes the type case explicit in the gloss instead, because the
@@ -1031,7 +1032,7 @@ in [0, 127] and bar it on the tile beside it, so an updater could decide only by
 inspecting every stored byte. `0x80` denotes −128 as `int8` and 128 as `uint8`
 whether or not any tile stores that byte.
 
-**"A tile that channel carries" settles the layout question without a layout
+**"A tile that carries that channel" settles the layout question without a layout
 branch.** An interleaved tile carries every channel, so a layer storing any tile
 has every channel's type pinned; a planar tile carries one, so only a channel
 with stored tiles is pinned. ADR-0113 reached the interleaved half by fixing the
