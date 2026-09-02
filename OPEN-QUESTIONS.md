@@ -1244,6 +1244,34 @@ channel removal is not an appender's operation at all. Owning section §20.3.
   carve-out has always been scoped to a grid-count fall — but ADR-0113 named channel
   removal as an operation for the first time, and said of one case that it "re-indexes
   nothing and moves no ordinal at all", which reads as clearing it.
+- **The round-29 pre-audit adds a consequence any permissive option must dispose of.**
+  Whichever way this resolves, the text as it stands blesses the operation in passing —
+  "removing the last re-indexes nothing and moves no ordinal at all" — and says nothing
+  about what becomes of the removed channel's stored payload. Removing a channel
+  unaddresses its N tiles, and every one the superseded generation stored becomes slack,
+  which only compaction reclaims. §20.4 makes exactly that argument decisive for the
+  parallel case of removing a **layer**: "an in-place removal would strand that layer's
+  stored tiles and index region as slack (§5.2) which only compaction reclaims, leaving
+  the file no smaller than before — so the operation would cost what it appears to save."
+  Four sentences before the channel case, §20.3 gives the same reasoning as its ground for
+  sending declaration changes out to a new layer. A reader who has just been told that,
+  and is then told the removal moves nothing, will not notice the stranding. **An option
+  that permits the removal owes this sentence**; one that bars it does not. Recorded here
+  rather than repaired, because ADR-0091 bars settling a rule's reach in a repair slot.
+- **A challenge to this entry's N-side / C-side framing was raised and failed.** Two
+  independent audit lanes, in two runs, argued that register row L32 — "A layer
+  **geometry** field whose floor is 1 is 0 | rank d; **channel count C**; tile extent Tᵢ" —
+  makes a channel edit a *geometry* change, which would fold the C-side event into the
+  carve-out's N-side language and dissolve the question. It does not, on three grounds
+  checked against the document: §21.1 provides that "where a row and the rule it cites
+  diverge, **the rule governs**", and L32's governing rule `[R-GEO-01]` never calls the
+  channel count geometry — it says only that writers MUST NOT emit rank 0, tile extent 0
+  or channel count 0; `[R-EXT-04]` lists "sample types, geometry, channel sets and layout"
+  as coordinate separate items, as does `[R-SER-07]`'s "geometry, layout, and channel
+  types"; and L32 is the document's only occurrence of "geometry field". The flag was
+  graded byte-level, refuted on verification, upheld by an independent second-opinion pass
+  and re-derived by hand. **This entry's premise survives the challenge** — recorded so it
+  is not re-litigated.
 
 ### Q-B7. Is adding a record an "independent change" that licenses a drop? [shaping]
 **Question:** §20.4's MU = 0 / PE = 0 row licenses dropping a record where the

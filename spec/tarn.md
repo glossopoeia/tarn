@@ -2607,11 +2607,13 @@ below. Carried over — named for convenience, not as a closed list —
 are the frame magic; no skippable frame and no second frame; no
 dictionary use, disclosed or not, and no nonzero dictionary ID; no
 content-checksum flag; and the bar on sizing any buffer from a
-length the frame itself declares. Two of those carry no witness a
-file exhibits, and R4 registers neither: dictionary use the header
-does not disclose is a writer violation nothing in the extent
-shows, exactly as `[R-COD-06]` has it for a tile (§21.7), and the
-bar on sizing a buffer binds a reader rather than the document.
+length the frame itself declares. Two of those fall outside the
+register, on the two distinct grounds §21.7 separates, and R4
+registers neither: dictionary use the header does not disclose is a
+writer violation nothing in the extent shows — an unwitnessed
+condition, exactly as `[R-COD-06]` has it for a tile (§21.7) — while
+the bar on sizing a buffer binds a reader rather than the document,
+and so states no condition a file can exhibit at all.
 The first exception holds because a document has no declared size,
 which is why the bound above is the reader's own and not the
 file's. The frame's declared `Window_Size` is unconstrained here
@@ -3166,7 +3168,8 @@ An appender MUST, in order:
    own tiles are stored, is a declaration edit like any other. Where a
    change does reach them it makes each stored tile it reaches
    nonconforming, and re-emitting those tiles would
-   strand the originals as slack — the whole layer's worth, since
+   strand the originals as slack — every tile the change reaches, and
+   for a change reaching every channel the whole layer's worth, since
    `[R-LIF-01]` freezes them where they lie — leaving the file larger
    for a change that reads like a directory edit. Such a change is a
    new layer, or a whole-file rewrite under a fresh file_id
@@ -3558,8 +3561,9 @@ the governing one. Its **completeness is normative** — a
 *detectable* file-conformance violation this specification names and
 the register omits is a defect in this document, detectability being the gate
 `[R-CNF-07]` already applies and §21.7 states the test for: a
-violation is detectable exactly where some file exhibiting it
-differs, in its live state, from every file that does not
+condition is detectable exactly where some file exhibiting it is
+separated, by a check this specification obliges a reader or a
+verifier to perform, from every file that does not
 — but each row *restates* its governing rule, and where a
 row and the rule it cites diverge, **the rule governs**. Conditions
 attach to the finest structure they damage, and the outcome follows
@@ -3885,13 +3889,13 @@ be told apart from it by any check this specification obliges a
 reader or a verifier to perform. It is **detectable** in the
 contrary case: where some file exhibiting it is separated by such a
 check from every file that does not. The two are stated over the
-same subject and with matching quantifiers, so each is exactly the
-negation of the other, and detectability so stated is the gate
-`[R-CNF-07]` applies in assigning an outcome and §21.1's
+same subject, and each quantifier is the other's dual, so each is
+exactly the negation of the other, and detectability so stated is
+the gate `[R-CNF-07]` applies in assigning an outcome and §21.1's
 completeness clause turns on. The register carries a row for a
-condition exactly where it is detectable, so an unwitnessed
-condition is absent from it by that clause's own terms rather than
-in breach of them.
+condition exactly where it is a detectable file-conformance
+violation, so an unwitnessed condition is absent from it by that
+clause's own terms rather than in breach of them.
 
 That is the whole of the test, and it decides any condition put to it
 without appeal to a list: ask whether a breach can be made to leave
@@ -3918,11 +3922,12 @@ at them, caught by the rows for the fields that hold them. Nothing
 is omitted from the register on its account, there being no
 condition to omit. `[R-ERR-01]`
 
-> **Rationale.** The obligations this test places outside the
-> register, as the document stands. This walk-through illustrates the
-> test and does not extend it; where an item here and the test above
-> disagree, the test governs, and an item found stale is a defect in
-> this block and not in the register.
+> **Rationale.** Obligations this test places outside the register, as
+> the document stands. This walk-through illustrates the test and does
+> not extend it, and its list is not offered as closed; where an item
+> here and the test above disagree, the test governs, and an item
+> found stale — or an obligation the list omits — is a defect in this
+> block and not in the register.
 >
 > Beyond the content-wrongness this section opens with, these
 > obligations are omitted from the register because a single file
@@ -3953,8 +3958,10 @@ condition to omit. `[R-ERR-01]`
 > fills agree** disturbs nothing a row can see, while one that leaves a
 > plane of one length at an ordinal the new declarations size
 > differently is caught by T3, or by T14 under codec 1. Where the fills
-> differ, §14.5's padding positions and §14.3's pad bits carry the
-> wrong channel's fill and T4 or T5 sees it. Where
+> differ and the layer has a padding position or a pad bit, §14.5's
+> padding positions and §14.3's pad bits carry the wrong channel's
+> fill and T4 or T5 sees it; where it has neither, the permutation is
+> unwitnessed whether the fills agree or not. Where
 > the change does touch something §14 fixes, the register's rows reach
 > it on the terms they state there and no better.
 >

@@ -4,6 +4,7 @@
 - Date: 2026-09-02
 - Covers: §21.7 and `[R-ERR-01]`; §21.1's two characterisations of §21.7
 - Confirm: none
+- Erratum: 2026-09-02 — the Decision states the superseded formulation of the test; see the Erratum section.
 
 ## Context
 
@@ -125,3 +126,78 @@ available, since this section has resisted four previous repairs.
 - ADR-0106's limit on that move — a property beats a list only where it is true
   and determinate — which is why the test was derived against every member and
   three controls before it was written.
+
+## Erratum, 2026-09-02
+
+**The Decision above states the test as it was first written, not as it now
+stands.** The audit of this decision's own commit (`a4d912e`) found its central
+claim logically false and repaired §21.7; the ADR text was not swept with it, and
+the pre-round-29 audit found the gap. The Decision paragraphs are left as written
+— what they said is part of the trail — and this erratum states what governs.
+
+**The test's subject, instrument and quantifiers.** The Decision defines
+*unwitnessed* over "a requirement" and *detectable* over "a violation", and makes
+the instrument "identical live states", glossed as "all §9.7 walks" and as "no
+check §21.2 through §21.5 states". Every one of those is superseded:
+
+- **The subject is the condition**, for both limbs, as `[R-CNF-13]` individuates
+  them. A requirement stating several conditions is classified as a whole by
+  neither. §21.7 says so in terms.
+- **The instrument is the checks this specification obliges a reader or a
+  verifier to perform**, and expressly *not* the register's rows. The Decision's
+  "no check §21.2 through §21.5 states" is the keying §21.7 now rejects by name:
+  a test keyed to the rows would make §21.1's completeness clause vacuous, every
+  omitted condition being undetectable by construction.
+- **The quantifiers are duals, not matches.** *Unwitnessed* is *for every file
+  exhibiting it, some file that does not*; *detectable* is *some file exhibiting
+  it, every file that does not*. They are exact negations **because** each
+  quantifier is the other's dual. `a4d912e` repaired the ∃∃/∃∀ mismatch the
+  Decision carried but wrote "with matching quantifiers" as the reason — a false
+  warrant for a true conclusion, since matching quantifiers would defeat the
+  negation. Round 29's audit found it (A-06, confirmed) and §21.7 now reads "each
+  quantifier is the other's dual".
+
+**The evidence claim in Consequences is scoped to the superseded test.** "The
+test was derived and checked before being written" records a derivation against
+the live-state formulation, put to nine inventory members, three stated
+exceptions and three controls. That derivation has **not** been re-run against
+the obliged-check formulation, and the Consequences paragraph should be read as
+history rather than as a standing warrant.
+
+**Five further corrections the pre-round-29 audit confirmed**, all repaired in
+the commit carrying this erratum:
+
+- **The register-row criterion needed its qualifier.** "The register carries a
+  row for a condition exactly where it is detectable" reaches §21.6, whose
+  conditions are detectable and carry no rows because they are not violations.
+  It now reads "exactly where it is a detectable file-conformance violation",
+  matching §21.1's completeness clause and §21.6's own closing sentence.
+- **§21.1's gloss stated the superseded test.** This decision's own sweep of
+  §21.1 wrote "a violation is detectable exactly where some file exhibiting it
+  differs, in its live state, from every file that does not" — the abandoned
+  subject and the abandoned instrument, written into the clause the test exists
+  to serve. Three audit lanes found it independently. §21.1 now states the
+  obliged-check test with "such a check" spelled out.
+- **The walk-through's lead-in claimed a closed set.** "The obligations this test
+  places outside the register" reads as complete and is not: §20.4's preservation
+  obligations and `[R-CNT-03]`'s zeroing SHOULD both belong and are absent. Per
+  ADR-0106's rule against an enumeration that has been wrong twice, the lead-in
+  is now indefinite and says the list is not offered as closed, rather than
+  gaining two more members.
+- **One walk-through item was unconditionally false.** "Where the fills differ,
+  §14.5's padding positions and §14.3's pad bits carry the wrong channel's fill
+  and T4 or T5 sees it" holds only where the layer has a padding position or a
+  pad bit; `[R-GEO-04]` creates the first only where Eᵢ mod Tᵢ ≠ 0 and
+  `[R-SER-03]` the second only where P mod 8 ≠ 0. The item now carries that
+  condition and states the residue.
+- **§18.2 conflated the two classes this decision separated.** "Two of those
+  carry no witness a file exhibits" covered both undisclosed dictionary use (an
+  unwitnessed condition) and the bar on sizing a buffer from a declared length
+  (which binds a reader and states no condition a file can exhibit). The sentence
+  now names the two grounds separately.
+
+**What this decision got right, and the audit confirms.** The demotion worked as
+designed. Three of the six defects round 29's audit confirmed sit inside the
+`> **Rationale.**` block and are therefore editorial rather than normative — the
+property this decision was taken to obtain, stated in Consequences as "future
+failures in that block change class", and now observed.

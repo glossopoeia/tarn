@@ -5,6 +5,7 @@
 - Covers: §20.3 step 4's declaration-change bar; §21.7's account of unwitnessed
   obligations
 - Confirm: none
+- Erratum: 2026-09-02 — two Decision claims are superseded or were false; see the Erratum section.
 
 ## Context
 
@@ -178,3 +179,48 @@ maintainer extended the same treatment to the type limb on the overflow ground.
   rewrite. Both bars are that rule applied where it had not reached.
 - ADR-0106's limit on ADR-0095's property-over-list move, applied here to reject
   the property option.
+
+## Erratum, 2026-09-02
+
+**Two claims in the Decision above are no longer true, and one was never true.**
+The Decision text is left as written — ADR-0114 supersedes this decision in part
+and the trail should show what it superseded — and this erratum states what
+governs.
+
+**"Neither bar is witnessed" now speaks of one bar, not two.** ADR-0114 withdrew
+the sample-type bar on the ground that §14's own bar had always reached the case,
+its gloss testing whether stored bytes still mean what they meant. Only the
+planar disk-ordinal bar remains as this decision's own addition, and §21.7 records
+its witness as indirect and partial rather than absent: it "is witnessed
+indirectly and only sometimes". Any count of the bars in step 4 taken from this
+Decision is one too many.
+
+**The ground offered for unwitnessedness was false when written.** The Decision
+says "the prior generation's channel declarations are not recoverable from the
+file". The document denies this twice: `[R-LIF-06]` provides that "a recovery tool
+enumerating a file's commit states continues the same probe to offset 0", and
+`[R-PRV-03]` lists a file's history as "recoverable by probing backward for the
+superseded trailers that committed-prefix immutability keeps in place". The
+correct formula — which the spec now uses, and which this Decision's own
+paragraph reaches for elsewhere — is about what a **check** reads, not what the
+bytes retain: §9.7 does not reconstruct a file's history, so no *obliged check*
+knows which ordinal a stored tile used to occupy. The repair landed in the spec at
+`dbfcafa`; the ADR was not swept with it.
+
+**The stranding consequence over-claimed for the partial case.** This decision's
+paragraph closes by saying re-emitting the reached tiles "would strand the
+originals as slack — the whole layer's worth". That was true of the antecedent it
+was written against, when the §14 bar's changes reached every tile of a layer.
+The paragraph this decision inserted introduced a case that reaches only part of
+one — a planar channel some but not all of whose tiles are stored — and the
+sentence was not requalified. Round 29's audit confirmed it (D-02); the spec now
+reads "every tile the change reaches, and for a change reaching every channel the
+whole layer's worth".
+
+**What stands unchanged.** The disk-ordinal bar itself, its tense, and its
+arithmetic. Round 29's audit raised five byte-level flags against §20.3 step 4 —
+including two against this bar's own test and its ground — and every one was
+refuted, by an adversarial verifier, by an independent second-opinion pass, and by
+hand against the document. The bar's quantifier over the superseded generation
+survives because the paragraph opens "on the same tense" and imports the §14 bar's
+explicit statement of it, which is the clause three of those five flags missed.
