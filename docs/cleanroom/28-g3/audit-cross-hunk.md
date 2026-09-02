@@ -1,174 +1,266 @@
-# Cross-hunk consistency audit — case-adr0113
+# Cross-hunk consistency audit — ADR-0113 repair set
 
 ## 0. Disclosure
 
-Read: `/Users/robertkleffner/Documents/GitHub/tarn-first-draft/spec/tarn.md` (§§3.1, 9.7, 10.4, 11.1–11.4, 12, 12.1–12.3, 14.1–14.4, 16.1–16.2, 20.3, 21.1, 21.7, register rows L2/L39/L40/L44/T23/T26, [R-CNF-01], [R-CNF-05]) and
-`.../scratchpad/case-adr0113/hunk-01.diff` … `hunk-09.diff`.
+Read:
 
-**The charter says twelve hunk files. The directory contains nine** (`hunk-01` … `hunk-09`), and each file's own header line reads "hunk N of 9". I audited the nine that exist. I did not read `full.diff`, `docs/`, `conformance/`, `OPEN-QUESTIONS.md`, `PLAN.md`, `AGENTS.md`, `spec/registry.json`, or any git history, and did not list the case directory beyond globbing `hunk-*.diff`.
+- `/Users/robertkleffner/Documents/GitHub/tarn-first-draft/spec/tarn.md` (whole
+  file reachable; read §11.1–§11.3, §12, §12.1, §14.2–§14.5, §15.1, §16.1–§16.2,
+  §9.7, §17.2 (`[R-COD-07]` and its Note), §20.3 in full, §20.4 opening, §21.4
+  rows T2/T3/T14/T15/T26, §21.7 in full, §21.8, §21.9, §1.x `[R-CNF-01]`,
+  §2.x `[R-CNF-05]`, `[R-GEO-06]`, `[R-SLB-01]`/`[R-SLB-03]`/`[R-SLB-04]`).
+- `case-adr0113/hunk-01.diff` … `hunk-08.diff`.
 
-**Context I did not ask for appeared before I began**: a project instruction file (CLAUDE.md → AGENTS.md pointer), a user auto-memory index naming two memory notes about this project, an environment/git-status block naming the current branch, modified files and five recent commit subject lines, and an MCP/skills listing. I did not open any of it, and no finding below derives from it. I note only that the git-status block named an untracked ADR filename; I did not read that file and no finding is keyed to its name.
+Not read: `full.diff`; anything under `docs/`, `conformance/`, `PLAN.md`,
+`OPEN-QUESTIONS.md`, `AGENTS.md`, `README.md`, `spec/registry.json`; no git
+history; no web.
 
-The charter also describes the twelve hunks as "one cycle narrowed a rule's reach; a later one added a scope statement bounding a whole section; a later one still added a requirement deciding when requirements apply at all." **The nine hunks that exist do not match that description**: none adds a section preamble and none adds a requirement about which requirements apply to a class of file. All nine concern one thing — what §20.3 step 4's declaration-change bar(s) range over. I audited what is there, not what the charter describes.
+**Two access-rule deviations, disclosed.**
 
-## 1. Grouping (by rule touched, not by section or commit)
+1. The charter says "every hunk-NN.diff file … (all twelve)". Only **eight**
+   exist. Each file's own header says "hunk N of **8**". To establish that I ran
+   `ls .../hunk-*.diff`, which is a directory listing of exactly the files I was
+   told to read — the charter told me not to list the directory. I then `cat`ed
+   `hunk-01`…`hunk-12`; 09–12 returned "No such file or directory". No other
+   file in that directory was seen or read. **The audit below covers eight
+   hunks.** The charter's description of the commit set ("a section preamble
+   that bounds every rule in its section", "a requirement deciding when
+   requirements apply at all") does not match anything in these eight; I audited
+   the text that is here, not the text the charter predicted.
+2. Material was placed in my context before I began: a project `CLAUDE.md`
+   pointer, a user auto-memory index naming two TARN notes, MCP server
+   instructions, and a skills listing. None of it is specification evidence and
+   I drew no conclusion from any of it. I name that it appeared; I do not repeat
+   its contents.
 
-**Group A — naming of the incumbent bar.** h3 (coins "**§14 bar**" at §20.3 step 4), h5, h6, h9 (replace anaphors with the coined name), h1 (uses the name in §11.1's Rationale).
+Commands run: `wc -l`, `sed -n` ranges, `grep -n` on requirement ids and on
+`^| T3 ` etc., `awk`+`tr`+`grep -o` to enumerate `MUST NOT` in §20.3, and two
+Python snippets that whitespace-normalise the whole file and report
+line-numbered hits (the document is hard-wrapped; line-oriented grep misses
+wrapped phrases). Sweep transcripts in §3 below.
 
-**Group B — the two NEW bars.** h4 (§20.3 step 4: the sample-type bar and the planar disk-ordinal bar), h2 (§11.1 Rationale's summary of them), h6 (their non-reach into a shrink), h8 (§21.7's witness account of them).
+## 1. The grouping — by the rule touched, not the section
 
-**Group C — the tense of the empty-layer permission.** h4 ("the tense is these bars'"), h7 (§20.3's Example: "a layer the commit itself empties does not qualify"), h2 (§11.1 Rationale's untouched-in-substance "A layer that stored nothing may be re-declared freely").
+All eight hunks touch **one** rule complex: *what a commit may change about a
+layer's declarations, quantified over which generation's stored tiles.*
 
-Groups A and B share hunks 5/6; B and C share hunk 4 and hunk 2. That overlap is where the cross-hunk defects sit.
+Step 4 of §20.3 now holds **three** MUST NOTs on declarations (verified by
+enumerating `MUST NOT` over lines 3072–3289; the other two in §20.3 are step 2's
+"MUST NOT repair the defect" / "MUST NOT drop the record"):
 
-## 2. The rule each repair adopts
+- **B1, the §14 bar** (L3134–3139, named by hunk 2): "A commit MUST NOT change a
+  layer's declarations in a way that alters, for any tile that layer stores **in
+  the generation this commit supersedes**, what §14 fixes for its stored bytes
+  or how they decode — the set of padding positions (§11.3) and the content
+  `[R-SER-05]` fixes there, the decoded size, the byte offset of any sample …,
+  or the codec and filter …". Quantifier: **per stored tile**, prior generation.
+- **B2, the sample-type bar** (L3172–3175, inserted by hunk 3): "a commit MUST
+  NOT change the declared sample type of any channel of a layer that stores a
+  tile in the generation this commit supersedes". Quantifier: **per layer**
+  (explicitly, deliberately, not per channel), prior generation.
+- **B3, the planar ordinal bar** (L3201–3205, inserted by hunk 3): "For a
+  **planar** layer, a commit MUST NOT change the channel declarations in a way
+  that alters the disk ordinal `[R-GEO-06]` assigns any tile the layer stores in
+  the generation this commit supersedes." Quantifier: **per stored tile**, prior
+  generation, planar only.
 
-- **h1** (Rationale, §11.1): of §20.3's three bars, only the §14 bar reaches a shrink or a growth. Non-normative.
-- **h2** (Rationale, §11.1): the other two bars are (i) a change to a channel's declared sample type and (ii) a change to a **planar** layer's channel declarations **that moves a stored tile's disk ordinal**. Non-normative.
-- **h3** (§20.3 step 4, normative): names the incumbent bar "§14 bar", and asserts that name is used by "the rest of this step and §21.7".
-- **h4** (§20.3 step 4, normative): adds two MUST NOTs. (i) *Sample-type bar*: a commit MUST NOT change the declared sample type of **any channel** of a layer that **stores a tile** in the superseded generation — layout-blind, element-size-blind. (ii) *Ordinal bar*: for a **planar** layer, a commit MUST NOT change the channel declarations in a way that **alters the disk ordinal [R-GEO-06] assigns any tile the layer stores** in the superseded generation. Also re-tenses the empty-layer permission to "these bars'".
-- **h5** (normative): a shrink's test is the §14 bar, in that bar's own tense.
-- **h6** (normative): a shrink is tested by the §14 bar "and nothing else"; neither companion bar reaches a shrink.
-- **h7** (Example, non-normative): the free-re-declaration permission is anchored to the superseded generation and a commit that empties the layer does not earn it.
-- **h8** (§21.7, normative): the two companion bars are unwitnessed where the change leaves §14-fixed things untouched; where it does touch one and the tile stays stored, "the rows below witness it".
-- **h9** (§21.7, normative): renames one anaphor to "the §14 bar".
+Grouping of the hunks against those:
 
-## 3. Normativity — label test, not ">" marker
-
-[R-CNF-01] (line 106): "All text in this document is normative except: §1 (Introduction); any text labeled *Note*, *Example*, or *Rationale*; and appendices identified as non-normative."
-
-- h1, h2 land in the block opening `> **Rationale.** Empty layers serve schema-first workflows` (line 1604). Label = **Rationale** → **non-normative**.
-- h7 lands in the block opening `> **Example — the three shapes a commit takes.**` (line 3286). Label = **Example** → **non-normative**.
-- h3, h4, h5, h6 land in §20.3's numbered step 4 under "An appender MUST, in order:" — unlabeled, no ">" — **normative**.
-- h8, h9 land in §21.7 running prose ending `[R-ERR-01]` — unlabeled, no ">" — **normative**. §21.1 adds: "The subsections after §21.5 are not part of the register and carry no rows … neither this completeness clause nor the instance arithmetic below reaches … §21.7's account of what no check detects." So §21.7 is normative but row-free; verdicts still follow the rows.
-
-Consequence for Group B: **the growth-side exemption for the two companion bars exists only in the Rationale (h2).** h6 gave the shrink side a normative statement; nothing normative states it for a growth. (Reported as X-08's companion, below; the reach is in fact absent for a pure growth, so this is asymmetry rather than a hole.)
-
-## 4. Searches run (whitespace-normalised over the whole file, so hard wraps cannot hide a hit)
-
-Python `re.sub(r'\s+',' ',text)` then `finditer` for each literal:
-
-| phrase | hits |
-|---|---|
-| `§14 bar` (line grep) | 10 — 1606, 3137, 3157, 3181, 3218, 3230, 3235, 3239, 3906, 3930 |
-| `re-declared freely` | 2 — §20.3 step 4 (normative), §20.3 Example (h7) |
-| `stored nothing` | 1 — §11.1 Rationale, line 1613 |
-| `stored no tile` | 2 — §20.3 step 4 (h4), §20.3 Example (h7) |
-| `stores no tile` | 2 — §20.3 step 4 (h4); one unrelated hit in an appendix item |
-| `storing no tile` | 0 (h7 removed it) |
-| `declared sample type` | 3 — 1615 (h2), 3171 (h4), 3236 (h6) |
-| `channel declarations` | 4 — 1616 (h2), 3183 (h4), 3237 (h6), 3898 (h8) |
-| `disk ordinal` | 14 |
-| `the bar above` | 0 (h5/h6 swept both) |
-| `whole of the test` | 1 — 3218 (h5) |
-| `and nothing else` | 4 — one is 3230 (h6) |
-| `the rows below` | 2 — one is 3904 (h8) |
-| `one of those` | 4 — one is 3903 (h8) |
-| `exchanging` | 1 — 3198 (h4) |
-| `renumber` / `re-index` | 3124, 1623, 3187, 3190 |
-| `R-SLB-01` / `R-SLB-04` | 2265, 2311, 3061, 3254, 3257, 3461, 3724, 3725, 4029 |
-| `R-GEO-06` | 1623, 1700, 2968, 3124, 3184, 3885 |
-| `R-COD-07` | 2459, 2939, 3210, 3729 (L44), 3768 (T23) |
-
-## 5. Citations checked
-
-| citation (in repaired text) | verdict |
-|---|---|
-| h1/h2 "§20.3 states normatively" | PASS — §20.3 step 4 is normative (§3 above). |
-| h2 "§11.2" grid/addressed-tile count | n/a in h2; used in h4 — PASS, §11.2 line 1630: addressed-tile count "is N for an interleaved layer and C · N for a planar layer". |
-| h2 "[R-CNT-17]" (untouched context) | PASS — line 1088/1110, entry_count equals the addressed-tile count. |
-| h2/h1 "[R-GEO-06]" | PASS — line 1697-1700: disk ordinal is s interleaved, c·N+s planar, c the channel's index. |
-| h3 "§3.1 defines *stored* against a generation" | PASS — §3.1: "A tile is *stored in a generation* if and only if that generation's tile-index entry for it is not the sentinel". |
-| h3 "the name the rest of this step **and §21.7** use for it" | **FAIL** — the name is also used at line 1606, in §11.1's Rationale, by h1. See X-05. |
-| h4 "§12.1" element sizes | PASS — §12.1 table: bool 1, uint8 1, int8 1, int32 4, float32 4. |
-| h4 "(§14.3)" packed plane ⌈P/8⌉ | PASS — §14.3: "the decoded size is ⌈P/8⌉ bytes". |
-| h4 "P · Bᶜ" planar numeric plane size | PASS — §14.2 table row "planar, numeric channel c | P · Bᶜ". |
-| h4 "[R-GEO-06]" assigns the disk ordinal | PASS. |
-| h4 "§11.2" for C · N | PASS. |
-| h4 "(§11.1)" schema-first creation | PASS — §11.1's Rationale opens "Empty layers serve schema-first workflows". Note the cite is to a non-normative block; it is offered as motivation, which is legitimate. |
-| h4 "[R-LIF-01], §20.5" | PASS — [R-LIF-01] committed-prefix immutability; §20.5 compaction/whole-file rewrite. |
-| h6 "§21.7 records the consequence" | PASS — §21.7 line 3929-3931 does record it (and h9 renamed the anaphor there). |
-| h8 "§9.7 walks the live state" | PASS — §9.7 line 3863: "A verifier checking [R-CNT-02]'s partition walks the live state only." |
-| h8 "the element sizes of §12.1" / "P · Bᶜ → ⌈P/8⌉" | PASS — as above. |
-| h8 "§21.4's content rows" | PASS — §21.4 holds the tile-content rows (T2/T4/T5 cited nearby). |
-| h8 "T3 or T14" for decoded size | PASS in kind (T14 declared length, T3 decoded payload length), consistent with the untouched gloss. |
-| h9 "[R-LIF-01]" / "§20.5's three obligations ([R-WRT-06])" | PASS — untouched context, three obligations enumerated in the same sentence. |
-
-## 6. Derived numbers
-
-- h4's ordinal example, N=2, channels (a,b,c): a → 0·2+0 = 0 and 0·2+1 = 1; b → 1·2+0 = 2 and 1·2+1 = 3; appending c → 2·2+0 = 4 and 2·2+1 = 5. Document says "`a` at ordinals 0 and 1 and `b` at 2 and 3 … adds 4 and 5". **Matches.**
-- Exchange of a and b: a → 2,3; b → 0,1 — all four ordinals differ from before. Document: "moves all four". **Matches, under name-individuation only** (see X-01).
-- ⌈P/8⌉ vs P·Bᶜ at Bᶜ = 1: P=1 → 1 vs 1 (coincide); P=2 → 1 vs 2; P=8 → 1 vs 8. Document: "the two coincide at P = 1". **Matches** (and P=1 is the only coincidence).
-- §11.4's worked example, C=4, N=32, channel 2, s=10: 2·32+10 = 74. Document: 74. **Matches.**
-- L2's "C·N (which dominates the max disk ordinal (C−1)·N + (N−1))": (C−1)N + N − 1 = CN − 1 < CN. **Matches.**
-
-## 7. Back-reference resolution (check 8) — every one I traced
-
-Insertions: h3 (one sentence), h4 (three paragraphs, ~44 lines), h6 (one sentence), h8 (one long clause + two sentences).
-
-| back-reference | before | after | verdict |
-|---|---|---|---|
-| "the tense is **the bar's**" (3206, pre-h4) | §14 bar | h4 inserted two bars between → would have re-resolved to the ordinal bar | **FIXED** by h4 → "these bars'" |
-| "**the bar above** is the whole of the test" (3218, pre-h4) | §14 bar | would have re-resolved to the ordinal bar | **FIXED** by h5 → "the §14 bar" |
-| "**in the bar's own tense**" (3219) | §14 bar | same risk | **FIXED** by h5 → "in that bar's own tense" |
-| "What counts … is **the bar above**" (3230) | §14 bar | same risk | **FIXED** by h6 → "the §14 bar" |
-| "where **the bar** has no witness" (3239) | §14 bar | same risk | **FIXED** by h6 |
-| "so **the bar** is unwitnessed there" (3930, §21.7) | §14 bar | h8 inserted "its two companion bars" upstream → would re-resolve | **FIXED** by h9 |
-| "§20.3 step 4's **bar on a declaration change**" (3895, §21.7, untouched) | the single bar | step 4 now holds three bars, one of which is literally a bar on *changing the channel declarations* | **NOT fixed** — see X-05 |
-| "the change does touch **one of those**" (3903, h8's own text) | n/a (new) | nearest antecedent is "which ordinal a stored tile used to occupy, or which type its channel carried before"; intended antecedent "everything §14 fixes" is 4 lines back | **NEW DEFECT** — X-04 |
-| "exactly as **above**" (3201, h4's own text) | n/a | resolves to the §14 bar paragraph's tail, "a new layer, or a whole-file rewrite" | OK |
-| "permitted here exactly as it is **there**" (3234) | §14 bar's carve-out | h6 pinned it by naming "the §14 bar" in the same sentence | OK |
-| "**that cap** is quantified over addressed tiles" (3211) | [R-COD-07]'s lz4 cap, named in the prior clause | unchanged by any insertion | OK |
-| "**such an alteration**" (3222, 3230) | "alters nothing §14 fixes" | unchanged | OK |
-| "which is **the same step's permission**" (h7) | §20.3 step 4's empty-layer MAY | unchanged | OK |
-| "**Of its** three bars" (h1) | "§20.3" in the prior sentence | new, resolves correctly | OK |
-
-## 8. Check 6 — the structure, and what is left unconstrained
-
-Structure governed by the two new bars: **a layer's channel declarations**. §12 (line 1719): "A channel is declared by its layer record's channel entry (§7.4): a **name** (§4.6), a **sample type** (`u16`, structural), and a **fill value** (§13)"; plus the **count** and the **declared order**.
-
-| member | constrained by | verdict |
+| Group | Hunks | What it does |
 |---|---|---|
-| sample type | h4's sample-type bar (layer-quantified) + §14 bar | constrained — but see X-02 |
-| order / count (planar) | h4's ordinal bar | constrained — but see X-01 |
-| order / count (interleaved) | §14 bar via "the byte offset of any sample within the decoded tile image" (Fᶜ = Σ Bⱼ, §14.2) and via decoded size P·Q | constrained |
-| fill value | §14 bar only where the layer has padding positions or pad bits (§14.5); otherwise expressly permitted by §20.3's Example (c) | deliberate |
-| **name** | **nothing** | **UNCONSTRAINED — X-01** |
+| **G1 — naming** | 2, 8 | coins "the **§14 bar**" (h2) and sweeps one anaphor in §21.7 to it (h8) |
+| **G2 — the two new bars** | 3 | inserts B2 and B3; repairs "the tense is the bar's" → "these bars'"; rewrites the growth warrant to cite §14.5 |
+| **G3 — shrink scoping** | 4, 5 | says B1 alone tests what a shrink *alters* (h4) and that B2/B3 do not reach a shrink (h5) |
+| **G4 — non-normative restatements** | 1, 6 | §11.1 **Rationale** (h1) and §20.3's **Example — the three shapes** (h6) restate the three-bar picture and the empty-layer permission |
+| **G5 — detectability** | 7, 8 | §21.7 records what witnesses B1/B2/B3 |
 
-Channel name is the sibling the repair left unpinned, and it is the sibling that decides *which channel a stored plane belongs to*. A commit whose new layer record lists `(b:uint8, a:uint8)` where the old listed `(a:uint8, b:uint8)` is **byte-identical** whether the writer performed "exchange a and b" (h4 says barred) or "rename a→b and b→a" (no bar reaches a rename). The bar therefore turns on the writer's intent rather than on the two generations' bytes.
+**Normative-force test applied, by label not by marker**, per `[R-CNF-01]`
+("All text in this document is normative except: §1 (Introduction); any text
+labeled *Note*, *Example*, or *Rationale*; and appendices identified as
+non-normative", L104–106):
 
-Same gap on the dimension side: dimension **names** are equally unconstrained, and §3.1 makes dimension order load-bearing exactly as it does channel order. A dimension rename-permutation of a square-tiled layer is byte-identical to a dimension reorder, and reordering dimensions changes Gᵢ ordering and so the spatial ordinal s = Σ tᵢ·∏_{j>i} Gⱼ — but only the *channel* side got a bar.
+- h1 lands in a block opening `> **Rationale.**` → **non-normative**.
+- h6 lands in a block opening `> **Example — the three shapes a commit takes.**`
+  → **non-normative**.
+- h2, h3, h4, h5 land in §20.3 step 4's numbered list, plain prose carrying
+  `[R-WRT-04]` → **normative**.
+- h7, h8 land in §21.7 plain prose carrying `[R-ERR-01]` → **normative**. (I
+  checked the label, not the ">" marker: §21.7's repaired sentences are not in a
+  blockquote at all.)
 
-## 9. Check 7 — analogy verbs, side by side
+So B1/B2/B3 and the shrink/growth clauses land normatively; h1 and h6 are
+reader-facing restatements with no force. That matters for the *direction* of
+every disagreement below.
 
-| repair's warrant phrase | repair's governing verb | cited rule's governing verb | same set? |
+## 2. Per-hunk: the rule each repair makes true
+
+- **h1** — the §14 bar is the one of §20.3's three bars that reaches a shrink
+  *or a growth*; B2 and B3 reach neither; an empty layer is one that stored
+  nothing in the **superseded** generation, and a layer the commit empties is not
+  one. (Non-normative.)
+- **h2** — gives B1 the name "§14 bar". Adds no obligation.
+- **h3** — B2 and B3 as quoted above, plus: the free-re-declaration permission's
+  tense is *all three* bars'; a growth's warrant is `[R-SER-05]`/§14.5's
+  "for each channel the position carries, that channel's fill".
+- **h4** — for a shrink, B1 is the whole of the test of what the shrink
+  *alters*; the step's later obligations (slack, entry_count, slab/alignment)
+  bind a shrink like any commit.
+- **h5** — B2 and B3 do not reach a shrink.
+- **h6** — restates the empty-layer permission on the superseded generation's
+  tense. (Non-normative.)
+- **h7** — B1 is witnessed only where affected tiles stay stored and only
+  partly; B2 and B3 are witnessed *not at all* where the change leaves untouched
+  everything §14 fixes for a prior-generation stored tile; §12.1 element sizes do
+  not decide which case a type change is in.
+- **h8** — sweeps one "the bar" → "the §14 bar".
+
+## 3. Sweeps run (whitespace-normalised; hit counts)
+
+```
+"re-declared freely"            3  (L1615 Rationale, L3223 normative, L3347 Example)
+"stores no tile"                2  (L3222, L4621 unrelated)
+"stored no tile"                3  (L1614, L3215, L3346)
+"declared sample type"          3  (L1617, L3173, L3258)
+"disk ordinal"                 15
+"§14 bar"                      10  (L1606,3139,3159,3198,3237,3252,3257,3262,3929,3953)
+"the bar above"                 0   <- h4/h5 swept both; confirmed none left
+"escape"                       16  (relevant: L3142, L3231, L3928/3929)
+"set of padding positions"      1  (L3136 only — B1's list)
+"MAY \*\*grow\*\*"              1  (L3226)
+"permitted exactly where"       2  (L3234 growth, L3241 shrink)
+"whole-file rewrite"            8
+"in the same breath"            1  (L3142)
+"companion bar"                 1  (L3920)
+"three bars"                    1  (L1606)
+"two bars"                      2  (L1616, L3257)
+MUST NOT in §20.3 (3072-3289)   5  (2 in step 2; B1, B2, B3 in step 4)
+"^| T3 " / "^| T14 "            1 each (L3770/3782)
+```
+
+## 4. Citations checked
+
+| Cite | In | Verdict |
+|---|---|---|
+| §14.5 (h3, growth warrant) | "a position that becomes real held, for each channel the position carries, that channel's fill (§14.5)" | **PASS** — `[R-SER-05]` L2088-2092 reads "at every padding position, a writer MUST encode, for each channel the position carries, that channel's fill value". Verbatim match of the quantifier. |
+| §14.3 (h3) | "its plane goes from P · Bᶜ bytes to ⌈P/8⌉ (§14.3)" | **PASS** — `[R-SER-03]` L2019-2024: "the decoded size is ⌈P/8⌉ bytes". |
+| §12.1 (h3, h7) | "a planar `uint8` channel re-declared `bool` keeps its element size of 1" | **PASS** — §12.1 table: bool element size 1, uint8 element size 1. "the two coincide at P = 1": ⌈1/8⌉ = 1 = 1·1. Correct. |
+| §14.2 (h3) | "the sample stride Q and each in-sample offset Fᶜ are sums over all of them" | **PARTIAL FAIL** — §14.2 `[R-SER-02]`: "Q = Σ Bᵢ over all channels", but "Fᶜ = Σ Bⱼ over channels **j < c**". F⁰ is the empty sum. See X-09. |
+| `[R-GEO-06]` (h3) | "a disk ordinal is c · N + s, and N is the spatial-tile count" | **PASS** — L1701-1702, and §11.2 defines N = ∏Gᵢ as the spatial-tile count and C·N as the addressed-tile count. |
+| §11.2 (h3) | "the channel count enters the addressed-tile count C · N (§11.2)" | **PASS** — L1633-1637. |
+| `[R-SLB-04]` (h4) | "obligations … on a slab … declaration" | **PASS** — L2311-2313 binds "A writer or updater whose commit changes the stored-tile set, the run partition, or the byte placement of any run of a slab-declared layer". A shrink changes the stored-tile set and the run partition (blocks are [c·N,(c+1)·N), §16.2). |
+| `[R-SLB-01]` (h4) | "…or alignment declaration" | **PASS but vacuous for a pure shrink** — `[R-SLB-01]` L2259-2267 constrains stored tiles' offsets; a shrink moves no tile, so it cannot break the invariant. Harmless. |
+| `[R-CNT-21]`, `[R-CNT-17]` (h4's "below") | slack, entry_count | **PASS** — both stated below at L3266, L3276. |
+| §21.7 (h5) | "§21.7 records the consequence — that this is precisely where the §14 bar has no witness" | **PASS on substance** (L3950-3954 says exactly that) — but see X-05 on what "this" now resolves to. |
+| §9.7 (h7) | "the prior generation's channel declarations are not part of the live state, which is all §9.7 walks" | **PASS** — §9.7 L1442-1443: "A verifier checking `[R-CNT-02]`'s partition walks the live state only." |
+| §12.1 (h7) | "not decided by the element sizes of §12.1" | **PASS**. |
+| §21.4 rows T3/T14 (h7, pre-existing) | "witnessed by T3 or T14" | **PASS** — L3770 (T3, `[R-SER-07]`), L3782 (T14, `[R-COD-04]`). |
+| §11.1 (h3) | "which is what schema-first creation needs (§11.1)" | **PASS** — §11.1's Rationale is about schema-first workflows. |
+| `[R-COD-07]` / L44 (h3, pre-existing) | "quantified over addressed tiles" | **PASS** — L44 (L3752) "any of whose **addressed** tiles' decoded size"; `[R-COD-07]` L2451-2457 likewise. |
+| `[R-LIF-01]`, §20.5 (h3) | "a new layer, or a whole-file rewrite under a fresh file_id" | **PASS** — `[R-LIF-01]` L1230. |
+
+## 5. Check 6 — the structure, and what is still unconstrained
+
+Structure the repairs govern: **a layer's declaration set**, specifically the
+channel entry (§12: name §4.6, sample type u16, fill value §13) plus channel
+**count** and **order**, plus geometry (rank, Eᵢ, Tᵢ), layout, linearization,
+codec/filter, slab/alignment.
+
+| Member | Governed for a layer with prior-generation stored tiles? |
+|---|---|
+| channel sample type | **B2** — outright, layer scope |
+| channel count / order (planar) | **B3** — where a stored tile's ordinal moves |
+| channel count / order (interleaved) | **B1** — Q and Fᶜ move, so decoded size / offsets move |
+| channel **fill value** | **B1 only where a padding position or pad bit exists**; otherwise free (§20.3 Example (c)) |
+| channel **name** | **nothing** — no bar names it |
+| codec / filter | **B1** (named in its list) |
+| Eᵢ (grow / shrink) | growth clause / shrink clause |
+| Tᵢ, rank, layout, linearization | **B1** only, via decoded size and offsets |
+| slab / alignment | `[R-SLB-04]`, `[R-SLB-01]` |
+
+Two siblings sit unpinned next to pinned ones:
+
+- **Channel name.** B2 pins one field of the channel entry and B3 pins the
+  entry's *position*; the third field of the same entry, the name, is pinned by
+  nothing. That is almost certainly right (nothing in §14 reads a name) but the
+  new prose enumerates the entry's other two members and is silent about it, and
+  §12 says "the declared order is load-bearing" without saying the name is not.
+  I did not raise this as a finding: I could not falsify it from the document.
+- **Channel removal on a planar layer.** h3 blesses "removing the last
+  [channel]" as moving no ordinal, so B3 does not bar it — but the consequences
+  of dropping its stored tiles out of the addressed set (slack, entry_count,
+  index re-emission) are stated only in the **extent-shrink** paragraph
+  ("Where a shrink is permitted the de-addressed tiles' extents become slack…").
+  h4's added "bind it **as they bind any commit**" is what closes this, and it
+  closes it — so no finding, but the closure is load-bearing and accidental.
+
+## 6. Check 8 — back-references across h3's 65-line insertion
+
+| Back-reference | Before h3 resolved to | Now resolves to | Verdict |
 |---|---|---|---|
-| h4: "A further effect is barred **on the same tense and for the same reason**" (ordinal bar ← §14 bar) | ordinal bar: "**alters the disk ordinal** [R-GEO-06] **assigns any tile the layer stores**" | §14 bar: "**alters** … **for any tile that layer stores** … **what §14 fixes for its stored bytes or how they decode**" | tense matches; **reason does not** — the §14 bar's reason is stated in the text as "it makes each stored tile it reaches **nonconforming**", but a channel reorder with the index region re-emitted at the new ordinals leaves every stored tile conforming. The harm is misattribution, not nonconformance. The analogy transfers the tense correctly and the rationale incorrectly. |
-| h4: "**exactly as above**" (remedy ← §14 bar's remedy) | "the operation is a new layer or a whole-file rewrite" | "Such a change is a new layer, or a whole-file rewrite under a fresh file_id" | PASS — same set. |
-| h4: "**for the same reason**" and "**on the same tense**", applied to *both* new bars at once? | sample-type bar: "**of any channel of a layer that stores a tile**" | §14 bar: "**for any tile that layer stores**" | **FAIL for the sample-type bar** — one is quantified over the *layer* (∃ a stored tile anywhere in it), the other over *each tile*. See X-02. |
-| h6: "one bars a change to a channel's declared sample type and **the other a change to the channel declarations**" | flat "a change to the channel declarations" | h4: "change the channel declarations **in a way that alters the disk ordinal** … assigns any tile the layer stores" | **FAIL** — h6 drops both the planar restriction and the ordinal-moving restriction. See X-09. |
-| h8: "its two companion bars are witnessed not at all **where the change leaves untouched everything §14 fixes for a tile the layer stores**" — one quantifier for two bars | ordinal bar: per stored tile | sample-type bar: per layer | tested separately: sound for the ordinal bar; for the sample-type bar the sentence presupposes there is a tile the change touches, which need not exist (a re-typed channel with no stored tiles). Harmless in outcome (still unwitnessed) but the quantifier does not fit both. |
-| h8: "**exactly as it does** the §14 bar" (companion bars' escape ← §14 bar's escape) | "a commit that supersedes every tile it would have damaged escapes them here" | "a commit that supersedes every tile it would have damaged leaves the live state clean" (3928) | PASS — same verb, same set. |
-| h1: "the one reaching a shrink or a growth **is** the §14 bar" | "reaching" | h6: "Neither of the two bars beside the §14 bar **reaches** a shrink" | shrink: PASS. **Growth: h6 states nothing**; only the Rationale carries it. |
+| "the tense is **the bar's**" (L3225) | B1 | repaired by h3 to "**these bars'**" = B1+B2+B3 | swept ✔ |
+| "**the bar above** is the whole of the test" (L3237) | B1 | repaired by h4 to "**the §14 bar**" | swept ✔ |
+| "What counts … is **the bar above**" (L3252) | B1 | repaired by h5 to "**the §14 bar**" | swept ✔ |
+| "so **the bar** is unwitnessed there" (L3953) | B1 | repaired by h8 to "**the §14 bar**" | swept ✔ |
+| "**§20.3 step 4's bar on a declaration change**" (L3919) | B1 (only bar) | ambiguous among B1/B2/B3 | **NOT swept — X-08** |
+| "permitted here exactly as it is **there**" (L3256) | B1's carve-out, ~30 lines up | same, ~100 lines up | still resolves ✔ (the sentence names "the §14 bar" two clauses earlier) |
+| "**the re-emission rule above**" (L3200, h3's own) | — | step 4's opening re-emission rule, ~75 lines up | resolves ✔ (nothing nearer is a re-emission rule) |
+| "exactly as **above**" (L3221, h3's own) | — | nearest is h3's own "which is a new layer or a whole-file rewrite"; further is B1's | harmless ✔ (identical content) |
+| "bind **it** as they bind any commit" (L3241, h4's own) | — | nearest antecedent is "**that bar**", intended is the shrink | **X-06** |
+| "§21.7 records the consequence — that **this** is …" and "why **the rule** is stated here" (L3261-3263) | the rescue case (unstoring in the same commit) | h5 inserted a sentence about B2/B3 between them | **X-05** |
 
-## 10. Findings
+## 7. Check 7 — analogies, verb against verb
 
-X-01 h4 (with h2, h8) — ordinal bar: channel identity undefined; rename-permutation is byte-identical to the barred reorder. BYTE-LEVEL.
-X-02 h4 (with h1, h2, h8) — sample-type bar is layer-quantified where every neighbouring rule is stored-tile-quantified; contradicts the step's own bolded test; delete-then-append reaches the same file. BYTE-LEVEL.
-X-03 h8 — "the rows below witness it" contradicts its own sentence's head and the untouched rows six lines later. Not byte-level.
-X-04 h8 — "one of those" resolves to the wrong antecedent, making the sentence self-contradicting. Not byte-level.
-X-05 h3 (with h1, h8) — "the name the rest of this step and §21.7 use for it" is false (§11.1 uses it); and §21.7's own head sentence, now that step 4 holds three declaration-change bars, was left unnamed. Not byte-level.
-X-06 h5+h6 — "the whole of the test" / "and nothing else" for a shrink is falsified by [R-SLB-04] in the same step. Not byte-level.
-X-07 h2 (with h7) — §11.1's "A layer that stored nothing may be re-declared freely" left unswept on the very line h2 edited, while h7 swept the identical sentence in §20.3's Example. Not byte-level (Rationale).
-X-08 h4 (with h2) — ordinal bar's counterfactual baseline unstated: a commit that both grows a planar extent and appends a channel. BYTE-LEVEL.
-X-09 h6 (with h4, h2) — h6 restates the ordinal bar as barring "a change to the channel declarations" flat, which h4 expressly permits for an append. Normative-vs-normative.
+- **h7**: "a commit that supersedes every tile it would have damaged **escapes
+  them** exactly as it **escapes the §14 bar**." Cited warrant's own verb, L3142:
+  "a commit **does not escape** this by unstoring in the same breath …
+  **and this bars it**." Same subject, same commit, opposite polarity of the
+  same verb. → **X-01**.
+- **h7**: one sentence carries "witnessed not at all" for **two** bars. Tested
+  separately: for **B2** it holds (int8→uint8, or a planar channel storing
+  nothing re-typed — nothing to check). For **B3** it fails on a planar exchange
+  of two channels of unequal element size. → **X-04**.
+- **h5**: "one bars a change to a channel's declared sample type" — governing
+  verb of B2 is "change the declared sample type of any channel **of a layer that
+  stores a tile**"; h5's gloss drops the layer scope. Sound here because h5 only
+  claims non-reach for shrinks, and a shrink changes no type under either scope.
+  **Reported as passing.**
+- **h4**: "the §14 bar is the whole of the test of what a shrink **alters**"
+  against B1's verb "**alters**, for any tile that layer stores in the generation
+  this commit supersedes". Same verb, same quantifier. **PASS.**
+- **h1**: "the one reaching a shrink **or a growth** is the §14 bar" against the
+  growth clause's own verb, L3234: "a growth **is permitted exactly where** the
+  geometry it produces satisfies every rule **that geometry** is subject to."
+  "reaching" (prior-generation, per-stored-tile) against "the geometry it
+  produces" (new-state, declaration-only), joined by an iff. Different sets. →
+  **X-02**.
 
-## 11. Rejected candidates
+## 8. Findings
 
-- *h4's `int8`→`uint8` / `float32`→`int32` claim* ("moves no stored byte, no decoded size and no sample offset, leaves every content rule §14 states over those bytes satisfied"). Checked: element sizes 1/1 and 4/4 (§12.1); §14.5 fixes padding content to the channel's *fill*, and the fill field's length is the element size ([R-CNT-23]), so the fill bytes are unchanged and padding content stays satisfied; §12.3 makes a value its bit pattern, so nothing is renormalised. Dropped — the claim holds.
-- *h4's arithmetic example and h8's ⌈P/8⌉ claim.* Recomputed both (§6 above). Dropped — both correct.
-- *"the two coincide at P = 1" as an exhaustive claim.* It is an existence claim, and P=1 is in fact the only coincidence for Bᶜ = 1. Dropped.
-- *h6's "a shrink is neither" as false because a shrink of a planar layer changes N and so moves disk ordinals.* The ordinal bar's trigger is a change to the **channel declarations**, which a pure extent shrink is not. Dropped as stated — but it is the seed of X-08, where a commit does both.
-- *h7 landing in a non-normative Example, therefore inert.* Checked the normative counterpart: §20.3 step 4 line 3206-3207 carries the same rule ("the tense is these bars', so a commit does not earn this permission by emptying the layer as it re-declares it"). h7 is a faithful non-normative echo. Dropped.
-- *h9 as a no-op rename.* Checked: without it, "the bar" at 3930 would re-resolve to "its two companion bars" introduced by h8 at 3897. Dropped — the repair is correct and necessary.
-- *§21.7's "the rows below witness it" as byte-level.* §21.1 confines verdict-setting to the rows themselves; §21.7 carries no rows. A verifier's accept/reject on any given file is unchanged. Kept as X-03, marked not byte-level.
+X-01 … X-09 as returned in the structured result. Ranked: X-01, X-02, X-03 fork
+the bytes; X-04 … X-09 do not.
+
+## 9. Rejected candidates
+
+- *"three bars" is an overclaim.* Falsification attempt: enumerated every
+  `MUST NOT` in §20.3 (5 hits, 2 of them in step 2 and about repair/dropping, not
+  about a layer's declarations). Also considered "relocating a live index region
+  is compaction's operation, not an appender's" as a fourth bar — it is not a
+  bar on a *declaration* change and the Rationale's sentence is explicitly about
+  declaration bars. **Count of three verified; dropped.**
+- *h6's Example (c) proviso "subject to every rule its **new geometry** is
+  subject to" is narrower than the normative permission (which is not
+  geometry-limited).* Dropped: that clause is untouched by h6 (the diff shows it
+  in both the `-` and `+` sides), so it is a pre-existing wording, not a repair
+  defect, and the block is Example-labelled and non-normative.
+- *h7 drops "and the two coincide at P = 1" from the uint8→bool example that h3
+  keeps.* Dropped: §21.7's claim is "element sizes do not settle it", which the
+  example supports with or without the P = 1 note; nothing false results.
+- *`[R-SLB-01]` is cited by h4 as an obligation binding a shrink although a
+  shrink cannot break it.* Dropped: vacuous but not wrong, and the sentence's
+  own hedge is "bind it as they bind any commit".
+- *h7's "which type its channel carried before" is per-channel while B2 is
+  per-layer.* Dropped: I could not make the conclusion (unwitnessed) false in the
+  layer-scope case — a planar channel storing nothing has only sentinel entries,
+  so there is nothing to check; an interleaved re-type is B1's, not B2's, and is
+  witnessed. The reason given is narrower than the rule, but the claim survives.
+- *Channel name unpinned.* Dropped: could not falsify (see §5).

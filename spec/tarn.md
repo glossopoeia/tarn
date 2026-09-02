@@ -3175,9 +3175,9 @@ An appender MUST, in order:
    layout and whether or not the element size moves. The scope is the
    layer and not the channel, and deliberately so. In an interleaved
    layer every stored tile depends on **every** channel's type, since
-   the sample stride Q and each in-sample offset Fᶜ are sums over all
-   of them (§14.2), so a channel storing nothing still governs the
-   tiles that do. The rule could have been split — bound to the layer
+   the sample stride Q is a sum over every channel's element size
+   (§14.2) and the decoded size is P · Q, so a channel storing
+   nothing still governs the tiles that do. The rule could have been split — bound to the layer
    for an interleaved layout and to the channel for a planar one — and
    is not. Under the uniform rule a caller has one answer: changing a
    sample type means writing the tiles. Under the split rule it means
@@ -3236,9 +3236,11 @@ An appender MUST, in order:
 
    An extent MAY also **shrink**, and the §14 bar is the whole of the
    test of what a shrink **alters**, **in that bar's own tense**;
-   the obligations this step states below — on slack, on entry_count,
-   and on a slab or alignment declaration (`[R-SLB-04]`,
-   `[R-SLB-01]`) — bind it as they bind any commit. A shrink is permitted
+   the obligations this step states below — among them slack,
+   entry_count, a slab or alignment declaration (`[R-SLB-04]`,
+   `[R-SLB-01]`), and the recommendation to produce a new file
+   instead where a commit would strand a large share of a layer's
+   stored bytes — bind a shrink as they bind any commit. A shrink is permitted
    exactly where it alters nothing §14 fixes for any tile the layer
    stores in the generation this commit supersedes. Dropping a tile
    out of the addressed set (§11.2's grid count falls) is not itself
@@ -3915,14 +3917,20 @@ record encoding file offsets in its own payload is opaque by
 construction; `[R-CNT-18]`'s prohibition on a sub-record containing
 records is detectable only by parsing a payload no format-major-1
 reader parses as a record sequence (§7.4's closing Note);
-§20.3 step 4's bar on a declaration change is witnessed only where
-the affected tiles remain stored, and then only for part of what it
-bars, and its two companion bars are witnessed not at all where the
-change leaves untouched everything §14 fixes for a tile the layer
-stores in the generation the commit supersedes — the prior
-generation's channel declarations are not part of the live state,
-which is all §9.7 walks, so no check can know which ordinal a stored
-tile used to occupy, or which type its channel carried before. Where
+§20.3 step 4's **§14 bar** is witnessed only where the affected tiles
+remain stored, and then only for part of what it bars. Its two
+companion bars — on a channel's declared sample type, and on a planar
+layer's disk ordinals — are unwitnessed on different terms, and the
+prior generation's channel declarations are not part of the live
+state, which is all §9.7 walks, so no check can know which ordinal a
+stored tile used to occupy or which type its channel carried before.
+The sample-type bar has no witness at all where the change leaves
+untouched everything §14 fixes for a tile stored in the generation
+the commit supersedes. The ordinal bar is witnessed indirectly and
+only sometimes: a permutation among channels whose planes are the
+same length disturbs nothing a row can see, while one that leaves a
+plane of one length at an ordinal the new declarations size
+differently is caught by T3, or by T14 under codec 1. Where
 the change does touch something §14 fixes, the rows below reach it
 on the terms they state there and no better, and a commit that
 supersedes every tile it would have damaged escapes them exactly as

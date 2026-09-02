@@ -1105,6 +1105,48 @@ section §20.3.
   permitted; `[R-CNF-06]` binds an updater to every writer requirement for the
   bytes it produces, and step 4 is a MUST.
 
+### Q-B10. May a commit remove a channel whose tiles the superseded generation stored? [shaping]
+**Question:** §20.3 step 4's de-addressing carve-out says "Dropping a tile out of the
+addressed set (**§11.2's grid count falls**) is not itself such an alteration — a tile
+the new state does not address carries no §14 obligation and its extent becomes slack."
+§11.2 defines the **grid count** Gᵢ as a strictly per-dimension quantity, ⌈Eᵢ/Tᵢ⌉,
+composing into the spatial-tile count N = ∏ Gᵢ; the **channel count** C is a separate
+quantity, entering only the planar addressed-tile count C · N. So the carve-out names an
+N-side event — an extent shrink — and a **channel removal is a C-side event it does not
+name.** Removing a channel de-addresses the N tiles that channel had, and if the
+superseded generation stored any of them, nothing in the document says whether that is
+permitted. Options: extend the carve-out to any mechanism that de-addresses a tile; bar a
+channel removal where the superseded generation stored a tile for it; or state that a
+channel removal is not an appender's operation at all. Owning section §20.3.
+- **Byte-level, so it gates G3.** Two readings. (1) *Restrictive*: the carve-out reaches
+  only a falling grid count, so the removal alters what §14 fixes for tiles the superseded
+  generation stored — they decode as nothing afterwards — and the §14 bar bars the commit,
+  making the operation a new layer or a whole-file rewrite. (2) *Extensive*: the carve-out
+  states a principle about de-addressing and the removal is permitted, the stranded extents
+  becoming slack under `[R-CNT-21]`. The output of (2) is an ordinary conforming appended
+  file, and only reading (2) permits an appender to produce it, which is the second limb of
+  the discriminator.
+- **The construction.** A planar layer with channels (`a`, `b`), N = 2, both storing tiles,
+  `entry_count` = C · N = 4 and `extent_length` = 4 · 20 + ⌈4/2¹⁶⌉ · 4 = 84. The commit
+  removes `b`, keeping every one of `a`'s tiles untouched. Neither new bar reaches it:
+  no channel's declared type changes, and `a` stays first so no surviving stored tile's
+  ordinal moves — the text says in terms that "removing the last re-indexes nothing and
+  moves no ordinal at all". What is disputed is the §14 bar's reach over `b`'s two
+  now-de-addressed stored tiles, and only the carve-out speaks to it.
+- **Swept and found nowhere.** Whitespace-normalised searches for "removing a channel",
+  "remove a channel", "drop a channel", "dropping a channel", "channel is removed" and
+  "fewer channels" return **zero occurrences** across the document. §11.1's Rationale, the
+  only other statement of the de-addressing principle, is scoped identically to a shrink.
+- **Reached by the refute phase, not by the audit.** ADR-0113's third audit flagged it
+  byte-level, an adversarial verifier downgraded it on the ground that the carve-out's
+  parenthetical is illustrative rather than restrictive, and the refute phase overturned
+  that by checking §11.2's own vocabulary. It is the first finding this project's audit
+  harness has recovered through a refute phase, which was added for exactly this shape.
+- **ADR-0113 exposed it rather than caused it.** The gap predates that decision — the
+  carve-out has always been scoped to a grid-count fall — but ADR-0113 named channel
+  removal as an operation for the first time, and said of one case that it "re-indexes
+  nothing and moves no ordinal at all", which reads as clearing it.
+
 ### Q-B7. Is adding a record an "independent change" that licenses a drop? [shaping]
 **Question:** §20.4's MU = 0 / PE = 0 row licenses dropping a record where the
 commit changes the scope it attaches to. Round 25's writer walk found the row
