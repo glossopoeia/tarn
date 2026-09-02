@@ -1602,7 +1602,8 @@ region of it returns no samples. `[R-GEO-02]`
 > **Rationale.** Empty layers serve schema-first workflows: declare
 > layers at creation, grow extents as data arrives. §20.3 states
 > normatively, and governs, what a commit may do to a layer that
-> already stored tiles in the generation a commit supersedes: a
+> already stored tiles in the generation a commit supersedes. Of its
+> three bars the one reaching a shrink or a growth is the §14 bar: a
 > shrink is barred wherever it alters what §14 fixes for such a
 > tile — whether or not the new state still stores it — and permitted
 > wherever it does not: a tile dropped out of the addressed set
@@ -1610,7 +1611,10 @@ region of it returns no samples. `[R-GEO-02]`
 > superseded generation did not store carries none either, and a new
 > padding position whose stored byte already holds the fill alters
 > nothing. One shrink can do several of these at once. A layer that stored nothing may be re-declared
-> freely. Growth
+> freely. The other two bars reach neither a shrink nor a growth:
+> they bar a change to a channel's declared sample type, and a change
+> to a planar layer's channel declarations that moves a stored tile's
+> disk ordinal. Growth
 > that leaves **entry_count** unchanged touches the directory alone —
 > a growth raising one grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) while another
 > stays 0 among them, the product holding at 0. Growth that changes
@@ -3126,11 +3130,12 @@ An appender MUST, in order:
    appender's. A commit MUST NOT change a
    layer's declarations in a way that alters, for any tile that layer
    stores **in the generation this commit supersedes**, what §14
-   fixes for its stored bytes or how they decode — the **§14 bar** —
+   fixes for its stored bytes or how they decode —
    the set of padding positions (§11.3) and the content
    `[R-SER-05]` fixes there, the decoded size, the byte offset of any
    sample within the decoded tile image, or the codec and filter that
-   produced the stored bytes. The tense is the prior generation's
+   produced the stored bytes. Call this the **§14 bar**, the name the
+   rest of this step and §21.7 use for it. The tense is the prior generation's
    (§3.1 defines *stored* against a generation), so a commit does not
    escape this by unstoring in the same breath: superseding every
    tile of a layer and re-declaring it are one operation, and this
@@ -3227,8 +3232,10 @@ An appender MUST, in order:
    byte already holds the fill `[R-SER-05]` fixes is not one, so a
    shrink producing only those is permitted here exactly as it is
    there, and this sentence answers the rescue question rather than
-   restating the test. The two bars beside the §14 bar govern
-   declaration changes, which a shrink is not. §21.7 records the
+   restating the test. Neither of the two bars beside the §14 bar
+   reaches a shrink: one bars a change to a channel's declared sample
+   type and the other a change to the channel declarations, and a
+   shrink is neither. §21.7 records the
    consequence — that this is precisely where the §14 bar has no
    witness, the live state being clean — which is why the rule is
    stated here and not left to the rows.
@@ -3313,9 +3320,10 @@ An appender MUST, in order:
 > is re-emitted. A fill change on a layer that **stores** a tile
 > carrying either is not an
 > appender's operation at all (step 4): it would invalidate every
-> stored tile it reaches. A layer storing no tile is re-declared
-> freely, subject to every rule its new geometry is subject to, which
-> is the same step's permission. Editing
+> stored tile it reaches. A layer that stored no tile in the
+> generation the commit supersedes is re-declared freely, subject to
+> every rule its new geometry is subject to, which is the same step's
+> permission — a layer the commit itself empties does not qualify. Editing
 > user metadata is not this shape:
 > its document lives in an extent (`[R-CNT-25]`), so a new extent is
 > appended and the old one becomes slack, as in (b).
@@ -3888,11 +3896,14 @@ reader parses as a record sequence (§7.4's closing Note);
 the affected tiles remain stored, and then only for part of what it
 bars, and its two companion bars are witnessed not at all where the
 change leaves untouched everything §14 fixes for a tile the layer
-stores — the prior generation's channel declarations are not
-recoverable from the file, so no check can know which ordinal a
-stored tile used to occupy, or which type its channel carried
-before. Where the change does touch one of those the rows below
-witness it, and which case a type change falls in is not decided by
+stores in the generation the commit supersedes — the prior
+generation's channel declarations are not part of the live state,
+which is all §9.7 walks, so no check can know which ordinal a stored
+tile used to occupy, or which type its channel carried before. Where
+the change does touch one of those, and the tile it touches remains
+stored, the rows below witness it; a commit that supersedes every
+tile it would have damaged escapes them here exactly as it does the
+§14 bar. Which case a type change falls in is not decided by
 the element sizes of §12.1: a planar `uint8` channel re-declared
 `bool` keeps its element size of 1 while its plane goes from
 P · Bᶜ bytes to ⌈P/8⌉. A change reaching a byte §14 structurally
