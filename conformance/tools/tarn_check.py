@@ -593,8 +593,14 @@ def check_spec(spec: Spec, report: Report) -> None:
                     f"gives `{field}` that class")
     # A class the taxonomy names but no field carries is the defect ADR-0069
     # fixed for `informative` and ADR-0072 for `semantic`. Catch the next one.
-    named = set(re.findall(r"It is \*\*(\w+)\*\*", flat)) | \
-            set(re.findall(r"A field is \*\*(\w+)\*\*", flat))
+    # Scope the taxonomy scan to §4.7. Run over the whole document it fires on
+    # any bolded term after "It is" -- §21.7's "It is **detectable** in the
+    # contrary case" tripped it, and the section has nothing to do with field
+    # classes. The claim this check exists to test is §4.7's about its own
+    # membership, so §4.7 is where it should look.
+    tax = re.sub(r"\s+", " ", _span(spec.text, "#### 4.7 Field taxonomy", "### 5. File Anatomy") or "")
+    named = set(re.findall(r"It is \*\*(\w+)\*\*", tax)) | \
+            set(re.findall(r"A field is \*\*(\w+)\*\*", tax))
     for cls in sorted(named):
         if classes.get(cls, 0) == 0 and f"only {cls} field" not in flat:
             failures.append(f"§4.7 names the class '{cls}' and no field carries it")

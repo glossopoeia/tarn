@@ -3879,29 +3879,39 @@ requirement a verifier is *unable to check* within the meaning of
 `[R-CNF-11]`: no file-level witness exists to check, so nothing about
 the file is left undetermined and the verdict is unaffected.
 
-A requirement of this specification is **unwitnessed** where a file
-that violates it and a file that satisfies it can present identical
-live states. No check §21.2 through §21.5 states can separate two
-such files, so none is omitted from the register by oversight: there
-is no condition for a row to carry. That is the whole of the test,
-and it decides any requirement put to it without appeal to a list —
-ask whether the breach can be made to leave the live state, which is
-all §9.7 walks, exactly as a conforming commit would leave it.
+A condition this specification names is **unwitnessed** where, for
+every file exhibiting it, some file that does not exhibit it cannot
+be told apart from it by any check this specification obliges a
+reader or a verifier to perform. It is **detectable** in the
+contrary case: where some file exhibiting it is separated by such a
+check from every file that does not. The two are stated over the
+same subject and with matching quantifiers, so each is exactly the
+negation of the other, and detectability so stated is the gate
+`[R-CNF-07]` applies in assigning an outcome and §21.1's
+completeness clause turns on. The register carries a row for a
+condition exactly where it is detectable, so an unwitnessed
+condition is absent from it by that clause's own terms rather than
+in breach of them.
 
-**Detectability is its negation**, and this is the gate `[R-CNF-07]`
-applies in assigning an outcome and §21.1's completeness clause
-turns on: a violation this specification names is **detectable**
-exactly where some file exhibiting it differs, in its live state,
-from every file that does not. The register's completeness is a
-claim about those and no others, so an unwitnessed obligation is
-absent from it by the clause's own terms rather than in breach of
-them. Being unwitnessed bears on detection and not on permission:
-the requirement binds its actor as any other does, and the outcome
-classes of §2.4 are assigned to violations a reader or verifier can
-establish rather than to every violation this document names.
+That is the whole of the test, and it decides any condition put to it
+without appeal to a list: ask whether a breach can be made to leave
+behind a file no obliged check separates from a conforming one. The
+instrument is the checks this specification obliges an actor to
+perform, and deliberately not the register's own rows — a test
+keyed to the rows would make §21.1's completeness clause vacuous,
+every omitted condition being undetectable by construction.
 
-Distinguish an unwitnessed requirement from one **no file can
-violate**. `[R-ENC-06]`'s fixed field widths are not a state a file
+**The subject is the condition and not the requirement**, as
+`[R-CNF-13]` individuates them and as `[R-CNT-06]` shows by stating
+nine. A single requirement states conditions of both kinds where it
+states several, and is classified as a whole by neither. Being unwitnessed bears on
+detection and not on permission: the requirement binds its actor as
+any other does, and the outcome classes of §2.4 are assigned to
+violations a reader or verifier can establish rather than to every
+violation this document names.
+
+Distinguish an unwitnessed condition from a requirement that states
+**no condition a file can exhibit**. `[R-ENC-06]`'s fixed field widths are not a state a file
 can be in — the parse is always at the widths this specification
 fixes, and a structure written at any other yields different values
 at them, caught by the rows for the fields that hold them. Nothing
@@ -3914,8 +3924,9 @@ condition to omit. `[R-ERR-01]`
 > disagree, the test governs, and an item found stale is a defect in
 > this block and not in the register.
 >
-> A second set of obligations is omitted from the register because a
-> single file exhibits no witness of their violation. Committed-prefix
+> Beyond the content-wrongness this section opens with, these
+> obligations are omitted from the register because a single file
+> exhibits no witness of their violation. Committed-prefix
 > immutability and the strict growth of `committed_file_length` across
 > the commits of one file_id (`[R-LIF-01]`, `[R-LIF-02]`) are
 > properties of a file's history, which §9.7 does not reconstruct, and
