@@ -1,672 +1,985 @@
-# Audit transcript — §21.7 "What no check detects", hunks 08 (and 09, missing)
+# Repair audit — hunks 7 and 8, §21.7 "What no check detects"
 
-Auditor lane: "§21.7's account of what no check detects, and the register's
-relationship to the two new requirements."
+Auditor lane: witness-and-register.
+Charter: §21.7's account of what no check detects, and the register's relationship
+to §20.3 step 4's bars.
 
-## 0. Disclosure — what I read, what I ran, what was missing
+---
 
-Read:
+## 0. Disclosure
 
-- `/private/tmp/.../scratchpad/case-adr0113/hunk-08.diff` (19 lines).
-- `/Users/robertkleffner/Documents/GitHub/tarn-first-draft/spec/tarn.md`, in
-  these passages: lines 100–110 (`[R-CNF-01]`), 1224–1240 (§9.1,
-  `[R-LIF-01]`), 1440–1500 (§9.7, `[R-LIF-08]` + its closing Note), 1590–1625
-  (§13-area Rationale that speaks of "three bars"), 2057–2110 (§14.4, §14.5),
-  3072–3120 (§20.3 opening + steps 1–4 head), 3120–3275 (§20.3 step 4 in
-  full), 3275–3365 (§20.3 steps 5–6 and its Note/Example blocks), 3422–3510
-  (§20.5), 3556–3660 (§21 head, §21.1 in full, §21.2 head), 3830–3884 (§21.6
-  in full), 3884–3990 (§21.7 in full, §21.8, §21.9 head).
-- Whole-file greps as listed in §1 below.
+Files opened:
 
-Ran: `grep`, `sed`, `awk`, `wc`, and one `python3` heredoc that reads only
-`spec/tarn.md` and computes row/instance counts. No network. No `git`. No
-`docs/`, `PLAN.md`, `OPEN-QUESTIONS.md`, `AGENTS.md`, `README.md`,
-`conformance/`, `spec/registry.json`. I did not open `full.diff` and did not
-open any hunk file other than hunk-08. I did not list the case directory.
+- `/private/tmp/.../case-adr0113/hunk-07.diff` (my charter's hunk)
+- `/private/tmp/.../case-adr0113/hunk-08.diff` (my charter's hunk)
+- `/Users/robertkleffner/Documents/GitHub/tarn-first-draft/spec/tarn.md` (the specification)
 
-**Missing charter input.** My charter named two hunk files. `hunk-09.diff`
-does not exist:
+Nothing else. I did not open `full.diff`, any other hunk file, `docs/`, `PLAN.md`,
+`OPEN-QUESTIONS.md`, `AGENTS.md`, `README.md`, `conformance/`, `spec/registry.json`,
+git history, or the web. I did not list the case directory. I wrote exactly one file,
+this transcript.
+
+Commands run: `sed -n` range reads of spec/tarn.md; `grep -n`; `awk` line filters;
+two `python3` heredocs that read only `spec/tarn.md` (one to count register rows and
+instances, one to run whitespace-normalised phrase sweeps). No network. No other file
+was read by any script.
+
+**Context I did not ask for.** Material appeared in my context before I began: a
+project-instructions pointer (CLAUDE.md → AGENTS.md), a user auto-memory index with
+two entries naming prior-round subjects, a list of MCP servers/skills, and an
+environment/git-status block that printed the subject lines of five recent commits.
+I name that it appeared; I do not repeat its contents, and no conclusion below
+depends on it. Every finding is grounded in a quotation from `spec/tarn.md` or from
+the two hunk files, and I re-derived each from the document. In particular I did not
+use the commit subject lines as evidence about what the repairs were for.
+
+---
+
+## 1. The two hunks, and the rule each adopts
+
+### Hunk 7 — lands at spec/tarn.md 3896-3916
+
+Verified landing: line 3896 is `§20.3 step 4's **§14 bar** is witnessed only where the affected tiles`.
+Verified nearest preceding heading: line 3862 `#### 21.7 What no check detects`. The
+header in the hunk file is correct; no mismatch to report.
+
+Deleted (5 lines):
+
+> §20.3 step 4's bar on a declaration change is witnessed only where
+> the affected tiles remain stored, and then only for part of what it
+> bars. A change reaching a byte §14 structurally constrains — a
+> padding position, a pad bit, or a boolean byte — fires §21.4's
+> content rows. A change reaching the decoded size is witnessed by T3
+
+Inserted (21 lines), as it now reads in the file at 3896-3917:
+
+> §20.3 step 4's **§14 bar** is witnessed only where the affected tiles
+> remain stored, and then only for part of what it bars — a re-typed
+> channel among the cases it does not reach, since the prior
+> generation's declarations are not part of the live state, which is
+> all §9.7 walks, and no check can know which type a channel carried
+> before. Its companion bar on a planar layer's disk ordinals is
+> witnessed indirectly and only sometimes, and for the same reason no
+> check knows which ordinal a stored tile used to occupy: a permutation
+> among channels whose planes are the same length disturbs nothing a
+> row can see, while one that leaves a plane of one length at an
+> ordinal the new declarations size differently is caught by T3, or by
+> T14 under codec 1. Where
+> the change does touch something §14 fixes, the rows below reach it
+> on the terms they state there and no better, and a commit that
+> supersedes every tile it would have damaged escapes them exactly as
+> it escapes the §14 bar. Which case a type change falls in is not
+> decided by the element sizes of §12.1: a planar `uint8` channel re-declared
+> `bool` keeps its element size of 1 while its plane goes from
+> P · Bᶜ bytes to ⌈P/8⌉. A change reaching a byte §14 structurally
+> constrains — a padding position, a pad bit, or a boolean byte — fires
+> §21.4's content rows. A change reaching the decoded size is witnessed by T3
+
+**The rule hunk 7 adopts, in my words.** It makes six assertions of fact about what a
+single-file check can see, and those assertions constrain nobody's bytes directly but
+do fix, for an implementer, the boundary between "the register omits this because it
+is undetectable" and "this is registered":
+
+1. The §14 bar of §20.3 step 4 is witnessed only for tiles still stored in the new
+   generation, and then only partly.
+2. A re-typed channel is one of the cases *it* — antecedent disputed, see §3 — does
+   not reach, on the ground that no check can know the prior generation's declarations.
+3. The companion bar (planar disk ordinals) is witnessed indirectly and sometimes.
+4. A same-plane-length channel permutation is invisible to every register row.
+5. A permutation that leaves a plane of one length at an ordinal now sized differently
+   is caught by T3, or T14 under codec 1.
+6. A commit that supersedes every tile it would have damaged **escapes the §14 bar**
+   as it escapes the rows.
+7. Element size does not decide which case a type change falls in: planar `uint8` →
+   `bool` holds element size 1 while the plane goes P·Bᶜ → ⌈P/8⌉.
+
+### Hunk 8 — lands at spec/tarn.md 3935
+
+Verified: line 3935 is `live state clean, so the §14 bar is unwitnessed there for the same`.
+Nearest preceding heading 3862, as stated. Correct.
+
+The whole change is `the bar` → `the §14 bar`, disambiguating a bare reference that
+became ambiguous the moment hunk 7 introduced a second bar into the paragraph.
+
+**The rule hunk 8 adopts.** None new. It fixes the referent of one noun phrase.
+
+---
+
+## 2. Passages read in full
+
+- §21.7 entire, spec/tarn.md 3862-3949.
+- §20.3 entire, 3073-3280 (the append procedure, all six steps, both bars, the
+  growth/shrink paragraphs, and the Note/Example blocks that close it).
+- §21.1, 3544-3625 (how to read the register, the completeness clause, the Instances
+  rule).
+- §21.2/§21.3/§21.4/§21.5 preambles and the whole §21.4 table (3745-3773).
+- §21.8, 3951-3957. §21.9, 3958-3990 (its per-instance paragraph, for the
+  "individuated differently" language).
+- §11.1 (1582-1630) including the **Rationale.** block at 1600-1628 that restates
+  both bars.
+- §11.2 (grid arithmetic, N, P, C·N), §11.4/§11.3 as reached.
+- §12 entire (1720-1824): the sample-type table with element sizes.
+- §14 entire (1922-2119): §14.1 value sequence, §14.2 byte layout and decoded size,
+  §14.3 packed boolean planes, §14.4, §14.5 padding content.
+- §9.1 (`[R-LIF-01]`, 1222-1240) and §9.7 (coverage verification, 1440-1490).
+- §11.4 disk-ordinal rule `[R-GEO-06]` (1690-1705).
+- §2.2 `[R-CNF-01]` at 104-106; `[R-CNF-05]` at 199-202.
+- §16 slab invariants `[R-SLB-03]`/`[R-SLB-04]` (2290-2320), for L41/L42.
+
+---
+
+## 3. Check-by-check
+
+### Check 3 first (normative placement), because everything else depends on it
+
+I applied the **label** test, not the ">" test.
 
 ```
-$ test -f ".../case-adr0113/hunk-09.diff" && echo EXISTS || echo MISSING
-MISSING
+awk 'NR>=3862 && NR<=3950 && /^>/ {print NR": "$0}' spec/tarn.md   → no output
+awk 'NR>=3862 && NR<=3950' spec/tarn.md | grep -c '^>'             → 0
 ```
 
-`hunk-08.diff`'s own header says `# hunk 8 of 8`, so the set ends at 8 and the
-charter's second filename is spurious. I did not go looking for a ninth hunk
-elsewhere. Everything below concerns hunk 08 and the passage it lands in.
+§21.7 contains **no blockquote at all**, hence no *Note*, *Example* or *Rationale*
+label. `[R-CNF-01]` (line 104-106, verbatim): "All text in this document is normative
+except: §1 (Introduction); any text labeled *Note*, *Example*, or *Rationale*; and
+appendices identified as non-normative." §21.7 is therefore **normative text**, and
+both hunks land in normative text. The repair lands.
 
-**Context I did not ask for.** Material was placed in my context before I
-began: a project instruction file pointing at another file, and an index of
-maintainer memory notes with titles referring to this project's harness and to
-a "lineage gate word list". I did not open any of it, and I have not used any
-of it. Naming that it appeared, not its contents, per the charter.
+§20.3 step 4 is likewise unblockquoted numbered-list prose; both bars are normative
+MUST NOTs there.
 
-**Header check.** hunk-08 says its nearest preceding heading is line 3884,
-"21.7 What no check detects". Verified: `grep -n "^#\{1,4\} 21"` puts
-`#### 21.7 What no check detects` at line 3884 and `#### 21.8` at 3969. The
-changed line is 3953. Header is correct; no mismatch to report.
+The one restatement of the same subject matter that *is* label-exempt is the
+**Rationale.** block at §11.1 (1600-1628). It is non-normative, so it cannot itself
+contradict anything normatively — but it is direct evidence of what the document
+means, and it says the opposite of hunk 7's assertion 2. Recorded under check 4.
 
-## 1. Sweeps run, verbatim, with hit counts
+**Verdict: passes.** No rule whose only statement is in a labeled block; no labeled
+block edited while a normative statement elsewhere kept the old rule.
 
-All run from the repo root against `spec/tarn.md`. The file is hard-wrapped, so
-every search fragment below is short enough not to wrap (`§14 bar`,
-`unwitnessed`, `escape`, `supersede`, `history`, `reconstruct`, `prior
-generation`, `no witness`).
+### Check 2 — citations resolve
 
-| Command | Hits |
-|---|---|
-| `grep -n "^#\{1,4\} 21" spec/tarn.md` | 9 (3564, 3566, 3648, 3702, 3759, 3796, 3830, 3884, 3969, 3976 — 10 lines; §21 + 9 subsections) |
-| `grep -n "^#\{1,4\} 14" spec/tarn.md` | 6 |
-| `grep -n "^#\{1,4\} 20" spec/tarn.md` | 6 |
-| `grep -n "^#\{1,4\} 9" spec/tarn.md` | 8 |
-| `grep -n "§14 bar" spec/tarn.md` | 10 (1606, 3139, 3159, 3198, 3237, 3252, 3257, 3262, 3929, 3953) |
-| `grep -n "the bar" spec/tarn.md` | 6 (1252, 2608, 2686, 3008, 3065, 3826) — none of them the §21.7 sentence any more, which is the point of the hunk |
-| `grep -n "unwitnessed" spec/tarn.md` | 3 (3942, 3953, 3958) |
-| `grep -n "no witness" spec/tarn.md` | 3 (2609, 3903, 3948) |
-| `grep -n "live state clean\|state clean\|being clean" spec/tarn.md` | 2 (3263, 3953) |
-| `grep -n "escape" spec/tarn.md` | 11 (1541, 2466, 2469, 2698, 2744, 3142, 3231, 3823, 3928, 3929, 4146) |
-| `grep -n "supersede" spec/tarn.md` | 31 |
-| `grep -n "prior generation" spec/tarn.md` | 4 (629, 1260, 3140, 3954) |
-| `grep -n "history" spec/tarn.md` | 7 (1486, 3417, 3781, 3906, 3907, 4223, 4233, 4470 — 8 lines) |
-| `grep -n "reconstruct" spec/tarn.md` | 4 (1486, 3418, 3906, 3955) |
-| `grep -n "§21\.7\|21\.7" spec/tarn.md` | 8 (2520, 2612, 3261, 3478, 3581, 3600, 3794, 3884) |
-| `grep -n "conditions" spec/tarn.md` | 12 |
-| `grep -n "R-WRT-06\|R-ERR-01\|R-CNF-01\`\]" spec/tarn.md` | 10 |
-| `grep -n "R-CNF-01" spec/tarn.md` | 1 (106) |
-| `grep -n "All text in this document is normative" spec/tarn.md` | 1 (104) |
-| `grep -c "^\| [FLTR][0-9]" spec/tarn.md` (over 3648–3830) | 120 |
+Every identifier and section number in the repaired text, opened and read:
 
-## 2. The hunk
-
-```
-@@ -3857,7 +3950,7 @@
- a sample within an image of unchanged length alters no declared
- quantity. And a
- commit that supersedes every tile it would have damaged leaves the
--live state clean, so the bar is unwitnessed there for the same
-+live state clean, so the §14 bar is unwitnessed there for the same
- reason `[R-LIF-01]` is: it is a property of the prior generation,
- which §9.7 does not reconstruct; §20.5's three obligations on a
-```
-
-One word pair inserted: `the bar` → `the §14 bar`. Nothing else.
-
-### The rule the repair adopts, in my words
-
-For an implementation, the repaired sentence makes this true: *when a commit
-re-declares a layer and, in the same commit, supersedes every tile whose
-stored bytes that re-declaration would have damaged, the resulting file
-carries nothing that any conforming reader or verifier can test to discover
-that §20.3 step 4's §14 bar was violated.* It names one of §20.3 step 4's
-three bars as the bar so escaping detection, and it grounds that on the §14
-bar being "a property of the prior generation", which §9.7's walk does not
-reconstruct.
-
-It is an epistemic claim (nothing is detectable), not a permission. Whether
-the paragraph keeps it that way is the subject of finding C-01.
-
-## 3. The passage in full (spec/tarn.md 3884–3967)
-
-§21.7 is plain paragraph text: no `>` markers, no **Note.**/**Example.**/
-**Rationale.** label, not §1, not an appendix. It closes with `[R-ERR-01]` at
-line 3967. §20.3 step 4 is a numbered list item indented three spaces, likewise
-unmarked, closing with `[R-WRT-04]` at line 3289.
-
-Second paragraph of §21.7, with the lines that matter:
-
-- 3902–3903 "A second set of obligations is omitted from the register because a
-  single file exhibits no witness of their violation."
-- 3903–3907 `[R-LIF-01]`/`[R-LIF-02]` "are properties of a file's history,
-  which §9.7 does not reconstruct, and no field of a file records how many
-  commits that history holds"
-- 3918–3925 "§20.3 step 4's bar on a declaration change is witnessed only where
-  the affected tiles remain stored, and then only for part of what it bars, and
-  its two companion bars are witnessed not at all where the change leaves
-  untouched everything §14 fixes for a tile the layer stores in the generation
-  the commit supersedes — the prior generation's channel declarations are not
-  part of the live state, which is all §9.7 walks, so no check can know which
-  ordinal a stored tile used to occupy, or which type its channel carried
-  before."
-- 3925–3929 "Where the change does touch something §14 fixes, the rows below
-  reach it on the terms they state there and no better, and a commit that
-  supersedes every tile it would have damaged **escapes them exactly as it
-  escapes the §14 bar**."
-- 3929–3950 the enumeration of which changes are witnessed (element sizes /
-  §14-constrained bytes → §21.4 content rows; decoded size → T3, T14; codec →
-  T15, T17, T23, T25 or T14, "sometimes"; filter or sample offset → T26's
-  terms, i.e. T2's or T4's check; neither caught by a length).
-- 3951–3955 **the repaired sentence.**
-- 3955–3962 §20.5's three `[R-WRT-06]` obligations.
-- 3962–3967 `[R-ENC-06]`.
-
-## 4. Check 3 — normative placement (label test, not marker test)
-
-Test applied: **label**, per `[R-CNF-01]` at line 104–106 — "All text in this
-document is normative except: §1 (Introduction); any text labeled *Note*,
-*Example*, or *Rationale*; and appendices identified as non-normative."
-
-- The repaired sentence, §21.7 line 3953: no `>` prefix, no label. **Normative.**
-  The repair lands with force.
-- The rule it is about, the §14 bar, §20.3 step 4 lines 3132–3139: numbered
-  list item, no `>`, no label, closes `[R-WRT-04]`. **Normative.** Not a Note.
-- The only other place the "three bars" story is told is line 1600–1620, which
-  opens `> **Rationale.**` — **non-normative**, and it merely restates. So the
-  normative statement is not stranded in a labeled block, and the repair did
-  not edit a labeled block while leaving the normative statement saying the old
-  thing.
-- The §14 bar's definition ("Call this the **§14 bar**.", 3139) is normative;
-  `grep -n "§14 bar"` gives 10 hits and exactly one of them (1606) is inside a
-  labeled block.
-
-**Check 3 passes.**
-
-## 5. Check 2 — citations in the repaired sentence
-
-| Citation | Where it resolves | Does it say what the sentence claims? |
+| Citation | Claim made about it | Verdict |
 |---|---|---|
-| "the §14 bar" | §20.3 step 4, 3132–3139: "A commit MUST NOT change a layer's declarations in a way that alters, for any tile that layer stores **in the generation this commit supersedes**, what §14 fixes for its stored bytes or how they decode — the set of padding positions (§11.3) and the content `[R-SER-05]` fixes there, the decoded size, the byte offset of any sample within the decoded tile image, or the codec and filter that produced the stored bytes. Call this the **§14 bar**." | **Resolves.** The narrowed subject names a real, defined term with the tense the sentence needs. |
-| `[R-LIF-01]` | §9.1, 1224–1232: "Bytes in [0, F) — F being the live trailer's committed file length — are immutable: a writer MUST NOT modify them, and every conforming mutation of a file is either a commit (§9.2) or a whole-file rewrite under a new file_id (compaction, §20)." | **Resolves as an identifier; fails as an analogy.** `[R-LIF-01]` ranges over every committed byte across the whole history of a file_id, and §21.7 itself says so eleven lines earlier ("properties of a file's history"). The repaired sentence glosses the shared reason as "a property of *the prior generation*". See C-02. |
-| §9.7 | §9.7 Coverage verification, 1440–1483, `[R-LIF-08]`: "A verifier checking `[R-CNT-02]`'s partition walks the live state only"; closing Note "Nothing here enumerates prior commits." | **Resolves.** §9.7 does not reconstruct anything but the live state. |
+| §20.3 step 4 | has a "§14 bar" and a companion bar on a planar layer's disk ordinals | **passes.** 3141-3147 defines and names the §14 bar ("Call this the **§14 bar**."); 3175-3182 states the companion: "For a **planar** layer, a commit MUST NOT change the channel declarations in a way that alters the disk ordinal `[R-GEO-06]` assigns any tile the layer stores in the generation this commit supersedes." §20.3 never uses the word *companion* — it says "One effect is barred beside it" and "The bar beside the §14 bar" — but the referent is unambiguous. |
+| §9.7 | "the live state … is all §9.7 walks" | **passes.** §9.7 opens "A verifier checking `[R-CNT-02]`'s partition walks the live state only", and its closing Note: "Nothing here enumerates prior commits." |
+| §14 ("what §14 fixes") | padding content, decoded size, sample byte offsets | **passes.** §14.2 table (decoded size, offset of value k), §14.3 (⌈P/8⌉, pad bits), §14.5 (`[R-SER-05]` padding content). §20.3's own list at 3143-3147 matches. |
+| §12.1 ("the element sizes of §12.1") | bool element size 1, uint8 element size 1 | **passes.** §12.1 table: `bool` id 1 element size 1; `uint8` id 6 element size 1. And §12.1 explicitly: element size "enters §14's byte-layout arithmetic, **except that a planar bool plane is sized by packing (§14.3)**". The repaired sentence is exactly this point, correctly made. |
+| P · Bᶜ → ⌈P/8⌉ | planar numeric plane length vs packed planar bool plane length | **passes.** §14.2 table row "planar, numeric channel c | P · Bᶜ"; §14.3 "the decoded size is ⌈P/8⌉ bytes". |
+| T3 | "caught by T3" for a plane landing at an ordinal the new declarations size differently | **passes.** T3 (3748): "The decoded payload's byte length is not exactly the tile's decoded size derived from the layer's declarations", reader / tile use, `[R-SER-07]`. A plane of length X sitting at an ordinal whose channel now sizes ≠ X is exactly this. |
+| T14 | "or by T14 under codec 1" | **passes.** T14 (3761): "Codec 1 (none) declared and a non-sentinel index entry's length differs from the tile's decoded size", `[R-COD-04]`. The codec-1 restriction in the repaired text matches the row's own restriction. |
+| §21.4's content rows (in the untouched sentence immediately after the insertion) | fired by a change reaching a byte §14 structurally constrains | **passes.** T2, T4, T5 are the §21.4 content rows; T4 is `[R-SER-05]`, T5 is `[R-SER-05]` (R-SER-03), T2 is `[R-SER-08]`. |
+| `[R-LIF-01]` (hunk 8's sentence) | "it is a property of the prior generation, which §9.7 does not reconstruct" | **passes.** §9.1: bytes in [0, F) are immutable; establishing a violation needs the prior bytes, which §9.7's live-state-only walk does not hold. |
+| `[R-WRT-06]`, §20.5, `[R-ENC-06]`, `[R-CNT-13]`, `[R-CNT-18]`, `[R-GEO-06]`, `[R-SER-01]`, `[R-COD-10]` | all in untouched neighbouring text | not re-verified in depth; out of hunk. `[R-GEO-06]` I did open (1701-1704), because finding C-04 turns on it: "**c · N + s** for a planar layer … where c is the channel's index — channel-major grouping". |
 
-Citations checked beyond the sentence, because the clause it is joined to by a
-semicolon depends on them:
+No citation in the repaired text points at a rule that fails to say what the sentence
+claims. **Check 2 passes clean.** The defects below are all internal.
 
-| Citation | Verdict |
+### Check 1 — tense and quantifier
+
+The two normative rules being restated, quoted:
+
+§14 bar, spec/tarn.md 3141-3147:
+
+> A commit MUST NOT change a layer's declarations in a way that alters, for any tile
+> that layer stores **in the generation this commit supersedes**, what §14 fixes for
+> its stored bytes or how they decode — the set of padding positions (§11.3) and the
+> content `[R-SER-05]` fixes there, the decoded size, the byte offset of any sample
+> within the decoded tile image, or the codec and filter that produced the stored
+> bytes. Call this the **§14 bar**.
+
+Companion bar, 3175-3182:
+
+> For a **planar** layer, a commit MUST NOT change the channel declarations in a way
+> that alters the disk ordinal `[R-GEO-06]` assigns any tile the layer stores in the
+> generation this commit supersedes.
+
+Generation-by-generation comparison of each repaired clause:
+
+- "witnessed only where the affected tiles **remain stored**" — new generation. This
+  is *not* the bar's quantifier (the bar's is the superseded generation) and it should
+  not be: witnessing needs a live tile. Correct, and pre-existing text.
+- "no check can know which type a channel carried **before**" — prior generation.
+  Correct.
+- "no check knows which ordinal a stored tile **used to occupy**" — prior generation.
+  Correct.
+- "a commit that supersedes **every tile it would have damaged**" — the damaged set is
+  quantified over the superseded generation ("would have damaged" = would have damaged
+  had they survived), and "supersedes" is this commit's act. Correct.
+- "a permutation among channels whose planes are the same length" — quantifier problem,
+  but of *range*, not tense: see check 6 / C-05. §20.3's companion bar ranges over
+  reordering **and** insertion **and** removal; the repair ranges over permutations only.
+- "a re-typed channel among the cases it does not reach" — quantifier over re-typings is
+  unrestricted, and §20.3's own text restricts nothing that would save it. See C-01/C-02.
+
+**Verdict: the tense discipline holds throughout; the quantifier discipline fails twice
+(C-02's unrestricted "a re-typed channel", C-05's "a permutation").**
+
+### Check 4 — contradiction in the same passage, including untouched text
+
+I read the whole of §21.7 (3862-3949) and the whole of §20.3 step 4 (3117-3260).
+Three collisions.
+
+**(a) Untouched sentence, three sentences earlier in the same paragraph** (3885-3891):
+
+> the ordinal mappings of `[R-GEO-06]` and `[R-SER-01]` are satisfied by a structurally
+> valid tile whatever values it carries, except where §14 constrains a byte's content —
+> a padding position, a pad bit, or an interleaved boolean — **and a mis-ordered image
+> is then witnessed by T2, T4 or T5**, exactly as a mis-strided filter is;
+
+against the inserted (3906-3908):
+
+> a permutation among channels whose planes are the same length **disturbs nothing a
+> row can see**
+
+The earlier sentence is precisely about `[R-GEO-06]`'s ordinal mapping — the same rule
+the companion bar cites — and says the mis-ordering *is* witnessed wherever §14
+constrains a byte's content. The insertion says an equal-length permutation disturbs
+nothing. Constructed counterexample in §4 below. → **C-04**.
+
+**(b) §20.3 step 4, 3148-3152**, verbatim:
+
+> The tense is the prior generation's (§3.1 defines *stored* against a generation), so
+> **a commit does not escape this by unstoring in the same breath: superseding every
+> tile of a layer and re-declaring it are one operation, and this bars it.**
+
+against the inserted (3910-3912):
+
+> and a commit that supersedes every tile it would have damaged escapes them **exactly
+> as it escapes the §14 bar**.
+
+§20.3 exists to forbid that exact inference. Note also that §20.3's forward reference to
+§21.7 uses the careful formula and not this one (3241-3243): "§21.7 records the
+consequence — **that this is precisely where the §14 bar has no witness**, the live state
+being clean". *Has no witness*, not *is escaped*. And hunk 8's own sentence 20 lines
+later gets it right: "so the §14 bar is unwitnessed there". → **C-03**.
+
+**(c) §20.3 step 4, 3159-3162**, verbatim:
+
+> A channel's declared **sample type** is such a declaration, and changing it is such a
+> change wherever the layer stores a tile that carries that channel
+
+and the §11.1 **Rationale.** restatement (1616-1618), non-normative but unambiguous:
+
+> Re-typing a channel is the §14 bar's own subject, barred wherever the layer stores a
+> tile that carries that channel, and free where it does not.
+
+against the inserted (3897-3899):
+
+> and then only for part of what it bars — **a re-typed channel among the cases it does
+> not reach**
+
+→ **C-01** (on the pronoun's nearest-antecedent reading) and **C-02** (on the charitable
+reading).
+
+I looked for and did **not** find: a carve-out sentence in §21.7 that the insertion's
+breadth collides with; a MUST elsewhere in §21.7 (there is none — §21.7 states no
+normative keyword at all, it is descriptive normative prose); a sentence in §21.7
+written to be true only under the pre-hunk single-bar wording other than the bare
+"the bar" hunk 8 already fixed.
+
+### Check 5 — exhaustive claims
+
+Every completeness word in the repaired text, and my attempt to falsify it:
+
+| Word / phrase | Falsifiable? |
 |---|---|
-| §20.5 / `[R-WRT-06]` "three obligations on a compacted file's trailer" | **Resolves.** §20.5 3440–3448 "It MUST mint a fresh file_id"; 3463–3466 "The output trailer MUST copy the input's unknown ignore-lane flag bits forward"; 3474 "the output's version_minor SHOULD be at least the input's". Three, and `[R-WRT-06]` is §20.5's identifier (3482). |
-| §20.5's "no field counts commits" ground | **Resolves.** 3449–3452: "nothing in the output's trailer records that it is a first committed state — no field counts commits". |
-| §14.4 `[R-SER-09]` | **Resolves and closes a candidate.** "Every combination of layout and channel types is defined… A reader MUST NOT reject a layer for its combination of layout and channel types." So a sample-type change can never manufacture a layout/type witness. |
-| §21.1's completeness clause | **Resolves.** 3578–3583 and 3597–3601, quoted in §7 below. |
-| `[R-CNF-01]` | **Resolves** (line 104–106). |
+| "witnessed **only** where the affected tiles remain stored" | pre-existing; survives. A witness needs bytes a reader reaches, and §9.7 reaches live state only. |
+| "**only** for part of what it bars" | survives (weakest possible claim). |
+| "which is **all** §9.7 walks" | survives — §9.7 first sentence. |
+| "**no** check can know which type a channel carried before" | survives. No field records a prior declaration; §9.7's Note: "Nothing here enumerates prior commits." |
+| "**no** check knows which ordinal a stored tile used to occupy" | survives, same ground. |
+| "disturbs **nothing** a row can see" | **FALSIFIED.** T4 / T5. See §4. → C-04 |
+| "a re-typed channel among the cases it does not reach" (an unqualified class claim) | **FALSIFIED by the insertion's own next-but-one sentence.** → C-02 |
+| "**Which case** a type change falls in" (presupposes exactly two) | survives as a dichotomy, but its antecedent is wrong → C-07 |
+| "the rows below reach it … **and no better**" | survives. |
+| "**every** tile it would have damaged" | survives. |
+| "is caught by T3, **or** by T14 under codec 1" | survives as stated (both rows verified). Note it is stated as sufficient, not exhaustive — T21/T22 could also fire under codec 3 — and "or" does not close the list, so no overclaim. |
 
-## 6. Check 1 — tense and quantifier of the repaired sentence itself
+### Check 6 — what the repair left open in the same structure
 
-- Generation spoken about: two, correctly distinguished. "leaves the **live
-  state** clean" = the new generation the commit produces; "a property of the
-  **prior generation**" = the generation the commit supersedes. §20.3's bar is
-  quantified "for any tile that layer stores **in the generation this commit
-  supersedes**" (3133–3134). The repair's tense matches the rule it restates.
-- Set ranged over: "**every** tile it would have damaged" — the damaged subset
-  of the superseded generation's stored tiles, not every tile of the layer.
-  §20.3's own escape-attempt sentence at 3142 says "superseding **every tile of
-  a layer** and re-declaring it". The narrower set is the right one for the
-  witness claim: what matters is that no damaged tile survives into the live
-  state.
-- Verb: "supersedes". §20.3 uses this verb two ways inside one step — see C-04.
+**The structure:** §20.3 step 4's obligations on a commit, and specifically the subject
+matter each bar ranges over.
 
-Check 1 finds no defect in the repair's own tense. The quantifier issue is
-C-04's, and the analogy quantifier is C-02's (check 7).
+*Members of the companion bar's subject*, per §20.3 3182-3187, verbatim:
 
-## 7. The charter's register question — does either new obligation owe a row?
+> A channel's tiles move exactly when its index does: **reordering** moves those channels
+> the reorder re-indexes, and **inserting or removing one** moves every channel after the
+> affected position. **Either** is such a change wherever the layer stores a tile for a
+> channel that moved.
 
-§21.1, lines 3578–3583: "Its **completeness is normative** — a *detectable*
-file-conformance violation this specification names and the register omits is a
-defect in this document, detectability being the gate `[R-CNF-07]` already
-applies and §21.7 the account, by class, of what fails it".
+Two members. The repair's account names one — "a permutation among channels" — and then
+partitions *that* one exhaustively (same plane length / different plane length). Channel
+insertion and channel removal at a non-terminal position are governed by the bar and
+unaccounted for in §21.7. They behave differently, too: they change C, hence the
+addressed-tile count C·N (§11.2) and hence entry_count, so an offending commit shows up
+against a different set of rows (L21's `planar C·N` instances) than a permutation does.
+→ **C-05**.
 
-§21.1, lines 3597–3601: "The subsections after §21.5 are not part of the
-register and carry no rows: neither this completeness clause nor the instance
-arithmetic below reaches §21.6's defined non-violations, §21.7's account of
-what no check detects, or §21.9's limits."
+*Members of step 4's other unwitnessed obligations.* The paragraph the repair rewrote is
+introduced by a stated criterion — "A second set of obligations is omitted from the
+register because a single file exhibits no witness of their violation" (3879-3881) — and
+the repair converted a vague singular ("step 4's bar on a declaration change") into an
+enumeration ("the §14 bar" … "Its companion bar"). Step 4 carries at least two further
+obligations that meet the same criterion and are enumerated nowhere:
 
-Applying it to the two companion bars of §20.3 step 4 — the sample-type bar
-(3171–3176: "a commit MUST NOT change the declared sample type of any channel
-of a layer that stores a tile in the generation this commit supersedes,
-whatever the layer's layout and whether or not the element size moves") and the
-planar-ordinal bar (3200–3205: "For a **planar** layer, a commit MUST NOT
-change the channel declarations in a way that alters the disk ordinal
-`[R-GEO-06]` assigns any tile the layer stores in the generation this commit
-supersedes"):
+- "**every other entry byte-identical at its disk-ordinal position**" (3128-3129), read
+  together with step 2's "a malformed index entry an appender meets while re-emitting a
+  region is carried forward byte-identically at its disk-ordinal position under step 4,
+  **not repaired to a sentinel**" (3084-3087). A file in which the appender repaired one
+  to a sentinel is structurally perfect; nothing in the live state records what the entry
+  used to be.
+- "A layer whose record alone changes **keeps its extent slot**, pointing at the existing
+  region … relocating a live index region is compaction's operation (§20.5,
+  `[R-WRT-07]`), not an appender's" (3130-3136). An appender that relocates one produces
+  a file indistinguishable from a legitimate commit.
 
-- **Ordinal bar.** A violating commit yields a *conforming* file. Nothing in
-  the output records the prior ordinal assignment; the tiles sit where the new
-  declarations address them and carry wrong content, which is §21.7's first
-  paragraph exactly ("this format detects *corruption of structure*, not
-  *incorrectness of content*"). Not a detectable file-conformance violation →
-  **no row owed.**
-- **Sample-type bar, where the change leaves §14 untouched** (`int8`→`uint8`,
-  `float32`→`int32`, per 3161–3165). Conforming file, wrong interpretation.
-  **No row owed.**
-- **Sample-type bar, where the change does touch §14** (`uint8`→`bool` planar,
-  P·Bᶜ → ⌈P/8⌉). The file *is* nonconforming — but only because the §14 bar is
-  violated too, and that nonconformity is already a registered condition (T3
-  decoded payload length, T14 declared entry length, T2/T4 content rows). The
-  register does not owe a *second* row for the same file state, and §21.1's
-  own specialization clause ("Some rows are strict specializations of others")
-  points the same way. **No row owed.**
-- **§14 bar itself**: already reached by existing rows where witnessed, which
-  is what 3925–3927 says.
+I checked whether the document hedges this list open. It does not. The document hedges
+open lists explicitly when it means to — `grep` for "not offered as exhaustive" (1 hit,
+§20.3's growth list) and "not offered as closed" (2 hits, §21.1's specialization list and
+§23's operations list) — and §21.7 carries no such hedge, while §21.1 calls it "**the**
+account, by class, of what fails it". I report this at PLAUSIBLE, not CONFIRMED: "by
+class" may be doing the hedging work. → **C-05** covers the companion-bar half; I fold
+the step-4 half into C-05's detail rather than raising a separate low-confidence finding,
+because the two are one omission of the same shape.
 
-So: **no row is owed, the counts do not move, and §21.7 is the right home.**
-This much of the change is sound. Recount below confirms nothing needs
-adjusting.
+### Check 7 — analogies, verb against verb
 
-## 8. Recount — the arithmetic
+Three analogy markers in the repaired text. All three compared word for word.
 
-Rows, counted mechanically as table lines matching `^\| [FLTR][0-9]`:
+**(i) "escapes them exactly as it escapes the §14 bar"** — marker: *exactly as*.
 
-```
-3648-3701 rows=35     §21.2 states "35 conditions."      (3650)   MATCH
-3702-3758 rows=49     §21.3 states "49 conditions."      (3705)   MATCH
-3759-3795 rows=26     §21.4 states "26 conditions."      (3765)   MATCH
-3796-3829 rows=10     §21.5 states "10 conditions."      (3815)   MATCH
-                      ------
-sum                     120     §21.8 states "120 conditions"    MATCH
-```
+| side | governing verb + object | relation asserted |
+|---|---|---|
+| repair, first half | "**escapes them**" — *them* = "the rows below", i.e. T3, T14, T2/T4, T15/T17/T23/T25 | **detection**: a row is a check; escaping it means no check fires |
+| repair, second half | "**escapes the §14 bar**" | the §14 bar is not a check. §20.3: "A commit **MUST NOT** change a layer's declarations…". Escaping a MUST NOT means **not being prohibited** |
 
-Instances, counted by splitting each row's third cell on `;`, a cell reading
-`—` counting as one, per §21.1 ("Instances within a cell are separated by
-semicolons, and a cell reading — is one instance; the count is therefore
-mechanical once the cell is written"):
+The two do not range over the same relation at all. A commit can fail to be detected
+while being flatly prohibited — that is the entire subject of §21.7. The analogy
+transfers a true statement about rows onto a false statement about a prohibition. This
+is the check-7 shape exactly, and it is the finding I rate highest. → **C-03**.
 
-```
-$ python3 (reads spec/tarn.md only)
-total instances 275 rows 120
-```
+**(ii) "for the same reason no check knows which ordinal a stored tile used to occupy"**
+— marker: *for the same reason*.
 
-§21.8 states "120 conditions over 275 **instances**". **MATCH.** Every row
-parsed into exactly six cells; no row was skipped as malformed.
+| side | verb | set |
+|---|---|---|
+| §14 bar's reason | "no check **can know** which **type** a channel **carried** before" | prior-generation channel declarations |
+| companion bar's reason | "no check **knows** which **ordinal** a stored tile **used to occupy**" | prior-generation disk-ordinal assignment |
 
-§21.9's table was not counted — §21.1 excludes it from the arithmetic.
+Both range over prior-generation declaration state, which §9.7 does not reconstruct.
+Same set, same verb sense. **The analogy holds.** Reported as passing. (The *conclusions*
+drawn on each side differ — "does not reach" vs "witnessed indirectly and only sometimes"
+— which is the asymmetry C-02 turns on, but the shared reason is genuinely shared.)
 
-**Conclusion: the printed figures are right and the hunks require no
-recount.** This is a null result, and it is a real one: the charter's "if a
-row is owed the counts are wrong" branch does not fire, because no row is
-owed (§7).
+**(iii) hunk 8's "for the same reason `[R-LIF-01]` is"** — marker: *for the same reason*.
 
-## 9. Check 4 — contradiction in the same passage, including untouched text
+| side | governing verb | set |
+|---|---|---|
+| `[R-LIF-01]` | "a writer **MUST NOT modify** them" (bytes in [0, F)) | the committed prefix as it stood before this commit |
+| §14 bar | "A commit **MUST NOT change** a layer's declarations in a way that **alters** … for any tile that layer **stores in the generation this commit supersedes**" | the superseded generation's stored tiles |
 
-This is where the passage fails.
+Both quantify over state the current file no longer exhibits, and the shared reason
+given — "it is a property of the prior generation, which §9.7 does not reconstruct" — is
+true of both. **The analogy holds.** Reported as passing. Hunk 8's whole contribution is
+to make clear which bar is the subject of this sentence, and it is the right one: §20.3
+itself points here for the §14 bar ("§21.7 records the consequence — that this is
+precisely where the §14 bar has no witness, the live state being clean").
 
-**(a) "escapes the §14 bar" versus §20.3's "does not escape this".** Lines
-3927–3929, untouched by this hunk:
+Testing analogy (i) against **each** row it carries, as the charter requires, since one
+sentence carries it for a whole set:
+- against T3: a commit superseding every damaged tile leaves no tile whose payload length
+  T3 can compare → escapes T3. True.
+- against T14: same, no surviving entry → escapes T14. True.
+- against T2/T4/T5: no surviving padding to check → escapes them. True.
+- against T15/T17/T23/T25 ("the rows for the codec now declared"): no surviving stored
+  bytes under the new declaration → escapes them. True.
+- against **the §14 bar**: FALSE, per §20.3 3148-3152. One member of the set the analogy
+  is carried over breaks it — and it is the member the analogy names as its warrant.
 
-> "…and a commit that supersedes every tile it would have damaged **escapes
-> them exactly as it escapes the §14 bar**."
+### Check 8 — what the insertion did to its neighbours
 
-Against §20.3 step 4, lines 3140–3144:
+Hunk 7 inserts. Every back-reference from the insertion point forward to the end of
+§21.7, with its pre- and post-insertion resolution:
 
-> "The tense is the prior generation's (§3.1 defines *stored* against a
-> generation), so **a commit does not escape this by unstoring in the same
-> breath: superseding every tile of a layer and re-declaring it are one
-> operation, and this bars it.**"
-
-Same actor, same commit shape, opposite verdict on the same verb. "Escape" is
-this document's word for evading a *rule*, not for evading detection —
-`grep -n "escape"` shows it used that way at 3142 ("escape this by unstoring")
-and at 3231 ("which an empty layer escapes only because that cap is quantified
-over addressed tiles"). Nothing in the paragraph glosses "escapes the §14 bar"
-as "escapes the §14 bar's witness".
-
-Hunk-08 is what makes this unavoidable. Before the change, line 3953 read "so
-the bar is unwitnessed there", and a reader could take 3927–3929's "escapes the
-§14 bar" and 3951–3953's "the bar is unwitnessed" as two remarks about
-different things. After the change both sentences name **the §14 bar**, about
-**the same commit** ("a commit that supersedes every tile it would have
-damaged", word for word in both), and assert two different predicates of it:
-*escapes* it, and *is unwitnessed* under it. Only the second is true.
-See C-01.
-
-**(b) The reason clause proves too much.** The repaired sentence's own
-justification, 3953–3955:
-
-> "so the §14 bar is unwitnessed there for the same reason `[R-LIF-01]` is: it
-> is a property of the prior generation, which §9.7 does not reconstruct"
-
-Against 3918–3919, eleven lines above, untouched:
-
-> "§20.3 step 4's bar on a declaration change is **witnessed only where the
-> affected tiles remain stored**, and then only for part of what it bars"
-
-The §14 bar is a property of the prior generation in *every* case — including
-the case where the affected tiles remain stored and T3/T14/T2/T4 do witness it.
-So "it is a property of the prior generation" cannot be what makes it
-unwitnessed *there*. The discriminator is the clause before the comma — "leaves
-the live state clean" — and the appositive names the wrong ground. See C-03.
-
-**(c) What I looked for and did not find.** No carve-out or "is not such a
-case" sentence in §21.7 collides with the narrowed subject. No MUST elsewhere
-in §21.7 is now permitted to be violated by the repaired sentence — the
-sentence grants nothing. §21.6 (read in full, 3830–3883) contains no entry
-touching either companion bar, and its two closing paragraphs ("Two conditions
-that once sat in this table…", "Two structural cases are **conforming files a
-reader nevertheless refuses**…") do not reach declaration changes at all.
-§21.1's tiebreaker sentences ("where a row and the rule it cites diverge, **the
-rule governs**"; and for §21.6 entries "the rule governs there too") are worth
-noting for a different reason: **neither reaches §21.7.** §21.1 explicitly
-excludes §21.7 from the completeness clause and states no precedence rule for
-it. So the §21.7-versus-§20.3 divergence at (a) has no stated tiebreaker, which
-is what makes C-01 byte-level rather than merely untidy.
-
-## 10. Check 5 — exhaustive claims in the repaired sentence
-
-Words promising completeness, and the falsification attempt for each:
-
-- **"every tile it would have damaged"** — a universal over the damaged subset.
-  Cannot be falsified from the document: if one damaged tile survives into the
-  live state, §20.3 3150–3152 ("Where a change does reach them it makes each
-  stored tile it reaches nonconforming") plus T2/T3/T4/T14 give a witness, and
-  §21.7 3918–3919 already says so. The universal is doing exactly the work it
-  should. **Passes.**
-- **"leaves the live state clean"** — an absolute. Tested against §9.7: the
-  verifier "walks the live state only", so a clean live state is a certified
-  file. Tested against §20.3 3265–3268 for the shrink route: "the de-addressed
-  tiles' extents become slack (`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller
-  entry_count and so a re-emitted index region, and every surviving stored tile
-  is untouched" — slack is unconstrained (§21.6 row for slack), so it does not
-  dirty the live state. **Passes.**
-- **"the §14 bar"** — the definite article now closes what was open. That is
-  the whole content of the hunk, and the closure is what C-01 and C-03 turn on.
-- **"for the same reason `[R-LIF-01]` is"** — a claim of identity between two
-  grounds. **Fails**; see C-02.
-- **"three obligations"** in the adjoining clause — checked against §20.5:
-  fresh file_id (MUST, 3440), ignore-lane bits (MUST, 3463), version_minor
-  floor (SHOULD, 3474). Exactly three. **Passes.**
-
-## 11. Check 6 — what the structure still leaves unconstrained
-
-The structure the repair governs is not a header or a record; it is **§21.7's
-inventory of unwitnessed obligations**, and specifically the slot in it for
-**§20.3 step 4**. So: enumerate every normative obligation step 4 carries, and
-ask which of them §21.7 accounts for.
-
-| §20.3 step 4 obligation | Line | Witnessed? | Accounted in §21.7? |
+| Back-reference (line) | Before the insertion | After the insertion | Changed? |
 |---|---|---|---|
-| §14 bar (MUST NOT alter what §14 fixes for a superseded-generation stored tile) | 3132–3139 | only where affected tiles remain stored | **yes**, 3918–3919 and 3951–3955 |
-| Sample-type bar (MUST NOT change a channel's declared sample type) | 3171–3176 | no, where §14 untouched | **yes**, 3920–3922 |
-| Planar-ordinal bar (MUST NOT move a stored tile's disk ordinal) | 3200–3205 | no | **yes**, 3920–3922 |
-| Growth permission and its geometry conditions | 3223–3236 | yes (L44, `[R-ENC-04]`, geometry rows) | n/a — witnessed |
-| Shrink permission | 3237–3251 | the §14 bar's terms | partly — see C-04 |
-| Slack, entry_count, `[R-SLB-04]`, `[R-SLB-01]` | 3275–3280 | yes (registered rows) | n/a |
-| "every other entry byte-identical at its disk-ordinal position" | 3125–3127 | **no** — nothing records the prior entries | **no** |
-| "A writer SHOULD instead produce a new file wherever a commit would strand a large share of a layer's stored bytes — **and always where it would re-emit every one of them**" | 3269–3273 | **no** — no field attributes slack to one commit | **no** |
+| "**it** bars" (3897) | "§20.3 step 4's bar on a declaration change" | "§20.3 step 4's **§14 bar**" | no (same bar, renamed) |
+| "the cases **it** does not reach" (3898) | did not exist | nearest antecedent is "**it**" in "what it bars" three words earlier = the §14 bar; intended is evidently the *witnessing* | **new, and wrong** → C-01 |
+| "**Its** companion bar" (3901) | did not exist | nearest antecedent "the §14 bar" → reads "the §14 bar's companion bar"; intended "§20.3 step 4's". Harmless in sense; recorded, not filed. | new, benign |
+| "**the change**" in "Where the change does touch something §14 fixes" (3909-3910) | n/a | nearest is the permutation of the previous clause; intended is any declaration change | ambiguous, minor; folded into C-07 |
+| "**the rows below**" (3910) | n/a | §21.7's rows are *above* it (§21.2-§21.5, lines 3626-3808); "below" can only mean "named later in this paragraph", against the document's only other use of the phrase | **new** → C-06 |
+| "**them**" in "escapes them" (3911) | n/a | "the rows below" | resolves fine |
+| "**Which case**" (3913) | n/a | nearest "cases" are the permutation dichotomy of 3906-3909, which is not about type changes; intended is the touches-§14 / does-not dichotomy of 3909-3910 | **new** → C-07 |
+| "A change reaching a byte §14 structurally constrains…" (3915-3917, untouched) | continued directly from "part of what it bars", one bar in play | now follows 21 lines about two bars and a type-change example; the series "A change reaching X" no longer says which bar it is scoped to | changed, but each member is still true of the §14 bar and the decoded-size member is true of the companion bar too (the insertion itself says T3/T14 for both). Recorded; **not filed as a defect.** |
+| "the change is unwitnessed **there**" (3925) | in the codec case | unchanged | no |
+| "**Neither** change" (3930) | filter change / sample-offset move, both named in the preceding sentence | unchanged | no |
+| "so **the bar** is unwitnessed there" (3935) | the single bar | would now have re-resolved ambiguously — **this is exactly what hunk 8 fixes** | fixed by hunk 8 |
+| "**it** is a property of the prior generation" (3936) | the bar | the §14 bar | correct |
+| "are unwitnessed for a reason all **three** share" (3938-3940) | §20.5's three `[R-WRT-06]` obligations | unchanged | no |
+| "For **the last two** there is a second" (3941) | the ignore-lane bits and the version_minor floor | unchanged | no |
 
-The last of these is the one that bites, because it is the sibling quantity of
-exactly the commit the repaired sentence describes. The repaired sentence's
-subject is "a commit that supersedes every tile it would have damaged" — a
-commit that re-emits every one of a layer's stored tiles. §20.3 3269–3273
-directs a writer away from precisely that commit with a SHOULD, and that SHOULD
-is as unwitnessed as anything §21.7 lists. §21.7 does account for SHOULD-level
-obligations — two clauses later it lists "the floor its version_minor SHOULD
-take" among §20.5's three — so the omission is not a policy of the section.
-A reader of §21.7 alone comes away believing the supersede-everything commit is
-merely undetectable; it is also, by §20.3, the shape a writer SHOULD NOT take.
-See C-05.
+Backwards direction (does the inserted text lean on an antecedent further away than the
+reader will look): yes, twice — "Which case" (C-07) and "the rows below … there" (C-06).
 
-I considered raising the "byte-identical entry" row too and rejected it: §21.7
-accounts for no §20.4 re-emission obligation either, so the section plainly
-does not aim at every writer-procedure duty, and the SHOULD at 3269 earns its
-place only because it is about *this sentence's own commit*.
+Sweep for stale bare references hunk 8 might have missed:
 
-## 12. Check 7 — the analogy, verb against verb
+```
+"the bar"   → 9 hits document-wide, NONE of them in §21.7 after hunk 8.
+"§14 bar"   → 11 hits: 8 in §20.3/§11.1, 3 in §21.7 (3896, 3912, 3935).
+```
 
-The repaired text justifies itself by analogy once, with the marker "for the
-same reason … is".
+Hunk 8's sweep is **complete** for the phrase it targets. That is a clean repair.
 
-| | Governing verb, verbatim | Ranges over |
-|---|---|---|
-| The repair, 3953–3955 | "the §14 bar **is unwitnessed** there … **it is a property of the prior generation**, which §9.7 does not reconstruct" | one generation — the one this commit supersedes; and only in the sub-case "there" |
-| The cited warrant, `[R-LIF-01]` as §21.7 itself states it at 3903–3907 | "Committed-prefix immutability and the strict growth of `committed_file_length` across the commits of one file_id (`[R-LIF-01]`, `[R-LIF-02]`) **are properties of a file's history**, which §9.7 does not reconstruct, **and no field of a file records how many commits that history holds**" | every commit of one file_id — the whole history |
-| `[R-LIF-01]` at its own site, §9.1 1226–1231 | "Bytes in [0, F) … **are immutable**: a writer **MUST NOT modify** them" | every committed byte, unconditionally |
+---
 
-Three mismatches:
+## 4. The constructed cases
 
-1. **"the prior generation" against "a file's history".** One generation
-   against all of them. The document's own idiom for the second is fixed:
-   `grep -n "reconstruct"` shows "which §9.7 does not reconstruct" attached to
-   "a file's history" at 3906 and again at 3418; line 3955 is the only place it
-   is attached to "the prior generation".
-2. **Unconditional against conditional.** `[R-LIF-01]` is unwitnessed in every
-   file, full stop. The §14 bar is unwitnessed only in the sub-case the
-   sentence's own first clause carves out; §21.7 says at 3918–3919 that it is
-   witnessed elsewhere. "For the same reason" imports an unconditional ground
-   into a conditional claim.
-3. **A second ground with no counterpart.** `[R-LIF-01]`'s unwitnessedness has
-   two stated grounds at 3906–3907, the second being that no field counts
-   commits. The §14 bar has no such second ground and does not need one.
+The charter asks for files, not arguments. Both bars, one at a time.
 
-Also, strictly, the §14 bar is not "a property of the prior generation" at all:
-it is a *relation* between the superseded generation's declarations and the new
-ones — §21.7 says so itself at 3922–3925 ("the prior generation's channel
-declarations are not part of the live state"). Half of the relation is in the
-live state. See C-02.
+### Case A — the §14 bar, re-typing, tiles remaining stored
 
-No other analogy marker appears in the repaired text. ("exactly as" appears
-twice in the paragraph, at 3912 and 3947, both outside the hunk; I checked
-both — 3912 "exactly as a mis-strided filter is" against T26 at line 3794, and
-3947 "exactly as T26 has it" against the same row. T26 reads: "Filter 2 applied
-at a stride other than the mandated one, **where the resulting image breaks
-§14.5's padding content or `[R-SER-08]`'s bool bytes** (a wrong stride with no
-such structural constraint is undetectable, §21.7); the check that detects it
-is T2's or T4's". §21.7's gloss at 3945–3948 reproduces that condition word for
-word, including its two-sided form. **Both analogies pass.**)
+Planar layer L, d = 1, E₀ = 8, T₀ = 8 → G₀ = 1, N = 1, P = 8. Channels
+`a` (`uint8`, fill `0x00`) and `b` (`uint8`, fill `0x00`). C = 2, addressed tiles
+C·N = 2, disk ordinals 0 (`a`) and 1 (`b`). Both stored, codec 1, filter 1. Each plane
+is P·Bᶜ = 8 bytes. No padding positions (E₀ mod T₀ = 0).
 
-## 13. Check 8 — what the surrounding sentences now mean
+Generation 2 re-declares `a` as `int8`, fill byte unchanged `0x00`, and stores nothing new.
 
-hunk-08 deletes and inserts within one sentence; it inserts no new sentence
-between two others. Still, it *changes an anaphor*, which is check 8's subject
-from the other side. Every back-reference from 3918 to the end of the
-subsection:
+Is this barred? §20.3: "A channel's declared **sample type** is such a declaration, and
+changing it is such a change wherever the layer stores a tile that carries that channel."
+Layer L stores a tile carrying `a` in the superseded generation. **Barred.**
 
-| Back-reference | Line | Before the change it resolved to | After the change it resolves to | Changed? |
-|---|---|---|---|---|
-| "its two companion bars" | 3920 | §20.3 step 4's bar on a declaration change | same | no |
-| "**them**" in "escapes them" | 3928 | "the rows below" (3926) | same | no |
-| "**it** escapes the §14 bar" | 3929 | the commit | same | no |
-| "**there**" in "the change is unwitnessed there" | 3942 | a codec change whose stored bytes satisfy both declarations | same | no |
-| "**it**" in "where it breaks neither" | 3947 | the resulting image | same | no |
-| "**Neither change**" | 3948 | a filter change; a sample-offset move | same | no |
-| **"the bar" → "the §14 bar"** | 3953 | nearest preceding "bar": "the §14 bar" at 3929, itself the nearest antecedent since the insertion at 3925–3929 | explicitly the §14 bar | **pinned, not moved** |
-| "**there**" in "unwitnessed there" | 3953 | the supersede-everything case named in the same sentence | same | no |
-| "**it** is a property of" | 3954 | "the bar" | "the §14 bar" | narrowed with its antecedent |
-| "**a second**" (reason) | 3961 | "a reason all three share" (3958) | same | no |
-| "**the last two**" | 3961 | ignore-lane bits; version_minor floor | same | no |
-| "**them**" in "the rows for the fields that hold them" | 3966–3967 | `[R-ENC-06]`'s fixed field widths | same | no |
+Is it witnessed? Element size 1 → 1; decoded size 8 → 8; padding: none; `[R-SER-08]`:
+not a bool channel; codec/filter unchanged. T3 no, T14 no, T4/T5 no (no padding
+positions), T2 no. The generation-2 file is **fully conforming**. This is the case in
+which §21.7's "no check can know which type a channel carried before" is exactly right,
+and it is also the case that makes C-01 byte-level: reading hunk 7's clause with "it" =
+the §14 bar, a writer concludes this commit is permitted; reading §20.3, it is
+prohibited; and the file it produces carries no register-row violation, so `[R-CNF-05]`
+does not bar it under either reading. The bytes fork.
 
-So the anaphor work of the hunk is correct as far as it goes: "the bar" at 3953
-had drifted to resolve against "the §14 bar" at 3929, and pinning it makes that
-explicit rather than accidental. The cost is that pinning it also welds 3953 to
-3929, and 3929 is the sentence that contradicts §20.3 (C-01). Running check 8
-backwards: the repaired sentence's own back-reference "for the same reason
-`[R-LIF-01]` is" reaches 48 lines back, to 3903–3907. A reader will not look
-that far, and when they do they find "a file's history", not "the prior
-generation" (C-02).
+### Case B — the §14 bar, re-typing, witnessed
 
-## 14. Findings
+Same layer, `a` re-declared from `uint8` to `bool`. Element size stays 1 (§12.1); the
+plane goes from P·Bᶜ = 8 bytes to ⌈P/8⌉ = 1 byte (§14.3). The stored 8-byte payload at
+ordinal 0 now fails T3 ("payload longer", the row's `packed planar bool ⌈P/8⌉, payload
+longer` instance) and, codec 1 being declared, T14 as well.
 
-### C-01 — §21.7 says a commit "escapes the §14 bar"; §20.3 says it does not (byte-level)
+So a re-typed channel is **not** uniformly "among the cases it does not reach" — this is
+the case the repair's own next-but-one sentence constructs, for the express purpose of
+saying the element sizes do not decide it. → C-02.
 
-Location: §21.7 lines 3927–3929, against §20.3 step 4 lines 3140–3144;
-sharpened by the hunk at 3951–3955.
+### Case C — the companion bar, equal plane lengths, witnessed
 
-The repaired sentence and the sentence twenty-four lines above it now share a
-subject verbatim — "a commit that supersedes every tile it would have damaged"
-— and a named object, "the §14 bar", and say two different things about the
-pair: the earlier that the commit **escapes** the bar, the later that the bar
-is **unwitnessed**. §20.3 settles which is right and says so in the same verb:
-"a commit does not escape this by unstoring in the same breath: superseding
-every tile of a layer and re-declaring it are one operation, and this bars it."
+Planar layer M, d = 2, extents (5, 5), tile extents (4, 4) → G = (2, 2), N = 4,
+P = 16. Padding positions exist (§11.3: E mod T ≠ 0 on both axes). Channels
+`a` (`uint8`, **fill `0x00`**) and `b` (`uint8`, **fill `0xFF`**). C = 2, addressed
+tiles 8, ordinals 0-3 = `a` (c=0), 4-7 = `b` (c=1) by `[R-GEO-06]`'s c·N + s. All eight
+stored. Both planes are P·Bᶜ = 16 bytes — **the same length**, which is the repair's
+stated case.
 
-§21.1's tiebreakers do not reach here. They govern a row against its rule, and
-a §21.6 entry against its rule. §21.7 is excluded from the completeness clause
-by name (3597–3601) and no precedence is stated for it, so two normative
-sentences stand in the document saying opposite things about the same commit.
+Generation 2 exchanges the two channel entries: `b` first, `a` second. Disk ordinals of
+every stored tile move (§20.3: "exchanging `a` and `b` moves all four"). **Barred** by
+the companion bar. Per step 4's re-emission rule — a channel permutation is not a
+geometry change, and "a geometry change renumbers ordinals wherever `[R-GEO-06]` moves
+them" names the only occasion — the entries are re-emitted byte-identical at their
+disk-ordinal positions. So the extent at ordinal 0 still holds `a`'s old plane.
 
-**Byte-level: yes.** The disputed file is conforming — §21.7 itself says the
-live state is left clean and the bar unwitnessed, so the file exhibits no
-register-row condition and `[R-CNF-05]` does not bar it under either reading.
-Only the reading of "escapes" moves. Writer A reads §20.3 and refuses: a
-re-declaration reaching stored tiles "is a new layer, or a whole-file rewrite
-under a fresh file_id (`[R-LIF-01]`, §20.5)" (3157–3159), so A emits a trailer
-carrying a **freshly drawn file_id**. Writer B reads §21.7's "escapes the §14
-bar" and appends a commit instead, emitting a trailer carrying the **input's
-file_id** with a higher `committed_file_length`, over a directory whose layer
-record holds the new declarations and payloads that are freshly written tiles.
-The two disagree on the 16 bytes of the trailer's file_id field and on whether
-the prior generation's bytes remain in the file as committed prefix. Both
-outputs are conforming files. The emittable set moves.
+A verifier now reads ordinal 0 as channel index 0 = `b`, fill `0xFF`. §14.5 /
+`[R-SER-05]`: "at every padding position, a writer MUST encode, for each channel the
+position carries, that channel's fill value", and "a verifier MUST check it, and a
+violation is a validity error at tile scope". The plane's padding bytes hold `0x00`.
+**T4 fires** — its `planar numeric plane fill bytes` instance.
 
-Repair: change 3928–3929 to speak of the witness, not the bar — e.g. "…escapes
-them, and escapes every check of the §14 bar, though not the bar itself
-(§20.3)". Or delete the clause: the repaired sentence at 3951–3955 already
-carries the claim, correctly.
+Lengths are equal throughout, so T3 and T14 see nothing. The row that sees it is T4, and
+the repaired sentence says no row can. → **C-04.** With `a` and `b` both `bool` and
+differing fill *bits*, T5 fires instead (final-byte pad bits, `[R-SER-05]` (R-SER-03)) —
+so the falsification is not an artifact of one type.
 
-### C-02 — the analogy to `[R-LIF-01]` compares two different quantifiers
+The claim is true only when the permuted channels' recorded fills coincide, or the layer
+has no padding positions and no pad bits. It is stated without either condition.
 
-Location: §21.7 lines 3953–3955, against §21.7 3903–3907 and §9.1 1226–1231.
+### Case D — the companion bar, unequal plane lengths
 
-"for the same reason `[R-LIF-01]` is: it is a property of the prior
-generation" against "`[R-LIF-01]`, `[R-LIF-02]` are properties of a file's
-history". One generation against every commit of one file_id; a conditional
-claim against an unconditional one; and `[R-LIF-01]`'s second stated ground
-("no field of a file records how many commits that history holds") has no
-counterpart here. Strictly the §14 bar is not a property of the prior
-generation but a relation between it and the live state, as 3922–3925 says.
+Same layer M with `a` (`uint8`, plane 16 bytes) and `b` (`bool`, plane ⌈16/8⌉ = 2 bytes);
+exchange them. Ordinal 0 now belongs to `b`, whose decoded size is 2, and holds a 16-byte
+payload. T3 fires; under codec 1, T14 too. **The repair is correct here.** Both citations
+verified against the row text.
 
-Not byte-level: no reading of this sentence licenses any writer to emit
-anything, and it identifies no accept/reject verdict.
+### Case E — the companion bar, genuinely unwitnessed
 
-Repair: "…for the same reason `[R-LIF-01]` is: what it is quantified over is
-the superseded generation, which §9.7 does not walk."
+Same as Case D, except the offending writer *also* renumbers, moving each channel's
+entries to follow it. That violates step 4's re-emission rule rather than being rescued
+by it, and the resulting file is byte-consistent: every plane sits at an ordinal its own
+channel sizes. Nothing fires. The repair's hedge "**only sometimes**" covers this, and I
+record it as the sentence earning its hedge.
 
-### C-03 — the reason given would make the §14 bar unwitnessed everywhere
+### Case F — the supersede-everything case
 
-Location: §21.7 lines 3953–3955, against §21.7 3918–3919.
+Layer L of Case A. Generation 2 supersedes both stored tiles (writes new payloads for
+ordinals 0 and 1) **and** re-types `a` from `uint8` to `bool` in the same commit, sizing
+the new payloads to the new declarations (1 byte for `a`'s plane).
 
-"the §14 bar is unwitnessed there … it is a property of the prior generation,
-which §9.7 does not reconstruct" states a ground that holds in every case, and
-therefore cannot explain a claim restricted to one. Eleven lines above, the
-same subsection says the bar is "witnessed only where the affected tiles remain
-stored". The clause that actually does the work is the one before the comma —
-"leaves the live state clean" — and the appositive displaces it.
+§20.3: "so a commit does not escape this by unstoring in the same breath: superseding
+every tile of a layer and re-declaring it are one operation, **and this bars it**."
+**Barred.** The generation-2 file, however, is entirely conforming: every live plane
+matches its live declaration.
 
-Not byte-level: the sentence's verdict is right, only its stated reason is
-wrong, and a reader who follows the wrong reason reaches the same verdict about
-the same files.
+Writer P follows hunk 7's "a commit that supersedes every tile it would have damaged
+escapes them exactly as it escapes the §14 bar" and emits this commit. Writer Q follows
+§20.3 and refuses, emitting instead a new layer (§20.3: "Such a change is a new layer, or
+a whole-file rewrite under a fresh file_id"). The two files differ from the first appended
+byte onward: P's file has a new layer-L index region and re-typed channel entry at F; Q's
+has an additional layer record and a second index region, and layer L's declarations
+unchanged. Both are `[R-CNF-05]`-conforming files. **The emittable set moves.** → C-03,
+byte-level.
 
-Repair: "…so the §14 bar is unwitnessed there — not because it is quantified
-over the prior generation, which is equally true where it *is* witnessed, but
-because the live state retains no tile the change damaged."
+I checked for a precedence rule that would settle P against Q. §21.1 supplies one only
+for rows ("where a row and the rule it cites diverge, **the rule governs**") and extends
+it only to §21.6 ("§21.6's entries restate their governing rules on the same terms a row
+does, and where such an entry and the rule it cites diverge, the rule governs there
+too"). §21.7 is named in the very same sentence that limits the completeness clause —
+"neither this completeness clause nor the instance arithmetic below reaches … §21.7's
+account of what no check detects" — and is given **no** such tie-breaker. So a §21.7-vs-
+§20.3 divergence has no stated resolution, and both texts are normative under
+`[R-CNF-01]`. That is what makes C-01 and C-03 byte-level rather than editorial.
 
-### C-04 — "supersedes" does not plainly cover the case §20.3 delegates here
+---
 
-Location: §21.7 lines 3951–3953, against §20.3 3120–3123, 3243–3251, 3261–3264.
+## 5. Does either bar owe a register row? — §21.1 applied
 
-§20.3's shrink paragraph hands this exact job to §21.7: "§21.7 records the
-consequence — that this is precisely where the §14 bar has no witness, the live
-state being clean". The case it means is a **shrink**: a commit that damages a
-prior-generation stored tile and then drops it out of the addressed set. §21.7
-records only "a commit that **supersedes** every tile it would have damaged" —
-and step 4 uses "supersedes" at 3122 in a sense that *excludes* de-addressing:
-"entries for tiles this commit stores or supersedes written to their new state,
-entries for tiles that become unstored written as the sentinel". (Step 4 also
-uses it inclusively at 3142, so the word carries both senses inside one step.)
-A reader following §20.3's pointer arrives at a sentence about the wrong
-operation, or at best an ambiguous one, in the one place the document promises
-the shrink case is recorded.
+§21.1's completeness clause, verbatim (3554-3560):
 
-Not byte-level: §20.3's shrink rule is complete on its own terms and bars the
-damaging shrink regardless; §21.7 licenses nothing.
+> Its **completeness is normative** — a *detectable* file-conformance violation this
+> specification names and the register omits is a defect in this document, detectability
+> being the gate `[R-CNF-07]` already applies and §21.7 the account, by class, of what
+> fails it
 
-Repair: "a commit that leaves no tile it would have damaged in the live state —
-whether by superseding it or by dropping it out of the addressed set — leaves
-the live state clean, so…".
+Applying it to each bar:
 
-### C-05 — the account of §20.3 step 4 omits the SHOULD that governs this very commit
+- **§14 bar.** A violation of it is a property of a *commit*, not a condition a single
+  file exhibits. Where its effect surfaces (Case B), the file exhibits T3's condition and
+  T14's — both already rows. There is no residue that is a detectable file condition and
+  unregistered. **No row owed.**
+- **Companion bar.** Same analysis, and the document already treats the neighbouring case
+  identically: §21.7's untouched sentence at 3885-3891 gives `[R-GEO-06]`'s and
+  `[R-SER-01]`'s ordinal mappings no row of their own, saying instead "a mis-ordered image
+  is then witnessed by T2, T4 or T5". Case C's file exhibits T4; Case D's exhibits T3 and
+  T14. All rows. **No row owed.**
 
-Location: §21.7 lines 3918–3922 and 3951–3955, against §20.3 3269–3273.
+There is a precedent for exactly this reasoning being made explicit: §16's Note on
+`[R-SLB-04]` — "Because this rule's detection *is* `[R-SLB-03]`'s, a stale declaration
+carries no register row of its own: every file exhibiting one exhibits a run whose tiles
+are unpacked or whose first stored tile is misaligned, which §21.3 registers." The bars
+stand in the same relation to T3/T4/T5/T14.
 
-§21.7 now accounts for three of step 4's obligations. Step 4 carries a fourth
-that is equally unwitnessed and is about the repaired sentence's own commit
-shape: "A writer SHOULD instead produce a new file wherever a commit would
-strand a large share of a layer's stored bytes — and always where it would
-re-emit every one of them, which duplicates the layer rather than dropping part
-of it." A commit that supersedes every damaged tile of a layer is that commit.
-Nothing in a single file attributes its slack to one commit, so the SHOULD has
-no witness; and §21.7 does account for SHOULDs — "the floor its version_minor
-SHOULD take" appears four lines later. So the omission is not the section's
-policy, and the effect is that §21.7's account of the supersede-everything
-commit reads as "undetectable" where §20.3 says "undetectable, and a writer
-SHOULD NOT".
+**Conclusion: no row is owed, and the counts stand.** Confirmed by recount below.
 
-Verdict PLAUSIBLE rather than CONFIRMED: §21.7 accounts for no §20.4
-re-emission obligation either, so an editor may hold that the section aims only
-at obligations whose *violation* is the thing omitted from the register.
+---
 
-Not byte-level: naming the SHOULD in §21.7 would not change what a conforming
-writer may emit, since the SHOULD is already normative at §20.3.
+## 6. The recount
 
-## 15. Candidates I opened and closed
+Script: parse every table row in the register subsections; a row's instance count is the
+number of `;`-separated items in its Instances cell, and a cell reading `—` is one
+instance (§21.1: "a cell reading — is one instance; the count is therefore mechanical
+once the cell is written").
 
-- **"Neither obligation has a witness in the output alone (§21.7)" (§20.5
-  line 3478) against §21.7's "three obligations".** Two against three looked
-  like an unswept restatement. Closed: "Neither" scopes to the two obligations
-  in its own vicinity — the ignore-lane carry-forward and the version_minor
-  floor — and §21.7 confirms that scoping explicitly with "**For the last two**
-  there is a second, the output carrying no record of its input's flags or its
-  input's minor either". The fresh file_id draw is handled in §20.5's earlier
-  paragraph, on its own ground ("no field counts commits", 3450). No defect.
-- **Could a sample-type change manufacture a layout/type witness?** §14.4
-  `[R-SER-09]`: "Every combination of layout and channel types is defined…
-  A reader MUST NOT reject a layer for its combination of layout and channel
-  types." No such witness exists. §21.7's qualification survives this.
-- **Could a sample-type change on a planar channel that stores nothing be
-  witnessed?** §20.3 3187–3190 says the bar reaches it "where it disturbs no
-  byte". Nothing in the file records the prior type, entry_count is unchanged,
-  no ordinal moves. Unwitnessed. §21.7's claim holds.
-- **Could a channel reorder be witnessed through entry_count or the index?**
-  §20.3 3122–3127 has entries carried "byte-identical at their disk-ordinal
-  position" and renumbered only for a geometry change; a reorder is not one, so
-  the entries stay and the tiles are silently re-labelled. `[R-CNT-17]` binds
-  entry_count to the addressed count C·N, which a reorder does not change.
-  Unwitnessed. §21.7's claim holds.
-- **Does either companion bar owe a register row?** §7 above. No. §21.1's
-  completeness clause is quantified over *detectable* violations, and the
-  companion bars' violations either leave a conforming file or leave a file
-  whose nonconformity is already a registered condition.
-- **Do the printed counts move?** §8 above. 35+49+26+10 = 120 rows, 275
-  instances, against printed 35/49/26/10, 120 and 275. Every figure matches.
-- **Does the repair sit in a labeled block?** §4 above. No — §21.7 is unmarked
-  normative prose under `[R-ERR-01]`, and so is §20.3 step 4 under
-  `[R-WRT-04]`. The one blockquote telling the same story (line 1600) is
-  labeled **Rationale.** and merely restates.
-- **Does the "three bars" Rationale at 1600–1620 now contradict §21.7?** Read
-  in full. It says "The other two bars reach neither a shrink nor a growth" and
-  "A layer that stored no tile in the generation the commit supersedes may be
-  re-declared freely; a layer the commit itself empties does not qualify" —
-  consistent with §20.3 and with §21.7 as repaired, and in any case
-  non-normative. No defect.
-- **Does T26's row need sweeping?** Line 3794 already carries the parenthetical
-  "(a wrong stride with no such structural constraint is undetectable, §21.7)"
-  and its own "the check that detects it is T2's or T4's". §21.7 3942–3948
-  reproduces both halves. No unswept restatement.
+```
+21.2  rows= 35   instances= 56
+21.3  rows= 49   instances= 116
+21.4  rows= 26   instances= 55
+21.5  rows= 10   instances= 48
+TOTAL rows 120   instances 275
+```
 
-## 16. Per-check verdicts
+Arithmetic: 35 + 49 + 26 + 10 = **120**. 56 + 116 + 55 + 48 = **275**.
 
-1. Tense and quantifier — **pass** on the repair's own words (§6); the analogy's
-   quantifier fails, reported separately as C-02.
-2. Citations resolve — **pass** for "the §14 bar", "§9.7", "`[R-WRT-06]`",
-   "§20.5"; `[R-LIF-01]` resolves as an identifier but not as the warrant it is
-   invoked as (C-02).
-3. Normative placement, label test — **pass** (§4).
-4. No contradiction in the same passage — **fail**, C-01 and C-03 (§9).
-5. No exhaustive claim it cannot carry — **pass** except "for the same reason"
-   (§10, C-02).
-6. What is still unconstrained — **fail**, C-05 (§11).
-7. Analogy quantifiers — **fail**, C-02; the two "exactly as" analogies outside
-   the hunk pass (§12).
-8. What the change did to the sentences around it — **pass** as anaphor work,
-   but the pinning is what makes C-01 unavoidable (§13).
+Printed figures:
 
-Charter-specific:
+| Location | Printed | Derived | Verdict |
+|---|---|---|---|
+| §21.2 preamble | "35 conditions" | 35 | matches |
+| §21.3 preamble | "49 conditions" | 49 | matches |
+| §21.4 preamble | "26 conditions" | 26 | matches |
+| §21.5 preamble | (no count stated) | 10 | n/a |
+| §21.8 | "120 conditions over 275 instances" | 120 / 275 | **matches** |
 
-- Claim that neither companion bar is witnessed, and its qualifications:
-  **holds**, tested against §14.4, planar/interleaved layouts, empty channels,
-  entry_count and ordinal renumbering (§15).
-- Register row owed: **no**, for either (§7).
-- Counts: **all correct**, recounted (§8).
-- Narrowed subject: **the right one for the local run of sentences**, and it
-  fixes a drifting anaphor — but it welds the sentence to a neighbour that
-  contradicts §20.3 (C-01) and it re-asserts a wrong ground (C-03) and a bad
-  analogy (C-02) without noticing either.
+Spot-checks of the mechanical count against §21.1's Instances rules, since a bad cell
+would propagate: R4 = 16 (4 conditions × 2 containers × 2 = the cell lists 16 items,
+counted); L1 = 8; L2 = 9; T3 = 6 (3 layout formulas × 2 magnitude directions — §21.1:
+"Where the quantity a condition derives varies by layout, the layout formulas are
+materially different shapes" and "Where the condition compares two **magnitudes** either
+of which can be the greater … the two directions are likewise enumerated"); T14 = 6
+identically; T22 = 6 identically; T21 = 3 (an *exceeds*: "larger than the tile's decoded
+size" bounds the comparison in one direction, so no direction split — consistent);
+T24 = 1 ("any codec", the §21.1 example). All consistent.
+
+**Neither hunk disturbs the counts, and the counts are right.**
+
+---
+
+## 7. Findings
+
+### C-01 — "the cases it does not reach": the pronoun makes §21.7 deny that the §14 bar reaches a re-typed channel
+
+Check: LOCAL_CONTRADICTION. Location: §21.7, spec/tarn.md 3896-3901.
+
+Quotation (repaired text): "§20.3 step 4's **§14 bar** is witnessed only where the
+affected tiles remain stored, and then only for part of what it bars — a re-typed channel
+among the cases it does not reach"
+
+Contradicting text: §20.3 step 4, spec/tarn.md 3159-3162: "A channel's declared **sample
+type** is such a declaration, and changing it is such a change wherever the layer stores a
+tile that carries that channel". Corroborated non-normatively at §11.1's **Rationale.**
+block, 1616-1618: "Re-typing a channel is the §14 bar's own subject, barred wherever the
+layer stores a tile that carries that channel, and free where it does not."
+
+Detail. The clause contains one pronoun, twice: "what **it** bars" and "the cases **it**
+does not reach". The first is unambiguously the §14 bar. The second, by nearest-antecedent
+resolution, is the same. On that reading §21.7 states, in normative text, that the §14 bar
+does not reach a re-typed channel — the precise opposite of §20.3, which names re-typing as
+the bar's paradigm case and spends five sentences on it. The intended referent is evidently
+the *witnessing*, not the bar; but the sentence never introduces a noun for the witnessing
+that "it" could pick up, and it re-uses the pronoun that four words earlier meant the bar.
+
+Both readings are permitted. Under the bar reading an implementer concludes Case A's
+commit is legal; under the witnessing reading it is illegal but undetected. §21.1 gives no
+tie-breaker for a §21.7-vs-rule divergence (it supplies one for rows and extends it only to
+§21.6, and the same sentence expressly says the completeness clause "does not reach …
+§21.7's account of what no check detects"). Both texts are normative under `[R-CNF-01]`.
+
+Byte-level: **yes.** Case A. Writer P (bar reading) emits generation 2 of layer L with `a`
+re-typed `uint8`→`int8`, both tiles left stored and untouched. Writer Q (§20.3) refuses and
+creates a new layer instead. P's file is conforming — no register row fires (verified row
+by row in Case A) — so `[R-CNF-05]` does not bar it under either reading, and the set of
+emittable files differs by exactly this file.
+
+Repair: replace "a re-typed channel among the cases it does not reach" with a phrase that
+names the witnessing rather than borrowing the bar's pronoun — e.g. "a re-typed channel
+among the cases **no witness reaches**, though the bar reaches it" — or, better, fix the
+substantive claim as C-02 requires and write "a re-typed channel that alters no length
+among the cases no witness reaches".
+
+### C-02 — the unqualified "a re-typed channel … does not reach" is falsified two sentences later by the repair's own example
+
+Check: OVERCLAIM. Location: §21.7, 3897-3899 against 3913-3918.
+
+Quotation: "a re-typed channel among the cases it does not reach"
+
+Contradicting text (same insertion, 3913-3918, plus untouched 3918-3919): "Which case a
+type change falls in is not decided by the element sizes of §12.1: a planar `uint8` channel
+re-declared `bool` keeps its element size of 1 while its plane goes from P · Bᶜ bytes to
+⌈P/8⌉." … "A change reaching the decoded size is witnessed by T3 or T14".
+
+Detail. Read charitably ("the *witnessing* does not reach a re-typed channel"), the clause
+is a class claim over re-typings and is false for every re-typing that changes the plane
+length. The repair itself supplies the counterexample and states why: `uint8` → `bool`
+takes a planar plane from P·Bᶜ to ⌈P/8⌉, which is a change reaching the decoded size,
+which the very next sentence says T3 or T14 witnesses. Case B constructs the file. The
+correct claim is narrower: a re-typing that alters no length and reaches no §14-constrained
+byte is unwitnessed — which is Case A, and which is what "no check can know which type a
+channel carried before" is actually about.
+
+The asymmetry matters because the same sentence-pair treats the companion bar correctly
+("witnessed indirectly and only sometimes") using the identical T3/T14 mechanism. One
+sentence gives one bar an unqualified negative and its neighbour a hedge, for the same
+detection mechanism.
+
+Byte-level: **no.** On this reading the sentence makes a claim about detection, not about
+permission; a verifier's obligation to apply T3 comes from `[R-SER-07]` and the row, which
+this sentence does not touch. The bytes do not move on the charitable reading. (They move
+on C-01's reading, which is why C-01 is filed separately.)
+
+Repair: "a re-typing that alters no length and no byte §14 constrains among the cases no
+witness reaches".
+
+### C-03 — "escapes … the §14 bar" says a commit is not barred where §20.3 says it is
+
+Check: LOCAL_CONTRADICTION (also the check-7 analogy failure). Location: §21.7, 3909-3913.
+
+Quotation: "and a commit that supersedes every tile it would have damaged escapes them
+exactly as it escapes the §14 bar."
+
+Contradicting text: §20.3 step 4, 3148-3152: "The tense is the prior generation's (§3.1
+defines *stored* against a generation), so **a commit does not escape this by unstoring in
+the same breath: superseding every tile of a layer and re-declaring it are one operation,
+and this bars it.**"
+
+Detail. This is the same verb, the same subject, and the opposite predicate. "Escape" is
+used across this document to mean *not being subject to a rule* — §20.3's own other use,
+3206-3208: "`[R-COD-07]`'s lz4 decoded-size cap among them (L44), which an empty layer
+**escapes** only because that cap is quantified over addressed tiles" — so the reading is
+not strained.
+
+The analogy is what carries the error. "Escapes **them**" (the rows) asserts non-detection;
+a row is a check. "Escapes **the §14 bar**" asserts non-prohibition; the bar is
+"A commit MUST NOT…". The *exactly as* transfers a true statement about checks onto a
+prohibition, and the two governing verbs are "test"/"detect" against "MUST NOT". Tested
+against each row the sentence carries the analogy for — T3, T14, T2/T4/T5, T15/T17/T23/T25
+— it holds for every one; it fails only for the member named as its warrant.
+
+The document supplies the correct formula twice. §20.3, 3241-3243: "§21.7 records the
+consequence — that **this is precisely where the §14 bar has no witness**, the live state
+being clean". And hunk 8's own sentence 20 lines below: "so the §14 bar is **unwitnessed**
+there". The insertion and the pre-existing sentence therefore state the same fact about the
+same case in the same paragraph with different force — which is also why this is an
+unswept restatement: hunk 7 added a second account of a case the paragraph already
+covered, and hunk 8 then carefully disambiguated only the older one.
+
+Byte-level: **yes.** Case F. Writer P emits a commit that supersedes every stored tile of
+layer L while re-typing a channel; writer Q refuses and creates a new layer. P's output is
+a conforming file — its live state is clean by the paragraph's own admission ("leaves the
+live state clean") — so `[R-CNF-05]` bars neither reading from the emittable set, and the
+two writers put different bytes on disk from offset F onward.
+
+Repair: "…escapes them, and the §14 bar has no witness there either" — dropping "escapes"
+in the second position entirely. Or delete the clause and let the paragraph's existing
+sentence at 3933-3936 carry the case, which it already does correctly.
+
+### C-04 — "disturbs nothing a row can see" is false wherever the permuted channels' fills differ
+
+Check: OVERCLAIM (and LOCAL_CONTRADICTION with untouched text in the same paragraph).
+Location: §21.7, 3906-3908.
+
+Quotation: "a permutation among channels whose planes are the same length disturbs nothing
+a row can see"
+
+Contradicting text: §21.7 itself, untouched, 3885-3891: "the ordinal mappings of
+`[R-GEO-06]` and `[R-SER-01]` are satisfied by a structurally valid tile whatever values it
+carries, **except where §14 constrains a byte's content** — a padding position, a pad bit,
+or an interleaved boolean — **and a mis-ordered image is then witnessed by T2, T4 or T5**".
+
+Detail. Case C constructs it: a planar layer with padding positions and two `uint8`
+channels of differing recorded fill. Their planes are the same length, so the repair's
+stated condition is met. Exchange them; step 4's re-emission rule keeps every entry
+byte-identical at its disk-ordinal position (a channel permutation is not a geometry
+change, and §20.3 names a geometry change as the only occasion for renumbering). The plane
+now read as channel `b` carries `a`'s fill in its padding positions. `[R-SER-05]`: "at
+every padding position, a writer MUST encode, for each channel the position carries, that
+channel's fill value … a verifier MUST check it, and a violation is a validity error at
+tile scope." **T4** fires — instance `planar numeric plane fill bytes`. With two `bool`
+channels of differing fill bit, **T5** fires instead. Both are rows; both can see it.
+
+The claim is true only under two unstated conditions: the permuted channels' recorded fills
+coincide, or the layer has neither padding positions nor pad bits. The document elsewhere
+states exactly this carve-out for exactly this mechanism, three sentences earlier, which is
+why I rate it CONFIRMED rather than a matter of judgement.
+
+Byte-level: **no.** The file in Case C exhibits T4's condition, a registered violation, so
+`[R-CNF-05]` bars every conforming writer from emitting it under both readings, and the
+verifier's obligation to check padding content comes from `[R-SER-05]` and T4, which this
+sentence does not amend. The emittable set does not move; the sentence is false rather than
+permissive. (It would mislead a verifier author into skipping a check `[R-SER-05]` makes a
+MUST, which is a real cost, but not one that forks the conforming set.)
+
+Repair: "a permutation among channels whose planes are the same length and whose recorded
+fills agree disturbs nothing a row can see — where the fills differ, the padding positions
+and pad bits of §14.5 do, and T4 or T5 sees it".
+
+### C-05 — the companion-bar account covers permutations only; §20.3's bar equally reaches channel insertion and removal
+
+Check: UNDERSHOT (check 6). Location: §21.7, 3901-3909.
+
+Quotation: "Its companion bar on a planar layer's disk ordinals is witnessed indirectly and
+only sometimes … a permutation among channels whose planes are the same length disturbs
+nothing a row can see, while one that leaves a plane of one length at an ordinal the new
+declarations size differently is caught by T3, or by T14 under codec 1."
+
+Contradicting/omitted text: §20.3 step 4, 3182-3187: "A channel's tiles move exactly when
+its index does: **reordering** moves those channels the reorder re-indexes, and
+**inserting or removing one** moves every channel after the affected position. **Either**
+is such a change wherever the layer stores a tile for a channel that moved."
+
+Detail. The structure the repair governs is the companion bar's subject: changes to a
+planar layer's channel declarations that move a stored tile's disk ordinal. §20.3 names two
+members. §21.7 accounts for one — permutation — and then partitions *that* one exhaustively
+into two cases. Insertion and removal at a non-terminal position are the sibling member,
+they are barred on identical terms, and §21.7 says nothing about whether they are
+witnessed. They are not the same case: they change C, hence the addressed-tile count C·N
+(§11.2) and hence entry_count, so an offending commit is measured against a different row
+family (L21's `planar C·N, entry_count larger` / `smaller` instances) as well as T3/T14,
+and the ordinal displacement is a uniform shift by N rather than a swap. A reader working
+out whether the register owes a row for a mid-list channel insertion gets no answer here.
+
+The same shape recurs one level up. The paragraph's stated criterion is "A second set of
+obligations is omitted from the register because a single file exhibits no witness of their
+violation", and this repair converted a vague singular ("step 4's bar on a declaration
+change") into an enumeration of step 4's bars. Step 4 carries at least two further
+obligations meeting the same criterion and enumerated nowhere: "every other entry
+byte-identical at its disk-ordinal position" (3128-3129, with step 2's "not repaired to a
+sentinel" at 3086-3087), and "A layer whose record alone changes keeps its extent slot …
+relocating a live index region is compaction's operation (§20.5, `[R-WRT-07]`), not an
+appender's" (3130-3136). A file violating either is structurally perfect. The document
+hedges open lists explicitly when it means to — "not offered as exhaustive" (1 hit),
+"not offered as closed" (2 hits) — and §21.7 carries no hedge, while §21.1 calls it "the
+account, by class, of what fails it". "By class" may be doing that work, which is why I
+mark this PLAUSIBLE rather than CONFIRMED.
+
+Byte-level: **no.** The omission licenses nothing; §20.3's MUST NOTs stand for insertion,
+removal, and the carry-forward obligations whether or not §21.7 mentions them.
+
+Repair: extend the sentence to the bar's whole subject — "a **reordering** among channels
+whose planes are the same length … while a reordering that leaves a plane of one length at
+an ordinal the new declarations size differently, or an insertion or removal that shifts
+one there, is caught by T3, or by T14 under codec 1" — and, separately, decide whether
+§21.7's list is closed and say so.
+
+### C-06 — "the rows below … on the terms they state there": the rows are above, and "below" and "there" point in opposite directions
+
+Check: NEW_AMBIGUITY. Location: §21.7, 3909-3911.
+
+Quotation: "Where the change does touch something §14 fixes, the rows below reach it on the
+terms they state there and no better"
+
+Contradicting text: §21.5's preamble, spec/tarn.md 3778-3780, the document's only other use
+of the phrase: "every way its document can be unreadable takes this outcome, whatever the
+containing scope — as a violation in **the rows below**" — where the rows genuinely are
+below, in the table that follows on the next line.
+
+Detail. §21.7 begins at line 3862. The register's rows occupy §21.2-§21.5, lines 3626-3808:
+they are 90 to 280 lines **above**. §21.7 contains no table. Two readings: "the rows below"
+means "the rows named later in this paragraph" (T3, T14, T2/T4, T15/T17/T23/T25 are indeed
+named below), or it means the register, misdescribed. The second half of the same clause —
+"on the terms they state **there**" — is a locative pointing away from "below", which is
+the tell: a row states its terms in the register, not later in this paragraph. Whichever
+was meant, the sentence uses two locatives for one referent and one of them is wrong.
+Sweep run: `"rows below"` → 2 hits, both quoted above.
+
+Byte-level: **no.** Both readings pick out the same rows in the end.
+
+Repair: "the rows of §21.2 through §21.5 reach it on the terms they state and no better".
+
+### C-07 — "Which case a type change falls in": the nearest "cases" are the permutation dichotomy, which is not about type changes
+
+Check: NEW_AMBIGUITY (check 8, backwards). Location: §21.7, 3913-3918.
+
+Quotation: "Which case a type change falls in is not decided by the element sizes of §12.1:
+a planar `uint8` channel re-declared `bool` keeps its element size of 1 while its plane goes
+from P · Bᶜ bytes to ⌈P/8⌉."
+
+Contradicting text: the nearest antecedent, §21.7 3906-3909 (inserted in the same hunk):
+"a permutation among channels whose planes are the same length disturbs nothing a row can
+see, while one that leaves a plane of one length at an ordinal the new declarations size
+differently is caught by T3, or by T14 under codec 1."
+
+Detail. The insertion orders its material bar-first: §14 bar, then companion bar and its
+two-case split, then a sentence about what "the change" does when it touches §14, then
+"Which case a type change falls in". The only place the word *case* has been given a
+partition is the companion bar's permutation dichotomy two sentences back — and a type
+change is not a permutation and does not move ordinals at all (§20.3: "a disk ordinal is
+c · N + s, and N is the spatial-tile count, so the channel count enters the addressed-tile
+count C · N (§11.2) but no individual ordinal"). The intended antecedent is the
+touches-§14 / does-not-touch dichotomy of the preceding sentence, one further back and
+never called a "case". A reader who resolves to the nearest partition concludes the
+sentence is telling them how to classify a type change as a permutation, which is
+incoherent, and may re-read the ordinal bar as reaching type changes.
+
+Before the insertion this sentence did not exist, and the untouched sentences that follow
+it ("A change reaching a byte §14 structurally constrains…") attached directly to the §14
+bar with one bar in play; they now attach to a type-change example sitting behind 15 lines
+about a second bar.
+
+Byte-level: **no.** No reading changes an obligation; the sentence's substantive content
+(element size does not determine plane length for bool) is correct and verified against
+§12.1 and §14.3.
+
+Repair: move the sentence to sit immediately after the §14-bar clause it belongs to, and
+name its partition: "Whether a type change touches something §14 fixes is not decided by
+the element sizes of §12.1: …".
+
+---
+
+## 8. Candidates opened and dropped
+
+1. **"§20.3 step 4's §14 bar"** — does §20.3 actually name it that? Opened 3141-3147:
+   "Call this the **§14 bar**." Dropped: the name is the document's own.
+2. **"Its companion bar"** — §20.3 never says *companion*; it says "One effect is barred
+   beside it" and "The bar beside the §14 bar". Dropped: a third informal name for an
+   unnamed bar is a style matter, the referent is unambiguous, and no rule turns on the
+   word. Also "Its" grammatically picks up "the §14 bar", giving "the §14 bar's companion
+   bar", which is true.
+3. **Does the companion bar being "witnessed … only sometimes" break §21.7's own opening
+   criterion** — "omitted from the register because a single file exhibits no witness of
+   their violation"? Dropped as pre-existing, not introduced: the untouched text already
+   lists `[R-GEO-06]`/`[R-SER-01]` with "a mis-ordered image is then witnessed by T2, T4
+   or T5", and the pre-hunk §14-bar sentence already said "witnessed only where the
+   affected tiles remain stored". The paragraph's list has always held partly-witnessed
+   members.
+4. **Is a register row owed for either bar, and are the counts therefore wrong?** Opened;
+   applied §21.1's completeness clause; found the detectable residue is in every case
+   already T3/T14/T4/T5, exactly as §16's Note reasons for `[R-SLB-04]`. Recounted anyway:
+   120 conditions, 275 instances, matching §21.8 and the three per-subsection figures.
+   Dropped.
+5. **Could a same-length permutation also break a slab invariant (L41, L42)?** Opened
+   §16 and the rows. Dropped: the entries are re-emitted byte-identical at their
+   disk-ordinal positions, so the offset/length sequence read by ordinal is unchanged and
+   `[R-SLB-03]`'s packing relation sees exactly what it saw before. Not a witness.
+6. **"caught by T3, or by T14 under codec 1" — does it under-name the catchers?** Under
+   codec 3 a plane of the wrong size would also trip T21 or T22. Dropped: the sentence uses
+   "or" and claims sufficiency, not exhaustiveness, so no completeness word is at risk.
+7. **Does the untouched "A change reaching…" series now mis-scope to the companion bar?**
+   Opened; each member checked. "byte §14 structurally constrains", "the codec", "the
+   filter" cannot arise from the companion bar (it moves ordinals, it does not alter a
+   stored tile's bytes — §20.3: "an ordinal move being no effect on any stored tile's
+   bytes"); "the decoded size" is shared, and the insertion itself already assigns T3/T14
+   to the companion case, so the two accounts agree. Dropped as recorded-but-benign.
+8. **Did hunk 8 undershoot — are there other bare "the bar" references left in §21.7?**
+   Swept: `"the bar"` → 9 hits document-wide, none in §21.7. Dropped; hunk 8 is complete
+   for what it set out to fix.
+9. **Do the hunk headers' stated landing lines and nearest heading match the body?**
+   Checked both: 3896 and 3935 are the first changed lines, and 3862 is `#### 21.7 What no
+   check detects` for both. No mismatch. Dropped.
+
+## 9. Sweeps run, verbatim, with hit counts
+
+Whitespace-normalised over the whole file (the document is hard-wrapped, so these were run
+against `re.sub(r'\s+',' ', text)`, not line-oriented):
+
+```
+"the bar"                      →  9 hits
+"rows below"                   →  2 hits
+"not offered as exhaustive"    →  1 hit
+"not offered as closed"        →  2 hits
+"§14 bar"                      → 11 hits
+"companion"                    →  1 hit
+"escapes"                      →  4 hits
+"escape this"                  →  1 hit
+"unwitnessed"                  →  3 hits
+"disturbs nothing"             →  1 hit
+"which case"                   →  1 hit  (§20.3 step 1, unrelated; the §21.7 one is
+                                          capitalised "Which case" and so not matched —
+                                          noted, and confirmed by eye at 3913)
+"the cases it does not reach"  →  1 hit
+```
+
+Line-oriented (safe, short, cannot wrap):
+
+```
+grep -n "20.3"            → 12 hits
+grep -n "R-CNF-05|R-GEO-06|R-SER-01]"  → 20 hits
+grep -n "R-SLB-03"        →  7 hits
+grep -n "Of its"          →  1 hit  (§11.1 Rationale, line 1605)
+grep -n "^| L39|^| L40|^| L41"         →  3 hits
+awk '/`\[R-LIF-01\]`/'    → 10 hits
+awk NR 3862..3950 /^>/    →  0 hits  (§21.7 has no blockquote)
+```
+
+## 10. Confidence
+
+I ran all eight checks against both hunks. Checks 2 and 3 pass cleanly and I say so
+above with the evidence. Check 1 passes on tense and fails on quantifier range twice.
+Checks 4, 5, 7 and 8 each produced a finding. Check 6 produced C-05.
+
+Hunk 8 is a good repair: it fixes a referent that hunk 7 made ambiguous, it names the
+right bar (corroborated by §20.3's own forward reference at 3241-3243), and the sweep for
+other bare "the bar" references in §21.7 comes back empty. I have no finding against it
+except that it disambiguated the *older* of two sentences about the same case while
+leaving the newer one (C-03) saying something stronger and wrong.
+
+Hunk 7 is where the defects are, and they cluster in the two sentences that carry the
+insertion's new claims: the re-typing clause and the "escapes the §14 bar" clause. Two of
+the seven findings fork the bytes, and both do so the same way — a sentence in §21.7 that
+was meant to describe non-detection instead describes non-prohibition, in a document
+where §21.7 is normative and no precedence rule settles it against §20.3.

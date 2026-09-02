@@ -3136,7 +3136,8 @@ An appender MUST, in order:
    fixes for its stored bytes or how they decode —
    the set of padding positions (§11.3) and the content
    `[R-SER-05]` fixes there, the decoded size, the byte offset of any
-   sample within the decoded tile image, or the codec and filter that
+   sample within the decoded tile image, the sample type each value
+   in the image is read under, or the codec and filter that
    produced the stored bytes. Call this the **§14 bar**.
    The tense is the prior generation's
    (§3.1 defines *stored* against a generation), so a commit does not
@@ -3894,21 +3895,23 @@ construction; `[R-CNT-18]`'s prohibition on a sub-record containing
 records is detectable only by parsing a payload no format-major-1
 reader parses as a record sequence (§7.4's closing Note);
 §20.3 step 4's **§14 bar** is witnessed only where the affected tiles
-remain stored, and then only for part of what it bars — a re-typed
-channel among the cases it does not reach, since the prior
-generation's declarations are not part of the live state, which is
-all §9.7 walks, and no check can know which type a channel carried
-before. Its companion bar on a planar layer's disk ordinals is
+remain stored, and then only for part of what it bars — a re-typing
+that alters no length and no byte §14 constrains among the cases no
+witness reaches, since the prior generation's declarations are not
+part of the live state, which is all §9.7 walks, and no check can
+know which type a channel carried before. Its companion bar on a planar layer's disk ordinals is
 witnessed indirectly and only sometimes, and for the same reason no
 check knows which ordinal a stored tile used to occupy: a permutation
-among channels whose planes are the same length disturbs nothing a
-row can see, while one that leaves a plane of one length at an
-ordinal the new declarations size differently is caught by T3, or by
-T14 under codec 1. Where
-the change does touch something §14 fixes, the rows below reach it
-on the terms they state there and no better, and a commit that
-supersedes every tile it would have damaged escapes them exactly as
-it escapes the §14 bar. Which case a type change falls in is not
+among channels whose planes are the same length **and whose recorded
+fills agree** disturbs nothing a row can see, while one that leaves a
+plane of one length at an ordinal the new declarations size
+differently is caught by T3, or by T14 under codec 1. Where the fills
+differ, §14.5's padding positions and §14.3's pad bits carry the
+wrong channel's fill and T4 or T5 sees it. Where
+the change does touch something §14 fixes, the register's rows reach
+it on the terms they state there and no better.
+
+Which case a re-typing falls in is not
 decided by the element sizes of §12.1: a planar `uint8` channel re-declared
 `bool` keeps its element size of 1 while its plane goes from
 P · Bᶜ bytes to ⌈P/8⌉. A change reaching a byte §14 structurally
