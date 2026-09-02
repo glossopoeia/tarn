@@ -3168,8 +3168,7 @@ An appender MUST, in order:
    own tiles are stored, is a declaration edit like any other. Where a
    change does reach them it makes each stored tile it reaches
    nonconforming, and re-emitting those tiles would
-   strand the originals as slack — every tile the change reaches, and
-   for a change reaching every channel the whole layer's worth, since
+   strand the originals as slack — every tile the change reaches, since
    `[R-LIF-01]` freezes them where they lie — leaving the file larger
    for a change that reads like a directory edit. Such a change is a
    new layer, or a whole-file rewrite under a fresh file_id
@@ -3958,10 +3957,10 @@ condition to omit. `[R-ERR-01]`
 > fills agree** disturbs nothing a row can see, while one that leaves a
 > plane of one length at an ordinal the new declarations size
 > differently is caught by T3, or by T14 under codec 1. Where the fills
-> differ and the layer has a padding position or a pad bit, §14.5's
-> padding positions and §14.3's pad bits carry the wrong channel's
-> fill and T4 or T5 sees it; where it has neither, the permutation is
-> unwitnessed whether the fills agree or not. Where
+> differ and the permuted channels themselves carry a padding position
+> or a pad bit, §14.5's padding positions and §14.3's pad bits carry
+> the wrong channel's fill and T4 or T5 sees it; where neither does,
+> the permutation is unwitnessed whether the fills agree or not. Where
 > the change does touch something §14 fixes, the register's rows reach
 > it on the terms they state there and no better.
 >
