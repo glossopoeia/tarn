@@ -3557,9 +3557,10 @@ condition reads, cited without brackets to keep them distinct from
 the governing one. Its **completeness is normative** — a
 *detectable* file-conformance violation this specification names and
 the register omits is a defect in this document, detectability being the gate
-`[R-CNF-07]` already applies and §21.7 the account, by class, of
-what fails
-it — but each row *restates* its governing rule, and where a
+`[R-CNF-07]` already applies and §21.7 states the test for: a
+violation is detectable exactly where some file exhibiting it
+differs, in its live state, from every file that does not
+— but each row *restates* its governing rule, and where a
 row and the rule it cites diverge, **the rule governs**. Conditions
 attach to the finest structure they damage, and the outcome follows
 from that scope — subject to the same exception stated above, a rule
@@ -3576,7 +3577,7 @@ this list is not offered as closed. Rows that merely overlap, each
 reachable without the other, do not stand in it. The subsections after §21.5 are not
 part of the register and carry no rows: neither this completeness
 clause nor the instance arithmetic below reaches §21.6's defined
-non-violations, §21.7's account of what no check detects, or
+non-violations, §21.7's test for what no check detects, or
 §21.9's limits. §21.6's entries restate their governing rules on
 the same terms a row does, and where such an entry and the rule it
 cites diverge, the rule governs there too.
@@ -3878,78 +3879,108 @@ requirement a verifier is *unable to check* within the meaning of
 `[R-CNF-11]`: no file-level witness exists to check, so nothing about
 the file is left undetermined and the verdict is unaffected.
 
-A second set of obligations is omitted from the register because a
-single file exhibits no witness of their violation. Committed-prefix
-immutability and the strict growth of `committed_file_length` across
-the commits of one file_id (`[R-LIF-01]`, `[R-LIF-02]`) are
-properties of a file's history, which §9.7 does not reconstruct, and
-no field of a file records how many commits that history holds; the
-ordinal mappings of `[R-GEO-06]` and `[R-SER-01]` are satisfied by a
-structurally valid tile whatever values it carries, except where §14
-constrains a byte's content —
-a padding position, a pad bit, or an interleaved boolean — and a
-mis-ordered image is then witnessed by T2, T4 or T5, exactly as a
-mis-strided filter is; `[R-CNT-13]`'s prohibition on an MU = 0
-record encoding file offsets in its own payload is opaque by
-construction; `[R-CNT-18]`'s prohibition on a sub-record containing
-records is detectable only by parsing a payload no format-major-1
-reader parses as a record sequence (§7.4's closing Note);
-§20.3 step 4's **§14 bar** is witnessed only where the affected tiles
-remain stored, and then only for part of what it bars — a re-typing
-that alters no length and no byte §14 constrains among the cases no
-witness reaches, since the prior generation's declarations are not
-part of the live state, which is all §9.7 walks, and no check can
-know which type a channel carried before. Its companion bar on a planar layer's disk ordinals is
-witnessed indirectly and only sometimes, and for the same reason no
-check knows which ordinal a stored tile used to occupy: a permutation
-among channels whose planes are the same length **and whose recorded
-fills agree** disturbs nothing a row can see, while one that leaves a
-plane of one length at an ordinal the new declarations size
-differently is caught by T3, or by T14 under codec 1. Where the fills
-differ, §14.5's padding positions and §14.3's pad bits carry the
-wrong channel's fill and T4 or T5 sees it. Where
-the change does touch something §14 fixes, the register's rows reach
-it on the terms they state there and no better.
+A requirement of this specification is **unwitnessed** where a file
+that violates it and a file that satisfies it can present identical
+live states. No check §21.2 through §21.5 states can separate two
+such files, so none is omitted from the register by oversight: there
+is no condition for a row to carry. That is the whole of the test,
+and it decides any requirement put to it without appeal to a list —
+ask whether the breach can be made to leave the live state, which is
+all §9.7 walks, exactly as a conforming commit would leave it.
 
-Which case a re-typing falls in is not
-decided by the element sizes of §12.1: a planar `uint8` channel re-declared
-`bool` keeps its element size of 1 while its plane goes from
-P · Bᶜ bytes to ⌈P/8⌉. A change reaching a byte §14 structurally
-constrains — a padding position, a pad bit, or a boolean byte — fires
-§21.4's content rows. A change reaching the decoded size is witnessed by T3
-or T14, which test a length rather than the decoded image's content
-— T14 the entry's declared length, T3 the decoded payload's own. A
-change reaching the codec is *sometimes* witnessed by the rows for
-the codec now declared, which test the stored bytes as a stream of it
-(T15, T17, T23, T25), or by T14 where the new declaration is
-codec 1 — but neither is assured: a writer can choose stored bytes
-that satisfy the old declaration and the new one alike, and the
-change is unwitnessed there. A change reaching the filter, or moving
-a sample's byte offset within the decoded image without changing
-that image's length, is witnessed on the same terms T26 states for a
-wrong stride: where the resulting image breaks §14.5's padding
-content or `[R-SER-08]`'s bool bytes, the check that detects it is
-T2's or T4's, exactly as T26 has it, and where it breaks neither
-there is no witness. Neither change is caught by a
-length: both filter values are length-preserving (§17.3), and moving
-a sample within an image of unchanged length alters no declared
-quantity. And a
-commit that supersedes every tile it would have damaged leaves the
-live state clean, so the §14 bar is unwitnessed there for the same
-reason `[R-LIF-01]` is: it is a property of the prior generation,
-which §9.7 does not reconstruct; §20.5's three obligations on a
-compacted file's trailer (`[R-WRT-06]`) — its fresh `file_id` draw,
-the unknown ignore-lane bits it MUST carry forward, and the floor
-its version_minor SHOULD take — are unwitnessed for a reason all
-three share: the output carries no record that it is a compaction
-output at all, so no check can know that any of the three was owed.
-For the last two there is a second, the output carrying no
-record of its input's flags or its input's minor either; and `[R-ENC-06]`'s fixed field widths are not
-a state a
-file can be in, since the parse is always at the widths this
-specification fixes and a structure written at any other yields
-different values at them, caught by the rows for the fields that hold
-them. `[R-ERR-01]`
+**Detectability is its negation**, and this is the gate `[R-CNF-07]`
+applies in assigning an outcome and §21.1's completeness clause
+turns on: a violation this specification names is **detectable**
+exactly where some file exhibiting it differs, in its live state,
+from every file that does not. The register's completeness is a
+claim about those and no others, so an unwitnessed obligation is
+absent from it by the clause's own terms rather than in breach of
+them. Being unwitnessed bears on detection and not on permission:
+the requirement binds its actor as any other does, and the outcome
+classes of §2.4 are assigned to violations a reader or verifier can
+establish rather than to every violation this document names.
+
+Distinguish an unwitnessed requirement from one **no file can
+violate**. `[R-ENC-06]`'s fixed field widths are not a state a file
+can be in — the parse is always at the widths this specification
+fixes, and a structure written at any other yields different values
+at them, caught by the rows for the fields that hold them. Nothing
+is omitted from the register on its account, there being no
+condition to omit. `[R-ERR-01]`
+
+> **Rationale.** The obligations this test places outside the
+> register, as the document stands. This walk-through illustrates the
+> test and does not extend it; where an item here and the test above
+> disagree, the test governs, and an item found stale is a defect in
+> this block and not in the register.
+>
+> A second set of obligations is omitted from the register because a
+> single file exhibits no witness of their violation. Committed-prefix
+> immutability and the strict growth of `committed_file_length` across
+> the commits of one file_id (`[R-LIF-01]`, `[R-LIF-02]`) are
+> properties of a file's history, which §9.7 does not reconstruct, and
+> no field of a file records how many commits that history holds; the
+> ordinal mappings of `[R-GEO-06]` and `[R-SER-01]` are satisfied by a
+> structurally valid tile whatever values it carries, except where §14
+> constrains a byte's content —
+> a padding position, a pad bit, or an interleaved boolean — and a
+> mis-ordered image is then witnessed by T2, T4 or T5, exactly as a
+> mis-strided filter is; `[R-CNT-13]`'s prohibition on an MU = 0
+> record encoding file offsets in its own payload is opaque by
+> construction; `[R-CNT-18]`'s prohibition on a sub-record containing
+> records is detectable only by parsing a payload no format-major-1
+> reader parses as a record sequence (§7.4's closing Note);
+> §20.3 step 4's **§14 bar** is witnessed only where the affected tiles
+> remain stored, and then only for part of what it bars — a re-typing
+> that alters no length and no byte §14 constrains among the cases no
+> witness reaches, since the prior generation's declarations are not
+> part of the live state, which is all §9.7 walks, and no check can
+> know which type a channel carried before. Its companion bar on a planar layer's disk ordinals is
+> witnessed indirectly and only sometimes, and for the same reason no
+> check knows which ordinal a stored tile used to occupy: a permutation
+> among channels whose planes are the same length **and whose recorded
+> fills agree** disturbs nothing a row can see, while one that leaves a
+> plane of one length at an ordinal the new declarations size
+> differently is caught by T3, or by T14 under codec 1. Where the fills
+> differ, §14.5's padding positions and §14.3's pad bits carry the
+> wrong channel's fill and T4 or T5 sees it. Where
+> the change does touch something §14 fixes, the register's rows reach
+> it on the terms they state there and no better.
+>
+> Which case a re-typing falls in is not
+> decided by the element sizes of §12.1: a planar `uint8` channel re-declared
+> `bool` keeps its element size of 1 while its plane goes from
+> P · Bᶜ bytes to ⌈P/8⌉. A change reaching a byte §14 structurally
+> constrains — a padding position, a pad bit, or a boolean byte — fires
+> §21.4's content rows. A change reaching the decoded size is witnessed by T3
+> or T14, which test a length rather than the decoded image's content
+> — T14 the entry's declared length, T3 the decoded payload's own. A
+> change reaching the codec is *sometimes* witnessed by the rows for
+> the codec now declared, which test the stored bytes as a stream of it
+> (T15, T17, T23, T25), or by T14 where the new declaration is
+> codec 1 — but neither is assured: a writer can choose stored bytes
+> that satisfy the old declaration and the new one alike, and the
+> change is unwitnessed there. A change reaching the filter, or moving
+> a sample's byte offset within the decoded image without changing
+> that image's length, is witnessed on the same terms T26 states for a
+> wrong stride: where the resulting image breaks §14.5's padding
+> content or `[R-SER-08]`'s bool bytes, the check that detects it is
+> T2's or T4's, exactly as T26 has it, and where it breaks neither
+> there is no witness. Neither change is caught by a
+> length: both filter values are length-preserving (§17.3), and moving
+> a sample within an image of unchanged length alters no declared
+> quantity. And a
+> commit that supersedes every tile it would have damaged leaves the
+> live state clean, so the §14 bar is unwitnessed there for the same
+> reason `[R-LIF-01]` is: it is a property of the prior generation,
+> which §9.7 does not reconstruct; §20.5's three obligations on a
+> compacted file's trailer (`[R-WRT-06]`) — its fresh `file_id` draw,
+> the unknown ignore-lane bits it MUST carry forward, and the floor
+> its version_minor SHOULD take — are unwitnessed for a reason all
+> three share: the output carries no record that it is a compaction
+> output at all, so no check can know that any of the three was owed.
+> For the last two there is a second, the output carrying no
+> record of its input's flags or its input's minor either.
 
 #### 21.8 Conformance vector coverage
 

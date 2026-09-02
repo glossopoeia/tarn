@@ -906,7 +906,45 @@ per placement. Should it state four?
   the register grows by two; if §21.1 needs a general rule instead, (c) is
   the cheaper fix and closes a standing debt with it.
 
-### Q-I5. What is §21.7 for, and what must its account cover? [shaping]
+### Q-I5. What is §21.7 for, and what must its account cover? [Resolved → ADR-0115]
+**Resolution:** Option (a). §21.7 states a **test** and no longer an inventory: a
+requirement is unwitnessed where a file that violates it and a file that satisfies
+it can present identical live states, so no check §21.2 through §21.5 states can
+separate them. Detectability is its negation and is now defined, which closes a
+gap the entry did not name — §21.1's completeness clause and `[R-CNF-07]` both
+turn on "detectable" and neither defined it, §21.7's enumeration being its only
+account. §21.1's two characterisations of §21.7 are swept to match.
+
+**The test was derived and checked before it was written**, which is the step the
+four previous repairs skipped. It decides all nine members of the old inventory
+and all three of its stated exceptions correctly, and declines to call unwitnessed
+three witnessed requirements used as controls (`[R-CNT-06]`'s trailer magic,
+`[R-SER-05]`'s padding content, `[R-CNT-11]`'s directory CRC). One member,
+`[R-ENC-06]`'s fixed field widths, resolved only **vacuously** — no file can
+violate it at all — which exposed a conflated class the old inventory carried;
+*unviolatable* is now distinguished from *unwitnessed* in normative text.
+
+**The walk-through is demoted to a block labelled *Rationale*** and so carries no
+force under `[R-CNF-01]`, which option (a) called for in its own terms. It states
+that it illustrates the test and does not extend it, that the test governs any
+disagreement, and that a stale item is a defect in that block and not in the
+register. §21.7 is now 434 normative words and 858 illustrative, where it was 926
+normative and no illustration.
+
+**Two options are retained rather than rejected**, at the maintainer's direction,
+this section having resisted four previous repairs:
+
+- **(b) Derive the inventory mechanically** — a checked artifact beside
+  `tarn_check` that enumerates every requirement and asks whether a row witnesses
+  it. **This is the fallback if the test proves undecidable for some
+  requirement**, which is the one way ADR-0115 can fail, since the test's whole
+  claim is that it decides membership without naming cases. It is also the only
+  form that survives if no property can be stated at all.
+- **(d) Cut the walk-through** rather than merely demoting it. **Reach for this if
+  the block keeps drawing findings even without normative force.** Demotion
+  changes the class of a failure there from normative to editorial; it does not
+  stop the illustration going stale.
+
 **Question:** §21.7 accounts, by class, for obligations no single file
 witnesses. Four ADRs have repaired it in four days (0089, 0090, 0091, 0092)
 and **it has drawn a finding cluster in five consecutive rounds** — eight in
