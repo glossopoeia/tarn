@@ -1610,8 +1610,10 @@ region of it returns no samples. `[R-GEO-02]`
 > carries no §14 obligation and its extent becomes slack, a tile the
 > superseded generation did not store carries none either, and a new
 > padding position whose stored byte already holds the fill alters
-> nothing. One shrink can do several of these at once. A layer that stored nothing may be re-declared
-> freely. The other two bars reach neither a shrink nor a growth:
+> nothing. One shrink can do several of these at once. A layer that
+> stored no tile in the generation the commit supersedes may be
+> re-declared freely; a layer the commit itself empties does not
+> qualify. The other two bars reach neither a shrink nor a growth:
 > they bar a change to a channel's declared sample type, and a change
 > to a planar layer's channel declarations that moves a stored tile's
 > disk ordinal. Growth
@@ -3134,8 +3136,8 @@ An appender MUST, in order:
    the set of padding positions (§11.3) and the content
    `[R-SER-05]` fixes there, the decoded size, the byte offset of any
    sample within the decoded tile image, or the codec and filter that
-   produced the stored bytes. Call this the **§14 bar**, the name the
-   rest of this step and §21.7 use for it. The tense is the prior generation's
+   produced the stored bytes. Call this the **§14 bar**.
+   The tense is the prior generation's
    (§3.1 defines *stored* against a generation), so a commit does not
    escape this by unstoring in the same breath: superseding every
    tile of a layer and re-declaring it are one operation, and this
@@ -3170,16 +3172,25 @@ An appender MUST, in order:
    than by cases: a commit MUST NOT change the
    declared sample type of any channel of a layer that stores a tile
    in the generation this commit supersedes, whatever the layer's
-   layout and whether or not the element size moves. Reinterpreting a
+   layout and whether or not the element size moves. The scope is the
+   layer and not the channel, and deliberately so: in an interleaved
+   layer every stored tile depends on **every** channel's type, since
+   the sample stride Q and each in-sample offset Fᶜ are sums over all
+   of them (§14.2), so a channel that stores nothing still governs
+   the tiles that do. Rather than split the rule by layout it holds
+   over the layer, which bars a change to a planar channel storing
+   nothing that would in fact disturb no byte. Reinterpreting a
    stored array is not an appender's operation. The caller decides
    what becomes of the values the new type cannot carry — a magnitude
    the narrower type cannot hold, a negative the unsigned type cannot
    — and expresses that decision by writing the tiles, which is a new
    layer or a whole-file rewrite.
 
-   A further effect is barred on the same tense and for the same
-   reason, and the §14 bar does not reach it because it is not an
-   effect on any stored tile's bytes: for a **planar** layer, a
+   A further effect is barred on the same tense, though on its own
+   ground: the §14 bar does not reach it, an ordinal move being no
+   effect on any stored tile's bytes, and what it disturbs is instead
+   the re-emission rule above, which licenses a renumbering only for
+   a geometry change. For a **planar** layer, a
    commit MUST NOT change the channel declarations in a way that
    alters the disk ordinal `[R-GEO-06]` assigns any tile the layer
    stores in the generation this commit supersedes. A channel's tiles
@@ -3205,8 +3216,8 @@ An appender MUST, in order:
    which is what schema-first creation needs (§11.1) — the tense is
    these bars', so a commit does not earn this permission by emptying
    the layer as it re-declares it; and an extent MAY **grow**, since a position that
-   becomes real held that channel's fill and fill is a legal sample
-   value — provided the grown geometry stays within every bound the
+   becomes real held, for each channel the position carries, that
+   channel's fill (§14.5), and fill is a legal sample value — provided the grown geometry stays within every bound the
    layer's own declarations impose, `[R-COD-07]`'s lz4 decoded-size
    cap among them (L44), which an
    empty layer escapes only because that cap is quantified over
@@ -3215,8 +3226,11 @@ An appender MUST, in order:
    a growth is permitted exactly where the geometry it produces
    satisfies every rule that geometry is subject to.
 
-   An extent MAY also **shrink**, and the §14 bar is the whole of
-   the test, **in that bar's own tense**: a shrink is permitted
+   An extent MAY also **shrink**, and the §14 bar is the whole of the
+   test of what a shrink **alters**, **in that bar's own tense**;
+   the obligations this step states below — on slack, on entry_count,
+   and on a slab or alignment declaration (`[R-SLB-04]`,
+   `[R-SLB-01]`) — bind it as they bind any commit. A shrink is permitted
    exactly where it alters nothing §14 fixes for any tile the layer
    stores in the generation this commit supersedes. Dropping a tile
    out of the addressed set (§11.2's grid count falls) is not itself
@@ -3234,8 +3248,9 @@ An appender MUST, in order:
    there, and this sentence answers the rescue question rather than
    restating the test. Neither of the two bars beside the §14 bar
    reaches a shrink: one bars a change to a channel's declared sample
-   type and the other a change to the channel declarations, and a
-   shrink is neither. §21.7 records the
+   type, the other a change to a planar layer's channel declarations
+   that moves a stored tile's disk ordinal, and a shrink is neither.
+   §21.7 records the
    consequence — that this is precisely where the §14 bar has no
    witness, the live state being clean — which is why the rule is
    stated here and not left to the rows.
@@ -3900,11 +3915,11 @@ stores in the generation the commit supersedes — the prior
 generation's channel declarations are not part of the live state,
 which is all §9.7 walks, so no check can know which ordinal a stored
 tile used to occupy, or which type its channel carried before. Where
-the change does touch one of those, and the tile it touches remains
-stored, the rows below witness it; a commit that supersedes every
-tile it would have damaged escapes them here exactly as it does the
-§14 bar. Which case a type change falls in is not decided by
-the element sizes of §12.1: a planar `uint8` channel re-declared
+the change does touch something §14 fixes, the rows below reach it
+on the terms they state there and no better, and a commit that
+supersedes every tile it would have damaged escapes them exactly as
+it escapes the §14 bar. Which case a type change falls in is not
+decided by the element sizes of §12.1: a planar `uint8` channel re-declared
 `bool` keeps its element size of 1 while its plane goes from
 P · Bᶜ bytes to ⌈P/8⌉. A change reaching a byte §14 structurally
 constrains — a padding position, a pad bit, or a boolean byte — fires
