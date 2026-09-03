@@ -1,0 +1,669 @@
+{
+ "merged": [
+  {
+   "members": [
+    "verifier-02",
+    "register-01",
+    "adversary-02",
+    "adversary-04"
+   ],
+   "title": "\u00a721.7's \"exactly where\" biconditional is falsified by rows the register carries \u2014 F1, and the five tile rows whose detection is another row's check",
+   "verdicts": {
+    "correctness": "CONFIRMED (split across 2)",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED (split across 3)"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-05",
+    "verifier-01",
+    "adversary-03"
+   ],
+   "title": "\u00a721.7's *detectable* clause admits two quantifier scopings and the asserted duality holds under only one of them",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "reader-01",
+    "register-02"
+   ],
+   "title": "[R-CNF-12] scopes the verifier's file-level duty by reference to \u00a721's inventory, which makes \u00a721.7's disclaimer false of its own instrument",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-03",
+    "diagrams-04"
+   ],
+   "title": "Appendix G item 5's closing universal \u2014 the shuffle \"changes the stored bytes of every tile it touches\" \u2014 is false for any decoded image the permutation fixes",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "figure"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-04",
+    "register-06"
+   ],
+   "title": "\u00a721.1 attributes \"the sole resolved byte in this format\" to \u00a714.2; \u00a712.3's [R-TYP-04] is the rule that makes the uniqueness claim",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "reader-02"
+   ],
+   "title": "The \u00a714 bar's general clause reaches a growth over a stored edge tile; only the express MAY takes it back out, and the carve-out illustrates only the shrink direction",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "PARTIAL",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "reader-03"
+   ],
+   "title": "\"Neither obligation has a witness in the output alone\" is false for the [R-CNT-26]-floor branch on an ordinary compacted output",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "REFUTED",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "none",
+    "skeptic": "none"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "reader-04"
+   ],
+   "title": "\"This is precisely where the \u00a714 bar has no witness\" has an unnamed antecedent, but only the narrow reading is sustainable and the reporter's extra wrinkle is refuted",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "reader-05"
+   ],
+   "title": "\u00a720.5 cites \u00a721.7's unwitnessed ground for an obligation stated over an input/output pair rather than over a file",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-01"
+   ],
+   "title": "[R-WRT-07] triggers index-region regeneration on the region being relocated, when what forces it is the layer's stored tiles being relocated",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "writer-02"
+   ],
+   "title": "\"declarations\" in [R-ERR-04] is read strictly in \u00a718.2's Note and loosely in [R-COD-06], though both outcomes are independently licensed",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-04"
+   ],
+   "title": "Appendix G's preamble claims to close every open degree of freedom while closing neither tiling nor layout, both named as freedoms by its own item 2",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-06"
+   ],
+   "title": "[R-LIF-06] obliges a report of \"the candidate it settled on\" in two reachable states where the probe settles on none",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-07"
+   ],
+   "title": "[R-SLB-04]'s trigger names only tile-side changes, so introducing a slab declaration or changing A_slab alone falls outside it",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "verifier-03"
+   ],
+   "title": "The \u00a714 bar's enumerated list names padding positions but never pad bits, which \u00a714.3 and [R-SER-05] carefully distinguish",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-01"
+   ],
+   "title": "Row R8's Instances cell enumerates containers but not the two alternatives its own condition text states, unlike R5, R6 and R7",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "diagrams-02"
+   ],
+   "title": "The front-matter gloss of *structural* drops [R-ENC-16]'s verifier clause and its layer/tile acceptance limb",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-03"
+   ],
+   "title": "The front-matter blockquote labels itself non-normative by a device [R-CNF-01]'s closed exception list confines to appendices",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-03"
+   ],
+   "title": "\u00a719.3 lists [R-ENC-06]'s fixed field widths among a reader's validations; \u00a721.7 says that rule states no condition a file can exhibit",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-04"
+   ],
+   "title": "[R-ERR-05]'s closed \"Two do not\" count and L1's instance list disagree about whether a declared alignment sits inside [R-ENC-03]'s value domain",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-05"
+   ],
+   "title": "F18 and \u00a721.2 assert version_major = 0 is invalid in every format major version; [R-CNT-24] fixes no such invariant",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-01"
+   ],
+   "title": "[R-SER-02]'s designation sentence carries no layout qualifier, raising the question whether a planar layer derives P\u00b7Q for [R-ENC-04]'s ceiling",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "PARTIAL",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "editorial",
+    "skeptic": "byte-level"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": true
+   },
+   "reporter_bl": [
+    "adversary-01"
+   ],
+   "any_bl": true,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-05"
+   ],
+   "title": "The \u00a714 bar's list names the byte offset of a *sample*, not of a *value*, so a same-type channel permutation passes every listed item",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "quiz-01"
+   ],
+   "title": "\"the bound above\" in [R-MTA-09]'s verifier sentence has two candidate antecedents, both stated as the reader's own bound",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-02"
+   ],
+   "title": "\u00a711.1's Rationale says \"last\" zero grid count where the document's own use of \"last\" is last-declared, which makes the sentence false",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-03"
+   ],
+   "title": "[R-LIF-02]'s durability barriers are writer MUSTs with no byte witness that [R-CNF-02]'s conduct enumeration does not place",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  }
+ ],
+ "pass_ok": {
+  "correctness": true,
+  "implementer": true,
+  "skeptic": true
+ }
+}
