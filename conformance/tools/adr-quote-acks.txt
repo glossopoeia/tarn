@@ -26,3 +26,16 @@
 0118|Two do not: [R-ERR-05]'s pre-repair closed count, now enumerated.
 0118|on the bound above: the pre-repair [R-MTA-09] anaphor with two candidate antecedents.
 0118|changes the stored bytes of every tile it touches: Appendix G item 5's pre-repair universal, false wherever the permutation fixes the image.
+# The pre-round-30 audit of ADR-0118's repairs (2026-09-03) changed nine of the
+# spans the ADR quoted as NEW text. Each is recorded here so the ADR's account
+# of what it wrote stays checkable against what the audit then did to it.
+0118|runs to MUST-level conditions, which §21 inventories: quoted as the new appositive; two audit lanes found it asserts that §21 inventories MUST-level conditions as a class, which §21.7 denies, and the clause was cut.
+0118|which need not be the same check for every one of them: quoted as the new clause; "them" had two antecedents (the files, or the reader and verifier) and now reads "every one of those files".
+0118|A shrink whose damage falls on a tile the new state no longer stores is precisely where: quoted as the repaired shrink sentence; "precisely where" was a biconditional the bar falsifies outside shrinks, and the sentence now states one direction with "only".
+0118|the field widths at which §4 fixes the parse: quoted as the new §19.3 member; a parse convention stayed listed among validations, naming no check, and the member was dropped.
+0118|caught by the rows for the fields that hold them: quoted as the claim the repair qualified; the qualified aside gave [R-ENC-06] the partially-caught shape §21.7 reserves for unwitnessed conditions, and the aside was cut.
+0118|Neither obligation has a witness in the output alone, save: quotes the repaired witness sentence in the erratum; it keyed checkability to the compactor's implementation set, which the output does not carry, and was cut as the sentence's second false form.
+0118|ask whether a breach can be made to leave behind a file: quotes §21.7's operational gloss in the erratum; its outer quantifier was ∃ where the definition's is ∀, and the clause was cut.
+0118|the byte offset of any value within the decoded tile image: quotes the renamed list member in the erratum; it now reads "the byte offset — or, in a packed plane, the bit position — of any value".
+0118|a relocated tile-index region: quotes the §20.5 Example's superseded keying in the erratum; the Example now keys on a region any of whose stored extents moved.
+0118|a layer or a tile: quotes [R-ERR-04]'s superseded scope list in the erratum; the list now reads "a layer, a tile, or the record carrying a user-metadata document, as §18.2 assigns".

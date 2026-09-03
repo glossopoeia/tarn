@@ -95,6 +95,15 @@ over *"some file that does not exhibit it"* — files not exhibiting the conditi
 and the gloss three sentences later over *"a conforming one"*. A reporter put both to twenty-two conditions and found
 seven where they disagree. The gloss now quantifies as the definition does.
 
+**Erratum, 2026-09-03.** The gloss aligned above has been cut. The pre-round-30
+audit found that its outer quantifier had never matched the definition's: it
+asked whether *some* breach leaves behind an inseparable file, where the
+definition requires that *every* file exhibiting the condition have one — a
+weaker test, under which a condition detectable by the definition could be
+called unwitnessed. This decision closed the gloss's comparison class and left
+its quantifier. The definition is the whole of the test and is now stated
+once; ADR-0118's erratum records the cut.
+
 ## Decision 2 — R8 enumerates four instances, and §21.8 moves to 277
 
 §21.1 fixes the count: *"An instance names a field the condition ranges over, a

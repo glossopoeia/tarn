@@ -1,0 +1,47 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 4fb6859..bd2517a 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -16,7 +16,8 @@ License: CC BY 4.0 (see [LICENSE-SPEC](../LICENSE-SPEC)).
+ > they carry, and a packed variable-length payload has no offsets to
+ > give. Every field is classified as
+ > **structural** (its value affects where a byte lies, how it decodes,
+-> what a decoded value is, or whether the file is accepted) or
++> what a decoded value is, or whether the file, layer or tile is
++> accepted at all) or
+ > **descriptive** (none of those — §4.7). Normative requirements carry
+ > stable identifiers like `[R-IDX-03]`, and test vectors cite those
+ > identifiers rather than prose positions.
+@@ -3901,9 +3902,9 @@ same subject, and each quantifier is the other's dual, so each is
+ exactly the negation of the other, and detectability so stated is
+ the gate `[R-CNF-07]` applies in assigning an outcome and §21.1's
+ completeness clause turns on. The register carries a row for every
+-condition that is a detectable file-conformance violation, so an
+-unwitnessed condition is absent from it by that clause's own terms
+-rather than in breach of them.
++condition that is a detectable file-conformance violation. An
++unwitnessed condition is not one, so that clause requires no row for
++it and its absence from the register breaches nothing.
+ 
+ That is the whole of the test, and it decides any condition put to it
+ without appeal to a list: ask whether a breach can be made to leave
+@@ -4577,12 +4578,15 @@ the file.
+    packed boolean plane, and equally where the decoded image is a
+    single group, n = L/s being 1 (`[R-COD-10]`); elsewhere it changes
+    the stored bytes of every tile it touches. **Fixed declared tile
+-   extents and a fixed layout** likewise, and item 2 names both:
++   extents and a fixed layout** likewise, as item 2's closing sentence
++   names both:
+    §11.3 states that tile extents are a writer's choice and that this
+    specification imposes none, and §14.1 leaves the layout to the
+-   writer, so two writers agreeing on everything above still emit
+-   different numbers of tiles, of different shapes, without both
+-   pinned.
++   writer. Without both pinned, two writers agreeing on everything
++   above still disagree on bytes: the tile extents fix every tile's
++   shape and with it the grid count, while the layout fixes how many
++   tile-index entries the layer addresses (§11.2) and how each tile's
++   values are arranged (§14.2).
+ 6. **The sentinel for every all-fill tile**, so that a tile whose
+    samples all equal fill is never stored; otherwise two writers
+    agreeing on content still disagree on bytes.

@@ -246,7 +246,10 @@ A **condition** this specification names — one malformed state, as
 §21.1 individuates them, and not the requirement that defines it —
 **reaches** a file declaring a format major other than 1 when, and
 only when, the invariant it violates is one `[R-CNT-24]` fixes in
-every format major version. Reach is per condition because a single
+every format major version. A file whose version_major is 0 declares
+no major at all (§6.3): it is not a file declaring a format major
+other than 1, no reach question arises for it, and `[R-CNT-07]`
+rejects it (§21.2, F18). Reach is per condition because a single
 requirement can state several: `[R-CNT-06]` states nine, of which the
 trailer magic and the trailer CRC assert invariants `[R-CNT-24]` fixes
 and the other seven do not. The test is the invariant asserted, not
@@ -322,8 +325,8 @@ purpose: §21's register enumerates MUST-level conditions only, and a
 verifier reports a SHOULD deviation as an advisory that does not bar
 certification. A verifier owes no search for one: §2.3's duty to
 check every file-level requirement runs to MUST-level conditions,
-which §21 inventories, and a SHOULD deviation is reported where the
-verifier observes it and not hunted for. `[R-CNF-12]`
+and a SHOULD deviation is reported where the verifier observes it
+and not hunted for. `[R-CNF-12]`
 
 > **Note.** "Reject" prescribes the scope of unusability, not user
 > interface: how failure is reported is implementation technique.
@@ -1408,8 +1411,10 @@ backward. `[R-LIF-05]`
 Recovery tools and verifiers — never conforming readers on the default
 path — locate commit states as follows: probe backward at 64-aligned
 offsets o for the trailer magic; on a match, require the trailer CRC
-to verify and committed_file_length = o + 64. The nearest-to-end valid
-candidate is the last committed state; truncating to it recovers the
+to verify and committed_file_length = o + 64 — a match satisfying
+both is a **candidate**, and one failing either is not. The
+nearest-to-end candidate that survives the whole-file re-verification
+below is the last committed state; truncating to it recovers the
 file. A recovery tool enumerating a file's commit states continues
 the same probe to offset 0; coverage verification does not (§9.7,
 `[R-LIF-08]`), and no verdict turns on the probe: a file whose final
@@ -1438,9 +1443,9 @@ the re-append reproduces. The probe begins at the
 largest 64-aligned offset o with o + 64 ≤ the physical file length; a
 candidate whose whole-file re-verification fails was not a commit
 state, so the tool continues the probe past it, and MUST report the
-candidate it settled on and how many it rejected, or, where no
-candidate survived re-verification, that none did and how many it
-rejected. `[R-LIF-06]`
+candidate it settled on and how many candidates it rejected on that
+re-verification, or, where no candidate survived it, that none did
+and how many it rejected. `[R-LIF-06]`
 
 Writers performing very large single commits SHOULD emit intermediate
 checkpoint commits (a directory and trailer mid-stream, ~a few KiB
@@ -2317,9 +2322,10 @@ not obligated to, and MAY instead detect contiguity arithmetically
 from any index segment. `[R-SLB-03]`
 
 A writer or updater whose commit changes the stored-tile set, the
-run partition, the byte placement of any run, or the slab
-declaration itself, of a layer slab-declared in either the
-superseded or the new generation, MUST either
+run partition, the byte placement of any run, the disk ordinal of
+any tile the new state stores, or the slab declaration itself, of a
+layer slab-declared in either the superseded or the new generation,
+MUST either
 re-establish the invariants for every such run — or clear the declaration in
 the new generation; carrying a stale declaration forward is a
 validity error at layer scope, detected as the invariant failures
@@ -2682,7 +2688,8 @@ ignore-record, never the tile-scope outcome §17.2 assigns. `[R-MTA-09]`
 > reader that proceeds takes ignore-record for that record; a reader
 > that instead declines on resource grounds under `[R-ERR-04]` does
 > so at the whole file, a document having no declared size and so no
-> narrower scope whose declarations that rule can measure. A refusal
+> narrower scope whose stated or derived quantities that rule can
+> measure, its decoded size being neither. A refusal
 > on that ground is reported as a resource limit, not as corruption.
 
 The decoded document is a JSON text as defined by RFC 8259, encoded
@@ -2950,8 +2957,7 @@ sub-record walk, and sub-record multiplicity (`[R-CNT-18]`,
 `[R-CNT-14]`), dimension- and channel-name rules (`[R-ENC-11]`,
 `[R-ENC-12]`, `[R-ENC-15]`), the framing rules a user-metadata
 sub-record carries — no (0, 0) slot, extent_length at least 5,
-inline_length exactly 1 (`[R-CNT-25]`, `[R-MTA-03]`) — the field
-widths at which §4 fixes the parse (`[R-ENC-06]`) and the u64 value
+inline_length exactly 1 (`[R-CNT-25]`, `[R-MTA-03]`) — the u64 value
 domain of §4.2 (`[R-ENC-03]`), the value sets of §11.4, §12.2, §14.1, §15.1,
 §17.2, and §17.3, the per-type fill constraints (§13.2,
 `[R-TYP-07]`), the codec declaration bounds (`[R-COD-07]`), the
@@ -3151,8 +3157,9 @@ An appender MUST, in order:
    fixes for its stored bytes or how they decode —
    the set of padding positions (§11.3), the pad bits `[R-SER-03]`
    gives a packed planar bool plane, and the content `[R-SER-05]`
-   fixes at both, the decoded size, the byte offset of any
-   value within the decoded tile image, the sample type each value
+   fixes at both, the decoded size, the byte offset — or, in a packed
+   plane, the bit position — of any value within the decoded tile
+   image, the sample type each value
    in the image is read under, or the codec and filter that
    produced the stored bytes. Call this the **§14 bar**.
    The tense is the prior generation's
@@ -3258,10 +3265,10 @@ An appender MUST, in order:
    restating the test. The bar beside the §14 bar does not reach a
    shrink either: it bars a change to a planar layer's channel
    declarations that moves a stored tile's disk ordinal, and a shrink
-   is not one. A shrink whose damage falls on a tile the new state no
-   longer stores is precisely where the §14 bar has no witness, the
-   live state being clean, which is why the rule is stated here and
-   not left to the rows.
+   is not one. A shrink whose damage falls only on tiles the new state
+   no longer stores leaves the live state clean, so the §14 bar has no
+   witness there, which is why the rule is stated here and not left to
+   the rows.
    Where a shrink is permitted the de-addressed tiles' extents become slack
    (`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller entry_count and
    so a re-emitted index region, and every surviving stored tile is
@@ -3476,11 +3483,7 @@ the output's version_minor SHOULD be at least the input's: a compactor cannot kn
 feature it does not implement, and a lower minor understates the
 file's feature floor to tooling, the mirror of the overstatement
 `[R-CNT-26]` names. Otherwise version_minor follows `[R-CNT-26]`'s
-floor. Neither obligation has a witness in the output alone, save
-that where the output carries no later-minor feature the compactor
-does not implement, its stored version_minor is checkable against
-the floor `[R-CNT-26]` states.
-A compactor MUST refuse to compact a file carrying any record
+floor. A compactor MUST refuse to compact a file carrying any record
 whose type it does not implement with MU = 1: such a type can
 define references this specification does not (§7.2), so its
 bytes cannot be safely relocated. `[R-WRT-06]`
@@ -3533,14 +3536,15 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
 > ```
 >
 > Every stored tile's bytes survive byte-for-byte, as does every
-> record extent but a relocated tile-index region — itself a record
-> extent (§5.2), and the one kind this operation regenerates rather
-> than copies, since its entries carry the offsets that moved. The
-> reference arrays are identical; extent slots are re-pointed and
-> each relocated index region is regenerated — the ′ marks
-> (`[R-WRT-07]`). Placement is what changes, which is why the
-> output is a different file rather than a later generation of the
-> same one. The fresh file_id is the mechanism, not bookkeeping: a
+> record extent but a tile-index region any of whose stored extents
+> moved — itself a record extent (§5.2), and the one kind this
+> operation regenerates rather than copies, since its entries carry
+> the offsets that moved. The reference arrays are identical; extent
+> slots are re-pointed and each index region any of whose stored
+> extents moved is regenerated — the ′ marks (`[R-WRT-07]`).
+> Placement is what changes, which is why the output is a different
+> file rather than a later generation of the same one. The fresh
+> file_id is the mechanism, not bookkeeping: a
 > cache keyed (file_id, range) is sound precisely because ranges never
 > change beneath a file_id (§9.3), and compaction is the one operation
 > that moves live bytes. Reusing the input's identifier would serve
@@ -3587,7 +3591,7 @@ the register omits is a defect in this document, detectability being the gate
 condition is detectable exactly where some file exhibiting it is
 separated from every file that does not by some check this
 specification obliges a reader or a verifier to perform, not
-necessarily the same check for each
+necessarily the same check for each such file
 — but each row *restates* its governing rule, and where a
 row and the rule it cites diverge, **the rule governs**. Conditions
 attach to the finest structure they damage, and the outcome follows
@@ -3914,7 +3918,7 @@ be told apart from it by any check this specification obliges a
 reader or a verifier to perform. It is **detectable** in the
 contrary case: where some file exhibiting it is separated from every
 file that does not by some such check, which need not be the same
-check for every one of them. The two are stated over the
+check for every one of those files. The two are stated over the
 same subject, and each quantifier is the other's dual, so each is
 exactly the negation of the other, and detectability so stated is
 the gate `[R-CNF-07]` applies in assigning an outcome and §21.1's
@@ -3924,9 +3928,7 @@ unwitnessed condition is not one, so that clause requires no row for
 it, and its absence is not the defect that clause names.
 
 That is the whole of the test, and it decides any condition put to it
-without appeal to a list: ask whether a breach can be made to leave
-behind a file no obliged check separates from one that does not
-exhibit the condition. The instrument is the checks this
+without appeal to a list. The instrument is the checks this
 specification obliges an actor to perform, and deliberately not the
 register's own rows — a test
 keyed to the rows would make §21.1's completeness clause vacuous,
@@ -3945,9 +3947,8 @@ Distinguish an unwitnessed condition from a requirement that states
 **no condition a file can exhibit**. `[R-ENC-06]`'s fixed field widths are not a state a file
 can be in — the parse is always at the widths this specification
 fixes, and a structure written at any other yields different values
-at them, caught by the rows for the fields that hold them wherever
-the shifted value is one those rows reject. Nothing
-is omitted from the register on its account, there being no
+at them — a different file, conforming or not on its own terms.
+Nothing is omitted from the register on its account, there being no
 condition to omit. `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
@@ -3995,8 +3996,9 @@ range over declarations, which every file and every layer carries.
 
 A file exceeding any of these remains conforming, and a reader MAY
 decline it — at the whole file, or at the narrowest scope whose
-stated or derived quantities exceed what it can serve, a layer or a
-tile. Software that declines **on that ground** a file whose every quantity lies
+stated or derived quantities exceed what it can serve: a layer, a
+tile, or the record carrying a user-metadata document, as §18.2
+assigns. Software that declines **on that ground** a file whose every quantity lies
 within the table is not a conforming reader (`[R-CNF-03]`) — the two
 capability refusals §21.6 names, a foreign format major and an
 unimplemented MU = 1 type, are not this ground — the
@@ -4599,8 +4601,9 @@ the file.
    packed boolean plane, and equally where the decoded image is a
    single group, n = L/s being 1 (`[R-COD-10]`); elsewhere it changes
    the stored bytes of any tile whose decoded image the permutation
-   does not fix, and a fixed image is no evidence of which filter
-   produced it. **Fixed declared tile
+   does not leave unchanged, and where it does, the stored bytes are
+   the same under either filter and are no evidence of which was
+   declared. **Fixed declared tile
    extents and a fixed layout** likewise, as item 2's closing sentence
    names both:
    §11.3 states that tile extents are a writer's choice and that this
@@ -4688,8 +4691,9 @@ file within §21.9's minimum guarantees and reports any resource
 refusal as a limit rather than as corruption (`[R-ERR-04]`); applies
 the outcome and scope §21 assigns; never returns padding positions (§11.3) and never returns
 fill for a rejected tile (§2.4); returns sample bit patterns unaltered
-(§3.2), the sole resolved byte being a nonconforming interleaved
-boolean it chooses to return rather than reject (`[R-SER-08]`, §14.2).
+(§3.2), the sole resolved byte (`[R-TYP-04]`, §12.3) being a
+nonconforming interleaved boolean it chooses to return rather than
+reject (`[R-SER-08]`, §14.2).
 
 **Conforming writer** — emits only conforming files (§2.3); records
 fill for every channel (`[R-TYP-06]`, §13.1); fill-encodes edge

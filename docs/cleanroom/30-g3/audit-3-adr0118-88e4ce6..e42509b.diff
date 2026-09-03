@@ -1,0 +1,255 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index bd2517a..d302b29 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -321,8 +321,8 @@ verifier. Deviation from a SHOULD is not a violation for this
+ purpose: §21's register enumerates MUST-level conditions only, and a
+ verifier reports a SHOULD deviation as an advisory that does not bar
+ certification. A verifier owes no search for one: §2.3's duty to
+-check every file-level requirement runs to the MUST-level conditions
+-§21 inventories, and a SHOULD deviation is reported where the
++check every file-level requirement runs to MUST-level conditions,
++which §21 inventories, and a SHOULD deviation is reported where the
+ verifier observes it and not hunted for. `[R-CNF-12]`
+ 
+ > **Note.** "Reject" prescribes the scope of unusability, not user
+@@ -1438,7 +1438,9 @@ the re-append reproduces. The probe begins at the
+ largest 64-aligned offset o with o + 64 ≤ the physical file length; a
+ candidate whose whole-file re-verification fails was not a commit
+ state, so the tool continues the probe past it, and MUST report the
+-candidate it settled on and how many it rejected. `[R-LIF-06]`
++candidate it settled on and how many it rejected, or, where no
++candidate survived re-verification, that none did and how many it
++rejected. `[R-LIF-06]`
+ 
+ Writers performing very large single commits SHOULD emit intermediate
+ checkpoint commits (a directory and trailer mid-stream, ~a few KiB
+@@ -1633,8 +1635,8 @@ region of it returns no samples. `[R-GEO-02]`
+ > entry_count changes extent_length with it (`[R-CNT-17]`), so the
+ > layer's whole tile-index region is re-emitted and disk ordinals
+ > renumber wherever `[R-GEO-06]` moves them (§20.3, `[R-WRT-04]`) —
+-> the growth that raises a zero-extent layer's **last** zero grid
+-> count included.
++> the growth that raises a zero-extent layer's **only remaining**
++> zero grid count included.
+ 
+ #### 11.2 Grid arithmetic
+ 
+@@ -2315,8 +2317,9 @@ not obligated to, and MAY instead detect contiguity arithmetically
+ from any index segment. `[R-SLB-03]`
+ 
+ A writer or updater whose commit changes the stored-tile set, the
+-run partition, or the byte placement of any run of a slab-declared
+-layer MUST either
++run partition, the byte placement of any run, or the slab
++declaration itself, of a layer slab-declared in either the
++superseded or the new generation, MUST either
+ re-establish the invariants for every such run — or clear the declaration in
+ the new generation; carrying a stale declaration forward is a
+ validity error at layer scope, detected as the invariant failures
+@@ -2656,7 +2659,7 @@ it to R4 keeps the condition checkable from the bytes alone rather
+ than turning on a decoder's tolerance (`[R-CNF-02]`) — the tile rule
+ of `[R-COD-06]` transposed to the quantity a document does have, its
+ decoded length, in place of the declared size it does not. A **verifier** that declines to decode a document on
+-the bound above cannot establish that document's conformance and MUST NOT certify
++either bound above cannot establish that document's conformance and MUST NOT certify
+ the file, exactly as `[R-COD-11]` requires of a codec it cannot
+ execute; the bound is that verifier's capability and not a limit on
+ validity (`[R-CNF-10]`), so the decline is not a finding that the
+@@ -2947,9 +2950,9 @@ sub-record walk, and sub-record multiplicity (`[R-CNT-18]`,
+ `[R-CNT-14]`), dimension- and channel-name rules (`[R-ENC-11]`,
+ `[R-ENC-12]`, `[R-ENC-15]`), the framing rules a user-metadata
+ sub-record carries — no (0, 0) slot, extent_length at least 5,
+-inline_length exactly 1 (`[R-CNT-25]`, `[R-MTA-03]`) — the fixed
+-field widths and u64 value domain of §4 (`[R-ENC-06]`,
+-`[R-ENC-03]`), the value sets of §11.4, §12.2, §14.1, §15.1,
++inline_length exactly 1 (`[R-CNT-25]`, `[R-MTA-03]`) — the field
++widths at which §4 fixes the parse (`[R-ENC-06]`) and the u64 value
++domain of §4.2 (`[R-ENC-03]`), the value sets of §11.4, §12.2, §14.1, §15.1,
+ §17.2, and §17.3, the per-type fill constraints (§13.2,
+ `[R-TYP-07]`), the codec declaration bounds (`[R-COD-07]`), the
+ geometry floor and its arithmetic (`[R-GEO-01]`–`[R-GEO-03]`),
+@@ -3146,9 +3149,10 @@ An appender MUST, in order:
+    layer's declarations in a way that alters, for any tile that layer
+    stores **in the generation this commit supersedes**, what §14
+    fixes for its stored bytes or how they decode —
+-   the set of padding positions (§11.3) and the content
+-   `[R-SER-05]` fixes there, the decoded size, the byte offset of any
+-   sample within the decoded tile image, the sample type each value
++   the set of padding positions (§11.3), the pad bits `[R-SER-03]`
++   gives a packed planar bool plane, and the content `[R-SER-05]`
++   fixes at both, the decoded size, the byte offset of any
++   value within the decoded tile image, the sample type each value
+    in the image is read under, or the codec and filter that
+    produced the stored bytes. Call this the **§14 bar**.
+    The tense is the prior generation's
+@@ -3215,7 +3219,12 @@ An appender MUST, in order:
+    both bars', so a commit does not earn this permission by emptying
+    the layer as it re-declares it; and an extent MAY **grow**, since a position that
+    becomes real held, for each channel the position carries, that
+-   channel's fill (§14.5), and fill is a legal sample value — provided the grown geometry stays within every bound the
++   channel's fill (§14.5), and fill is a legal sample value. The bar's
++   carve-out does not reach a growth: it covers a position whose
++   stored byte already holds the fill it keeps, not one that ceases
++   to be padding, so this is an exception the permission states
++   rather than one the carve-out supplies. It holds provided the
++   grown geometry stays within every bound the
+    layer's own declarations impose, `[R-COD-07]`'s lz4 decoded-size
+    cap among them (L44), which an
+    empty layer escapes only because that cap is quantified over
+@@ -3249,9 +3258,10 @@ An appender MUST, in order:
+    restating the test. The bar beside the §14 bar does not reach a
+    shrink either: it bars a change to a planar layer's channel
+    declarations that moves a stored tile's disk ordinal, and a shrink
+-   is not one. This is precisely
+-   where the §14 bar has no witness, the live state being clean,
+-   which is why the rule is stated here and not left to the rows.
++   is not one. A shrink whose damage falls on a tile the new state no
++   longer stores is precisely where the §14 bar has no witness, the
++   live state being clean, which is why the rule is stated here and
++   not left to the rows.
+    Where a shrink is permitted the de-addressed tiles' extents become slack
+    (`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller entry_count and
+    so a re-emitted index region, and every surviving stored tile is
+@@ -3466,7 +3476,10 @@ the output's version_minor SHOULD be at least the input's: a compactor cannot kn
+ feature it does not implement, and a lower minor understates the
+ file's feature floor to tooling, the mirror of the overstatement
+ `[R-CNT-26]` names. Otherwise version_minor follows `[R-CNT-26]`'s
+-floor. Neither obligation has a witness in the output alone (§21.7).
++floor. Neither obligation has a witness in the output alone, save
++that where the output carries no later-minor feature the compactor
++does not implement, its stored version_minor is checkable against
++the floor `[R-CNT-26]` states.
+ A compactor MUST refuse to compact a file carrying any record
+ whose type it does not implement with MU = 1: such a type can
+ define references this specification does not (§7.2), so its
+@@ -3475,7 +3488,8 @@ bytes cannot be safely relocated. `[R-WRT-06]`
+ A compactor MUST preserve content, and preserves no placement — placement is not among the things it carries forward, and it is free to place structures anywhere §5.2 admits and every declared layout invariant permits (`[R-SLB-01]`, `[R-SLB-03]`): every stored
+ tile's bytes verbatim — each index entry's crc is unchanged — and
+ every retained record per §20.4, except that relocation re-points
+-extent slots, regenerates each relocated tile-index region (entry
++extent slots, regenerates each tile-index region any of whose stored
++extents the output relocates (entry
+ offsets new; entry lengths, entry crcs, and sentinel entries
+ unchanged; segment CRCs recomputed over the entries as
+ re-emitted), and updates the layer-record fields covering a
+@@ -3571,8 +3585,9 @@ the governing one. Its **completeness is normative** — a
+ the register omits is a defect in this document, detectability being the gate
+ `[R-CNF-07]` already applies and §21.7 states the test for: a
+ condition is detectable exactly where some file exhibiting it is
+-separated, by a check this specification obliges a reader or a
+-verifier to perform, from every file that does not
++separated from every file that does not by some check this
++specification obliges a reader or a verifier to perform, not
++necessarily the same check for each
+ — but each row *restates* its governing rule, and where a
+ row and the rule it cites diverge, **the rule governs**. Conditions
+ attach to the finest structure they damage, and the outcome follows
+@@ -3635,8 +3650,9 @@ unchanged (`[R-CNT-22]`, whose registered type keeps its fixed
+ semantics; and `[R-MTA-05]`, whose unsorted document readers process
+ as they find it — F27 and L48). `[R-SER-08]` is the one rule that
+ goes the other way: it resolves a nonconforming interleaved boolean
+-byte to a value rather than serving it through, which is why §14.2
+-calls it the sole resolved byte in this format.
++byte to a value rather than serving it through, which is why
++`[R-TYP-04]` (§12.3) makes it the one byte a reader resolves rather
++than serves through.
+ 
+ #### 21.2 File-scope violations
+ 
+@@ -3645,8 +3661,8 @@ a format major other than 1 is decided by `[R-CNF-13]` (§2.3),
+ condition by condition. Deriving it there yields F8, F14, F6 and both
+ of F1's instances — each asserting an invariant `[R-CNT-24]` fixes in
+ every major — and no other row. F18 is not an exception but a case outside the
+-premise: version_major = 0 declares no major at all and is permanently
+-invalid in every one (§21.6).
++premise: version_major = 0 declares no major at all, so `[R-CNF-13]`'s
++premise is unmet and `[R-CNT-07]` governs (§21.6).
+ 
+ | # | Condition | Instances | Detector | Detected | Governing rule |
+ |---|---|---|---|---|---|
+@@ -3666,7 +3682,7 @@ invalid in every one (§21.6).
+ | F15 | The 12 reserved bytes at trailer offset 48 are not all zero | trailer reserved [48,60) | reader | open | `[R-CNT-06]` (R-CNT-24) |
+ | F16 | Trailer dir_length is less than 4, too small to hold the directory region's terminal CRC-32C | dir_length | reader | open | `[R-CNT-06]` (R-ENC-07) |
+ | F17 | Trailer committed_file_length does not equal the transport-authoritative file size (physical file not truncated or extended to it) | committed_file_length, physical file shorter; committed_file_length, physical file longer | reader | open | `[R-CNT-06]` (R-LIF-04, R-CNT-10) |
+-| F18 | Trailer version_major is 0, a permanently invalid major in every format major version | version_major | reader | open | `[R-CNT-07]` |
++| F18 | Trailer version_major is 0, which declares no major at all | version_major | reader | open | `[R-CNT-07]` |
+ | F19 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-15 | reader | open | `[R-CNT-08]` |
+ | F20 | The final 4 bytes of the directory region do not equal the CRC-32C of the preceding dir_length - 4 bytes (the raw record sequence) | directory region CRC | reader | open | `[R-CNT-11]` (R-CNT-20, R-ENC-10) |
+ | F21 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0) | — | reader | open | `[R-CNT-25]` |
+@@ -3869,8 +3885,8 @@ in the bytes, and the diagnostic ought to distinguish the two.
+ Neither is a register row: the register enumerates file-conformance
+ violations (§21.1), and a file this document declines to judge is not
+ one. What is registered in each case is the neighbouring condition
+-that *is* a violation — version_major = 0, permanently invalid in
+-every format major version (F18, `[R-CNT-07]`), and a *reserved*-range
++that *is* a violation — version_major = 0, which declares no major at
++all (F18, `[R-CNT-07]`), and a *reserved*-range
+ type, whose emission `[R-CNT-15]` does make a violation (F35, F36,
+ L24, L25).
+ 
+@@ -3896,15 +3912,16 @@ A condition this specification names is **unwitnessed** where, for
+ every file exhibiting it, some file that does not exhibit it cannot
+ be told apart from it by any check this specification obliges a
+ reader or a verifier to perform. It is **detectable** in the
+-contrary case: where some file exhibiting it is separated by such a
+-check from every file that does not. The two are stated over the
++contrary case: where some file exhibiting it is separated from every
++file that does not by some such check, which need not be the same
++check for every one of them. The two are stated over the
+ same subject, and each quantifier is the other's dual, so each is
+ exactly the negation of the other, and detectability so stated is
+ the gate `[R-CNF-07]` applies in assigning an outcome and §21.1's
+ completeness clause turns on. The register carries a row for every
+ condition that is a detectable file-conformance violation. An
+ unwitnessed condition is not one, so that clause requires no row for
+-it and its absence from the register breaches nothing.
++it, and its absence is not the defect that clause names.
+ 
+ That is the whole of the test, and it decides any condition put to it
+ without appeal to a list: ask whether a breach can be made to leave
+@@ -3928,7 +3945,8 @@ Distinguish an unwitnessed condition from a requirement that states
+ **no condition a file can exhibit**. `[R-ENC-06]`'s fixed field widths are not a state a file
+ can be in — the parse is always at the widths this specification
+ fixes, and a structure written at any other yields different values
+-at them, caught by the rows for the fields that hold them. Nothing
++at them, caught by the rows for the fields that hold them wherever
++the shifted value is one those rows reject. Nothing
+ is omitted from the register on its account, there being no
+ condition to omit. `[R-ERR-01]`
+ 
+@@ -3977,7 +3995,8 @@ range over declarations, which every file and every layer carries.
+ 
+ A file exceeding any of these remains conforming, and a reader MAY
+ decline it — at the whole file, or at the narrowest scope whose
+-declarations exceed what it can serve, a layer or a tile. Software that declines **on that ground** a file whose every quantity lies
++stated or derived quantities exceed what it can serve, a layer or a
++tile. Software that declines **on that ground** a file whose every quantity lies
+ within the table is not a conforming reader (`[R-CNF-03]`) — the two
+ capability refusals §21.6 names, a foreign format major and an
+ unimplemented MU = 1 type, are not this ground — the
+@@ -4021,9 +4040,11 @@ bytes at an offset of at least 16 (§6.2, `[R-CNT-06]`); and no
+ conforming file shorter than 128 bytes (§5.1, `[R-CNT-27]`). Most
+ follow from a field's width, an external format, or the value
+ domain, and the rest from arithmetic over structures a generation
+-cannot omit. Two do not: the 512 floor on A is a number chosen
++cannot omit. Some do not: the 512 floor on A is a number chosen
+ here, fixed at the legacy sector size (§16.1) so that a declared
+-alignment is worth declaring, and the 255-byte cap on a user-metadata
++alignment is worth declaring; the 2⁶² ceilings on A and A_slab, and
++the power-of-two shape each takes, are chosen here too rather than
++consequences of the u64 domain; and the 255-byte cap on a user-metadata
+ key is this specification folding §4.6's name rules onto keys, which
+ carry no length prefix to force it. `[R-ERR-05]`
+ 
+@@ -4577,7 +4598,9 @@ the file.
+    exactly where its permutation is — where the stride is 1, as for a
+    packed boolean plane, and equally where the decoded image is a
+    single group, n = L/s being 1 (`[R-COD-10]`); elsewhere it changes
+-   the stored bytes of every tile it touches. **Fixed declared tile
++   the stored bytes of any tile whose decoded image the permutation
++   does not fix, and a fixed image is no evidence of which filter
++   produced it. **Fixed declared tile
+    extents and a fixed layout** likewise, as item 2's closing sentence
+    names both:
+    §11.3 states that tile extents are a writer's choice and that this
