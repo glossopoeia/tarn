@@ -3561,7 +3561,7 @@
       "violations": [
         {
           "row": "L2",
-          "instance": "C\u00b7N (which dominates the max disk ordinal (C\u22121)\u00b7N + (N\u22121))",
+          "instance": "planar C\u00b7N (which dominates the max disk ordinal (C\u22121)\u00b7N + (N\u22121))",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {
@@ -3640,7 +3640,7 @@
       "violations": [
         {
           "row": "L2",
-          "instance": "P\u00b7Q (which dominates V = P\u00b7C)",
+          "instance": "interleaved P\u00b7Q (which dominates V = P\u00b7C)",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {
@@ -3719,7 +3719,7 @@
       "violations": [
         {
           "row": "L2",
-          "instance": "P\u00b7B\u1d9c",
+          "instance": "planar numeric P\u00b7B\u1d9c",
           "rule": "R-ENC-04",
           "outcome": "reject-layer",
           "scope": {

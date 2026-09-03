@@ -39,3 +39,10 @@
 0118|the byte offset of any value within the decoded tile image: quotes the renamed list member in the erratum; it now reads "the byte offset — or, in a packed plane, the bit position — of any value".
 0118|a relocated tile-index region: quotes the §20.5 Example's superseded keying in the erratum; the Example now keys on a region any of whose stored extents moved.
 0118|a layer or a tile: quotes [R-ERR-04]'s superseded scope list in the erratum; the list now reads "a layer, a tile, or the record carrying a user-metadata document, as §18.2 assigns".
+# ADR-0119 is a repairs ADR: it quotes the text each repair replaced.
+0119|P·Q and P·Bᶜ are checked in an empty layer: §17.2's Note before ADR-0119, which now names the layout ("the decoded size the layout gives, P·Q or P·Bᶜ").
+0119|a reader that neither detects the violation nor rejects the tile: [R-SER-08]'s pre-repair antecedent; it now reaches a reader that does not reject the tile whether or not it detected the violation.
+0119|the file it produces is not nonconforming on that account: §9.2's pre-repair closing clause, category two's device; it now cites [R-CNF-02]'s conduct-rule principle.
+0119|makes each stored tile it reaches nonconforming: §20.3 step 4's pre-repair re-type consequence, false of a pure predicate on bytes; it now says the bytes denote values the writer did not store.
+0119|item 8's creator's rule, not a compactor's: Appendix G's pre-repair closing gloss, contradicted by item 8 and §20.5; it now says the floor binds creator and compactor alike.
+0119|An encoding this specification does not assign: the pre-repair words of §2.3's cannot-establish sentence, quoted for the two senses they carried; §2.3 and §17.4 now say "experimental-range".

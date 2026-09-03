@@ -269,3 +269,15 @@ restates a rule the edit sourced. Ten quotation acknowledgements, each a span th
 text that the audit then changed or that this erratum quotes as superseded — which is the count a repairs ADR should
 expect, and the reason `tarn_adr_quotes` exists.
 
+## Erratum, 2026-09-03 — a repair recorded and not made
+
+The Context above says that §14.2's layout qualifier was "repaired with
+decision 2". **No commit made that repair.** `0790131` did not touch §14.2 and
+nothing after it did; round 29's findings recorded the reporter's one-clause
+repair as the right disposition, and it was carried into this ADR's accounting
+as done. Round 30's reader found the same sentence cold, built the same
+construction, and two of three passes upheld it byte-level. ADR-0119 makes the
+repair — in §14.2, in row L2, and in §17.2's Note — and records the check now
+owed after every repairs commit: the round's repair list against the diff,
+item by item.
+

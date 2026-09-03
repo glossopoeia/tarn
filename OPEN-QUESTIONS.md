@@ -1092,6 +1092,11 @@ is unfixed. From round 25's recovered verifier walk.
   front block and live trailer included. (b) Transpose the layer clause: discard
   everything, total = F. (c) Excuse the total entirely for file-scope rejections,
   widening §5.2's narrow excusal.
+- **Round 30 found it again, cold** (verifier-03): a two-layer file gives 326
+  under the literal composition and 880 under the stated rationale. The quiz
+  author separately observed that the layer-scope discard clause is easy to miss
+  from memory (quiz-01). Three passes graded it a maintainer decision; two
+  recommended stating the file-scope rule in one sentence, on option (a).
 
 ### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [Resolved → ADR-0113, amended by ADR-0114]
 **Resolution:** The sample type: **yes, it always did**, and saying otherwise was
@@ -1302,6 +1307,14 @@ section §20.4.
   independently.
 - **This is the fifth byte-level defect in this cell**, after rounds 10, 14, 16
   and 17. ADR-0081 measured it as the document's most defect-prone passage.
+- **Round 30 found it cold for the sixth time** (adversary-02), with the same
+  construction — a PE = 0 experimental record retained by one appender and
+  dropped by another when a first user-metadata record is added. Two passes
+  downgraded it on the letter (*another* record presupposes one existing), the
+  skeptic upheld it on the stated principle, and the refuter let the downgrade
+  stand; none of that moves the standing above, which rests on round 27's
+  hand-check. The round's every pass recommended the one-clause closure in the
+  "no" direction, and none could show the document decides it.
 
 **Priced by a spec-only consequence sweep, one agent per option, 2026-08-26.**
 

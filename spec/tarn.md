@@ -221,9 +221,11 @@ Conformance is defined for five classes.
   cannot check §14's decoded-content obligations (`[R-ERR-04]`,
   `[R-SER-05]`, `[R-SER-08]`), or when it declines to decode a
   user-metadata document (`[R-MTA-09]`). A user-metadata document
-  under an encoding this specification does not assign is not such
-  a ground: no content rule attaches there, so nothing is left
-  unchecked, and certification is unaffected (`[R-MTA-10]`, §21.6).
+  under an experimental-range encoding — one this specification does
+  not assign and a conforming file can carry (§21.6) — is not such a
+  ground: no content rule attaches there, so nothing is left
+  unchecked, and certification is unaffected (`[R-MTA-10]`); encoding
+  0 and a reserved value are violations (§21.5, R1).
   *Cannot establish* is not a finding that the file is nonconforming,
   and a verifier MUST NOT certify a file it reports that way. An
   established violation takes priority: a verifier that has
@@ -1257,8 +1259,9 @@ are declared so here on the model `[R-CNF-02]` states: a barrier
 orders writes against power loss and leaves no trace in the bytes, so
 a file committed without one can be byte-identical to a file
 committed with it. A writer that omits a barrier violates this
-requirement, and the file it produces is not nonconforming on that
-account.
+requirement as an actor, and the file it produces is never
+nonconforming by virtue of it, as `[R-CNF-02]` says of every conduct
+rule.
 
 On creation there is no prior trailer: the writer first emits the
 front signature block (§6.1) — whose durability the barriers of steps
@@ -1987,7 +1990,8 @@ offset follow:
 where Bᶜ is channel c's element size (§12.1; 1 for bool), Q = Σ Bᵢ
 over all channels (the **sample stride**), and Fᶜ = Σ Bⱼ over
 channels j < c (channel c's in-sample offset). These products and
-sums are declaration-derived quantities under `[R-ENC-04]`.
+sums are declaration-derived quantities under `[R-ENC-04]`, each for
+the layout its row states — a planar layer has no P · Q to form.
 `[R-SER-02]`
 
 Writers MUST NOT emit any byte other than 0x00 or 0x01 as an
@@ -1996,9 +2000,10 @@ nonconforming: its assigned detector is the verifier, for which it
 is a validity error at tile scope. A reader is not obligated to
 screen decoded content, and a reader that does not detect the
 violation is not thereby nonconforming; `[R-CNF-12]` governs a
-reader that does detect it. A reader that neither detects the
-violation nor rejects the tile, and returns the value, MUST report
-0x00 as false and every other byte as true. That rule fixes what
+reader that does detect it. A reader that does not reject the
+tile and returns the value — whether or not it detected the
+violation — MUST report 0x00 as false and every other byte as
+true. That rule fixes what
 such a reader returns; it neither makes the byte conforming nor
 relieves the verifier, and it never arises in a conforming file,
 where the only bytes present are 0x00 and 0x01. `[R-SER-08]`
@@ -2489,8 +2494,8 @@ error at layer scope, checkable from declarations alone.
 > same declarations are then measured against the cap.
 > `[R-ENC-04]`'s overflow rule carries no such quantifier — it binds
 > every quantity it designates, whether or not the layer addresses a
-> tile — so P·Q and P·Bᶜ are checked in
-> an empty layer even though this cap is not.
+> tile — so the decoded size the layout gives, P·Q or P·Bᶜ, is
+> checked in an empty layer even though this cap is not.
 
 For every codec: the stored bytes MUST decode to exactly the
 decoded size — no more, no fewer — and the decode MUST consume the
@@ -2564,9 +2569,9 @@ assigned codec and filter being core: it rejects the layer
 (`[R-COD-03]`, `[R-COD-09]`);
 software unable to execute an assigned codec or filter is not a
 conforming reader (`[R-CNF-03]`). `[R-COD-11]` The
-metadata-encoding space alone differs: an unassigned document
-encoding in a conforming file is not a violation (§21.6), no
-document rule attaches to its extent, and certification is
+metadata-encoding space alone differs: an experimental-range
+document encoding in a conforming file is not a violation (§21.6),
+no document rule attaches to its extent, and certification is
 unaffected (`[R-MTA-10]`, §18.2).
 
 ### 18. User Metadata
@@ -2685,12 +2690,10 @@ ignore-record, never the tile-scope outcome §17.2 assigns. `[R-MTA-09]`
 > decodes to more than the guarantee stays conforming, and it falls
 > outside `[R-CNF-03]`'s acceptance duty, which runs only to a
 > conforming file none of whose values exceeds those guarantees. A
-> reader that proceeds takes ignore-record for that record; a reader
-> that instead declines on resource grounds under `[R-ERR-04]` does
-> so at the whole file, a document having no declared size and so no
-> narrower scope whose stated or derived quantities that rule can
-> measure, its decoded size being neither. A refusal
-> on that ground is reported as a resource limit, not as corruption.
+> reader that proceeds takes ignore-record for that record, which is
+> also the narrowest scope at which `[R-ERR-04]` lets it decline the
+> document on resource grounds; it MAY instead decline the whole file.
+> Either refusal is reported as a resource limit, not as corruption.
 
 The decoded document is a JSON text as defined by RFC 8259, encoded
 in UTF-8. Four restrictions apply, and a document violating any of
@@ -2729,14 +2732,16 @@ asks for:
 `[R-MTA-04]`
 
 Writers MUST serialize object members, at every nesting depth, in
-ascending order of their keys' UTF-8 bytes. This makes one writer's output reproducible for
-identical content; it does not make two writers' output identical,
-and this specification promises no byte-identity here or anywhere
-else (`[R-CNF-05]`) — an application needing content-addressed
-metadata canonicalizes the decoded document itself. Readers MUST NOT
-depend on member order for meaning, and unsorted members do not make
-a document unreadable: the file is nonconforming, a verifier MUST
-report it, and readers process the document unchanged. `[R-MTA-05]`
+ascending order of their keys' UTF-8 bytes, compared lexicographically
+as unsigned bytes with a proper prefix ordering first. This makes one
+writer's output reproducible for identical content; it does not make
+two writers' output identical, and this specification promises no
+byte-identity here or anywhere else (`[R-CNF-05]`) — an application
+needing content-addressed metadata canonicalizes the decoded document
+itself. Readers MUST NOT depend on member order for meaning, and
+unsorted members do not make a document unreadable: the file is
+nonconforming, a verifier MUST report it, and readers process the
+document unchanged. `[R-MTA-05]`
 
 The document rules of this section — the frame constraints of
 encoding 2, the decoded-document restrictions above, and
@@ -3187,9 +3192,10 @@ An appender MUST, in order:
    nothing to reinterpret, and this bars nothing: re-typing a channel
    of a layer that stores nothing, or a planar channel none of whose
    own tiles are stored, is a declaration edit like any other. Where a
-   change does reach them it makes each stored tile it reaches
-   nonconforming, and re-emitting those tiles would
-   strand the originals as slack — every tile the change reaches, since
+   change does reach them it makes the stored bytes of each tile it
+   reaches denote values the writer did not store — wrong content, of
+   the kind §21.7 leaves unwitnessed — and re-emitting those tiles
+   would strand the originals as slack — every tile the change reaches, since
    `[R-LIF-01]` freezes them where they lie — leaving the file larger
    for a change that reads like a directory edit. Such a change is a
    new layer, or a whole-file rewrite under a fresh file_id
@@ -3720,7 +3726,7 @@ layer unaffected. 49 conditions.
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
 | L1 | A u64 offset, length, extent, or count field of a layer record holds a value above 2^63 - 1 | layer record extent_offset; layer record extent_length; sub-record extent_offset; sub-record extent_length; dimension extent Eᵢ; tile extent Tᵢ; entry_count; slab run length S | reader | layer access | `[R-ENC-03]` (R-CNT-13, R-CNT-23) |
-| L2 | A declaration-derived sum or product of a layer exceeds 2^63 - 1 although every contributing field is in domain | layer record extent_offset + extent_length; sub-record extent_offset + extent_length; N = ∏⌈Eᵢ/Tᵢ⌉; P = ∏Tᵢ; N·P; C·N (which dominates the max disk ordinal (C−1)·N + (N−1)); P·Q (which dominates V = P·C); P·Bᶜ; entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 | reader | layer access | `[R-ENC-04]` (R-GEO-03, R-CNT-13, R-SER-02, R-SER-07) |
+| L2 | A declaration-derived sum or product of a layer exceeds 2^63 - 1 although every contributing field is in domain | layer record extent_offset + extent_length; sub-record extent_offset + extent_length; N = ∏⌈Eᵢ/Tᵢ⌉; P = ∏Tᵢ; N·P; planar C·N (which dominates the max disk ordinal (C−1)·N + (N−1)); interleaved P·Q (which dominates V = P·C); planar numeric P·Bᶜ; entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 | reader | layer access | `[R-ENC-04]` (R-GEO-03, R-CNT-13, R-SER-02, R-SER-07) |
 | L3 | A layer record's name bytes are not well-formed UTF-8 | — | reader | open | `[R-ENC-11]` |
 | L4 | A dimension or channel entry's name bytes are not well-formed UTF-8 | dimension entry name; channel entry name | reader | layer access | `[R-ENC-11]` (R-CNT-23) |
 | L5 | A layer record's name has length prefix 0 (empty name) | — | reader | open | `[R-ENC-12]` |
@@ -3741,7 +3747,7 @@ layer unaffected. 49 conditions.
 | L20 | A layer record declares both a per-tile alignment A ≠ 0 and a slab S ≠ 0 | — | reader | layer access | `[R-CNT-16]` |
 | L21 | entry_count does not equal the geometry-derived addressed-tile count (N interleaved, C·N planar) | interleaved N, entry_count larger; interleaved N, entry_count smaller; planar C·N, entry_count larger; planar C·N, entry_count smaller | reader | layer access | `[R-CNT-17]` (R-CNT-20) |
 | L22 | Under index_encoding 1, extent_length ≠ entry_count × 20 + ⌈entry_count/2¹⁶⌉ × 4 — including slot (0,0) with entry_count > 0, or a nonzero slot with entry_count = 0 | extent_length against the formula, extent_length larger; extent_length against the formula, extent_length smaller; slot (0,0) with entry_count > 0; a nonzero slot with entry_count = 0 | reader | layer access | `[R-CNT-17]` (R-ENC-07, R-CNT-20) |
-| L23 | A declared region of the layer record's inline payload does not lie entirely within inline_length (overrun or truncation) | leading fixed fields (name … C); d dimension entries; C channel entries; trailing fixed fields (index_encoding, entry_count, crc_of_crc_array) | reader | layer access | `[R-CNT-18]` |
+| L23 | A declared region of the layer record's inline payload does not lie entirely within inline_length (overrun or truncation) | leading fixed fields (name … C); d dimension entries; C channel entries; trailing fixed fields (index_encoding, entry_count, crc_of_crc_array) | reader | open (the name, §19.1 step 4); layer access (every other region) | `[R-CNT-18]` |
 | L24 | A layer record's sub-record carries a reserved-range type value (0x0003-0x7FFF, §10.2) with MUST_UNDERSTAND (flags bit 0) set to 1 | — | reader | layer access | `[R-CNT-18]` (R-CNT-15) |
 | L25 | A layer record's sub-record carries a type value from the reserved range 0x0003-0x7FFF, which this specification has not assigned; emitting one is a violation whatever its MU bit | — | verifier | certification | `[R-CNT-15]` (R-CNT-18) |
 | L26 | A record of type 0x0001 (layer) appears inside a layer record's sub-record sequence | — | reader | layer access | `[R-CNT-18]` (§7.3 registry table) |
@@ -3859,6 +3865,7 @@ of them as a failure is the nonconforming party.
 | A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes. No document rule attaches at such an encoding, so a verifier certifies, reporting the record it ignored | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]`, `[R-MTA-10]` |
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
 | A standardized key (§18.4) appears outside its listed scope, or carries a value whose shape its row does not give | Conforming: placement and value shape are writer guidance, and a reader ignores the key and reads the rest of the document, exactly as for an unrecognized key above | `[R-MTA-07]` |
+| A user-metadata document's decoded size, or its frame's declared `Window_Size`, exceeds the reader's own bound, which is no smaller than §21.9's guarantee | Ignore-record on capability grounds — the narrowest-scope decline `[R-ERR-04]` names for a document — reported as a resource limit and not as corruption; the file is conforming, and the reader MAY instead decline the whole file | `[R-MTA-09]`, `[R-ERR-04]` |
 | A payload contains a byte string that mimics a trailer | Inert: nothing enumerates slack, and a recovery tool re-verifies its output whole (§9.6) — which catches any mimic that is not itself a consistent generation; §9.6's second caution covers the rest | `[R-LIF-06]` |
 | Under a compressing codec (2–4), a stored tile's decoded size differs from its stored length | Expected: codecs compress, and can expand — codec 1's equality is `[R-COD-04]`'s subject | `[R-COD-08]` |
 
@@ -4552,7 +4559,8 @@ the file.
    serialization of logical content, and two files carrying the same
    arrays can legitimately differ in tiling, layout, and codec.
 3. **A total emission order, contiguously.** For each layer in
-   ascending layer-name byte order: its stored tiles in disk-ordinal
+   ascending layer-name byte order, compared as `[R-MTA-05]` compares
+   keys: its stored tiles in disk-ordinal
    order, then its tile-index region; then any remaining record
    extents in ascending record order — all of them after every layer's tiles and
    index region, not interleaved with them; then the directory. That
@@ -4662,7 +4670,9 @@ SHOULD); the sentinel for every all-fill tile, which no rule requires;
 a single generation, which §9 nowhere constrains; the absence or
 fixing of a declared alignment and slab, which §16 leaves to the
 writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
-SHOULD — item 8's creator's rule, not a compactor's (§20.5); a derived `file_id`, where §9.3 states only advice; NFC-normalized
+SHOULD — item 8, binding creator and compactor alike save §20.5's
+carried-feature case, its `flags` half a creator's rule alone; a
+derived `file_id`, where §9.3 states only advice; NFC-normalized
 names, which `[R-ENC-14]` states as a SHOULD; and the
 producer pinning of items 1 and 9. Read the numbered items as the
 list; this paragraph names what they are for, not how many there
