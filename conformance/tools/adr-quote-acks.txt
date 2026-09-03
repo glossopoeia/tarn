@@ -1,0 +1,14 @@
+# Quotations an ADR makes that are NOT in spec/tarn.md, and why that is correct.
+#
+# Format:  <adr number>|<prefix of the normalised quote>: <reason>
+#
+# An ADR that changes the spec quotes the text it replaces, which is absent by
+# design. tarn_adr_quotes.py cannot tell that from an ADR whose description has
+# drifted under it — the defect that hit ADR-0113, ADR-0115 and ADR-0117 — so
+# each absence is recorded here with a reason a reader can check.
+
+0117|The register carries a row for a condition exactly where: quotes §21.7's sentence AS IT READ BEFORE this ADR, which weakened the biconditional to its forward direction. Absent because this decision removed it.
+0117|a conforming one: quotes the operational gloss's superseded comparison class. This ADR aligned the gloss with the formal definition, so the phrase is gone by design.
+0117|in any form … alike: quotes R8's superseded Condition cell, which asserted the two limbs were one shape. This ADR splits them, so the framing is gone by design. (The ellipsis is the ADR's own elision, so this could never match verbatim regardless.)
+0117|is not well-formed JSON either, so no two files could differ: quotes a comment in conformance/tools/vectordefs/r_rows.py, not the specification — the corpus author's counterargument, answered in the ADR. Not spec text and never was.
+0117|so an unwitnessed condition is absent from it by that clause's own terms: quotes the conclusion this decision's OWN first draft left standing when it weakened the premise under it. Two audit lanes found the broken inference; the sentence was repaired and the ADR records what it used to say. Absent by design, and the reason the erratum exists.

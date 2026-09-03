@@ -36,7 +36,7 @@ classes the document creates on purpose.**
   and no later check runs.
 - **Cause rows.** T13, T15, T16, T23 and T26 say so in their own Condition cells.
   T13: *"the check that detects it is T25's, and this row records the cause rather
-  than a procedure of its own."*
+  than a procedure of its own"*
 
 Meanwhile four passages **decline** a row on that same ground — §16.2 for a stale
 slab declaration, §7.4 for the nesting prohibition, §9.5 for residue past a
@@ -45,9 +45,18 @@ both practices.
 
 **The sentence is weakened to the forward direction alone.** The register carries
 a row for every condition that is a detectable file-conformance violation; the
-claim that it carries one *only* there is withdrawn. An unwitnessed condition is
-still absent by the clause's own terms, which follows from the forward direction
-unchanged.
+claim that it carries one *only* there is withdrawn.
+
+**The conclusion drawn from it had to be weakened with it, and the first draft of
+this decision did not do that.** The sentence continued *"so an unwitnessed
+condition is absent from it by that clause's own terms"* — which asserts
+*not-detectable ⟹ no row*, the inverse of the new premise and equivalent to the
+converse just withdrawn. Two audit lanes found it independently within the hour.
+What the forward direction licenses is weaker and is what the sentence now says:
+an unwitnessed condition is not a detectable violation, **so the clause requires
+no row for it and its absence breaches nothing.** The distinction is between an
+absence the clause *entails* and an absence it *permits*, and only the second
+survives the weakening.
 
 **The alternative was rejected on ADR-0091's ground.** Keeping "exactly" and
 adding a carve-out for specialization and cause rows would resolve the practice
@@ -67,8 +76,8 @@ sentence was overstated.
 
 **The operational gloss is aligned with the definition in the same edit.** §21.7
 stated its test twice over different comparison classes: the formal definition
-over *"every file that does not exhibit it"*, and the gloss three sentences later
-over *"a conforming one"*. A reporter put both to twenty-two conditions and found
+over *"some file that does not exhibit it"* — files not exhibiting the condition —
+and the gloss three sentences later over *"a conforming one"*. A reporter put both to twenty-two conditions and found
 seven where they disagree. The gloss now quantifies as the definition does.
 
 ## Decision 2 — R8 enumerates four instances, and §21.8 moves to 277
@@ -168,12 +177,19 @@ choice, and this specification imposes none"*, while §14.1 leaves layout to the
 writer. An adopter pinning items 1 through 10 and expecting byte-identity did not
 get it.
 
-**A new item pins fixed declared tile extents and a fixed layout**, on the model
-item 5 already sets for alignment, slab and filter: *"§17.3 leaves the choice to
-the writer, and no content implies it, so two writers agreeing on everything else
+**Item 5 pins fixed declared tile extents and a fixed layout**, on the model it
+already sets for alignment, slab and filter: *"§17.3 leaves the choice to the
+writer, and no content implies it, so two writers agreeing on everything else
 still disagree on bytes without it pinned."* Tiling and layout satisfy that
 sentence word for word. The profile becomes complete on its own terms, under one
 principle rather than two.
+
+**The clause extends item 5 rather than becoming an eleventh item, and the reason
+is renumbering.** Item 5 is already the profile's "things a writer chooses that
+content does not imply" item, so the clause belongs there on the merits. It also
+avoids moving the numbers, and the numbers are referenced: the closing paragraph
+names *"item 8's creator's rule"* and *"the producer pinning of items 1 and 9"*,
+and the new clause itself cites item 2. Appendix G still carries ten items.
 
 Naming them instead as inputs the adopter supplies was rejected as sitting
 awkwardly against item 2's own framing of them as freedoms over the same arrays.
@@ -182,6 +198,16 @@ One sub-claim of the finding is **not** adopted: that the closing paragraph's
 inventory wrongly omits tiling, layout and the filter. That paragraph says of
 itself *"Read the numbered items as the list; this paragraph names what they are
 for, not how many there are."* It makes no completeness claim to falsify.
+
+**A second reader raised the same sub-claim in the audit of this decision**,
+reading that very sentence as *presenting* the paragraph as the complete list. It
+says the opposite. The claim is declined a second time, and deliberately not
+answered by adding the missing items: a longer enumeration would make the
+paragraph read more like the checklist it disclaims being, not less. That two
+readers have now misread it is recorded here rather than repaired, on the
+maintainer's standing direction — the impact is a reader consulting the wrong
+paragraph in a non-normative appendix, and the sentence that prevents it is
+already there.
 
 ## Consequences
 
