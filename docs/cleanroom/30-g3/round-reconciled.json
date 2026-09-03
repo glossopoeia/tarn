@@ -1,0 +1,368 @@
+{
+ "merged": [
+  {
+   "members": [
+    "reader-02",
+    "writer-03",
+    "verifier-04"
+   ],
+   "title": "\u00a79.2's barrier paragraph is a conduct rule by its own words, not a third member of [R-CNF-02]'s closed list",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "reader-04",
+    "register-02"
+   ],
+   "title": "L23's Detected cell says 'layer access' for the name-overrun instance that \u00a719.1 step 4 decides at open",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-02",
+    "diagrams-01"
+   ],
+   "title": "Appendix G's closing paragraph calls the version_minor floor 'not a compactor's'; item 8 and \u00a720.5 say it binds a compactor",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-02",
+    "register-01"
+   ],
+   "title": "\u00a718.2's Note confines an [R-ERR-04] document decline to the whole file; [R-ERR-04] and \u00a718.2's own body name the record as a scope",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "reader-01"
+   ],
+   "title": "Whether P\u00b7Q is an [R-ENC-04]-designated quantity of a planar layer is not fixed by \u00a714.2, and L2 restates it untagged",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "byte-level",
+    "implementer": "byte-level",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": true,
+    "implementer": true,
+    "skeptic": false
+   },
+   "reporter_bl": [
+    "reader-01"
+   ],
+   "any_bl": true,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "reader-03"
+   ],
+   "title": "\u00a720.3's 'makes each stored tile it reaches nonconforming' overstates: same-size re-typing is unwitnessed and the file is conforming",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-01"
+   ],
+   "title": "'Ascending order of their keys' UTF-8 bytes' does not name prefix-first, but the words do not admit a length-first order either",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "verifier-01"
+   ],
+   "title": "'An encoding this specification does not assign' is used in a broad sense in \u00a72.3/\u00a717.4 and a narrow one in \u00a721.6; the sentences are true only with their qualifiers",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "verifier-03"
+   ],
+   "title": "[R-CNT-21] states the partial-total discard for a rejected layer only; a walk-established or post-trailer reject-file has no stated composition",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "design-decision",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-03"
+   ],
+   "title": "\u00a721.5 sends the reader to \u00a721.6 for the ignore-record non-violations, but the size-bound and window declines it names are not there",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "register-bookkeeping",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-01"
+   ],
+   "title": "[R-SER-08]'s return rule is conditioned on 'neither detects \u2026 nor rejects', leaving a reader that detects and serves outside it",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-02"
+   ],
+   "title": "\u00a720.4's PE = 0 cell addresses adding a layer and dropping a record but not adding a non-layer record; the letter reads as not licensing the drop",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "PARTIAL",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "byte-level"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": true
+   },
+   "reporter_bl": [
+    "adversary-02"
+   ],
+   "any_bl": true,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-03"
+   ],
+   "title": "The cannot-execute ground is reachable only by non-conforming software, which [R-COD-11]'s own third sentence already states",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-01"
+   ],
+   "title": "The layer-scope discard sub-rule is decidable from the text; reading cost is not a defect",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "REFUTED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "none",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  }
+ ],
+ "pass_ok": {
+  "correctness": true,
+  "implementer": true,
+  "skeptic": true
+ }
+}
