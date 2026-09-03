@@ -3904,7 +3904,7 @@ the gate `[R-CNF-07]` applies in assigning an outcome and §21.1's
 completeness clause turns on. The register carries a row for every
 condition that is a detectable file-conformance violation. An
 unwitnessed condition is not one, so that clause requires no row for
-it and its absence from the register breaches nothing.
+it, and its absence is not the defect that clause names.
 
 That is the whole of the test, and it decides any condition put to it
 without appeal to a list: ask whether a breach can be made to leave

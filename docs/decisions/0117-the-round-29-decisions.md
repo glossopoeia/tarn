@@ -52,11 +52,26 @@ this decision did not do that.** The sentence continued *"so an unwitnessed
 condition is absent from it by that clause's own terms"* — which asserts
 *not-detectable ⟹ no row*, the inverse of the new premise and equivalent to the
 converse just withdrawn. Two audit lanes found it independently within the hour.
-What the forward direction licenses is weaker and is what the sentence now says:
-an unwitnessed condition is not a detectable violation, **so the clause requires
-no row for it and its absence breaches nothing.** The distinction is between an
-absence the clause *entails* and an absence it *permits*, and only the second
-survives the weakening.
+
+**Stating the weaker conclusion correctly took two attempts, and the second is
+recorded here because the first is instructive.** The first correction fixed the
+inference and *widened* the conclusion while doing so, replacing the original's
+*"rather than in breach of them"* — scoped to that clause's terms — with an
+unscoped "breaches nothing". That is strictly stronger than anything here
+entails: it needs the unstated premise that §21.1's clause is the only possible
+source of a row obligation. It happens to be true — an audit lane searched the
+document for a second completeness rule and found none — but true is not
+entailed, and the same lane noted that the free-floating *breaches* collided with
+the next sentence's use of *a breach* for violating the underlying rule, inviting
+the reading that an unwitnessed condition violates nothing at all. §18.2 calls
+undisclosed dictionary use a writer violation that is nonetheless unwitnessed.
+
+The sentence now reads: an unwitnessed condition is not a detectable violation,
+**so that clause requires no row for it, and its absence is not the defect that
+clause names** — scoped to the clause it is drawn from, and echoing §21.1's own
+consequence term instead of reusing *breach*. The distinction being kept is
+between an absence the clause *entails*, which the weakening gives up, and a
+defect it *names*, which it does not.
 
 **The alternative was rejected on ADR-0091's ground.** Keeping "exactly" and
 adding a carve-out for specialization and cause rows would resolve the practice
