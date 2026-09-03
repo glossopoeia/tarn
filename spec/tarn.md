@@ -3240,10 +3240,9 @@ An appender MUST, in order:
    restating the test. The bar beside the §14 bar does not reach a
    shrink either: it bars a change to a planar layer's channel
    declarations that moves a stored tile's disk ordinal, and a shrink
-   is not one. §21.7 records the
-   consequence — that this is precisely where the §14 bar has no
-   witness, the live state being clean — which is why the rule is
-   stated here and not left to the rows.
+   is not one. This is precisely
+   where the §14 bar has no witness, the live state being clean,
+   which is why the rule is stated here and not left to the rows.
    Where a shrink is permitted the de-addressed tiles' extents become slack
    (`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller entry_count and
    so a re-emitted index region, and every surviving stored tile is
@@ -3322,10 +3321,11 @@ An appender MUST, in order:
 > **(c) A change confined to the directory** — clearing a slab
 > declaration, renaming a layer, or changing a channel's fill value
 > where that channel carries no padding position and no pad bit in any
-> tile the layer stores. Only the directory is re-emitted. A fill
-> change on a channel that carries either in a tile the layer
-> **stores** is not an appender's operation at all (step 4): it would
-> invalidate every stored tile it reaches. A layer that stored no tile in the
+> tile the layer stores in the generation the commit supersedes. Only
+> the directory is re-emitted. A fill change on a channel that carries
+> either in a tile the layer **stored** in that generation is not an
+> appender's operation at all (step 4): it would invalidate every
+> stored tile it reaches. A layer that stored no tile in the
 > generation the commit supersedes is re-declared freely, subject to
 > every rule its new geometry is subject to, which is the same step's
 > permission — a layer the commit itself empties does not qualify. Editing

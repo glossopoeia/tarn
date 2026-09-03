@@ -1,0 +1,360 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 0c8b3e3..4bba807 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -1602,15 +1602,22 @@ region of it returns no samples. `[R-GEO-02]`
+ > **Rationale.** Empty layers serve schema-first workflows: declare
+ > layers at creation, grow extents as data arrives. §20.3 states
+ > normatively, and governs, what a commit may do to a layer that
+-> already stored tiles in the generation a commit supersedes: a
++> already stored tiles in the generation a commit supersedes. Of its
++> two bars the one reaching a shrink or a growth is the §14 bar: a
+ > shrink is barred wherever it alters what §14 fixes for such a
+ > tile — whether or not the new state still stores it — and permitted
+ > wherever it does not: a tile dropped out of the addressed set
+ > carries no §14 obligation and its extent becomes slack, a tile the
+ > superseded generation did not store carries none either, and a new
+ > padding position whose stored byte already holds the fill alters
+-> nothing. One shrink can do several of these at once. A layer that stored nothing may be re-declared
+-> freely. Growth
++> nothing. One shrink can do several of these at once. A layer that
++> stored no tile in the generation the commit supersedes may be
++> re-declared freely; a layer the commit itself empties does not
++> qualify. Re-typing a channel is the §14 bar's own subject, barred
++> wherever the layer stores a tile that carries that channel, and
++> free where it does not. The other bar reaches neither a shrink nor a
++> growth: it bars a change to a planar layer's channel declarations
++> that moves a stored tile's disk ordinal. Growth
+ > that leaves **entry_count** unchanged touches the directory alone —
+ > a growth raising one grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) while another
+ > stays 0 among them, the product holding at 0. Growth that changes
+@@ -3129,8 +3136,10 @@ An appender MUST, in order:
+    fixes for its stored bytes or how they decode —
+    the set of padding positions (§11.3) and the content
+    `[R-SER-05]` fixes there, the decoded size, the byte offset of any
+-   sample within the decoded tile image, or the codec and filter that
+-   produced the stored bytes. The tense is the prior generation's
++   sample within the decoded tile image, the sample type each value
++   in the image is read under, or the codec and filter that
++   produced the stored bytes. Call this the **§14 bar**.
++   The tense is the prior generation's
+    (§3.1 defines *stored* against a generation), so a commit does not
+    escape this by unstoring in the same breath: superseding every
+    tile of a layer and re-declaring it are one operation, and this
+@@ -3140,20 +3149,61 @@ An appender MUST, in order:
+    what they meant — a filter whose mandated stride makes it
+    the identity (`[R-COD-10]`), or a new padding position whose
+    stored byte already holds the fill `[R-SER-05]` fixes — is not
+-   what this bars. Where a
++   what this bars.
++
++   A channel's declared **sample type** is such a declaration, and
++   changing it is such a change wherever the layer stores a tile that
++   carries that channel: the type is what fixes the value a stored bit
++   pattern denotes, so under a new one the same bytes denote
++   different values. **The test is on the declared types and not on
++   the values a tile happens to hold** — `0x80` denotes −128 as
++   `int8` and 128 as `uint8` whether or not any tile stores that
++   byte, and an updater decides the question from the layer record
++   alone rather than by inspecting stored bytes. Where the
++   superseded generation stored no tile carrying that channel there is
++   nothing to reinterpret, and this bars nothing: re-typing a channel
++   of a layer that stores nothing, or a planar channel none of whose
++   own tiles are stored, is a declaration edit like any other. Where a
+    change does reach them it makes each stored tile it reaches
+    nonconforming, and re-emitting those tiles would
+    strand the originals as slack — the whole layer's worth, since
+    `[R-LIF-01]` freezes them where they lie — leaving the file larger
+    for a change that reads like a directory edit. Such a change is a
+    new layer, or a whole-file rewrite under a fresh file_id
+-   (`[R-LIF-01]`, §20.5). A layer that stores no tile **in the
++   (`[R-LIF-01]`, §20.5).
++
++   One effect is barred beside it, on the same tense and on its own
++   ground: the §14 bar does not reach it, an ordinal move being no
++   effect on any stored tile's bytes, and what it disturbs is instead
++   the re-emission rule above, whose only stated occasion for a
++   renumbering is a geometry change. For a **planar** layer, a
++   commit MUST NOT change the channel declarations in a way that
++   alters the disk ordinal `[R-GEO-06]` assigns any tile the layer
++   stores in the generation this commit supersedes. A channel's tiles
++   move exactly when its index does: reordering moves those channels
++   the reorder re-indexes, and inserting or removing one moves every
++   channel after the affected position. Either is such a change
++   wherever the layer stores a tile for a channel that moved.
++   Appending a channel, or removing the last, re-indexes nothing and
++   moves no ordinal at all — a disk ordinal is c · N + s,
++   and N is the spatial-tile count, so the channel count enters the
++   addressed-tile count C · N (§11.2) but no individual ordinal. **The
++   test is the effect on a stored tile, not the shape of the edit**: a
++   commit that moves only the ordinals of channels the superseded
++   generation stored no tile for alters nothing this bars. A layer
++   with N = 2 and channels (`a`, `b`) places `a` at ordinals 0 and 1
++   and `b` at 2 and 3; appending `c` leaves those four where they are
++   and adds 4 and 5, while exchanging `a` and `b` moves all four.
++   An interleaved layer is unaffected, its disk ordinal being s,
++   which no channel declaration enters. Where this bars a change the
++   operation is a new layer or a whole-file rewrite, exactly as
++   above. A layer that stores no tile **in the
+    generation this commit supersedes** MAY be re-declared freely,
+    which is what schema-first creation needs (§11.1) — the tense is
+-   the bar's, so a commit does not earn this permission by emptying
++   both bars', so a commit does not earn this permission by emptying
+    the layer as it re-declares it; and an extent MAY **grow**, since a position that
+-   becomes real held that channel's fill and fill is a legal sample
+-   value — provided the grown geometry stays within every bound the
++   becomes real held, for each channel the position carries, that
++   channel's fill (§14.5), and fill is a legal sample value — provided the grown geometry stays within every bound the
+    layer's own declarations impose, `[R-COD-07]`'s lz4 decoded-size
+    cap among them (L44), which an
+    empty layer escapes only because that cap is quantified over
+@@ -3162,8 +3212,13 @@ An appender MUST, in order:
+    a growth is permitted exactly where the geometry it produces
+    satisfies every rule that geometry is subject to.
+ 
+-   An extent MAY also **shrink**, and the bar above is the whole of
+-   the test, **in the bar's own tense**: a shrink is permitted
++   An extent MAY also **shrink**, and the §14 bar is the whole of the
++   test of what a shrink **alters**, **in that bar's own tense**;
++   the obligations this step states below — among them slack,
++   entry_count, a slab or alignment declaration (`[R-SLB-04]`,
++   `[R-SLB-01]`), and the recommendation to produce a new file
++   instead where a commit would strand a large share of a layer's
++   stored bytes — bind a shrink as they bind any commit. A shrink is permitted
+    exactly where it alters nothing §14 fixes for any tile the layer
+    stores in the generation this commit supersedes. Dropping a tile
+    out of the addressed set (§11.2's grid count falls) is not itself
+@@ -3174,14 +3229,18 @@ An appender MUST, in order:
+    and for the same reason: the quantifier is the superseded
+    generation's, so a shrink that alters what §14 fixes for a tile
+    stored there is barred whether or not the new state still stores
+-   it. What counts as such an alteration is the bar above and nothing
++   it. What counts as such an alteration is the §14 bar and nothing
+    else, its carve-out included — a new padding position whose stored
+    byte already holds the fill `[R-SER-05]` fixes is not one, so a
+    shrink producing only those is permitted here exactly as it is
+    there, and this sentence answers the rescue question rather than
+-   restating the test. §21.7 records the consequence — that this is
+-   precisely where the bar has no witness, the live state being clean
+-   — which is why the rule is stated here and not left to the rows.
++   restating the test. The bar beside the §14 bar does not reach a
++   shrink either: it bars a change to a planar layer's channel
++   declarations that moves a stored tile's disk ordinal, and a shrink
++   is not one. §21.7 records the
++   consequence — that this is precisely where the §14 bar has no
++   witness, the live state being clean — which is why the rule is
++   stated here and not left to the rows.
+    Where a shrink is permitted the de-addressed tiles' extents become slack
+    (`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller entry_count and
+    so a re-emitted index region, and every surviving stored tile is
+@@ -3263,9 +3322,10 @@ An appender MUST, in order:
+ > is re-emitted. A fill change on a layer that **stores** a tile
+ > carrying either is not an
+ > appender's operation at all (step 4): it would invalidate every
+-> stored tile it reaches. A layer storing no tile is re-declared
+-> freely, subject to every rule its new geometry is subject to, which
+-> is the same step's permission. Editing
++> stored tile it reaches. A layer that stored no tile in the
++> generation the commit supersedes is re-declared freely, subject to
++> every rule its new geometry is subject to, which is the same step's
++> permission — a layer the commit itself empties does not qualify. Editing
+ > user metadata is not this shape:
+ > its document lives in an extent (`[R-CNT-25]`), so a new extent is
+ > appended and the old one becomes slack, as in (b).
+@@ -3497,9 +3557,10 @@ condition reads, cited without brackets to keep them distinct from
+ the governing one. Its **completeness is normative** — a
+ *detectable* file-conformance violation this specification names and
+ the register omits is a defect in this document, detectability being the gate
+-`[R-CNF-07]` already applies and §21.7 the account, by class, of
+-what fails
+-it — but each row *restates* its governing rule, and where a
++`[R-CNF-07]` already applies and §21.7 states the test for: a
++violation is detectable exactly where some file exhibiting it
++differs, in its live state, from every file that does not
++— but each row *restates* its governing rule, and where a
+ row and the rule it cites diverge, **the rule governs**. Conditions
+ attach to the finest structure they damage, and the outcome follows
+ from that scope — subject to the same exception stated above, a rule
+@@ -3516,7 +3577,7 @@ this list is not offered as closed. Rows that merely overlap, each
+ reachable without the other, do not stand in it. The subsections after §21.5 are not
+ part of the register and carry no rows: neither this completeness
+ clause nor the instance arithmetic below reaches §21.6's defined
+-non-violations, §21.7's account of what no check detects, or
++non-violations, §21.7's test for what no check detects, or
+ §21.9's limits. §21.6's entries restate their governing rules on
+ the same terms a row does, and where such an entry and the rule it
+ cites diverge, the rule governs there too.
+@@ -3818,60 +3879,119 @@ requirement a verifier is *unable to check* within the meaning of
+ `[R-CNF-11]`: no file-level witness exists to check, so nothing about
+ the file is left undetermined and the verdict is unaffected.
+ 
+-A second set of obligations is omitted from the register because a
+-single file exhibits no witness of their violation. Committed-prefix
+-immutability and the strict growth of `committed_file_length` across
+-the commits of one file_id (`[R-LIF-01]`, `[R-LIF-02]`) are
+-properties of a file's history, which §9.7 does not reconstruct, and
+-no field of a file records how many commits that history holds; the
+-ordinal mappings of `[R-GEO-06]` and `[R-SER-01]` are satisfied by a
+-structurally valid tile whatever values it carries, except where §14
+-constrains a byte's content —
+-a padding position, a pad bit, or an interleaved boolean — and a
+-mis-ordered image is then witnessed by T2, T4 or T5, exactly as a
+-mis-strided filter is; `[R-CNT-13]`'s prohibition on an MU = 0
+-record encoding file offsets in its own payload is opaque by
+-construction; `[R-CNT-18]`'s prohibition on a sub-record containing
+-records is detectable only by parsing a payload no format-major-1
+-reader parses as a record sequence (§7.4's closing Note);
+-§20.3 step 4's bar on a declaration change is witnessed only where
+-the affected tiles remain stored, and then only for part of what it
+-bars. A change reaching a byte §14 structurally constrains — a
+-padding position, a pad bit, or a boolean byte — fires §21.4's
+-content rows. A change reaching the decoded size is witnessed by T3
+-or T14, which test a length rather than the decoded image's content
+-— T14 the entry's declared length, T3 the decoded payload's own. A
+-change reaching the codec is *sometimes* witnessed by the rows for
+-the codec now declared, which test the stored bytes as a stream of it
+-(T15, T17, T23, T25), or by T14 where the new declaration is
+-codec 1 — but neither is assured: a writer can choose stored bytes
+-that satisfy the old declaration and the new one alike, and the
+-change is unwitnessed there. A change reaching the filter, or moving
+-a sample's byte offset within the decoded image without changing
+-that image's length, is witnessed on the same terms T26 states for a
+-wrong stride: where the resulting image breaks §14.5's padding
+-content or `[R-SER-08]`'s bool bytes, the check that detects it is
+-T2's or T4's, exactly as T26 has it, and where it breaks neither
+-there is no witness. Neither change is caught by a
+-length: both filter values are length-preserving (§17.3), and moving
+-a sample within an image of unchanged length alters no declared
+-quantity. And a
+-commit that supersedes every tile it would have damaged leaves the
+-live state clean, so the bar is unwitnessed there for the same
+-reason `[R-LIF-01]` is: it is a property of the prior generation,
+-which §9.7 does not reconstruct; §20.5's three obligations on a
+-compacted file's trailer (`[R-WRT-06]`) — its fresh `file_id` draw,
+-the unknown ignore-lane bits it MUST carry forward, and the floor
+-its version_minor SHOULD take — are unwitnessed for a reason all
+-three share: the output carries no record that it is a compaction
+-output at all, so no check can know that any of the three was owed.
+-For the last two there is a second, the output carrying no
+-record of its input's flags or its input's minor either; and `[R-ENC-06]`'s fixed field widths are not
+-a state a
+-file can be in, since the parse is always at the widths this
+-specification fixes and a structure written at any other yields
+-different values at them, caught by the rows for the fields that hold
+-them. `[R-ERR-01]`
++A condition this specification names is **unwitnessed** where, for
++every file exhibiting it, some file that does not exhibit it cannot
++be told apart from it by any check this specification obliges a
++reader or a verifier to perform. It is **detectable** in the
++contrary case: where some file exhibiting it is separated by such a
++check from every file that does not. The two are stated over the
++same subject and with matching quantifiers, so each is exactly the
++negation of the other, and detectability so stated is the gate
++`[R-CNF-07]` applies in assigning an outcome and §21.1's
++completeness clause turns on. The register carries a row for a
++condition exactly where it is detectable, so an unwitnessed
++condition is absent from it by that clause's own terms rather than
++in breach of them.
++
++That is the whole of the test, and it decides any condition put to it
++without appeal to a list: ask whether a breach can be made to leave
++behind a file no obliged check separates from a conforming one. The
++instrument is the checks this specification obliges an actor to
++perform, and deliberately not the register's own rows — a test
++keyed to the rows would make §21.1's completeness clause vacuous,
++every omitted condition being undetectable by construction.
++
++**The subject is the condition and not the requirement**, as
++`[R-CNF-13]` individuates them and as `[R-CNT-06]` shows by stating
++nine. A single requirement states conditions of both kinds where it
++states several, and is classified as a whole by neither. Being unwitnessed bears on
++detection and not on permission: the requirement binds its actor as
++any other does, and the outcome classes of §2.4 are assigned to
++violations a reader or verifier can establish rather than to every
++violation this document names.
++
++Distinguish an unwitnessed condition from a requirement that states
++**no condition a file can exhibit**. `[R-ENC-06]`'s fixed field widths are not a state a file
++can be in — the parse is always at the widths this specification
++fixes, and a structure written at any other yields different values
++at them, caught by the rows for the fields that hold them. Nothing
++is omitted from the register on its account, there being no
++condition to omit. `[R-ERR-01]`
++
++> **Rationale.** The obligations this test places outside the
++> register, as the document stands. This walk-through illustrates the
++> test and does not extend it; where an item here and the test above
++> disagree, the test governs, and an item found stale is a defect in
++> this block and not in the register.
++>
++> Beyond the content-wrongness this section opens with, these
++> obligations are omitted from the register because a single file
++> exhibits no witness of their violation. Committed-prefix
++> immutability and the strict growth of `committed_file_length` across
++> the commits of one file_id (`[R-LIF-01]`, `[R-LIF-02]`) are
++> properties of a file's history, which §9.7 does not reconstruct, and
++> no field of a file records how many commits that history holds; the
++> ordinal mappings of `[R-GEO-06]` and `[R-SER-01]` are satisfied by a
++> structurally valid tile whatever values it carries, except where §14
++> constrains a byte's content —
++> a padding position, a pad bit, or an interleaved boolean — and a
++> mis-ordered image is then witnessed by T2, T4 or T5, exactly as a
++> mis-strided filter is; `[R-CNT-13]`'s prohibition on an MU = 0
++> record encoding file offsets in its own payload is opaque by
++> construction; `[R-CNT-18]`'s prohibition on a sub-record containing
++> records is detectable only by parsing a payload no format-major-1
++> reader parses as a record sequence (§7.4's closing Note);
++> §20.3 step 4's **§14 bar** is witnessed only where the affected tiles
++> remain stored, and then only for part of what it bars — a re-typing
++> that alters no length and no byte §14 constrains among the cases no
++> witness reaches, since the prior generation's declarations are not
++> part of the live state, which is all §9.7 walks, and no check can
++> know which type a channel carried before. Its companion bar on a planar layer's disk ordinals is
++> witnessed indirectly and only sometimes, and for the same reason no
++> check knows which ordinal a stored tile used to occupy: a permutation
++> among channels whose planes are the same length **and whose recorded
++> fills agree** disturbs nothing a row can see, while one that leaves a
++> plane of one length at an ordinal the new declarations size
++> differently is caught by T3, or by T14 under codec 1. Where the fills
++> differ, §14.5's padding positions and §14.3's pad bits carry the
++> wrong channel's fill and T4 or T5 sees it. Where
++> the change does touch something §14 fixes, the register's rows reach
++> it on the terms they state there and no better.
++>
++> Which case a re-typing falls in is not
++> decided by the element sizes of §12.1: a planar `uint8` channel re-declared
++> `bool` keeps its element size of 1 while its plane goes from
++> P · Bᶜ bytes to ⌈P/8⌉. A change reaching a byte §14 structurally
++> constrains — a padding position, a pad bit, or a boolean byte — fires
++> §21.4's content rows. A change reaching the decoded size is witnessed by T3
++> or T14, which test a length rather than the decoded image's content
++> — T14 the entry's declared length, T3 the decoded payload's own. A
++> change reaching the codec is *sometimes* witnessed by the rows for
++> the codec now declared, which test the stored bytes as a stream of it
++> (T15, T17, T23, T25), or by T14 where the new declaration is
++> codec 1 — but neither is assured: a writer can choose stored bytes
++> that satisfy the old declaration and the new one alike, and the
++> change is unwitnessed there. A change reaching the filter, or moving
++> a sample's byte offset within the decoded image without changing
++> that image's length, is witnessed on the same terms T26 states for a
++> wrong stride: where the resulting image breaks §14.5's padding
++> content or `[R-SER-08]`'s bool bytes, the check that detects it is
++> T2's or T4's, exactly as T26 has it, and where it breaks neither
++> there is no witness. Neither change is caught by a
++> length: both filter values are length-preserving (§17.3), and moving
++> a sample within an image of unchanged length alters no declared
++> quantity. And a
++> commit that supersedes every tile it would have damaged leaves the
++> live state clean, so the §14 bar is unwitnessed there for the same
++> reason `[R-LIF-01]` is: it is a property of the prior generation,
++> which §9.7 does not reconstruct; §20.5's three obligations on a
++> compacted file's trailer (`[R-WRT-06]`) — its fresh `file_id` draw,
++> the unknown ignore-lane bits it MUST carry forward, and the floor
++> its version_minor SHOULD take — are unwitnessed for a reason all
++> three share: the output carries no record that it is a compaction
++> output at all, so no check can know that any of the three was owed.
++> For the last two there is a second, the output carrying no
++> record of its input's flags or its input's minor either.
+ 
+ #### 21.8 Conformance vector coverage
+ 
