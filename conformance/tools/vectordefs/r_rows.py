@@ -483,17 +483,35 @@ VECTORS = [
        patches=[ENC[1], _json(b'\xef\xbb\xbf{"a":1}')]),
 
     # -- R8: a non-finite number ---------------------------------------------
-    # §18.2 names `1e400` as the ordinary case: RFC 8259 admits the token, and
-    # its binary64 interpretation overflows to infinity. The bare `NaN` and
-    # `Infinity` tokens are the same row and the same instance — a document
-    # carrying one is not well-formed JSON either, so no two files could differ
-    # on the predicate alone (§21.1's distinguishability test).
-    _v("TV-0532", "number whose binary64 value is not finite, top-level document",
+    # ADR-0117 splits this row's two limbs into separate instances, so there are
+    # four here where there were two. The earlier note argued they were one
+    # instance because a bare-token document "is not well-formed JSON either, so
+    # no two files could differ on the predicate alone (§21.1's
+    # distinguishability test)". That test is stated over a single predicate
+    # across several FIELDS — "a sum against a bound, a combination of two flag
+    # bits" — and not over the alternatives a condition text states, which §21.1
+    # enumerates in the sentence above it. The overlap is real and is what the
+    # specialization clause is for: a bare-token document exhibits R7 too and is
+    # recorded against the narrower row, and R7 and R8 carry the same detector,
+    # detection point and governing rule, so which row records it changes no
+    # verdict.
+    #
+    # The two limbs are different parser paths, which is why they are different
+    # instances. `1e400` is a token RFC 8259 admits, whose binary64
+    # interpretation overflows to infinity on conversion; `NaN` is a token
+    # RFC 8259 does not admit at all.
+    _v("TV-0532", "overflowing magnitude, top-level document",
        sub=False, row="R8", rule="R-MTA-04", detected="extent use",
        patches=[ENC[1], _json(b'{"a":1e400}')]),
-    _v("TV-0533", "number whose binary64 value is not finite, layer sub-record document",
+    _v("TV-0533", "overflowing magnitude, layer sub-record document",
        sub=True, row="R8", rule="R-MTA-04", detected="extent use",
        patches=[ENC[1], _json(b'{"a":1e400}')]),
+    _v("TV-0961", "bare token, top-level document",
+       sub=False, row="R8", rule="R-MTA-04", detected="extent use",
+       patches=[ENC[1], _json(b'{"a":NaN}')]),
+    _v("TV-0962", "bare token, layer sub-record document",
+       sub=True, row="R8", rule="R-MTA-04", detected="extent use",
+       patches=[ENC[1], _json(b'{"a":NaN}')]),
 
     # -- R9: duplicate keys, identity being the decoded string ----------------
     # The register's own example: `"a"` and `"a"` differ in source bytes

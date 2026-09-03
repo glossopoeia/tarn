@@ -14137,7 +14137,7 @@
     {
       "id": "TV-0532",
       "file": "ignore-record/TV-0532.tarn",
-      "title": "number whose binary64 value is not finite, top-level document",
+      "title": "overflowing magnitude, top-level document",
       "sha256": "96965d304f6e5d0df7a22c87b154858bdbf218e0a4694a6c775d221a23ff0584",
       "size": 320,
       "conforming": false,
@@ -14205,7 +14205,7 @@
       "violations": [
         {
           "row": "R8",
-          "instance": "top-level document",
+          "instance": "overflowing magnitude, top-level document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -14221,7 +14221,7 @@
     {
       "id": "TV-0533",
       "file": "ignore-record/TV-0533.tarn",
-      "title": "number whose binary64 value is not finite, layer sub-record document",
+      "title": "overflowing magnitude, layer sub-record document",
       "sha256": "50e269fc996f254c3657adf8c95c4234db177f590365764d991817e74669ac0f",
       "size": 320,
       "conforming": false,
@@ -14293,7 +14293,7 @@
       "violations": [
         {
           "row": "R8",
-          "instance": "layer sub-record document",
+          "instance": "overflowing magnitude, layer sub-record document",
           "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
@@ -52076,6 +52076,179 @@
           "row": "R4",
           "instance": "the content-size field declared smaller than the decoded length, layer sub-record extent",
           "rule": "R-MTA-09",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "layer",
+            "layer": "ok",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0961",
+      "file": "ignore-record/TV-0961.tarn",
+      "title": "bare token, top-level document",
+      "sha256": "0891c6fb59f70d9f939d923d9a6a06d9e67d4405a25f8899201e21e69373ccd5",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "record[0x0002].inline",
+            "value": "01"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "7b2261223a4e614e7d202020202020202020202020202055d5a013"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:file"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R8",
+          "instance": "bare token, top-level document",
+          "rule": "R-MTA-04",
+          "outcome": "ignore-record",
+          "scope": {
+            "kind": "record",
+            "container": "file",
+            "record_type": "0x0002"
+          },
+          "detector": "reader",
+          "detected": "extent use"
+        }
+      ]
+    },
+    {
+      "id": "TV-0962",
+      "file": "ignore-record/TV-0962.tarn",
+      "title": "bare token, layer sub-record document",
+      "sha256": "5066e0c9604623e1bc4327612150b8f50362bbdd065a5c5b3eefc9ed223b3afb",
+      "size": 320,
+      "conforming": false,
+      "derivation": {
+        "seed": "meta",
+        "patches": [
+          {
+            "field": "layer[ok].record",
+            "value": "010003007800000028000000000000001800000000000000026f6b0101000100010000000000000000000000000000000000000000000000000002010001790200000000000000020000000000000001780300000000000000030000000000000001740c00040000000001010000000000000034d41709"
+          },
+          {
+            "field": "record[0x0002].inline",
+            "value": "01"
+          },
+          {
+            "field": "record[0x0002].extent",
+            "value": "7b2261223a4e614e7d202020202020202020202020202055d5a013"
+          }
+        ],
+        "repair": [
+          "directory.crc",
+          "trailer.crc"
+        ]
+      },
+      "expect": {
+        "must_not_serve": [
+          "metadata:layer:ok"
+        ],
+        "may_escalate_to": "file",
+        "serves": [
+          {
+            "layer": "ok",
+            "geometry": {
+              "rank": 2,
+              "extents": [
+                2,
+                3
+              ],
+              "tile_extents": [
+                2,
+                3
+              ]
+            },
+            "layout": "interleaved",
+            "channels": [
+              {
+                "name": "t",
+                "type": "float32",
+                "fill": "0x00000000"
+              }
+            ],
+            "tiles": [
+              {
+                "disk_ordinal": 0,
+                "stored": true,
+                "values": [
+                  "0x3F800000",
+                  "0x80000000",
+                  "0x7FC00001",
+                  "0xC0000000",
+                  "0x00000000",
+                  "0x7F800000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "row": "R8",
+          "instance": "bare token, layer sub-record document",
+          "rule": "R-MTA-04",
           "outcome": "ignore-record",
           "scope": {
             "kind": "record",

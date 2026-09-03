@@ -9,7 +9,7 @@ ADR and this document diverge, this document governs.
 
 License: CC BY 4.0 (see [LICENSE-SPEC](../LICENSE-SPEC)).
 
-> **How to read this document** *(non-normative).* Sections follow a fixed
+> **Note.** How to read this document. Sections follow a fixed
 > rubric where applicable: purpose, byte-layout table, writer rules, reader
 > rules, error handling, worked examples. On-disk structures are presented
 > as layout tables whose columns suit the structure — §4.7 states what
@@ -1247,6 +1247,14 @@ to the new end; (6) make the trailer durable. A commit's
 committed_file_length is strictly greater than the prior trailer's,
 by at least 128, so the committed file length orders a file's
 generations (§9.3). `[R-LIF-02]`
+
+Steps 4 and 6 bind a writer's **conduct** rather than its output, and
+are declared so here on the model `[R-CNF-02]` states: a barrier
+orders writes against power loss and leaves no trace in the bytes, so
+a file committed without one can be byte-identical to a file
+committed with it. A writer that omits a barrier violates this
+requirement, and the file it produces is not nonconforming on that
+account.
 
 On creation there is no prior trailer: the writer first emits the
 front signature block (§6.1) — whose durability the barriers of steps
@@ -3807,7 +3815,7 @@ blast radius and never makes the file conforming (`[R-CNF-12]`);
 | R5 | A decoded user-metadata document violates the document's own content rules — a key or string value whose UTF-8 is ill-formed in the source bytes, or that resolves a `\uXXXX` escape denoting an unpaired surrogate | ill-formed source bytes in a key, top-level document; ill-formed source bytes in a key, layer sub-record document; ill-formed source bytes in a string value, top-level document; ill-formed source bytes in a string value, layer sub-record document; unpaired-surrogate escape in a key, top-level document; unpaired-surrogate escape in a key, layer sub-record document; unpaired-surrogate escape in a string value, top-level document; unpaired-surrogate escape in a string value, layer sub-record document | reader | extent use | `[R-CNT-25]` (R-MTA-04, R-ENC-11) |
 | R6 | A key of a decoded user-metadata document is empty or contains a code point in U+0000 through U+001F | empty key, top-level document; empty key, layer sub-record document; key with a code point in U+0000–U+001F, top-level document; key with a code point in U+0000–U+001F, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25, R-ENC-12) |
 | R7 | A decoded user-metadata document is not well-formed JSON, its top-level value is not an object, or it carries a leading U+FEFF byte-order mark | not well-formed JSON, top-level document; not well-formed JSON, layer sub-record document; top-level value not an object, top-level document; top-level value not an object, layer sub-record document; leading U+FEFF, top-level document; leading U+FEFF, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
-| R8 | A user-metadata document contains a non-finite number, in any form — a magnitude whose binary64 interpretation overflows (`1e400`) and the bare tokens `NaN`, `Infinity` and `-Infinity` alike | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
+| R8 | A user-metadata document contains a non-finite number — a magnitude whose binary64 interpretation overflows (`1e400`), or one of the bare tokens `NaN`, `Infinity` and `-Infinity`, which RFC 8259 does not admit | overflowing magnitude, top-level document; overflowing magnitude, layer sub-record document; bare token, top-level document; bare token, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R9 | Two members of one object in a user-metadata document carry the same key, identity being the decoded string and not the JSON source bytes (`"a"` and `"\u0061"` are the same key) | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R10 | A user-metadata document key is longer than 255 bytes | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-ENC-12) |
 
@@ -3892,16 +3900,17 @@ check from every file that does not. The two are stated over the
 same subject, and each quantifier is the other's dual, so each is
 exactly the negation of the other, and detectability so stated is
 the gate `[R-CNF-07]` applies in assigning an outcome and §21.1's
-completeness clause turns on. The register carries a row for a
-condition exactly where it is a detectable file-conformance
-violation, so an unwitnessed condition is absent from it by that
-clause's own terms rather than in breach of them.
+completeness clause turns on. The register carries a row for every
+condition that is a detectable file-conformance violation, so an
+unwitnessed condition is absent from it by that clause's own terms
+rather than in breach of them.
 
 That is the whole of the test, and it decides any condition put to it
 without appeal to a list: ask whether a breach can be made to leave
-behind a file no obliged check separates from a conforming one. The
-instrument is the checks this specification obliges an actor to
-perform, and deliberately not the register's own rows — a test
+behind a file no obliged check separates from one that does not
+exhibit the condition. The instrument is the checks this
+specification obliges an actor to perform, and deliberately not the
+register's own rows — a test
 keyed to the rows would make §21.1's completeness clause vacuous,
 every omitted condition being undetectable by construction.
 
@@ -3924,7 +3933,7 @@ condition to omit. `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 120 conditions over 275
+Every row of §21.2 through §21.5 — 120 conditions over 277
 instances — has at least one conformance vector (§24) whose expected
 outcome is that row's outcome, and one vector per instance. A row without a vector is a
 gap in the corpus, not a licence to skip the check. `[R-ERR-02]`
@@ -4567,7 +4576,13 @@ the file.
    exactly where its permutation is — where the stride is 1, as for a
    packed boolean plane, and equally where the decoded image is a
    single group, n = L/s being 1 (`[R-COD-10]`); elsewhere it changes
-   the stored bytes of every tile it touches.
+   the stored bytes of every tile it touches. **Fixed declared tile
+   extents and a fixed layout** likewise, and item 2 names both:
+   §11.3 states that tile extents are a writer's choice and that this
+   specification imposes none, and §14.1 leaves the layout to the
+   writer, so two writers agreeing on everything above still emit
+   different numbers of tiles, of different shapes, without both
+   pinned.
 6. **The sentinel for every all-fill tile**, so that a tile whose
    samples all equal fill is never stored; otherwise two writers
    agreeing on content still disagree on bytes.
