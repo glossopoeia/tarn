@@ -13,3 +13,16 @@
 0117|is not well-formed JSON either, so no two files could differ: quotes a comment in conformance/tools/vectordefs/r_rows.py, not the specification — the corpus author's counterargument, answered in the ADR. Not spec text and never was.
 0117|so an unwitnessed condition is absent from it by that clause's own terms: quotes the conclusion this decision's OWN first draft left standing when it weakened the premise under it. Two audit lanes found the broken inference; the sentence was repaired and the ADR records what it used to say. Absent by design, and the reason the erratum exists.
 0117|rather than in breach of them: quotes the ORIGINAL scoping this decision's first correction dropped and its second restored in different words. Absent because the sentence now ends "its absence is not the defect that clause names". Recorded so the erratum's account of both attempts stays checkable.
+# ADR-0118 is a repairs ADR: it quotes the text each repair REPLACED, so most of
+# its absences are the record of what was fixed. Each is listed rather than
+# blanket-approved, so a reader can check that the ADR is quoting the old text
+# and not misdescribing the new.
+0118|separated by such a check: the pre-repair detectable clause, before "some such check" made the quantifier explicit.
+0118|runs to the MUST-level conditions §21 inventories: the pre-repair [R-CNF-12] wording that read as a bound rather than an inventory.
+0118|the byte offset of any sample: the pre-repair §14 bar list item, before it named the value offset §14.2 defines.
+0118|This is precisely where: the pre-repair shrink sentence's unnamed antecedent.
+0118|each relocated tile-index region: the pre-repair [R-WRT-07] trigger, before it keyed on the extent that moves.
+0118|Neither obligation has a witness in the output alone (§21.7): the pre-repair §20.5 sentence, with the over-broad claim and the wrong-ground citation.
+0118|Two do not: [R-ERR-05]'s pre-repair closed count, now enumerated.
+0118|on the bound above: the pre-repair [R-MTA-09] anaphor with two candidate antecedents.
+0118|changes the stored bytes of every tile it touches: Appendix G item 5's pre-repair universal, false wherever the permutation fixes the image.
