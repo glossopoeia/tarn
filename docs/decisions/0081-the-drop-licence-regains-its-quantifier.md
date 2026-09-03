@@ -1,6 +1,6 @@
 # 0081. The drop licence regains its quantifier, and ADR-0070 is superseded
 
-- Status: Accepted
+- Status: Accepted; the §20.4 drop gate it made operative superseded by ADR-0120, its other decisions standing
 - Date: 2026-08-21
 - Covers: §20.4's MU = 0 / PE = 0 cell; §23.1's removal appositive; §21.7's
   codec witnesses; Appendix G item 3's first structure; `SPEC-03`'s scope

@@ -1278,7 +1278,14 @@ channel removal is not an appender's operation at all. Owning section §20.3.
   and re-derived by hand. **This entry's premise survives the challenge** — recorded so it
   is not re-litigated.
 
-### Q-B7. Is adding a record an "independent change" that licenses a drop? [shaping]
+### Q-B7. Is adding a record an "independent change" that licenses a drop? [Resolved → ADR-0120, as moot]
+**Resolution (ADR-0120): the question dissolves.** A PE = 0 record may now be
+dropped in any commit, including one whose only effect is the drop, so nothing
+turns on whether adding a record changes the file's scope. The maintainer's
+ground: the bit is named PRESERVE_ON_EDIT, its writer cleared it, and at file
+scope "edits the scope" was never decidable — six byte-level forks in one cell
+across rounds 10 through 30. The protection given up is stated in the ADR. The
+history below is kept as it stood.
 **Question:** §20.4's MU = 0 / PE = 0 row licenses dropping a record where the
 commit changes the scope it attaches to. Round 25's writer walk found the row
 does not say whether *adding* a non-layer top-level record is such a change.

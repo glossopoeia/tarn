@@ -1,7 +1,7 @@
 # 0041. Updater re-emission, verification depth, and compaction identity
 
 - Status: Accepted (discharges cleanroom round 1's three §20
-  deferrals)
+  deferrals); its MU = 0 / PE = 0 drop gate superseded by ADR-0120
 - Date: 2026-08-04
 - Covers: byte-identical re-emission of retained records; PE
   semantics operationalized; appender verification depth; compaction

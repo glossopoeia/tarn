@@ -1,6 +1,6 @@
 # 0066. Round eight reopens the updater table
 
-- Status: Accepted
+- Status: Accepted; the MU = 0 / PE = 0 drop-licence narrowing superseded by ADR-0120
 - Date: 2026-08-14
 - Covers: §20.4's MU = 1 grant at file scope; the MU = 0 / PE = 0 drop
   licence; the scope of *cannot establish*; the register's completeness

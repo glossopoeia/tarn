@@ -3127,8 +3127,10 @@ An appender MUST, in order:
    byte-identically at its disk-ordinal position under step 4, not
    repaired to a sentinel. Against any other structure the appender
    carries forward, it MUST NOT repair the defect — `[R-LIF-01]`
-   freezes the committed prefix — and MUST NOT drop the record
-   (§20.4). Reproducing a structure's bytes unchanged is not
+   freezes the committed prefix — and MUST NOT drop the record save
+   where §20.4's table licenses the drop, which it does for an
+   unregistered record stored MU = 0, PE = 0 and for no other.
+   Reproducing a structure's bytes unchanged is not
    authoring them: an appender satisfies its writer obligations for
    the bytes it produces, and a violation latent in a structure it
    neither modifies nor relies on travels with that structure
@@ -3398,7 +3400,7 @@ PE = 0 is read as PE = 1, `[R-CNT-12]`), and carry these obligations:
 |---|---|
 | MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. At either scope a compactor MUST refuse to compact the file, on `[R-WRT-06]`'s own ground: such a type can define references this specification does not (§7.2), so its bytes cannot be safely relocated. |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
-| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. An appender MUST NOT drop it except in a commit that *independently* changes the scope the record attaches to: for a layer sub-record, that layer's record, the entry set of its index, or which of its tiles are stored; for a top-level record, the file's layer set, any layer record's content, or another *non-layer* top-level record. A commit changes the layer set by adding a layer; an appender never removes one (`[R-CNT-22]`, §7.3). Superseding a stored tile's bytes re-places that layer's index region (§20.3, `[R-WRT-04]`), moving its extent slot (§7.4) and so modifying that layer's record, which is such a change: an appender superseding a tile MAY drop a top-level such record, or such a sub-record of the layer whose tile it superseded, and the SHOULD-report below is what keeps the loss visible. Dropping the record, or dropping another record in the same commit, is not itself such a change, so a commit whose only effect would be the drop MUST retain it. A compactor MAY drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. The licence is the bit's own: the writer that stored PE = 0 declined preservation across edits, so an updater MAY drop the record in any commit, including one whose only effect is the drop, and a compactor MAY drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
 No commit therefore removes a layer record, or a user-metadata
 record at either scope. Both registered types carry PE = 1, and an

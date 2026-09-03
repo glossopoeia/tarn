@@ -46,3 +46,12 @@
 0119|makes each stored tile it reaches nonconforming: §20.3 step 4's pre-repair re-type consequence, false of a pure predicate on bytes; it now says the bytes denote values the writer did not store.
 0119|item 8's creator's rule, not a compactor's: Appendix G's pre-repair closing gloss, contradicted by item 8 and §20.5; it now says the floor binds creator and compactor alike.
 0119|An encoding this specification does not assign: the pre-repair words of §2.3's cannot-establish sentence, quoted for the two senses they carried; §2.3 and §17.4 now say "experimental-range".
+# ADR-0120 withdraws §20.4's scope-edit gate and quotes what it withdrew.
+0120|An appender MUST NOT drop it except in a commit that: the withdrawn gate, quoted from the pre-ADR-0120 cell.
+0120|a commit whose only effect would be the drop MUST retain it: the withdrawn exclusion sentence.
+0120|another non-layer top-level record: the withdrawn third limb — the phrase Q-B7 turned on.
+0120|independently changes the scope the record attaches to: the withdrawn gate's property, quoted from the pre-ADR-0120 cell and the priced sweep.
+0120|MUST NOT drop the record (§20.4): §20.3 step 2's pre-ADR-0120 restatement, which now defers to the table.
+0120|drop only when the commit modifies the record's scope: quotes ADR-0041's decision text, never spec text.
+0120|updaters preserve or drop per the preserve flag: quotes ADR-0026's decision text, never spec text.
+0120|only when the commit modifies the record's scope: quotes ADR-0041's decision text ("drop only when the commit modifies the record's scope"), never spec text; the gate it describes is the one this ADR withdraws.
