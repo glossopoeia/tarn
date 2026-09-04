@@ -1629,10 +1629,12 @@ region of it returns no samples. `[R-GEO-02]`
 > shrink is barred wherever it alters what §14 fixes for such a
 > tile — whether or not the new state still stores it — and permitted
 > wherever it does not: a tile dropped out of the addressed set
-> carries no §14 obligation and its extent becomes slack, a tile the
-> superseded generation did not store carries none either, and a new
-> padding position whose stored byte already holds the fill alters
-> nothing. One shrink can do several of these at once. A layer that
+> carries no §14 obligation and its extent becomes slack — by a grid
+> count falling or, in a planar layer, by its channel being removed
+> (§20.3) — a tile the superseded generation did not store carries
+> none either, and a new padding position whose stored byte already
+> holds the fill alters nothing. One shrink can do several of these
+> at once. A layer that
 > stored no tile in the generation the commit supersedes may be
 > re-declared freely; a layer the commit itself empties does not
 > qualify. Re-typing a channel is the §14 bar's own subject, barred
@@ -3221,7 +3223,13 @@ An appender MUST, in order:
    Appending a channel, or removing the last, re-indexes nothing and
    moves no ordinal at all — a disk ordinal is c · N + s,
    and N is the spatial-tile count, so the channel count enters the
-   addressed-tile count C · N (§11.2) but no individual ordinal. **The
+   addressed-tile count C · N (§11.2) but no individual ordinal.
+   Removing a channel de-addresses its N tiles: those the superseded
+   generation stored carry no §14 obligation afterwards and their
+   extents become slack (§5.2), as a shrink's de-addressed tiles do
+   below, and the recommendation below to produce a new file instead
+   reaches a commit that would strand a large share of a layer's
+   stored bytes this way too. **The
    test is the effect on a stored tile, not the shape of the edit**: a
    commit that moves only the ordinals of channels the superseded
    generation stored no tile for alters nothing this bars. A layer
@@ -3260,10 +3268,12 @@ An appender MUST, in order:
    stored bytes — bind a shrink as they bind any commit. A shrink is permitted
    exactly where it alters nothing §14 fixes for any tile the layer
    stores in the generation this commit supersedes. Dropping a tile
-   out of the addressed set (§11.2's grid count falls) is not itself
-   such an alteration — a tile the new state does not address carries
-   no §14 obligation and its extent becomes slack — but neither does
-   it rescue a commit that damages a prior-generation stored tile.
+   out of the addressed set — §11.2's grid count falling, or a channel
+   removed from a planar layer taking its N tiles with it — is not
+   itself such an alteration, a tile the new state does not address
+   carrying no §14 obligation and its extent becoming slack however it
+   was de-addressed; but neither does it rescue a commit that damages
+   a prior-generation stored tile.
    Unstoring that tile in the same commit does not rescue it either,
    and for the same reason: the quantifier is the superseded
    generation's, so a shrink that alters what §14 fixes for a tile

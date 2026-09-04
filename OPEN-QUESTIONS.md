@@ -1208,7 +1208,15 @@ section §20.3.
   permitted; `[R-CNF-06]` binds an updater to every writer requirement for the
   bytes it produces, and step 4 is a MUST.
 
-### Q-B10. May a commit remove a channel whose tiles the superseded generation stored? [shaping]
+### Q-B10. May a commit remove a channel whose tiles the superseded generation stored? [Resolved → ADR-0122]
+**Resolution (ADR-0122): yes — the carve-out covers any de-addressing.** §20.3
+step 4 now names both mechanisms — a grid count falling, or a channel removed
+from a planar layer taking its N tiles with it — and the planar-ordinal
+paragraph states what the removal strands and that the shrink paragraph's
+SHOULD to produce a new file instead reaches it; §11.1's Rationale names both
+mechanisms too. An interleaved removal and a planar removal that moves a
+stored channel's ordinals stay barred by the bars that already reach them.
+The history below is kept as it stood.
 **Question:** §20.3 step 4's de-addressing carve-out says "Dropping a tile out of the
 addressed set (**§11.2's grid count falls**) is not itself such an alteration — a tile
 the new state does not address carries no §14 obligation and its extent becomes slack."

@@ -58,3 +58,4 @@
 # ADR-0121 quotes ADR-0025's decision text twice; neither span is spec text.
 0121|refuse lever that spares the major: quotes ADR-0025's characterisation of the incompat lane, never spec text.
 0121|updaters MUST copy unknown ignore-lane bits forward (else the first older-tool append strips them): quotes ADR-0025's decision sentence, of which ADR-0121 is the other half; never spec text.
+0122|(§11.2's grid count falls): the pre-ADR-0122 parenthetical of §20.3's de-addressing carve-out, now "§11.2's grid count falling, or a channel removed from a planar layer taking its N tiles with it".
