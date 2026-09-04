@@ -1097,6 +1097,11 @@ is unfixed. From round 25's recovered verifier walk.
   author separately observed that the layer-scope discard clause is easy to miss
   from memory (quiz-01). Three passes graded it a maintainer decision; two
   recommended stating the file-scope rule in one sentence, on option (a).
+- **Round 31** (verifier-02) found, beside this entry, a third cause of an
+  incomplete walk that neither statement of the partial-total rule named — a
+  verifier's resource decline under `[R-ERR-04]`, which establishes no
+  violation — and ADR-0123 adds it at §5.2 and §9.7. This entry's own question,
+  what a file-scope rejection's partial total is, is exactly where it was.
 
 ### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [Resolved → ADR-0113, amended by ADR-0114]
 **Resolution:** The sample type: **yes, it always did**, and saying otherwise was
@@ -1141,6 +1146,14 @@ throughout, its ordinal being s.
 barred wherever a tile is stored, a geometry change is the only thing that can
 renumber a carried-forward entry, so the sentence round 28 found ambiguous is
 true as written. Neither bar is witnessed and §21.7 now says so.
+**Round 31 found the limb this entry never asked** (writer-01, byte-level,
+upheld by all three passes and by hand): a change to the tile extents, or to the
+declared dimension order, on a layer that stores a tile transposes the array
+over unchanged bytes, and the §14 bar named neither. ADR-0123 names both in the
+bar and in a paragraph on the sample-type paragraph's model, and asks the
+maintainer to confirm it. The parenthetical this entry left as it was is widened
+there too, since ADR-0122 made a planar channel removal an operation that
+renumbers sentinel entries with no geometry change.
 
 **Question:** Step 4 bars declaration changes that alter what §14 fixes for a
 tile the superseded generation stored, and lists the things that can be altered.
