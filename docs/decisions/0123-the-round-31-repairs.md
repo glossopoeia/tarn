@@ -11,13 +11,17 @@
   zero-layers and experimental-type entries; §13.3's sparse-writing Note;
   Appendix H's writer and updater checklists; §14.2 `[R-SER-08]`, §19.4 step 8
   and §21.1; §20.4's preservation table; §22.3 `[R-SEC-04]`
-- Confirm: two, either reversible by a superseding ADR. (1) That the §14 bar
-  reaches a change to a layer's tile extents or to the declared order of its
-  dimensions wherever the layer stores any tile — decided here on the ground
-  ADR-0081 and ADR-0114 already record, not on a new one; the alternative is
-  stated below so it can be chosen instead. (2) That `[R-ERR-04]`'s scope
-  enumeration is a floor rather than a ceiling, which is how `[R-COD-06]` and
-  `[R-CNF-11]` already read it.
+- Confirm: none. Two decisions were put to the maintainer and confirmed on
+  2026-09-04. (1) That the §14 bar reaches a change to a layer's tile extents
+  or to the declared order of its dimensions wherever the layer stores any
+  tile, decided on the ground ADR-0081 and ADR-0114 already record; the
+  alternative is stated below so a superseding ADR can choose it. (2) That
+  `[R-ERR-04]`'s scope enumeration is a floor rather than a ceiling, which is
+  how `[R-COD-06]` and `[R-CNF-11]` already read it. The maintainer confirmed
+  the round-31 model policy the same day, Opus standing for every lane, and
+  directed that specification prose carry no nested em-dash phrase; decision
+  11's sentence, the one place these repairs had introduced one, was
+  restructured into two sentences on 2026-09-04.
 
 ## Context
 
@@ -144,9 +148,9 @@ stated in four normative places — *"writes flags = 0 on creation"*; *"copies
 forward the input's unknown ignore-lane flag bits, clears none and sets no
 other"* — the one obligation `[R-CNF-02]` declares no verifier can witness.
 
-**11. `[R-ERR-04]`'s enumeration is a floor.** *"or at any scope containing
-that one, as `[R-COD-06]` provides for a frame's window and `[R-CNF-11]`
-presupposes"*. Both citing rules already grant a layer-scope decline over a
+**11. `[R-ERR-04]`'s enumeration is a floor.** *"It MAY also decline at any
+scope that contains the narrowest one, as `[R-COD-06]` provides for a frame's
+window and `[R-CNF-11]` presupposes"*. Both citing rules already grant a layer-scope decline over a
 tile's frame window; an enumeration in one rule does not repeal a grant in
 another, so nothing a reader may do changes, and the three passages now agree.
 
