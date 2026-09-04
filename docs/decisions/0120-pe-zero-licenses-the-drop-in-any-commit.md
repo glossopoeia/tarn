@@ -118,3 +118,25 @@ it depends on — and none is proposed here.
 - **ADR-0081**'s observation that §20.4's cell is *the only statement of the
   updater's drop rule* in the document, which is why this decision is two
   edits and not a sweep.
+
+## Erratum, 2026-09-03 — the pre-round-31 audit
+
+Two defects in this decision's own wording, both flagged byte-level by the
+lane that read it, both on narrow corners, both repaired in the commit
+carrying this erratum.
+
+- **§20.3 step 2's gloss keyed the licence on the wrong bits.** *"which it does
+  for an unregistered record stored MU = 0, PE = 0 and for no other"* named the
+  stored bits, and §20.4 makes the stored bits authoritative only for a type the
+  updater does not implement; for an implemented unregistered type the
+  definition it implements supplies the flags. Two lanes found it. An updater
+  that implements an experimental type whose definition says PE = 1, meeting a
+  record of it stored PE = 0, was licensed by the gloss and forbidden by the
+  rule. The gloss is cut and the sentence defers to §20.4, the authority.
+- **The cell's "in any commit, including one whose only effect is the drop"
+  collided with the MU = 1 row.** Dropping a sub-record modifies its layer's
+  record, and a layer an unimplemented MU = 1 record governs may not be
+  modified; the reject-layer bar in §20.3 step 2 raises the same collision. The
+  old gate could never reach either, its precondition being unsatisfiable
+  there; the unconditional MAY reached both. It now reads *"in any commit it is
+  otherwise free to make — one whose only effect is the drop included"*.

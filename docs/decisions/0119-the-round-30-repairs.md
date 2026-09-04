@@ -153,3 +153,41 @@ between them account for twenty, and the twenty-first was this one.
 - **ADR-0117** decision 4, whose category choice §9.2 now states in that
   category's own terms.
 - **ADR-0118**'s erratum, whose `[R-ERR-04]` edit §18.2's Note now follows.
+
+## Erratum, 2026-09-03 — the pre-round-31 audit
+
+Seven lanes read this ADR's fourteen edits with the three decisions taken after
+them, and found nine of the fourteen needed a second repair, none byte-level.
+Each is made in the commit carrying this erratum.
+
+- **§17.2's Note** named the decoded size as *"P·Q or P·Bᶜ"* and omitted the
+  planar bool plane's ⌈P/8⌉ and the per-channel plurality; it now reads *"P·Q
+  for an interleaved layer and each channel's P·Bᶜ or ⌈P/8⌉ for a planar one"*.
+- **L23's Detected cell** said *"every other region"* in a row whose regions
+  are its four instances, leaving the leading fixed fields other than the name
+  in neither part; now *"every other field and entry"*.
+- **`[R-ERR-04]`'s "the two capability refusals §21.6 names"** became a
+  miscount once §21.6's new row named a third; two lanes found it. It now says
+  *"§21.6's closing paragraph names"*, as `[R-CNF-03]` already did, and the row
+  says *"on resource grounds"*, the rule's own word, rather than *capability*.
+- **§21.6's preamble** branded any reader treating an entry as a failure
+  nonconforming, which the new row's licensed whole-file decline contradicted;
+  it now says *"validity failure"* and that a recorded resource decline is
+  licensed and reported as `[R-ERR-04]` requires.
+- **§20.3's re-type consequence**, rewritten here as *"wrong content, of the
+  kind §21.7 leaves unwitnessed"*, swapped one universal for its opposite: a
+  size-changing re-type is witnessed by T3 and T14, and one to bool by T2. Two
+  lanes found it. The sentence now states the disjunction.
+- **Appendix G item 3** pinned the layer-name comparison and left the
+  record-key comparison three sentences later unpinned; two lanes found it.
+  Every byte order in the item now compares as `[R-MTA-05]` compares keys.
+- **§9.7, §22.3 and `[R-MTA-10]`** still stated the certification consequence
+  over *"an unassigned encoding"* after §2.3 and §17.4 were narrowed to the
+  experimental range; two lanes found it. All three now say experimental-range,
+  and `[R-MTA-10]` names R1's violations beside the claim.
+- **§17.4's "the metadata-encoding space alone differs"** was false across
+  every identifier space once narrowed; it now names its comparison class, the
+  codec and filter spaces.
+- **§18.2's Note** said *"a reader that proceeds"* where `[R-MTA-09]` has a
+  reader whose own bound is larger decode the document; now *"A reader whose
+  own bound it exceeds"*.

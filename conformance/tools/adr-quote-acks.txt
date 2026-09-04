@@ -59,3 +59,23 @@
 0121|refuse lever that spares the major: quotes ADR-0025's characterisation of the incompat lane, never spec text.
 0121|updaters MUST copy unknown ignore-lane bits forward (else the first older-tool append strips them): quotes ADR-0025's decision sentence, of which ADR-0121 is the other half; never spec text.
 0122|(§11.2's grid count falls): the pre-ADR-0122 parenthetical of §20.3's de-addressing carve-out, now "§11.2's grid count falling, or a channel removed from a planar layer taking its N tiles with it".
+# Pre-round-31 audit errata quote what they replaced.
+0119|P·Q or P·Bᶜ: §17.2's Note between ADR-0119 and its erratum; now "P·Q for an interleaved layer and each channel's P·Bᶜ or ⌈P/8⌉ for a planar one".
+0119|every other region: L23's Detected cell between ADR-0119 and its erratum; now "every other field and entry".
+0119|wrong content, of the kind §21.7 leaves unwitnessed: §20.3's re-type consequence between ADR-0119 and its erratum; now the disjunction over element size and type.
+0119|an unassigned encoding: the phrase §9.7, §22.3 and [R-MTA-10] carried until the erratum swept them to "experimental-range"; [R-MTA-10]'s opening sentence keeps "Under an unassigned encoding", which is true of every unassigned value.
+0119|a reader that proceeds: §18.2's Note between ADR-0119 and its erratum; now "a reader whose own bound it exceeds".
+0120|which it does for an unregistered record stored MU = 0, PE = 0 and for no other: §20.3 step 2's gloss between ADR-0120 and its erratum, cut.
+0120|in any commit, including one whose only effect is the drop: the cell between ADR-0120 and its erratum; now "in any commit it is otherwise free to make — one whose only effect is the drop included".
+0121|carried by every tool after: §6.3's reason clause between ADR-0121 and its erratum; now "carried forward by every updater and compactor under this text".
+0122|does not reach a shrink: the shrink paragraph's untouched sentence reads "does not reach a shrink either"; quoted in the erratum as the sentence a reader could take over a channel removal.
+0122|a shrink: the Rationale's framing word, quoted in the erratum for its scope rather than as a span.
+0122|An interleaved layer is unaffected: the ordinal paragraph's sentence between ADR-0122 and its erratum; now "An interleaved layer is unaffected by this bar".
+# Decision-section quotations superseded by the same ADR's pre-round-31 erratum.
+0119|the decoded size the layout gives, P·Q or P·Bᶜ: ADR-0119's Decision quotes §17.2's Note as it landed; the erratum in the same ADR records the second repair.
+0119|open (the name, §19.1 step 4); layer access (every other region): ADR-0119's Decision quotes L23's cell as it landed; superseded by its erratum.
+0120|Retain byte-identical, or drop it — its extent becoming slack. The licence is the bit's own: ADR-0120's Decision quotes the whole cell as it landed; the erratum in the same ADR records the "otherwise free to make" repair.
+0120|save where §20.4's table licenses the drop, which it does for an unregistered record: ADR-0120's Decision quotes step 2's gloss as it landed; cut by its erratum.
+0121|this text defining none for it to mean anything by, so a bit is set only by a writer under the later minor version that defines it and carried by every tool after: ADR-0121's Decision quotes the reason clause as it landed; the erratum narrows the carry claim.
+0122|Dropping a tile out of the addressed set — §11.2's grid count falling, or a channel removed from a planar layer taking its N tiles with it: ADR-0122's Decision quotes the carve-out as it landed; the erratum separates the two mechanisms.
+0119|another non-layer top-level record: ADR-0119's Context quotes §20.4's third limb as it stood when round 30 rediscovered Q-B7; ADR-0120 withdrew the limb the same day.

@@ -116,3 +116,18 @@ decision forecloses it.
   slot; round 27 sent this to the ledger on that ground.
 - **ADR-0117** decision 4, and `[R-CNF-02]`: a writer obligation declared
   where it arises, binding the actor and not the bytes.
+
+## Erratum, 2026-09-03 — the pre-round-31 audit
+
+- **The reason clause overclaimed.** *"carried by every tool after"* is false
+  of a creator under this text that emits a new file from an old file's
+  content, which the same paragraph binds to flags = 0, and of tools under a
+  later minor, which this text cannot bind. It now says *"carried forward by
+  every updater and compactor under this text"*, the two tiers this text
+  obliges.
+- **`[R-CNF-02]`'s enumeration was not swept.** Its closed count of writer
+  obligations expressly declared not to be file-conformance violations named
+  §6.3's flags = 0 alone; the updater's and compactor's set-no-other are the
+  same kind. The enumeration now names *"§6.3's flags rules against a set
+  ignore-lane bit — a creator's flags = 0, and an updater's or compactor's
+  copy-forward and set-no-other (§20.5)"*.

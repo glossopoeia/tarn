@@ -97,3 +97,25 @@ the operation is, beside the recommendation that already governs a shrink.
 - **ADR-0120**, taken the same day on the same ground: where the document's
   caller has chosen the operation, the specification states its cost and
   does not bar it.
+
+## Erratum, 2026-09-03 — the pre-round-31 audit
+
+Four defects in this decision's wording, none byte-level, all repaired in the
+commit carrying this erratum.
+
+- **Channel removal was introduced inside shrink-framed sentences.** The
+  carve-out in the shrink paragraph enumerated it as a way of dropping a tile
+  out of the addressed set, and the paragraph goes on to say the ordinal bar
+  *"does not reach a shrink"*; §11.1's Rationale did the same under *"a
+  shrink"*. Two lanes found it: a reader taking channel removal as a species
+  of shrink concludes the ordinal bar does not reach it, which is false for a
+  non-last removal. Both places now say the removal *"is not one"* and that
+  the other bar judges it on its own ground; the Rationale's list is a list
+  again and its closing sentence says *"One commit"*.
+- **The ordinal paragraph's new sentence dropped the *planar* qualifier its
+  siblings carry**, and the untouched *"An interleaved layer is unaffected"*
+  after it could be read over the removal; now *"Removing a planar channel"*,
+  and the interleaved sentence names its bar and says a removal there *"is the
+  §14 bar's subject"*.
+- **The same sentence lacked the caveat both its siblings carry**, that
+  de-addressing rescues nothing; it now carries it.
