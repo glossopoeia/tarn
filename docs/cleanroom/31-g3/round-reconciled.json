@@ -1,0 +1,515 @@
+{
+ "merged": [
+  {
+   "members": [
+    "reader-01",
+    "writer-03",
+    "adversary-01",
+    "quiz-02"
+   ],
+   "title": "[R-CNF-03]'s acceptance-duty exclusion omits the 'top-level' qualifier \u00a721.6 calls load-bearing",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-02",
+    "verifier-01"
+   ],
+   "title": "\u00a720.3's growth paragraph describes the \u00a714 bar's carve-out as single-membered after it was widened to two mechanisms",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-01"
+   ],
+   "title": "The \u00a714 bar's reach over a tile-extent permutation is undecided, and the permutation transposes the array over unchanged stored bytes",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "byte-level",
+    "implementer": "byte-level",
+    "skeptic": "byte-level"
+   },
+   "byte_level": {
+    "correctness": true,
+    "implementer": true,
+    "skeptic": true
+   },
+   "reporter_bl": [
+    "writer-01"
+   ],
+   "any_bl": true,
+   "unanimous_bl": true,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-02"
+   ],
+   "title": "Both statements of the partial-slack-total rule enumerate two causes of an incomplete walk; a resource decline is a third",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-01"
+   ],
+   "title": "The \u00a714 bar's carve-out is stated over stored bytes, but a padding position in a packed planar bool plane is a bit",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-02"
+   ],
+   "title": "The trailer layout table's Valid-values cell for flags gives a lane decomposition instead of a value constraint",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-03"
+   ],
+   "title": "\u00a721.6's zero-layers entry fuses [R-CNT-14]'s two statements and reads as requiring an empty directory",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-04"
+   ],
+   "title": "\u00a713.3's sparse-writing Note keys index re-emission to growth alone where [R-WRT-04] keys it to stored-tile set or index content",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-05"
+   ],
+   "title": "The three-shapes commit figure draws no hatched run for a drop-only commit of an extent-owning PE = 0 record",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "figure",
+    "implementer": "figure",
+    "skeptic": "figure"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-06"
+   ],
+   "title": "Appendix H's writer and updater checklists carry no trailer-flags obligation, the one no verifier can check",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-01"
+   ],
+   "title": "[R-ERR-04] enumerates the resource-decline scopes as whole-file-or-narrowest; two rules cite it for a layer-scope decline over a tile's quantity",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-02"
+   ],
+   "title": "\u00a721.9's hard-limit restatement of the lz4 cap drops [R-COD-07]'s 'addressed tiles' quantifier and its planar largest-plane rule",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "register-bookkeeping",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-03"
+   ],
+   "title": "\u00a721.6's unassigned-record-type entry reaches layer sub-records but cites only [R-CNT-15] and [R-WRT-08]",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-02"
+   ],
+   "title": "\u00a711.1's Rationale restates the \u00a714 bar as reaching a growth and omits \u00a720.3's express growth permission",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-03"
+   ],
+   "title": "The re-emission clause's parenthetical, and \u00a720.3's own gloss on it, name only a geometry change as an occasion for renumbering",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-04"
+   ],
+   "title": "'such a tile' in the planar-channel-removal carve-out has no antecedent that makes the sentence coherent",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-05"
+   ],
+   "title": "[R-SER-08] fixes the logical value a reader reports for a bad interleaved bool byte but not, in one place, the byte it returns",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-01"
+   ],
+   "title": "'relies on' carries two incompatible senses in \u00a720.3: re-emission both does and does not rely on a record",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "quiz-03"
+   ],
+   "title": "The preservation table's rows are keyed to 'Stored flags', the one flag source its lead sentence says does not always govern",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "quiz-04"
+   ],
+   "title": "\u00a722.3's recovery-re-verification obligation is stated twice in one paragraph, with a dangling trailing trigger",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  }
+ ],
+ "pass_ok": {
+  "correctness": true,
+  "implementer": true,
+  "skeptic": true
+ }
+}
