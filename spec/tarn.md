@@ -882,11 +882,14 @@ violation — such bits are defined by later minor versions, and files
 carrying them are conforming files this text's readers ignore. A
 compactor, though its output is a new file, carries the input's
 unknown ignore-lane bits into its output trailer rather than writing
-flags = 0 (§20.5, `[R-WRT-06]`). An updater MUST copy forward
-unknown ignore-lane bits of the file it modifies and MUST NOT clear
-them; an updater encountering an unknown incompat-lane bit is a
-reader first, and therefore rejects the file before modifying
-anything. `[R-CNT-08]`
+flags = 0, and sets no other (§20.5, `[R-WRT-06]`). An updater MUST
+copy forward unknown ignore-lane bits of the file it modifies, MUST
+NOT clear them, and MUST NOT set any other: no writer under this text
+originates an ignore-lane bit, this text defining none for it to mean
+anything by, so a bit is set only by a writer under the later minor
+version that defines it and carried by every tool after. An updater
+encountering an unknown incompat-lane bit is a reader first, and
+therefore rejects the file before modifying anything. `[R-CNT-08]`
 
 A writer SHOULD emit the lowest version_minor that defines every
 feature present in the file — for a file expressible under this text,
@@ -3300,7 +3303,8 @@ An appender MUST, in order:
    the new end — necessarily at least 128 above the F step 1
    established, this commit having appended at least a directory and
    a trailer (`[R-LIF-02]`) — unknown ignore-lane flag bits copied
-   forward (`[R-CNT-08]`), and version_minor per `[R-CNT-26]`;
+   forward and no other set (`[R-CNT-08]`), and version_minor per
+   `[R-CNT-26]`;
    barrier. `[R-WRT-04]`
 
 > **Note.** A commit's cost is dominated by its index, not its data:
@@ -3477,9 +3481,9 @@ than a commit (`[R-LIF-01]`) fixes what the output *is*, not which
 rules govern the writing of it.
 
 The output
-trailer MUST copy the input's unknown ignore-lane flag bits forward,
-in place of the flags = 0 §6.3 requires of a file created under this
-text (`[R-CNT-08]`). Where the output carries a feature a later minor
+trailer MUST copy the input's unknown ignore-lane flag bits forward
+and set no other, in place of the flags = 0 §6.3 requires of a file
+created under this text (`[R-CNT-08]`). Where the output carries a feature a later minor
 defines and this compactor does not — on a conforming input a carried
 ignore-lane bit (§6.3) or an unrecognized `tarn.` key in a record it
 never decoded (§18.3), the two of §10.1's four vehicles §21.6 makes
@@ -4635,7 +4639,8 @@ the file.
 8. **`version_minor` at the floor** `[R-CNT-26]` states, and
    `flags` = 0. The `flags` half is a creator's rule, as item 2's
    identifier is: a compactor adopting the profile carries its input's
-   unknown ignore-lane bits forward instead (`[R-CNT-08]`). The
+   unknown ignore-lane bits forward instead, setting no other
+   (`[R-CNT-08]`). The
    version_minor floor binds a compactor too, save where its output
    carries a feature it does not implement, when §20.5's floor governs
    instead (`[R-WRT-06]`). A compactor's output is therefore

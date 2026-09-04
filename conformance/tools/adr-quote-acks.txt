@@ -55,3 +55,6 @@
 0120|drop only when the commit modifies the record's scope: quotes ADR-0041's decision text, never spec text.
 0120|updaters preserve or drop per the preserve flag: quotes ADR-0026's decision text, never spec text.
 0120|only when the commit modifies the record's scope: quotes ADR-0041's decision text ("drop only when the commit modifies the record's scope"), never spec text; the gate it describes is the one this ADR withdraws.
+# ADR-0121 quotes ADR-0025's decision text twice; neither span is spec text.
+0121|refuse lever that spares the major: quotes ADR-0025's characterisation of the incompat lane, never spec text.
+0121|updaters MUST copy unknown ignore-lane bits forward (else the first older-tool append strips them): quotes ADR-0025's decision sentence, of which ADR-0121 is the other half; never spec text.

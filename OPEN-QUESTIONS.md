@@ -1540,7 +1540,15 @@ three auditors reading independently.
   wanted, only (b) and (c) key on a quantity that survives a commit that grows
   and shrinks at once.
 
-### Q-B9. Which writers does the flags = 0 obligation bind? [shaping]
+### Q-B9. Which writers does the flags = 0 obligation bind? [Resolved → ADR-0121]
+**Resolution (ADR-0121): every writer under this text, as a bar on origination.**
+`[R-CNT-08]` now says no writer under this text originates an ignore-lane bit —
+a creator writes flags = 0, an updater MUST copy the input's unknown ignore-lane
+bits forward, MUST NOT clear them, and MUST NOT set any other, a compactor the
+same — with the reason: this text defines no bit, so a bit is set only by a
+writer under the later minor that defines it. §20.3 step 6, §20.5 and Appendix
+G item 8 say "and no other". The witness row (option d) was not taken and is
+not foreclosed. The history below is kept as it stood.
 **Question:** `[R-CNT-08]` says "a writer **creating a file** under this text MUST
 write flags = 0", and the next sentence carves out a compactor expressly because
 "its output is a new file" — which shows the phrase is read as *producing a new
