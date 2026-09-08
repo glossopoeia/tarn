@@ -4518,7 +4518,9 @@ is a new format major version.
 
 - **[BCP 14]** RFC 2119 and RFC 8174 — the requirement keywords (§2.1).
 - **[RFC 3720]** §12.1 — the CRC-32C polynomial and parameters (§4.5).
-- **[IEEE 754]** IEEE 754-2019 — binary16, binary32, and binary64 (§12.1).
+- **[IEEE 754]** IEEE 754-2019 — binary16, binary32, and binary64 (§12.1),
+  and the conversion from decimal text to binary64 under its default
+  rounding-direction attribute, roundTiesToEven (§18.2).
 - **[RFC 1951]** DEFLATE Compressed Data Format Specification version 1.3 — codec 2 (§17.2).
 - **[RFC 8878]** Zstandard Compression and the `application/zstd` Media Type — codec 3 and metadata encoding 2 (§17.2, §18.2).
 - **[LZ4 Block]** LZ4 Block Format Description, version 1.0 — `doc/lz4_Block_format.md` in the lz4/lz4 repository, as published with lz4 release v1.9.4 — codec 4 (§17.2).

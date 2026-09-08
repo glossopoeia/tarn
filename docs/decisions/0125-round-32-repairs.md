@@ -1,21 +1,27 @@
 # 0125. Round 32's repairs: a channel list changes one way per commit, and the binary64 test names its rounding
 
-- Status: Accepted (resolves round 32's repairable findings)
+- Status: Accepted (resolves round 32's repairable findings; both decisions
+  confirmed by the maintainer on 2026-09-08)
 - Date: 2026-09-08
 - Covers: §20.3 step 4's permitted list, its several-at-once sentence,
   its bounds paragraph and its witness parenthetical; §18.2 `[R-MTA-04]`;
   §11.1's Rationale; §13.3's sparse-writing Note; §20.3's three-shapes
   Example; §5.1's Example; §5.2 `[R-CNT-21]`; §2.3 `[R-CNF-03]`; §7.1
   `[R-CNT-25]`; §20.5's compaction Example; §21.2 F3; §21.3 L14; §21.6's
-  closing paragraph; Appendix H's reader and updater entries
-- Confirm: two decisions are put to the maintainer, each with its
-  alternative stated below so a superseding ADR can choose it. (1) That
+  closing paragraph; Appendix H's reader and updater entries; Appendix F's
+  IEEE 754 entry
+- Confirm: none. Two decisions were put to the maintainer and confirmed on
+  2026-09-08, each with its alternative stated below so a superseding ADR
+  can choose it. (1) That
   one commit MAY extend a planar layer's channel list at its end or
   shorten it from its end, and not both, so that a commit's net change to
   the list is one of the two and replacing the last channel is two commits
   or a rewrite. (2) That §18.2's finiteness test is taken under IEEE 754's
   default rounding-direction attribute, roundTiesToEven, which the text now
-  names.
+  names. On confirming, the maintainer directed that Appendix F's IEEE 754
+  entry cite §18.2 beside §12.1, which the round-32 hand-check had left as
+  the one ground the dissenting pass stood on; it now names the conversion
+  and its default attribute.
 
 ## Context
 
