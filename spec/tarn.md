@@ -1637,12 +1637,13 @@ region of it returns no samples. `[R-GEO-02]`
 > layers at creation, grow extents as data arrives. §20.3 states
 > normatively, and governs, what a commit may do to a layer that
 > already stored tiles in the generation a commit supersedes: its
-> extents may grow, subject to every rule the grown geometry is
-> under; a planar layer's channel list may be extended or shortened
-> at its end; its names, and its slab and alignment declarations,
-> may change; and every other declaration is fixed while the layer
-> stores a tile, a change to one being a new layer or a whole-file
-> rewrite. A layer that stored no tile in the generation the commit
+> extents may grow and not shrink; a planar layer's channel list may
+> be extended or shortened at its end; its names may change, and a
+> slab or alignment declaration may be declared, re-established or
+> cleared; several of these in one commit, each subject to every rule
+> the declarations it produces are under; and every other declaration
+> is fixed while the layer stores a tile, a change to one being a new
+> layer or a whole-file rewrite. A layer that stored no tile in the generation the commit
 > supersedes may be re-declared freely; a layer the commit itself
 > empties does not qualify. Growth
 > that leaves **entry_count** unchanged touches the directory alone —
@@ -1942,10 +1943,10 @@ rejection is never satisfied by returning fill (`[R-CNF-09]`).
 > segment of sentinels even the segment CRC is a known constant
 > (`[R-IDX-05]`). Declare-then-fill workflows append tiles as data
 > arrives, generation by generation (§9); each commit that changes a
-> layer's stored-tile set or its entry_count — the only way its index
-> content moves under the changes §20.3 permits a layer that stores a
-> tile — re-emits that layer's whole tile-index region (§11.1, §20.3,
-> `[R-WRT-04]`).
+> layer's stored-tile set or its index content — which, among the
+> declaration changes §20.3 permits a layer that stores a tile, only
+> a change to entry_count does — re-emits that layer's whole
+> tile-index region (§11.1, §20.3, `[R-WRT-04]`).
 
 ### 14. Tile Serialization
 
@@ -3178,63 +3179,82 @@ An appender MUST, in order:
    A layer that stores a tile **in the generation this commit
    supersedes** keeps its declarations, with these exceptions and no
    other: its name, and its dimension and channel names, MAY change;
-   an extent MAY grow; a planar layer's channel list MAY be extended
-   at its end, or shortened from its end; and a slab or alignment
-   declaration is re-established or cleared as this step provides
-   below. Every other declaration is fixed for as long as the layer
-   stores a tile: the layout, the linearization and the index
-   encoding, the codec and the filter, the rank and the dimension
-   order, every tile extent, every channel's type and fill, an
-   interleaved layer's channel list, and the position of every planar
-   channel but the last. A commit MUST NOT change one of these; the
-   change is a new layer, or a whole-file rewrite under a fresh
-   file_id (`[R-LIF-01]`, §20.5). The two lists partition §7.4's
-   fields, the derived ones aside — entry_count, crc_of_crc_array and
-   the extent slot follow the commit. The tense is the prior
-   generation's (§3.1 defines *stored* against a generation), so a
-   commit does not earn an empty layer's freedom by emptying the
-   layer as it re-declares it: superseding every tile of a layer and
-   re-declaring it are one operation, and it is a rewrite. A layer
-   that stores no tile in the generation this commit supersedes MAY
-   be re-declared freely, which is what schema-first creation needs
-   (§11.1).
+   an extent MAY grow, and MUST NOT shrink; a planar layer's channel
+   list MAY be extended at its end, or shortened from its end; and a
+   slab or alignment declaration MAY be declared, re-established or
+   cleared as this step provides below. A commit MAY make several of
+   these changes at once. Every other declaration is fixed for as
+   long as the layer stores a tile: the layout, the linearization and
+   the index encoding, the codec and the filter, the rank and the
+   dimension order, every tile extent, every channel's type and fill,
+   an interleaved layer's channel list, and the position of every
+   planar channel but the last. A commit MUST NOT change one of
+   these; the change is a new layer, or a whole-file rewrite under a
+   fresh file_id (`[R-LIF-01]`, §20.5). Between them the two lists
+   reach every declaration field of §7.4, and where a field is on
+   both sides — a dimension extent, a planar layer's channel list —
+   the permitted side states the whole of what a commit MAY do to it;
+   entry_count and crc_of_crc_array follow the commit, the record's
+   extent slot with them (§7.2), and a layer's sub-records are §20.4's
+   subject whether or not the layer stores a tile. The tense is the
+   prior generation's (§3.1 defines *stored* against a generation),
+   so a commit does not earn an empty layer's freedom by emptying the
+   layer as it re-declares it: unstoring or superseding every tile of
+   a layer and re-declaring it is one operation, and it is a rewrite.
+   A layer that stores no tile in the generation this commit
+   supersedes MAY be re-declared freely, subject to every rule its
+   new declarations are subject to, which is what schema-first
+   creation needs (§11.1).
 
    The line is drawn where a stored tile's meaning is fixed. The
    fixed declarations are the ones §14 reads a stored tile under —
    its value sequence, its byte layout, the fill its padding
-   positions hold (§14.5) — and the ones §11.4 assigns its ordinal
-   and its values' coordinates by; under new ones the same bytes
-   would denote values, coordinates or padding the writer did not
-   store, with every checksum in §8 certifying the result and no
-   check any actor owes able to see it (§21.7). The permitted
-   changes touch none of that: a name enters no map; a grown extent
-   adds positions that held their channel's fill (§14.5), and fill is
-   a legal sample value; an appended planar channel adds tiles at
+   positions hold (§14.5) — the ones §11.4 assigns its ordinal and
+   its values' coordinates by, as a rule rather than as the numbers
+   the rule yields, and the one §15 gives the layer's index region
+   its shape by. Under new ones the same bytes would denote values,
+   coordinates or padding the writer did not store, with every
+   checksum in §8 certifying the result and, but for a decoded size
+   or a boolean byte the register witnesses (T3, T14, T2), no check
+   any actor owes able to see it (§21.7). The permitted changes
+   touch none of that: a name enters no map; a grown extent adds
+   positions that held their channel's fill (§14.5), and fill is a
+   legal sample value, and where the growth moves an ordinal it
+   moves it under the same rule, the re-emission clause above
+   following the tile; an appended planar channel adds tiles at
    ordinals after every existing one, a disk ordinal being c · N + s
    with N the spatial-tile count; a channel removed from the end
    takes only its own tiles out of the addressed set, and a tile the
-   new state does not address carries no obligation. What the line
+   new state does not address carries no obligation; a slab or
+   alignment declaration governs placement (§16), not a value, its
+   coordinate or its padding. What the line
    gives up is stated rather than carved around: a shrink, a fill
-   change, a re-type, a re-tiling, a change of layout, codec or
-   filter, and a channel inserted or removed anywhere but the end are
-   rewrites even where a particular file would survive them in place,
-   because deciding which files would is the edge this list exists to
-   remove.
+   change, a re-type, a re-tiling, a transposition of the dimensions,
+   a change of rank, layout, linearization, index encoding, codec or
+   filter, any change to an interleaved layer's channel list, and a
+   planar channel inserted or removed anywhere but the end of the
+   list are rewrites even where a particular file would survive them
+   in place, because deciding which files would is the edge this list
+   exists to remove.
 
-   A growth holds provided the grown geometry stays within every
-   bound the layer's own declarations impose, `[R-COD-07]`'s lz4
-   decoded-size cap among them (L44), which an empty layer escapes
-   only because that cap is quantified over addressed tiles.
-   `[R-ENC-04]`'s 2⁶³ − 1 ceiling on every quantity it designates is
-   another, and the list is not offered as exhaustive: a growth is
-   permitted exactly where the geometry it produces satisfies every
-   rule that geometry is subject to. A channel removed from the end
+   A permitted change holds provided the declarations and geometry
+   it produces stay within every bound they are subject to:
+   `[R-COD-07]`'s lz4 decoded-size cap (L44, the largest channel
+   plane governing in a planar layer), which an empty layer escapes
+   only because that cap is quantified over addressed tiles;
+   `[R-ENC-04]`'s 2⁶³ − 1 ceiling on every quantity it designates,
+   C · N among them; `[R-GEO-01]`'s floor of one channel; and the name
+   rules of §4.6 and `[R-ENC-15]`. The list is not offered as
+   exhaustive: a change is permitted exactly where the declarations
+   it produces satisfy every rule they are subject to. A channel
+   removed from the end
    leaves its stored tiles' extents as slack (§5.2), and `[R-CNT-17]`
    obliges the smaller entry_count and so a re-emitted index region;
    a writer SHOULD instead produce a new file wherever a commit would
-   strand a large share of a layer's stored bytes — and always where
-   it would re-emit every one of them, which duplicates the layer
-   rather than dropping part of it. Unstoring a tile (§15.2) is how a
+   strand a large share of a layer's stored bytes, a shortening that
+   removes most of them included, and always where a commit would
+   supersede every one of them, which duplicates the layer rather
+   than editing it. Unstoring a tile (§15.2) is how a
    commit discards data in place; discarding is the caller's
    operation and this specification does not bar it. A file is
    charged for by its length wherever storage is metered, so slack
@@ -3309,9 +3329,10 @@ An appender MUST, in order:
 > §20.4 licenses the drop, any extent it owned becoming slack, a run
 > the figure below does not draw. Only the directory is re-emitted. A
 > change to any fixed declaration of a layer that **stored** a tile in
-> that generation — a fill value, a type, a tile extent — is not an
-> appender's operation at all (step 4): it would reinterpret every
-> stored tile it reaches. A layer that stored no tile in the
+> the generation the commit supersedes — a fill value, a type, a tile
+> extent — is not an appender's operation at all (step 4): it would
+> reinterpret or invalidate every stored tile it reaches. A layer that
+> stored no tile in the
 > generation the commit supersedes is re-declared freely, subject to
 > every rule its new geometry is subject to, which is the same step's
 > permission — a layer the commit itself empties does not qualify. Editing
@@ -4142,8 +4163,9 @@ The append-only model (§9.1) means that what a commit removes, it
 removes only from *reachability*. It removes sample data by making it
 unreachable and never by erasing it: superseding a stored tile's
 payload, unstoring a tile so its entry becomes the sentinel (§15.2),
-and removing a planar layer's last channel, which takes its tiles out
-of the addressed set (§20.3 step 4), all do it, and a record's
+and shortening a planar layer's channel list from its end, which takes
+the removed channels' tiles out of the addressed set (§20.3 step 4),
+all do it, and a record's
 extent goes the same way whether a commit drops the record (§20.4) or
 supersedes it — editing a user-metadata document appends a new extent
 and strands the old one (§20.3 places this with shape (b)), which is
@@ -4154,8 +4176,9 @@ live state**, they remain in the file as slack (`[R-CNT-21]`),
 readable by anyone with the bytes and a hex editor, and recoverable
 by any tool that scans backward for an earlier trailer (§9.6). That
 is every case: no commit turns a real position of a stored tile into
-padding, a shrink being a rewrite (§20.3 step 4), so the bytes a
-commit makes unreachable always leave the live state whole; the list
+padding, a shrink of a layer that stores a tile being a rewrite
+(§20.3 step 4), so the bytes a commit makes unreachable always leave
+the live state whole; the list
 of operations above is not offered as closed. Writers and the tools
 built on them MUST NOT represent any commit that makes sample data
 unreachable as erasure of it — a channel removal reported as erasure
@@ -4687,10 +4710,12 @@ SHOULD zero the gaps it creates (`[R-CNT-03]`, §5.2).
 
 **Conforming updater** — everything a writer does for the bytes it
 produces, plus: validates the trailer and full directory, and every
-layer it modifies (§20.3); changes a layer that stores a tile only
-as §20.3 step 4 permits — its names, a grown extent, a planar channel
-at the end, a slab or alignment declaration — and makes any other
-change to it as a new layer or a whole-file rewrite (§20.3);
+layer it modifies (§20.3); changes a layer that stores a tile in the
+generation its commit supersedes only as §20.3 step 4 permits — its
+names, a grown extent, a planar channel added or removed at the end,
+a slab or alignment declaration declared, re-established or cleared —
+and makes any other change to it as a new layer or a whole-file
+rewrite (§20.3);
 re-emits every retained record
 byte-identically (§20.4); copies forward the input's unknown
 ignore-lane flag bits, clears none and sets no other (`[R-CNT-08]`,

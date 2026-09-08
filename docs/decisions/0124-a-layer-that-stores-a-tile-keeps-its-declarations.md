@@ -142,3 +142,77 @@ then.
   maintainer's question is what a rule is for.
 - **ADR-0068**: no commit removes a layer, whose stranding argument this
   decision carries to the operations it now sends to a rewrite.
+
+## Erratum, 2026-09-08 — the pre-round-32 audit of this decision
+
+Five lanes read this commit's seven hunks the same day: an Opus cross-hunk
+pass, refused once at zero tokens and completed on the unchanged resume,
+returning 16; three Sonnet subject lanes returning 8; and a second cross-hunk
+pass grouped by operation, refused twice on Opus and run on Sonnet, returning
+3. Twenty-seven findings merge by hand into eighteen distinct defects, every
+one in this decision's wording, and every one is repaired in the commit
+carrying this erratum. The Opus pass did the substantive work; the four
+fallback-grade lanes converged on it and added the small ones.
+
+**Two graded byte-level by the Opus pass, both confirmed by hand.**
+
+- **The partition claim left a layer's sub-records on neither list.** §7.4's
+  field table ends with them, and a reader taking *"every other declaration is
+  fixed"* at its word could freeze a layer-scope user-metadata document while
+  the layer stores a tile, against §20.4's table, §23.1 and shape (c). The
+  claim now reads *"Between them the two lists reach every declaration field
+  of §7.4, and where a field is on both sides — a dimension extent, a planar
+  layer's channel list — the permitted side states the whole of what a commit
+  MAY do to it; entry_count and crc_of_crc_array follow the commit, the
+  record's extent slot with them (§7.2), and a layer's sub-records are §20.4's
+  subject whether or not the layer stores a tile"*.
+- **The give-up sentence exempted a channel added at the end for any layer.**
+  The fixed list freezes an interleaved layer's channel list, and a writer
+  appending an interleaved channel and superseding every stored tile at the
+  new decoded size in one commit produces a conforming file one sentence
+  permits and the other bars. It now names *"any change to an interleaved
+  layer's channel list, and a planar channel inserted or removed anywhere but
+  the end of the list"*.
+
+**The MUST NOT did not reach a shrink.** The extent sat on the permitted side
+for growth and nowhere on the fixed side, so only the opening sentence and the
+give-up sentence barred a shrink. The permitted list now reads *"an extent MAY
+grow, and MUST NOT shrink"*, and the partition sentence says the permitted side
+states the whole of a two-sided field.
+
+**The principle did not reach two of its own instances.** Its test named §14
+and §11.4, and index_encoding enters neither; and it called the
+ordinal-assigning declarations fixed while the step's own re-emission clause
+says a growth moves ordinals. It now names three grounds — §14, §11.4 *"as a
+rule rather than as the numbers the rule yields"*, and §15 — and says of a
+growth that *"where the growth moves an ordinal it moves it under the same
+rule, the re-emission clause above following the tile"*. Its §21.7 claim
+overclaimed for a size-changing re-type and a boolean byte, and now excepts
+*"a decoded size or a boolean byte the register witnesses (T3, T14, T2)"*. A
+clause for the slab and alignment declarations, which govern placement, joins
+the four arguments. The give-up sentence, framed as complete, omitted the
+linearization, the index encoding, the rank and the dimension order; it names
+every fixed declaration now.
+
+**Three permissions were under-stated.** *"MAY be declared, re-established or
+cleared"* admits a first-time slab or alignment declaration, which
+`[R-SLB-04]` contemplates; *"A commit MAY make several of these changes at
+once"* restores the sentence the deleted Rationale text carried; and the
+growth's proviso is lifted to every permitted change — `[R-COD-07]`'s cap,
+`[R-ENC-04]`'s ceiling with C · N named, `[R-GEO-01]`'s floor of one channel,
+and the name rules — with the empty-layer permission carrying it too. The
+tense sentence illustrates emptying with unstoring, which empties, beside
+superseding, which does not.
+
+**Restatements.** §13.3's Note had narrowed the trigger to entry_count, which a
+supersede leaves unchanged while changing index content; it restates *"stored-tile
+set or its index content"* and glosses entry_count as the only declaration
+change that moves it. Shape (c) regains its antecedent and says *"reinterpret
+or invalidate"*, a fill or size change being witnessed. §23.1 says
+*"shortening a planar layer's channel list from its end"* and *"a shrink of a
+layer that stores a tile"*. §11.1 and Appendix H carry the slab verb and the
+tense qualifier the source carries. The stranding SHOULD, carried over from the
+shrink paragraph, is re-derived for what a commit can now strand.
+
+**Register unchanged**: 120 conditions, 277 instances, 331 vectors;
+`tarn_check` PASS; two propagation and two quotation acknowledgements.

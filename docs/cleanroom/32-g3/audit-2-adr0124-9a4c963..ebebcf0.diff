@@ -1,0 +1,409 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 23bc5f8..54a3e66 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -1636,33 +1636,15 @@ region of it returns no samples. `[R-GEO-02]`
+ > **Rationale.** Empty layers serve schema-first workflows: declare
+ > layers at creation, grow extents as data arrives. §20.3 states
+ > normatively, and governs, what a commit may do to a layer that
+-> already stored tiles in the generation a commit supersedes. Of its
+-> two bars the one reaching a shrink or a growth is the §14 bar: a
+-> shrink is barred wherever it alters what the §14 bar protects for
+-> such a tile — whether or not the new state still stores it — and
+-> permitted wherever it does not: a tile dropped out of the addressed set —
+-> by a grid count falling, which is a shrink, or in a planar layer by
+-> the removal of its channel, which is not one and which §20.3 judges
+-> under the other bar as well — carries no §14 obligation and its
+-> extent becomes slack; a tile the superseded generation did not
+-> store carries none either; and a new padding position whose stored
+-> byte, or bit in a packed plane, already holds the fill alters
+-> nothing. One commit can do
+-> several of these at once. A layer that
+-> stored no tile in the generation the commit supersedes may be
+-> re-declared freely; a layer the commit itself empties does not
+-> qualify. Re-typing a channel is the §14 bar's own subject, barred
+-> wherever the layer stores a tile that carries that channel, and
+-> free where it does not; so is a change to the tile extents or the
+-> dimension order, barred wherever the layer stores any tile. An
+-> extent's growth is permitted whether or not the layer stores a
+-> tile — a position that becomes real held that channel's fill, and
+-> fill is a legal sample value — an exception §20.3's permission
+-> states rather than one the carve-out supplies, subject to every
+-> rule the grown geometry is under.
+-> The other bar reaches neither a shrink nor a
+-> growth: it bars a change to a planar layer's channel declarations
+-> that moves a stored tile's disk ordinal. Growth
++> already stored tiles in the generation a commit supersedes: its
++> extents may grow, subject to every rule the grown geometry is
++> under; a planar layer's channel list may be extended or shortened
++> at its end; its names, and its slab and alignment declarations,
++> may change; and every other declaration is fixed while the layer
++> stores a tile, a change to one being a new layer or a whole-file
++> rewrite. A layer that stored no tile in the generation the commit
++> supersedes may be re-declared freely; a layer the commit itself
++> empties does not qualify. Growth
+ > that leaves **entry_count** unchanged touches the directory alone —
+ > a growth raising one grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) while another
+ > stays 0 among them, the product holding at 0. Growth that changes
+@@ -1960,9 +1942,10 @@ rejection is never satisfied by returning fill (`[R-CNF-09]`).
+ > segment of sentinels even the segment CRC is a known constant
+ > (`[R-IDX-05]`). Declare-then-fill workflows append tiles as data
+ > arrives, generation by generation (§9); each commit that changes a
+-> layer's stored-tile set or its index content — its entry_count, or
+-> which ordinal an entry sits at — re-emits that layer's whole
+-> tile-index region (§11.1, §20.3, `[R-WRT-04]`).
++> layer's stored-tile set or its entry_count — the only way its index
++> content moves under the changes §20.3 permits a layer that stores a
++> tile — re-emits that layer's whole tile-index region (§11.1, §20.3,
++> `[R-WRT-04]`).
+ 
+ ### 14. Tile Serialization
+ 
+@@ -3181,198 +3164,86 @@ An appender MUST, in order:
+    (`[R-LIF-01]`), with entries for tiles this commit stores or
+    supersedes written to their new state, entries for tiles that
+    become unstored written as the sentinel, entries new to this
+-   generation (added tiles, grown extents) emitted per §15, and
+-   every other entry byte-identical at its disk-ordinal position
+-   (a geometry change, or a change to a planar layer's channel
+-   declarations the bar below leaves permitted, renumbers ordinals
+-   wherever `[R-GEO-06]` moves them). A layer
++   generation (added tiles, grown extents, an appended channel)
++   emitted per §15, and every other entry byte-identical at its
++   disk-ordinal position (a growth renumbers ordinals wherever
++   `[R-GEO-06]` moves them, and nothing else this step permits moves
++   one). A layer
+    whose record alone changes keeps its extent slot, pointing at
+    the existing region, as does a layer the commit leaves
+    untouched (`[R-WRT-05]`); relocating a live index region is
+    compaction's operation (§20.5, `[R-WRT-07]`), not an
+-   appender's. A commit MUST NOT change a
+-   layer's declarations in a way that alters, for any tile that layer
+-   stores **in the generation this commit supersedes**, what §14
+-   fixes for its stored bytes or how they decode, or the coordinate
+-   §11.4 assigns any value they decode to. The quantities are these:
+-   the set of padding positions (§11.3); the pad bits `[R-SER-03]`
+-   gives a packed planar bool plane, and the content `[R-SER-05]`
+-   fixes at both; the decoded size; the byte offset of any value
+-   within the decoded tile image, or in a packed plane its bit
+-   position; the sample type each value in the image is read under;
+-   the coordinate (§11.4) each value in the image denotes; and the
+-   codec and filter that produced the stored bytes. Call this the
+-   **§14 bar**.
+-   The tense is the prior generation's
+-   (§3.1 defines *stored* against a generation), so a commit does not
+-   escape this by unstoring in the same breath: superseding every
+-   tile of a layer and re-declaring it are one operation, and this
+-   bars it. The tile is the prior generation's too: it is its grid
+-   position and, in a planar layer, its channel, whatever disk
+-   ordinal either generation assigns it, and its stored bytes lie
+-   where `[R-LIF-01]` leaves them. The test is the effect on such a
+-   tile, and the list names where that effect arises rather than
+-   standing on its own: a change
+-   that leaves every one of those tiles' stored bytes meaning exactly
+-   what they meant — every value they carry denoting, at the same
+-   coordinate, what it denoted — is not what this bars, and a filter
+-   whose mandated
+-   stride makes it the identity (`[R-COD-10]`), or a new padding
+-   position whose stored byte, or bit in a packed plane, already
+-   holds the fill `[R-SER-05]` fixes, leaves them so.
+-
+-   A channel's declared **sample type** is such a declaration, and
+-   changing it is such a change wherever the layer stores a tile that
+-   carries that channel: the type is what fixes the value a stored bit
+-   pattern denotes, so under a new one the same bytes denote
+-   different values. **The test is on the declared types and not on
+-   the values a tile happens to hold** — `0x80` denotes −128 as
+-   `int8` and 128 as `uint8` whether or not any tile stores that
+-   byte, and an updater decides the question from the layer record
+-   alone rather than by inspecting stored bytes. Where the
+-   superseded generation stored no tile carrying that channel there is
+-   nothing to reinterpret, and this bars nothing: re-typing a channel
+-   of a layer that stores nothing, or a planar channel none of whose
+-   own tiles are stored, is a declaration edit like any other. Where a
+-   change does reach them it makes the stored bytes of each tile it
+-   reaches denote values the writer did not store — wrong content,
+-   which §21.7 leaves unwitnessed where the element size is unchanged
+-   and the new type is numeric, and which the register witnesses
+-   otherwise (T3 and T14 for a changed decoded size, T2 for a boolean
+-   byte) — and re-emitting those tiles would strand the originals as
+-   slack — every tile the change reaches, since
+-   `[R-LIF-01]` freezes them where they lie — leaving the file larger
+-   for a change that reads like a directory edit. Such a change is a
+-   new layer, or a whole-file rewrite under a fresh file_id
+-   (`[R-LIF-01]`, §20.5).
+-
+-   A layer's declared **tile extents**, and the declared order of its
+-   **dimensions**, are such declarations too, and changing either is
+-   such a change wherever the layer stores any tile: given its tile,
+-   they are what fix the coordinate each stored value denotes
+-   (§11.4), so under new ones the same bytes denote samples
+-   the writer did not store there — the layer is re-tiled or
+-   transposed over bytes it never stored that way, and where the
+-   product of the tile extents and the set of padding positions are
+-   preserved no other listed quantity moves, not one index entry
+-   changes, and every checksum in §8 certifies the result. The
+-   escape is the re-type's above: a new layer, or a whole-file
+-   rewrite. An extent's growth and shrink, below, are permitted:
+-   tile coordinates and in-tile positions turn on the tile extents
+-   alone (§11.4), so neither moves the coordinate a stored value
+-   denotes.
+-
+-   One effect is barred beside the §14 bar, on the same tense and on
+-   its own ground: that bar does not reach it, an ordinal move being
+-   no effect on any stored tile's bytes, on their decoding, or on the
+-   coordinates their values denote, which the tile's grid position
+-   fixes whatever its ordinal; what it disturbs is instead the
+-   re-emission rule above, whose stated occasions for a renumbering
+-   are a geometry change and a channel-declaration change this bar
+-   leaves permitted, wherever either moves an entry. For a
+-   **planar** layer, a
+-   commit MUST NOT change the channel declarations in a way that
+-   alters the disk ordinal `[R-GEO-06]` assigns any tile the layer
+-   stores in the generation this commit supersedes. A channel's tiles
+-   move exactly when its index does: reordering moves those channels
+-   the reorder re-indexes, and inserting or removing one moves every
+-   channel after the affected position. Either is such a change
+-   wherever the layer stores a tile for a channel that moved.
+-   Appending a channel, or removing the last, re-indexes nothing and
+-   moves no ordinal at all — a disk ordinal is c · N + s,
+-   and N is the spatial-tile count, so the channel count enters the
+-   addressed-tile count C · N (§11.2) but no individual ordinal.
+-   Removing a planar channel de-addresses its N tiles: those the
+-   superseded generation stored carry no §14 obligation afterwards and
+-   their extents become slack (§5.2), as a shrink's de-addressed tiles
+-   do below, and the recommendation below to produce a new file
+-   instead reaches a commit that would strand a large share of a
+-   layer's stored bytes this way too. As there, de-addressing rescues
+-   nothing: a commit that also alters what the §14 bar protects for a
+-   tile the layer stores in the generation this commit supersedes is
+-   barred.
+-   **The
+-   test is the effect on a stored tile, not the shape of the edit**: a
+-   commit that moves only the ordinals of channels the superseded
+-   generation stored no tile for alters nothing this bars. A layer
+-   with N = 2 and channels (`a`, `b`) places `a` at ordinals 0 and 1
+-   and `b` at 2 and 3; appending `c` leaves those four where they are
+-   and adds 4 and 5, while exchanging `a` and `b` moves all four.
+-   An interleaved layer is unaffected by this bar, its disk ordinal
+-   being s, which no channel declaration enters — removing one of its
+-   channels changes Q and so is the §14 bar's subject wherever the
+-   layer stores a tile. Where this bars a change the
+-   operation is a new layer or a whole-file rewrite, exactly as
+-   above. A layer that stores no tile **in the
+-   generation this commit supersedes** MAY be re-declared freely,
+-   which is what schema-first creation needs (§11.1) — the tense is
+-   both bars', so a commit does not earn this permission by emptying
+-   the layer as it re-declares it; and an extent MAY **grow**, since a position that
+-   becomes real held, for each channel the position carries, that
+-   channel's fill (§14.5), and fill is a legal sample value. The bar's
+-   carve-out does not reach a growth: its padding limb covers a
+-   position whose stored byte, or bit in a packed plane, already holds
+-   the fill it keeps, not one that ceases to be padding, so this is an
+-   exception the permission states
+-   rather than one the carve-out supplies. It holds provided the
+-   grown geometry stays within every bound the
+-   layer's own declarations impose, `[R-COD-07]`'s lz4 decoded-size
+-   cap among them (L44), which an
+-   empty layer escapes only because that cap is quantified over
+-   addressed tiles. `[R-ENC-04]`'s 2⁶³ − 1 ceiling on every quantity
+-   it designates is another, and the list is not offered as exhaustive:
+-   a growth is permitted exactly where the geometry it produces
+-   satisfies every rule that geometry is subject to.
+-
+-   An extent MAY also **shrink**, and the §14 bar is the whole of the
+-   test of what a shrink **alters**, **in that bar's own tense**;
+-   the obligations this step states below — among them slack,
+-   entry_count, a slab or alignment declaration (`[R-SLB-04]`,
+-   `[R-SLB-01]`), and the recommendation to produce a new file
+-   instead where a commit would strand a large share of a layer's
+-   stored bytes — bind a shrink as they bind any commit. A shrink is permitted
+-   exactly where it alters nothing the §14 bar protects for any tile
+-   the layer stores in the generation this commit supersedes. Dropping a tile
+-   out of the addressed set is not itself such an alteration — a tile
+-   the new state does not address carries no §14 obligation and its
+-   extent becomes slack, whether §11.2's grid count fell, which is a
+-   shrink, or a planar channel was removed, which is not one and which
+-   the bar beside this one judges on its own ground above — but
+-   neither does it rescue a commit that damages a prior-generation
+-   stored tile.
+-   Unstoring that tile in the same commit does not rescue it either,
+-   and for the same reason: the quantifier is the superseded
+-   generation's, so a shrink that alters what the §14 bar protects
+-   for a tile stored there is barred whether or not the new state
+-   still stores it. What counts as such an alteration is the §14 bar and nothing
+-   else, its carve-out included — a new padding position whose stored
+-   byte, or bit in a packed plane, already holds the fill `[R-SER-05]`
+-   fixes is not one, so a
+-   shrink producing only those is permitted here exactly as it is
+-   there, and this sentence answers the rescue question rather than
+-   restating the test. The bar beside the §14 bar does not reach a
+-   shrink either: it bars a change to a planar layer's channel
+-   declarations that moves a stored tile's disk ordinal, and a shrink
+-   is not one. A shrink whose damage falls only on tiles the new state
+-   no longer stores leaves the live state clean, so the §14 bar has no
+-   witness there, which is why the rule is stated here and not left to
+-   the rows.
+-   Where a shrink is permitted the de-addressed tiles' extents become slack
+-   (`[R-CNT-21]`), `[R-CNT-17]` obliges the smaller entry_count and
+-   so a re-emitted index region, and every surviving stored tile is
+-   untouched. Discarding data is the caller's operation and this
+-   specification does not bar it. A writer SHOULD instead produce a
+-   new file wherever a commit would strand a large share of a
+-   layer's stored bytes — and always where it would re-emit every
+-   one of them, which duplicates the layer rather than dropping part
+-   of it. A file is charged for by its length wherever storage is
+-   metered, so slack that is not data the caller chose to discard is
+-   paid for and never read. Extents this commit supersedes become slack
+-   (`[R-CNT-21]`); a slab declaration is re-established or
+-   cleared (`[R-SLB-04]`), and an aligned layer's stored tiles —
+-   every one the new state keeps, not only those this commit adds —
+-   satisfy its invariant or the declaration is cleared
+-   (`[R-SLB-01]`, `[R-CNF-05]`).
++   appender's.
++
++   A layer that stores a tile **in the generation this commit
++   supersedes** keeps its declarations, with these exceptions and no
++   other: its name, and its dimension and channel names, MAY change;
++   an extent MAY grow; a planar layer's channel list MAY be extended
++   at its end, or shortened from its end; and a slab or alignment
++   declaration is re-established or cleared as this step provides
++   below. Every other declaration is fixed for as long as the layer
++   stores a tile: the layout, the linearization and the index
++   encoding, the codec and the filter, the rank and the dimension
++   order, every tile extent, every channel's type and fill, an
++   interleaved layer's channel list, and the position of every planar
++   channel but the last. A commit MUST NOT change one of these; the
++   change is a new layer, or a whole-file rewrite under a fresh
++   file_id (`[R-LIF-01]`, §20.5). The two lists partition §7.4's
++   fields, the derived ones aside — entry_count, crc_of_crc_array and
++   the extent slot follow the commit. The tense is the prior
++   generation's (§3.1 defines *stored* against a generation), so a
++   commit does not earn an empty layer's freedom by emptying the
++   layer as it re-declares it: superseding every tile of a layer and
++   re-declaring it are one operation, and it is a rewrite. A layer
++   that stores no tile in the generation this commit supersedes MAY
++   be re-declared freely, which is what schema-first creation needs
++   (§11.1).
++
++   The line is drawn where a stored tile's meaning is fixed. The
++   fixed declarations are the ones §14 reads a stored tile under —
++   its value sequence, its byte layout, the fill its padding
++   positions hold (§14.5) — and the ones §11.4 assigns its ordinal
++   and its values' coordinates by; under new ones the same bytes
++   would denote values, coordinates or padding the writer did not
++   store, with every checksum in §8 certifying the result and no
++   check any actor owes able to see it (§21.7). The permitted
++   changes touch none of that: a name enters no map; a grown extent
++   adds positions that held their channel's fill (§14.5), and fill is
++   a legal sample value; an appended planar channel adds tiles at
++   ordinals after every existing one, a disk ordinal being c · N + s
++   with N the spatial-tile count; a channel removed from the end
++   takes only its own tiles out of the addressed set, and a tile the
++   new state does not address carries no obligation. What the line
++   gives up is stated rather than carved around: a shrink, a fill
++   change, a re-type, a re-tiling, a change of layout, codec or
++   filter, and a channel inserted or removed anywhere but the end are
++   rewrites even where a particular file would survive them in place,
++   because deciding which files would is the edge this list exists to
++   remove.
++
++   A growth holds provided the grown geometry stays within every
++   bound the layer's own declarations impose, `[R-COD-07]`'s lz4
++   decoded-size cap among them (L44), which an empty layer escapes
++   only because that cap is quantified over addressed tiles.
++   `[R-ENC-04]`'s 2⁶³ − 1 ceiling on every quantity it designates is
++   another, and the list is not offered as exhaustive: a growth is
++   permitted exactly where the geometry it produces satisfies every
++   rule that geometry is subject to. A channel removed from the end
++   leaves its stored tiles' extents as slack (§5.2), and `[R-CNT-17]`
++   obliges the smaller entry_count and so a re-emitted index region;
++   a writer SHOULD instead produce a new file wherever a commit would
++   strand a large share of a layer's stored bytes — and always where
++   it would re-emit every one of them, which duplicates the layer
++   rather than dropping part of it. Unstoring a tile (§15.2) is how a
++   commit discards data in place; discarding is the caller's
++   operation and this specification does not bar it. A file is
++   charged for by its length wherever storage is metered, so slack
++   that is not data the caller chose to discard is paid for and never
++   read. Extents this commit supersedes become slack (`[R-CNT-21]`);
++   a slab declaration is re-established or cleared (`[R-SLB-04]`),
++   and an aligned layer's stored tiles — every one the new state
++   keeps, not only those this commit adds — satisfy its invariant or
++   the declaration is cleared (`[R-SLB-01]`, `[R-CNF-05]`).
+ 5. **Re-emit the directory** per §20.4, followed by its CRC
+    (`[R-LIF-02]` step 3).
+ 6. **Commit** (`[R-LIF-02]` steps 4–6): barrier; pad;
+@@ -3434,15 +3305,12 @@ An appender MUST, in order:
+ > too; retained ones do not move.
+ >
+ > **(c) A change confined to the directory** — clearing a slab
+-> declaration, renaming a layer, changing a channel's fill value
+-> where that channel carries no padding position and no pad bit in any
+-> tile the layer stores in the generation the commit supersedes, or
+-> dropping a PE = 0 record where §20.4 licenses the drop, any extent
+-> it owned becoming slack, a run the figure below does not draw. Only
+-> the directory is re-emitted. A fill change on a channel that carries
+-> a padding position or a pad bit in a tile the layer **stored** in
+-> that generation is not an
+-> appender's operation at all (step 4): it would invalidate every
++> declaration, renaming a layer, or dropping a PE = 0 record where
++> §20.4 licenses the drop, any extent it owned becoming slack, a run
++> the figure below does not draw. Only the directory is re-emitted. A
++> change to any fixed declaration of a layer that **stored** a tile in
++> that generation — a fill value, a type, a tile extent — is not an
++> appender's operation at all (step 4): it would reinterpret every
+ > stored tile it reaches. A layer that stored no tile in the
+ > generation the commit supersedes is re-declared freely, subject to
+ > every rule its new geometry is subject to, which is the same step's
+@@ -4274,8 +4142,8 @@ The append-only model (§9.1) means that what a commit removes, it
+ removes only from *reachability*. It removes sample data by making it
+ unreachable and never by erasing it: superseding a stored tile's
+ payload, unstoring a tile so its entry becomes the sentinel (§15.2),
+-and a shrink that either drops tiles out of the addressed set or turns
+-real positions into padding (§20.3 step 4) all do it, and a record's
++and removing a planar layer's last channel, which takes its tiles out
++of the addressed set (§20.3 step 4), all do it, and a record's
+ extent goes the same way whether a commit drops the record (§20.4) or
+ supersedes it — editing a user-metadata document appends a new extent
+ and strands the old one (§20.3 places this with shape (b)), which is
+@@ -4284,18 +4152,14 @@ likely to strand content a caller believes it deleted; no commit
+ removes a layer at all. **Where the structure carrying the bytes leaves the
+ live state**, they remain in the file as slack (`[R-CNT-21]`),
+ readable by anyone with the bytes and a hex editor, and recoverable
+-by any tool that scans backward for an earlier trailer (§9.6).
+-**Where it does not** — a shrink turning real positions into padding
+-of a tile the new state still stores — they remain inside that tile
+-as its padding content, and disclose nothing a reader could not
+-already derive: §20.3 step 4 permits that shrink only where those
+-bytes, or bits in a packed plane, already hold the channel's
+-recorded fill, which the layer record publishes. Those two cases are exhaustive because the bytes
+-either travel out of the live state or stay in the structure that
+-carried them; the list of operations above is not offered as closed. Writers and the tools built on them
+-MUST NOT represent any commit that makes sample data unreachable as
+-erasure of it — a shrink reported as erasure misleads exactly as a
+-supersede so reported does.
++by any tool that scans backward for an earlier trailer (§9.6). That
++is every case: no commit turns a real position of a stored tile into
++padding, a shrink being a rewrite (§20.3 step 4), so the bytes a
++commit makes unreachable always leave the live state whole; the list
++of operations above is not offered as closed. Writers and the tools
++built on them MUST NOT represent any commit that makes sample data
++unreachable as erasure of it — a channel removal reported as erasure
++misleads exactly as a supersede so reported does.
+ `[R-PRV-01]`
+ 
+ Compaction (§20.5) is the only operation that removes slack,
+@@ -4823,7 +4687,11 @@ SHOULD zero the gaps it creates (`[R-CNT-03]`, §5.2).
+ 
+ **Conforming updater** — everything a writer does for the bytes it
+ produces, plus: validates the trailer and full directory, and every
+-layer it modifies (§20.3); re-emits every retained record
++layer it modifies (§20.3); changes a layer that stores a tile only
++as §20.3 step 4 permits — its names, a grown extent, a planar channel
++at the end, a slab or alignment declaration — and makes any other
++change to it as a new layer or a whole-file rewrite (§20.3);
++re-emits every retained record
+ byte-identically (§20.4); copies forward the input's unknown
+ ignore-lane flag bits, clears none and sets no other (`[R-CNT-08]`,
+ §6.3); respects every record's MU and PE bits, the
