@@ -123,3 +123,10 @@
 # Decision-section quotations of ADR-0124 superseded by its pre-round-32 audit erratum (2026-09-08).
 0124|its name, and its dimension and channel names, MAY change; an extent MAY grow; a planar layer's channel list MAY be extended at its end, or shortened: the permitted list as it landed; the erratum adds "and MUST NOT shrink", "MAY be declared", and the sentence permitting several changes at once.
 0124|a shrink, a fill change, a re-type, a re-tiling, a change of layout, codec or filter, and a channel inserted or removed anywhere but the end are rewri: the give-up sentence as it landed; the erratum names every fixed declaration and qualifies the channel clause by layout.
+# Decision-section quotations in ADR-0125 of text it replaces (2026-09-08).
+0125|extended at its end, or shortened from its end: ADR-0124's permitted-list wording, quoted as the text decision 1 qualifies; the list now reads "extended at its end or shortened from its end, but not both in one commit".
+0125|an IEEE 754 binary64 value: [R-MTA-04]'s conversion clause as it stood, quoted as the text decision 2 extends; it now names the rounding-direction attribute.
+0125|only a change to entry_count: §13.3's Note as the ADR-0124 erratum keyed it, quoted as the claim repair 3 removes.
+0125|[R-CNT-17] obliges the smaller entry_count: §20.3's channel-removal sentence as it stood, quoted as the claim repair 5 replaces.
+0125|so the sum wraps: F3's Condition cell as it stood, quoted as the clause repair 13 cuts.
+0125|never invalidates: [R-CNT-25]'s closing sentence as it stood, quoted as the wording repair 15 scopes.

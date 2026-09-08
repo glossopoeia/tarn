@@ -1526,6 +1526,15 @@ file and every vector built from §21's register is nonconforming."
   keying re-emission to entry_count in §13.3's Note is sound, and the Note and
   the Rationale now say the list and nothing else. What remains of this entry is
   whether the two blocks should restate the rule at all.
+- **Round 32 (2026-09-08) falsified the settled premise.** Five reporters
+  found two permitted changes that move a layer's index content with
+  entry_count still: a growth taken with a shortening of a planar channel
+  list (N doubled, C halved, every ordinal moved), and a slab or alignment
+  declaration re-established over stored tiles. ADR-0125 restates §13.3's
+  Note on §20.3's own key, *stored-tile set or index content*, and §11.1's
+  Rationale on the grid counts `[R-GEO-06]` reads, which is this entry's
+  option (b). What remains is unchanged: whether either block should
+  restate the rule at all.
 **Question:** §11.1's Rationale and §13.3's sparse-writing Note both state when
 a commit re-emits a layer's whole tile-index region. The rule is stated
 normatively once, in §20.3 step 4 (`[R-WRT-04]`): "Every layer whose stored-tile
