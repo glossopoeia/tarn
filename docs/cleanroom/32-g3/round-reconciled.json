@@ -1,0 +1,501 @@
+{
+ "merged": [
+  {
+   "members": [
+    "reader-01",
+    "writer-03",
+    "verifier-02",
+    "adversary-02",
+    "quiz-01"
+   ],
+   "title": "\u00a713.3's Note claims that among \u00a720.3's permitted declaration changes only an entry_count change alters a layer's index content; at least two permitted changes falsify it",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-02",
+    "verifier-03",
+    "adversary-01",
+    "quiz-03"
+   ],
+   "title": "The closed list is not closed under composition: one commit may both shorten and extend a planar channel list, replacing the last channel's name, type and fill over the ordinals it vacated",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "byte-level",
+    "implementer": "byte-level",
+    "skeptic": "byte-level"
+   },
+   "byte_level": {
+    "correctness": true,
+    "implementer": true,
+    "skeptic": true
+   },
+   "reporter_bl": [
+    "writer-02",
+    "adversary-01"
+   ],
+   "any_bl": true,
+   "unanimous_bl": true,
+   "agree": true
+  },
+  {
+   "members": [
+    "reader-02",
+    "writer-01"
+   ],
+   "title": "The bounds paragraph's closing biconditional switches subject from \"a permitted change\" to \"a change\"",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [
+    "writer-01"
+   ],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "reader-03",
+    "writer-04"
+   ],
+   "title": "\u00a720.3's normative \"[R-CNT-17] obliges the smaller entry_count\" is false when the shortening accompanies a growth the same step permits",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-01",
+    "register-01"
+   ],
+   "title": "\u00a720.3 names T3, T14 and T2 as the only register rows that witness a fixed-declaration change; T4 and T5 witness one too, and \u00a721.7 \u2014 the section the sentence cites \u2014 states three content classes, not two",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-01"
+   ],
+   "title": "\u00a75.1's figure says a commit touching no layer re-emits the directory, pad and trailer alone; a file-scope metadata commit also appends a record extent",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "figure",
+    "skeptic": "figure"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-02"
+   ],
+   "title": "Appendix H's reader checklist keeps one of [R-CNF-03]'s three qualifiers on the acceptance duty",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-03"
+   ],
+   "title": "Appendix H's updater checklist drops [R-WRT-05]'s \"and does not logically modify\", contradicting the clause five lines above it",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-04"
+   ],
+   "title": "\u00a720.3's shape (c) narrows the empty-layer permission from \"new declarations\" to \"new geometry\" while asserting it is the same permission",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "figure",
+    "skeptic": "figure"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-05"
+   ],
+   "title": "The compaction figure's prime mark has no legend and could mark either re-pointing or regeneration",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "figure",
+    "implementer": "figure",
+    "skeptic": "figure"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "diagrams-06"
+   ],
+   "title": "Register row L14's Condition cell states two of the three alternatives its own Instances cell and [R-CNT-18] carry",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-07"
+   ],
+   "title": "Register row F3 omits the in-domain qualifier both sibling rows carry and adds a \"so the sum wraps\" clause narrower than [R-ENC-04]",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-02"
+   ],
+   "title": "\u00a721.6's closing note says the two reclassified conditions are \"not a reason for a reader to reject anything\"; [R-CNF-12] licenses rejection of any nonconforming file",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-03"
+   ],
+   "title": "[R-CNT-25]'s \"Application metadata never invalidates the structural data it annotates\" carries no scope word, while [R-MTA-05] and F27/L48 make an unsorted document a violation recorded at file and layer scope",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-03"
+   ],
+   "title": "[R-CNF-03]'s no-subset enumeration omits the registered record types, so its em-dash gloss and \u00a720.4's \"an updater implements both registered types\" rest on a requirement stated in another section",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "none"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-04"
+   ],
+   "title": "The decimal-to-binary64 conversion's rounding direction is unnamed, so a document at the overflow boundary forks a file's conformance and a verifier's verdict",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "byte-level",
+    "implementer": "design-decision",
+    "skeptic": "design-decision"
+   },
+   "byte_level": {
+    "correctness": true,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [
+    "adversary-04"
+   ],
+   "any_bl": true,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-05"
+   ],
+   "title": "Whether a compactor must refuse a structurally malformed index entry turns on a placement choice \u00a720.5 leaves free",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-02"
+   ],
+   "title": "Whether \"an interleaved layer's channel list\" on the fixed side includes channel names",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "CONFIRMED",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "editorial",
+    "skeptic": "none"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-04"
+   ],
+   "title": "\u00a75.2's enumeration of the grounds on which a coverage walk is incomplete carries no structural-entry carve-out",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  }
+ ],
+ "pass_ok": {
+  "correctness": true,
+  "implementer": true,
+  "skeptic": true
+ }
+}
