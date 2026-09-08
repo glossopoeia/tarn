@@ -720,9 +720,11 @@ a layer on resource grounds (`[R-ERR-04]`) and so never enumerated
 its claimants, or where the verifier elected under `[R-CNF-11]` to
 stop at the first violation; a tile's or a document's decode
 declined leaves the walk complete, that claimant being enumerated
-from its index entry or extent slot, and so does an entry
-`[R-IDX-03]` classifies reject-tile on a structural ground, which
-the walk passes over (§9.7). A rejected layer's claimants
+from its index entry or extent slot. An entry `[R-IDX-03]`
+classifies reject-tile on a structural ground leaves it complete
+too, and for the opposite reason: it contributes no claimant, the
+walk passes over it, and its bytes fall to slack (§9.7). A rejected
+layer's claimants
 are not enumerated, whether or not the rejection impeded reading
 them, and where the rejection is one the walk itself established,
 L18's overlap or L40 through L42's placement among them, the
@@ -975,11 +977,15 @@ framing has been read — a failed extent CRC, an unimplemented or
 invalid encoding, a decode failure, or content violating the
 document's own rules (ill-formed UTF-8 included, `[R-ENC-11]`) — is
 ignore-record with a SHOULD-report, notwithstanding the owning-scope
-mapping of `[R-CNF-08]`. Application metadata never makes the
-structural data it annotates unusable: where a rule outside this
-quarantine records a document's defect at the file or the layer
-(`[R-MTA-05]`, F27, L48), the verifier records it there and a reader
-owes nothing for it (§21.6). The directory and the tile-index
+mapping of `[R-CNF-08]`. Application metadata never obliges a reader
+to treat the structural data it annotates as unusable: where a rule
+outside this quarantine records a document's defect at the file or
+the layer (`[R-MTA-05]`, F27, L48), the verifier records it there and
+a reader owes nothing for it, `[R-CNF-12]`'s licence on the
+nonconforming file aside (§21.6). A reader that declines a document
+on resource grounds MAY decline a scope containing it, which is
+`[R-MTA-09]`'s and `[R-ERR-04]`'s subject and not this rule's. The
+directory and the tile-index
 region are always raw (the index so that it can be range-fetched,
 §15); tile payloads use the layer's codec field (§17). `[R-CNT-25]`
 
@@ -1955,7 +1961,8 @@ rejection is never satisfied by returning fill (`[R-CNF-09]`).
 > layer's stored-tile set or its index content re-emits that layer's
 > whole tile-index region (§20.3, `[R-WRT-04]`), and a growth that
 > changes no grid count ⌈Eᵢ / Tᵢ⌉ (§11.2) moves no entry and adds
-> none (§11.1).
+> none, as does one that raises a grid count while another stays 0
+> (§11.1).
 
 ### 14. Tile Serialization
 
@@ -2729,7 +2736,7 @@ asks for:
 - **Finite numbers only.** A reader interprets every JSON number as
   the IEEE 754 binary64 value its decimal text converts to under
   IEEE 754's default rounding-direction attribute, roundTiesToEven,
-  and MAY use a wider representation. A
+  and MAY hold the value so obtained in a wider representation. A
   document is unreadable if it contains a number whose binary64
   interpretation is not finite — which covers a magnitude that
   overflows on that conversion, `1e400` being the ordinary case — or any
@@ -3195,10 +3202,11 @@ An appender MUST, in order:
    both in one commit; and a slab or alignment declaration MAY be
    declared, re-established or cleared as this step provides below.
    A commit MAY make several of these changes at once, an extension
-   and a shortening of one channel list excepted: a commit's net
-   change to a planar layer's channel list is an extension or a
-   shortening, and replacing the last channel is two commits or a
-   rewrite. Every other declaration is fixed for as
+   and a shortening of one channel list excepted: a commit that
+   shortens a planar layer's channel list appends no channel to it and
+   one that extends it removes none, whatever the counts, so replacing
+   the last channel, or any run of channels at the end, is two commits
+   or a rewrite. Every other declaration is fixed for as
    long as the layer stores a tile: the layout, the linearization and
    the index encoding, the codec and the filter, the rank and the
    dimension order, every tile extent, every channel's type and fill,
@@ -3208,8 +3216,9 @@ An appender MUST, in order:
    these; the change is a new layer, or a whole-file rewrite under a
    fresh file_id (`[R-LIF-01]`, §20.5). Between them the two lists
    reach every declaration field of §7.4, and where a field is on
-   both sides — a dimension extent, a planar layer's channel list —
-   the permitted side states the whole of what a commit MAY do to it;
+   both sides — a dimension extent, a planar layer's channel list, an
+   interleaved layer's channel list — the permitted side states the
+   whole of what a commit MAY do to it;
    entry_count and crc_of_crc_array follow the commit, the record's
    extent slot with them (§7.2), and a layer's sub-records are §20.4's
    subject whether or not the layer stores a tile. The tense is the
@@ -3232,9 +3241,13 @@ An appender MUST, in order:
    coordinates or padding the writer did not store, with every
    checksum in §8 certifying the result and, but for a decoded size,
    a padding position or pad bit, or a boolean byte the register
-   witnesses (T3, T14, T4, T5, T2), no check any actor owes able to
-   see it (§21.7). The permitted changes
-   touch none of that: a name enters no map; a grown extent adds
+   witnesses (T3, T14, T21, T22, T4, T5, T2) and a decode that fails
+   outright under a changed codec or filter (T24, T25), no check any
+   actor owes able to see it (§21.7). The permitted changes
+   touch none of that: a name enters no map this specification
+   defines, and a commit MAY change several names at once, two
+   swapped included, the dimension order and the channel order being
+   positional and fixed; a grown extent adds
    positions that held their channel's fill (§14.5), and fill is a
    legal sample value, and where the growth moves an ordinal it
    moves it under the same rule, the re-emission clause above
@@ -3246,13 +3259,14 @@ An appender MUST, in order:
    alignment declaration governs placement (§16), not a value, its
    coordinate or its padding. What the line
    gives up is stated rather than carved around: a shrink, a fill
-   change, a re-type, a re-tiling, a transposition of the dimensions,
+   change, a re-type, a re-tiling, a change to the dimension order,
    a change of rank, layout, linearization, index encoding, codec or
-   filter, any change to an interleaved layer's channel list, and a
-   planar channel inserted or removed anywhere but the end of the
-   list are rewrites even where a particular file would survive them
-   in place, because deciding which files would is the edge this list
-   exists to remove.
+   filter, any change to an interleaved layer's channel list but a
+   channel's name, a planar channel inserted or removed anywhere but
+   the end of the list, and a planar channel list both extended and
+   shortened in one commit are rewrites even where a particular file
+   would survive them in place, because deciding which files would is
+   the edge this list exists to remove.
 
    A permitted change holds provided the declarations and geometry
    it produces stay within every bound they are subject to:
@@ -3264,13 +3278,14 @@ An appender MUST, in order:
    rules of §4.6 and `[R-ENC-15]`. These bounds are not offered as
    exhaustive: a permitted change holds exactly where the declarations
    it produces satisfy every rule they are subject to, and which
-   changes are permitted is what the list above states. A channel
+   changes are permitted is what this step's list of exceptions
+   above states. A channel
    removed from the end
    leaves its stored tiles' extents as slack (§5.2) and changes the
-   layer's index content, so the region is re-emitted under the clause
-   above: the shortening taken alone lowers entry_count
-   (`[R-CNT-17]`), and one taken with a growth moves ordinals whether
-   or not the count changes;
+   layer's index content, the entries the removed channel held ceasing
+   to denote its tiles, so the region is re-emitted under the clause
+   above whether or not entry_count changes with it (`[R-CNT-17]`) and
+   whether or not a retained ordinal moves;
    a writer SHOULD instead produce a new file wherever a commit would
    strand a large share of a layer's stored bytes, a shortening that
    removes most of them included, and always where a commit would
@@ -3549,9 +3564,11 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
 > operation regenerates rather than copies, since its entries carry
 > the offsets that moved. The reference arrays are identical; extent
 > slots are re-pointed and each index region any of whose stored
-> extents moved is regenerated — the ′ marks B's, whose tiles moved;
-> A's did not, so A's index is copied and its slot re-pointed
-> (`[R-WRT-07]`).
+> extents moved is regenerated — the ′ marks B's (`[R-WRT-07]`). In
+> this placement A's stored extents happen not to move, so A's index
+> is copied and only its slot re-pointed; under a placement that moved
+> them it would be regenerated too, placement being the compactor's
+> to choose.
 > Placement is what changes, which is why the output is a different
 > file rather than a later generation of the same one. The fresh
 > file_id is the mechanism, not bookkeeping: a
@@ -3564,7 +3581,8 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
 > (`[R-LIF-04]`) and recovery to an earlier commit boundary
 > (`[R-LIF-06]`) also shorten a file, but neither reclaims any. Slack
 > accumulates a directory, a pad and a trailer per commit, plus a whole
-> index region for each layer a commit touched (§20.3); a verifier
+> index region for each layer whose stored-tile set or index content a
+> commit changed (§20.3); a verifier
 > whose walk completes reports the total (§9.7), and that total is
 > what tells an operator when to run this.
 
@@ -3659,10 +3677,11 @@ a verifier detects, which §19.2 places outside the reader tiers
 entirely. For a row whose Detector is *verifier*, the outcome names
 the scope at which the damage is recorded, not an obligation on any
 reader: the governing rule states what a reader does, and for
-several such rows it obliges the reader to serve the structure
-unchanged (`[R-CNT-22]`, whose registered type keeps its fixed
-semantics; and `[R-MTA-05]`, whose unsorted document readers process
-as they find it — F27 and L48). `[R-SER-08]` is the one rule that
+several such rows it obliges the reader that serves the structure to
+serve it unchanged (`[R-CNT-22]`, whose registered type keeps its
+fixed semantics; and `[R-MTA-05]`, whose unsorted document readers
+process as they find it — F27 and L48), `[R-CNF-12]`'s licence to
+reject the nonconforming file being untouched in each. `[R-SER-08]` is the one rule that
 goes the other way: it resolves a nonconforming interleaved boolean
 byte to a value rather than serving it through, which is why
 `[R-TYP-04]` (§12.3) makes it the one case where a reader resolves a
@@ -3742,7 +3761,7 @@ layer unaffected. 49 conditions.
 | L11 | A user-metadata sub-record's extent_length is less than 5, too short to hold both a document and the terminal CRC-32C of its final 4 bytes | — | reader | layer access | `[R-CNT-25]` (R-ENC-07) |
 | L12 | A user-metadata sub-record's inline_length is not 1; the encoding field is a fixed structure, not a growable one | inline_length 0, the encoding byte absent; inline_length ≥ 2 | reader | layer access | `[R-MTA-03]` (R-ENC-07) |
 | L13 | A sub-record of a layer record has type 0x0000 | — | reader | layer access | `[R-CNT-12]` (R-CNT-18) |
-| L14 | A sub-record does not fit in the layer record's inline payload: its 24-byte header is truncated at the payload end, its inline_length runs past that end, or bytes remain after the last complete sub-record | sub-record header; sub-record inline_length; trailing residue | reader | layer access | `[R-CNT-12]` (R-CNT-18, R-ENC-07) |
+| L14 | A sub-record's 24-byte header is truncated at the layer record's inline payload end, its inline_length runs past that end, or bytes remain after the last complete sub-record | sub-record header; sub-record inline_length; trailing residue | reader | layer access | `[R-CNT-12]` (R-CNT-18, R-ENC-07) |
 | L15 | A layer record's or sub-record's extent slot has exactly one of extent_offset and extent_length zero | layer record extent_offset; layer record extent_length; sub-record extent_offset; sub-record extent_length | reader | layer access | `[R-CNT-13]` |
 | L16 | A layer record's or sub-record's nonzero extent slot has extent_offset in 1-15, pointing into the front signature block | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
 | L17 | A layer record's or sub-record's extent reaches the live trailer or beyond: extent_offset + extent_length > F - 64 | layer record extent slot; sub-record extent slot | reader | layer access | `[R-CNT-13]` |
@@ -3883,10 +3902,11 @@ file nonconforming while leaving every reader behavior unchanged —
 readers process the document and apply the type's fixed semantics —
 so both carry detector *verifier*, on the precedent `[R-CNT-12]`'s
 reserved-flag rows already set. What belongs here is the reader's
-side of them, and it is unchanged: neither obliges a reader to
-reject anything, and `[R-CNF-12]`'s licence to reject a nonconforming
-file on any detected violation is untouched, as `[R-CNT-18]` says of
-its own case.
+obligation, and it is unchanged: neither obliges a reader to reject
+anything. What did change is that each now makes the file
+nonconforming, so `[R-CNF-12]`'s licence to reject on any detected
+violation reaches a reader that detects one, a licence that did not
+arise while these sat in the table above.
 
 Two structural cases are **conforming files a reader nevertheless
 refuses**. The first is **version_major naming a major this reader
@@ -4519,8 +4539,8 @@ is a new format major version.
 - **[BCP 14]** RFC 2119 and RFC 8174 — the requirement keywords (§2.1).
 - **[RFC 3720]** §12.1 — the CRC-32C polynomial and parameters (§4.5).
 - **[IEEE 754]** IEEE 754-2019 — binary16, binary32, and binary64 (§12.1),
-  and the conversion from decimal text to binary64 under its default
-  rounding-direction attribute, roundTiesToEven (§18.2).
+  and the conversion from decimal text to binary64 under IEEE 754's
+  default rounding-direction attribute, roundTiesToEven (§18.2).
 - **[RFC 1951]** DEFLATE Compressed Data Format Specification version 1.3 — codec 2 (§17.2).
 - **[RFC 8878]** Zstandard Compression and the `application/zstd` Media Type — codec 3 and metadata encoding 2 (§17.2, §18.2).
 - **[LZ4 Block]** LZ4 Block Format Description, version 1.0 — `doc/lz4_Block_format.md` in the lz4/lz4 repository, as published with lz4 release v1.9.4 — codec 4 (§17.2).
@@ -4713,8 +4733,8 @@ conditions can — an experimental-range MU = 0 record being conforming
 each checksum before acting on what it covers (§4.5, §8.2); detects
 every reader-assigned violation no later than its tier (§19.2);
 implements all four codecs, both filters, both layouts, all
-thirteen sample types, and both user-metadata encodings
-(`[R-CNF-03]`, §2.3); accepts every conforming
+thirteen sample types, both user-metadata encodings, and both
+registered record types (`[R-CNF-03]`, §2.3); accepts every conforming
 file of a major it implements that carries no top-level MU = 1 record
 of a type it does not implement and lies within §21.9's minimum
 guarantees, and reports any resource refusal as a limit rather than

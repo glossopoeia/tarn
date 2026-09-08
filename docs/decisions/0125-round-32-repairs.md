@@ -254,3 +254,97 @@ deferred.
   diff.
 - **ADR-0091**: a rule's reach is settled by an ADR; this is the ADR.
 - **ADR-0104**: editorial repairs ride with the decision.
+
+## Erratum, 2026-09-08 — the pre-round-33 audit
+
+Six lanes read the nineteen hunks of this decision's two commits the same
+day, on the shape the ADR-0124 audit set: four subject lanes on Sonnet from
+the start, and two cross-hunk passes on Opus, one grouped by rule and one by
+operation. Opus refused the by-rule pass at zero tokens at launch and ran it on the
+unchanged resume, which refused the by-operation pass in its turn while
+re-running it rather than replaying its cache; the journal holds one
+completed result from each Opus pass, and neither needed the fallback.
+The four Sonnet lanes returned 8 findings between them, one lane empty
+with a full account of its sweeps; the two Opus passes returned 10 each. Twenty-eight findings merge by hand into eighteen distinct defects, every one in this
+decision's wording, and every one is repaired in the commit carrying this
+erratum. The four subject lanes are fallback-grade; the Opus pass grouped by
+operation did the substantive work, and the lanes converged on it in three
+places and added five small ones.
+
+**Three were graded byte-level by an Opus pass, and the hand-check
+confirms two as forks in the text and settles the third as decided by the
+list's own terms but stated loosely enough to be read against it.**
+
+- **The exception's gloss tested the channel list by size.** Decision 1's
+  sentence read *"a commit's net change to a planar layer's channel list is
+  an extension or a shortening"*, and a commit that removes three trailing
+  channels and appends five has a net change that is an extension by count
+  while the bullet's *"not both in one commit"* forbids it; the lane and the
+  Opus pass each built the file and found every row silent. The gloss now
+  says what the bullet means: *"a commit that shortens a planar layer's
+  channel list appends no channel to it and one that extends it removes
+  none, whatever the counts, so replacing the last channel, or any run of
+  channels at the end, is two commits or a rewrite"*.
+- **The give-up list still called any change to an interleaved layer's
+  channel list a rewrite**, three paragraphs after the fixed list excepted
+  its names, so renaming an interleaved channel was a permitted change and a
+  rewrite at once. It now reads *"any change to an interleaved layer's
+  channel list but a channel's name"*, and it names the operation decision 1
+  forbids, *"a planar channel list both extended and shortened in one
+  commit"*, which it had omitted while claiming to state what the line gives
+  up.
+- **Two renames in one commit swap two dimensions' names**, and the give-up
+  list named *"a transposition of the dimensions"* as a rewrite while the
+  permitted list let every name change and the principle said a name enters
+  no map. The fixed list fixes the dimension order, which is positional; a
+  name is a label. The give-up list now says *"a change to the dimension
+  order"*, and the principle says *"a name enters no map this specification
+  defines, and a commit MAY change several names at once, two swapped
+  included, the dimension order and the channel order being positional and
+  fixed"*. That is a small decision taken on ADR-0124's ground, that a name
+  enters no map, and the maintainer can reverse it by adding a composition
+  rule for renames beside the channel-list one.
+
+**Below the line.** The channel-removal sentence's two-branch account of
+why the index region is re-emitted was false of a shortening taken with a
+growth that changes no grid count, and of one taken with a growth that
+doubles N while C halves; it now rests on the index-content ground alone,
+*"whether or not entry_count changes with it (`[R-CNT-17]`) and whether or
+not a retained ordinal moves"*. The witness parenthetical omitted T21 and
+T22 for a decoded size and said nothing of a codec or filter change a
+decode does not survive; it names *"a decode that fails outright under a
+changed codec or filter (T24, T25)"*. The partition claim's both-sides
+examples gain the interleaved channel list the parenthetical split. §21.6's
+closing paragraph said the reader's side was unchanged while adding the
+licence that had changed it; it now says the obligation is unchanged and
+the licence newly reaches, and drops the analogy to `[R-CNT-18]`, whose
+otherwise-conforming branch these conditions never have. `[R-CNT-25]`'s
+universal is scoped to a defect in application metadata, and the resource
+decline `[R-MTA-09]` licenses at any containing scope is named as another
+rule's subject. §5.2's carve-out for a structurally malformed entry is its
+own sentence, the walk passing over it for the opposite reason from a
+declined decode. Appendix F's *"its"* resolved to binary64; it says
+*"IEEE 754's"*. L14's headline *"does not fit"* did not subsume its third
+alternative; the cell coordinates the three on F29's model. Appendix H's
+reader entry lists the registered record types among what a reader
+implements, as `[R-CNF-03]` now does. §20.5's compaction caption taught a
+placement as the rule; it says the placement is the compactor's to choose
+and under another A's index would be regenerated too. §21.1's account of
+verifier-detected rows said the rule *"obliges the reader to serve the
+structure unchanged"*, unbounded, for the two rows §21.6's paragraph had
+just bounded; it obliges the reader that serves the structure, the licence
+untouched. §13.3's Note carried one of §11.1's two entry-free growths and
+not the one a declare-then-fill writer meets; it carries both. §20.5's
+slack Note still keyed the index cost to a layer a commit *"touched"*; it
+keys to the stored-tile set or index content, as the rest of the account
+now does. §18.2's *"MAY use a wider representation"* sat beside the
+named conversion with nothing tying the two; it reads *"MAY hold the
+value so obtained in a wider representation"*. And *"the list above"*
+in the bounds paragraph resolved to the bounds it had just called
+non-exhaustive; it names *"this step's list of exceptions above"*.
+
+**Register unchanged**: 120 conditions, 277 instances, 331 vectors;
+`tarn_check` PASS; eleven quotation and seven propagation acknowledgements,
+each for a span this erratum supersedes or a restatement it cites. The
+repair list of this erratum was ticked against its diff: eighteen edits,
+eighteen hunks, none deferred.

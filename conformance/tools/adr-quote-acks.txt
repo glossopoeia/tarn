@@ -130,3 +130,15 @@
 0125|[R-CNT-17] obliges the smaller entry_count: §20.3's channel-removal sentence as it stood, quoted as the claim repair 5 replaces.
 0125|so the sum wraps: F3's Condition cell as it stood, quoted as the clause repair 13 cuts.
 0125|never invalidates: [R-CNT-25]'s closing sentence as it stood, quoted as the wording repair 15 scopes.
+# Quotations in ADR-0125 of text its pre-round-33 audit erratum replaces (2026-09-08).
+0125|where a field is on both sides — a dimension extent, a planar layer's channel list — the permitted side states the whole of what a commit MAY do to it: the tie-break as it landed, quoted in the Context; the erratum adds an interleaved layer's channel list to the both-sides examples.
+0125|A commit MAY make several of these changes at once, an extension and a shortening of one channel list excepted: a commit's net change to a planar laye: decision 1's gloss as it landed, quoted in the Decision; the erratum restates the gloss on the operations rather than the net change.
+0125|A reader interprets every JSON number as the IEEE 754 binary64 value its decimal text converts to under IEEE 754's default rounding-direction attribut: decision 2's clause as it landed, quoted in the Decision; the erratum ties the wider-representation licence to the value so obtained.
+0125|a permitted change holds exactly where the declarations it produces satisfy every rule they are subject to, and which changes are permitted is what th: repair 4's sentence as it landed; the erratum names "this step's list of exceptions above" in place of "the list above".
+0125|a decoded size, a padding position or pad bit, or a boolean byte the register witnesses (T3, T14, T4, T5, T2): repair 6's parenthetical as it landed; the erratum adds T21, T22, T24 and T25.
+0125|a commit's net change to a planar layer's channel list is an extension or a shortening: the gloss the erratum replaces, quoted as the defect.
+0125|a transposition of the dimensions: the give-up list's phrase the erratum replaces with "a change to the dimension order", quoted as the defect.
+0125|does not fit: L14's headline the erratum cuts, quoted as the defect.
+0125|obliges the reader to serve the structure unchanged: §21.1's clause the erratum bounds, quoted as the defect.
+0125|MAY use a wider representation: §18.2's licence the erratum ties to the conversion, quoted as the defect.
+0125|the list above: the anaphor the erratum names, quoted as the defect.
