@@ -257,3 +257,115 @@ one, told to find the sentence that decides the finding.
 - **ADR-0091**: a rule's reach is settled by an ADR; this is the ADR.
 - **ADR-0104**: editorial changes need a check, not an ADR — the nineteen
   editorial repairs ride with decision 1 rather than separately.
+
+## Erratum, 2026-09-08 — the pre-round-32 audit
+
+Nine lanes read the twenty-five hunks of this decision's two commits before
+round 32 was chartered: two Opus passes of the cross-hunk lane — the resume
+re-ran it rather than replaying its cache — returning 14 and 17 findings, and
+seven subject lanes that Opus refused twice each at zero tokens and Sonnet then
+ran, returning 14, one lane empty with a full account of its search. Forty-five
+findings merge by hand into thirty-one distinct defects, every one in this
+decision's own wording, and every one is repaired in the commit carrying this
+erratum. Coverage of the seven subject lanes is fallback-grade; the two Opus
+cross-hunk passes found the defects that mattered, and the lanes' fourteen
+findings converge on them in nine cases and add six small ones.
+
+**Two of the second pass's four byte-level grades are confirmed by hand, and
+both fork what an updater may emit.**
+
+- **§20.4's introducing clause routed every type into the table.** *"Whichever
+  source governs, its flags carry these obligations"* read the registered layer
+  record — MU = 1, PE = 1 in §7.3 — into the MU = 1 row, whose obligation is
+  *"The updater MUST NOT modify the scope the record governs"*; taken that way,
+  no updater could edit a layer and no compactor could compact a file that had
+  one, while Appendix H said in the same commit that an updater validates
+  *"every layer it modifies"*. The old introducing clause had scoped the table
+  to a type the updater does not implement, and the table's rows still say
+  *"unknown critical"* and *"unimplemented"*. The scope is restored in the
+  terms the paragraph's three sources need: *"The table states what an updater
+  owes a record it does not logically modify, read under whichever flags
+  govern it. Its MU = 1 row reaches only a type the updater does not
+  implement"*, so for an implemented type only the PE bit bites. The PE = 0
+  row's licence is now source-neutral — *"whoever fixed PE = 0 for the record,
+  the writer that stored it or the definition that governs it"*.
+- **The coordinate limb reached a shrink on one reading and not the other, and
+  the shorthand for the bar had stopped naming it.** §11.4's ordinals take the
+  grid counts, which take the extents, and §3.1 bounds a coordinate by the
+  extents, so a reader could hold that a shrink alters *"the coordinate §11.4
+  assigns any value they decode to"* and refuse every shrink of a populated
+  layer; and four restatements — the shrink permission's *"exactly where"*
+  sentence among them — still tested *"what §14 fixes"*, a set the bar had
+  outgrown, so a shrink combined with a re-tiling that preserves §14's
+  quantities was permitted by one sentence and barred by the next. Both close
+  on one statement of what a tile is: *"The tile is the prior generation's
+  too: it is its grid position and, in a planar layer, its channel, whatever
+  disk ordinal either generation assigns it, and its stored bytes lie where
+  `[R-LIF-01]` leaves them"*. The geometry paragraph now says that the tile
+  extents and the dimension order fix the coordinate *given its tile*, cites
+  §11.4 — `[R-GEO-06]` closes the list that fixes ordinals — and closes with
+  *"An extent's growth and shrink, below, are permitted: tile coordinates and
+  in-tile positions turn on the tile extents alone (§11.4), so neither moves
+  the coordinate a stored value denotes"*, in place of the exhaustive *"the
+  geometry changes this step permits"*, which excluded a free re-declaration
+  and a rename. The four restatement sites read *"what the §14 bar protects"*.
+
+The second pass's other two byte-level grades and the scope-floor lane's one
+are settled below the line: the exhaustive closer is cut, and §18.2's Note and
+§21.6's row offering only the record and the whole file are swept to *"any
+scope containing the record, the whole file included"* — a file exceeding a
+guarantee is outside `[R-CNF-03]`'s duty under every reading, so no verdict
+forked, and the three passages now agree.
+
+**The bar's sentence is split**, on the maintainer's direction of 2026-09-04:
+the subject clause ends at *"the coordinate §11.4 assigns any value they decode
+to"*, and *"The quantities are these:"* opens a semicolon list with no dash in
+it. The gloss is quantified over values, as the packed plane needs — *"every
+value they carry denoting, at the same coordinate, what it denoted"* — and the
+geometry paragraph says *"no other listed quantity moves"* where it had said no
+listed quantity did, the coordinate being the listed quantity that does. §5.2's
+partial-total sentence, which the round-31 repair had lengthened around a
+parenthesis holding a dash inside a dash pair, is three sentences now.
+
+**The ordinal bar's opening and ground**: *"One effect is barred beside the §14
+bar"*, its ground naming the decoding and the coordinates as well as the bytes
+an ordinal move leaves alone, and its occasions *"a geometry change and a
+channel-declaration change this bar leaves permitted, wherever either moves an
+entry"*, which the re-emission clause's parenthetical states the same way in
+place of the circular *"a permitted change"*.
+
+**The third cause of a partial total** is narrowed to the scope that stops the
+walk: *"where the verifier declined a layer on resource grounds (`[R-ERR-04]`)
+and so never enumerated its claimants"*, since *"a tile's or a document's decode
+declined leaves the walk complete, that claimant being enumerated from its
+index entry or extent slot"*; §9.7 says the same, and its untouched sentence
+now reads *"A verifier that certifies decodes every stored tile"*, with the
+declining verifier reporting the check unmade. `[R-ERR-04]`'s narrowest scopes
+are no longer a closed three — *"or the file itself where the quantity is the
+file's, as layers per file and dir_length are"* — and *"In every case"* replaces
+an *"Either way"* that had counted two options after a third was added.
+
+**The flags rule's five restatements**: §6.2's cell now reads *"0 from a
+creator, carried forward unchanged by an updater or a compactor, a set bit
+ignored"*, where *"0 when created under this text"* had contradicted the
+compactor's carve-out; Appendix H's writer line carries that carve-out —
+*"a compactor instead carrying its input's unknown ignore-lane bits forward and
+setting no other"* — where its two new lines had given a compactor opposite
+instructions.
+
+**Unswept restatements**: `[R-CNT-14]`'s own gloss, *"a directory carrying no
+layer record is a conforming generation, an empty directory included"*;
+Appendix H's reader line, *"the sole resolved case"*; `[R-WRT-01]`, which now
+says *"a violation latent in a structure they carry forward unmodified travels
+with it, seen or unseen"* in the words step 2 borrows from it; §11.1's
+Rationale, *"An extent's growth is permitted whether or not the layer stores a
+tile"* with the proviso the permission carries; §13.3's Note keyed to *"its
+entry_count, or which ordinal an entry sits at"*; shape (c)'s *"a padding
+position or a pad bit"* in place of an *either* whose pair the new item had
+displaced, and its drop clause noting *"a run the figure below does not draw"*.
+
+**Register unchanged**: 120 conditions, 277 instances, 331 vectors; `tarn_check`
+PASS; two propagation acknowledgements and eleven quotation acknowledgements,
+each for a Decision sentence this erratum supersedes. The repair list of this
+decision was ticked against its diff by the cross-hunk lane, hunk by hunk, all
+twenty-five accounted for.

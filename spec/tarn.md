@@ -711,17 +711,20 @@ established there is no F and no live state to walk, so the total is
 not owed at all: the verifier reports the trailer failure and
 nothing about slack, which is not a partial total but the absence of
 one. Where the walk of §9.7 does not
-enumerate every region's claimants — whether because a scope-level
-rejection ends that scope's enumeration (a rejected layer's claimants
+enumerate every region's claimants, the verifier MUST report the
+total as partial. The walk is incomplete where a scope-level
+rejection ends that scope's enumeration, where the verifier declined
+a layer on resource grounds (`[R-ERR-04]`) and so never enumerated
+its claimants, or where the verifier elected under `[R-CNF-11]` to
+stop at the first violation; a tile's or a document's decode
+declined leaves the walk complete, that claimant being enumerated
+from its index entry or extent slot. A rejected layer's claimants
 are not enumerated, whether or not the rejection impeded reading
-them — and where the rejection is one the walk itself established,
+them, and where the rejection is one the walk itself established,
 L18's overlap or L40 through L42's placement among them, the
 claimants it had already enumerated are discarded with the layer,
 since the total is a claim about a live state one of whose layers is
-not usable), because the verifier declined a scope on resource
-grounds (`[R-ERR-04]`), or because the verifier elected under
-`[R-CNF-11]` to stop at the first violation — the verifier MUST
-report the total as partial. A partial total is F less the bytes claimed by the
+not usable. A partial total is F less the bytes claimed by the
 claimants the walk did enumerate — an upper bound on the file's true
 slack, never an under-count — and a verifier reporting one MUST say
 which scope or violation stopped the walk. It is not the file's slack
@@ -815,7 +818,7 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 | 0 | 8 | bytes | trailer magic | structural | `8A 4E 52 41 54 0D 0A 1A` (`\x8A`, "NRAT", CR, LF, ctrl-Z) |
 | 8 | 2 | u16 | version_major | structural | 1 (0 invalid; others: §6.3) |
 | 10 | 2 | u16 | version_minor | descriptive | any (see §6.3) |
-| 12 | 4 | u32 | flags | structural | bits 0–15 (incompat lane) all zero, a set bit being reject-file (F19); bits 16–31 (ignore lane) 0 when created under this text, a set bit carried and ignored (§6.3) |
+| 12 | 4 | u32 | flags | structural | bits 0–15 (incompat lane) all zero, a set bit being reject-file (F19); bits 16–31 (ignore lane) 0 from a creator, carried forward unchanged by an updater or a compactor, a set bit ignored (§6.3) |
 | 16 | 8 | u64 | dir_offset | structural | ≥ 16 |
 | 24 | 8 | u64 | dir_length | structural | ≥ 4; dir_offset + dir_length ≤ F − 64 |
 | 32 | 8 | u64 | committed_file_length | structural | = F; multiple of 64 |
@@ -1034,8 +1037,9 @@ knowledge). `[R-CNT-13]`
 Record semantics MUST NOT depend on record order: readers MUST NOT
 infer meaning from the position of a record within the sequence, and
 multiplicity rules are per type — in format major 1: any number of
-layer records (zero is valid: an empty directory is a conforming
-generation); at most one file-scope user-metadata record, a second
+layer records (zero is valid: a directory carrying no layer record
+is a conforming generation, an empty directory included); at most
+one file-scope user-metadata record, a second
 being a validity error at the directory's scope (reject-file); and at
 most one user-metadata sub-record per layer record, a second being a
 validity error at layer scope. `[R-CNT-14]`
@@ -1488,18 +1492,21 @@ well, being members of the live committed state (`[R-CNT-02]`); the
 [16, F − 64) bound above already
 keeps every other claimant disjoint from them. Bytes the walk does not
 reach are slack: the verifier sums them and reports the total, and
-their content is not its concern. A verifier decodes every stored
-tile, whatever content obligations §14 places on the layer: §21.4's
-codec rows are file-conformance violations, and a verifier MUST NOT
-certify past a violation it has not looked for. A user-metadata
+their content is not its concern. A verifier that certifies decodes
+every stored tile, whatever content obligations §14 places on the
+layer: §21.4's codec rows are file-conformance violations, and a
+verifier MUST NOT certify past a violation it has not looked for;
+one that declines a tile's decode on resource grounds reports that
+check unmade and cannot certify (`[R-CNF-11]`, `[R-ERR-04]`). A user-metadata
 document under an experimental-range encoding asks nothing of this
 walk: no
 rule attaches to its content (`[R-MTA-10]`), so there is no
 violation there to look for, and what the verifier reports instead
 is that rule's subject. Where the walk does not complete —
 a scope-level rejection blocks enumeration, the verifier declines a
-scope on resource grounds (`[R-ERR-04]`), or it stops at the first
-violation (`[R-CNF-11]`) — the sum is reported as partial, and
+layer on resource grounds and so never enumerates its claimants
+(`[R-ERR-04]`), or it stops at the first violation (`[R-CNF-11]`) —
+the sum is reported as partial, and
 `[R-CNT-21]` governs what such a total counts and what the verifier
 reports beside it. An entry `[R-IDX-03]` classifies
 reject-tile on a *structural* ground does not make the walk
@@ -1631,9 +1638,9 @@ region of it returns no samples. `[R-GEO-02]`
 > normatively, and governs, what a commit may do to a layer that
 > already stored tiles in the generation a commit supersedes. Of its
 > two bars the one reaching a shrink or a growth is the §14 bar: a
-> shrink is barred wherever it alters what §14 fixes for such a
-> tile — whether or not the new state still stores it — and permitted
-> wherever it does not: a tile dropped out of the addressed set —
+> shrink is barred wherever it alters what the §14 bar protects for
+> such a tile — whether or not the new state still stores it — and
+> permitted wherever it does not: a tile dropped out of the addressed set —
 > by a grid count falling, which is a shrink, or in a planar layer by
 > the removal of its channel, which is not one and which §20.3 judges
 > under the other bar as well — carries no §14 obligation and its
@@ -1647,10 +1654,12 @@ region of it returns no samples. `[R-GEO-02]`
 > qualify. Re-typing a channel is the §14 bar's own subject, barred
 > wherever the layer stores a tile that carries that channel, and
 > free where it does not; so is a change to the tile extents or the
-> dimension order, barred wherever the layer stores any tile. A
-> growth is permitted outright — a position that becomes real held
-> that channel's fill, and fill is a legal sample value — an exception
-> §20.3's permission states rather than one the carve-out supplies.
+> dimension order, barred wherever the layer stores any tile. An
+> extent's growth is permitted whether or not the layer stores a
+> tile — a position that becomes real held that channel's fill, and
+> fill is a legal sample value — an exception §20.3's permission
+> states rather than one the carve-out supplies, subject to every
+> rule the grown geometry is under.
 > The other bar reaches neither a shrink nor a
 > growth: it bars a change to a planar layer's channel declarations
 > that moves a stored tile's disk ordinal. Growth
@@ -1951,9 +1960,9 @@ rejection is never satisfied by returning fill (`[R-CNF-09]`).
 > segment of sentinels even the segment CRC is a known constant
 > (`[R-IDX-05]`). Declare-then-fill workflows append tiles as data
 > arrives, generation by generation (§9); each commit that changes a
-> layer's stored-tile set or its index content — a growth, a shrink or
-> a channel removal that changes entry_count among them — re-emits that
-> layer's whole tile-index region (§11.1, §20.3, `[R-WRT-04]`).
+> layer's stored-tile set or its index content — its entry_count, or
+> which ordinal an entry sits at — re-emits that layer's whole
+> tile-index region (§11.1, §20.3, `[R-WRT-04]`).
 
 ### 14. Tile Serialization
 
@@ -2712,8 +2721,8 @@ ignore-record, never the tile-scope outcome §17.2 assigns. `[R-MTA-09]`
 > reader whose own bound it exceeds takes ignore-record for that
 > record, which is also the narrowest scope at which `[R-ERR-04]` lets
 > it decline the document on resource grounds; it MAY instead decline
-> the whole file. Either refusal is reported as a resource limit, not
-> as corruption.
+> any scope containing the record, the whole file included. Either
+> refusal is reported as a resource limit, not as corruption.
 
 The decoded document is a JSON text as defined by RFC 8259, encoded
 in UTF-8. Four restrictions apply, and a document violating any of
@@ -3099,8 +3108,8 @@ and a compactor satisfy every writer requirement for the bytes
 they produce and the preservation obligations of §20.4 for what
 they carry forward (`[R-CNF-06]`), and are readers of every
 structure they process (`[R-CNF-11]`) — a violation latent in a
-structure they neither modify nor rely on travels with it, and
-certifying the whole file is a verifier's office (§9.7).
+structure they carry forward unmodified travels with it, seen or
+unseen, and certifying the whole file is a verifier's office (§9.7).
 `[R-WRT-01]`
 
 #### 20.2 Creation
@@ -3174,9 +3183,9 @@ An appender MUST, in order:
    become unstored written as the sentinel, entries new to this
    generation (added tiles, grown extents) emitted per §15, and
    every other entry byte-identical at its disk-ordinal position
-   (a geometry change, or a permitted change to a planar layer's
-   channel declarations, renumbers ordinals wherever `[R-GEO-06]`
-   moves them). A layer
+   (a geometry change, or a change to a planar layer's channel
+   declarations the bar below leaves permitted, renumbers ordinals
+   wherever `[R-GEO-06]` moves them). A layer
    whose record alone changes keeps its extent slot, pointing at
    the existing region, as does a layer the commit leaves
    untouched (`[R-WRT-05]`); relocating a live index region is
@@ -3185,24 +3194,29 @@ An appender MUST, in order:
    layer's declarations in a way that alters, for any tile that layer
    stores **in the generation this commit supersedes**, what §14
    fixes for its stored bytes or how they decode, or the coordinate
-   §11.4 assigns any value they decode to —
-   the set of padding positions (§11.3), the pad bits `[R-SER-03]`
+   §11.4 assigns any value they decode to. The quantities are these:
+   the set of padding positions (§11.3); the pad bits `[R-SER-03]`
    gives a packed planar bool plane, and the content `[R-SER-05]`
-   fixes at both, the decoded size, the byte offset — or, in a packed
-   plane, the bit position — of any value within the decoded tile
-   image, the sample type each value
-   in the image is read under, the coordinate (`[R-GEO-06]`) each
-   value in the image denotes, or the codec and filter that
-   produced the stored bytes. Call this the **§14 bar**.
+   fixes at both; the decoded size; the byte offset of any value
+   within the decoded tile image, or in a packed plane its bit
+   position; the sample type each value in the image is read under;
+   the coordinate (§11.4) each value in the image denotes; and the
+   codec and filter that produced the stored bytes. Call this the
+   **§14 bar**.
    The tense is the prior generation's
    (§3.1 defines *stored* against a generation), so a commit does not
    escape this by unstoring in the same breath: superseding every
    tile of a layer and re-declaring it are one operation, and this
-   bars it. The test is the effect on such a tile, and the list names
-   where that effect arises rather than standing on its own: a change
+   bars it. The tile is the prior generation's too: it is its grid
+   position and, in a planar layer, its channel, whatever disk
+   ordinal either generation assigns it, and its stored bytes lie
+   where `[R-LIF-01]` leaves them. The test is the effect on such a
+   tile, and the list names where that effect arises rather than
+   standing on its own: a change
    that leaves every one of those tiles' stored bytes meaning exactly
-   what they meant — the value each denotes, at the coordinate it
-   denotes it — is not what this bars, and a filter whose mandated
+   what they meant — every value they carry denoting, at the same
+   coordinate, what it denoted — is not what this bars, and a filter
+   whose mandated
    stride makes it the identity (`[R-COD-10]`), or a new padding
    position whose stored byte, or bit in a packed plane, already
    holds the fill `[R-SER-05]` fixes, leaves them so.
@@ -3234,23 +3248,29 @@ An appender MUST, in order:
 
    A layer's declared **tile extents**, and the declared order of its
    **dimensions**, are such declarations too, and changing either is
-   such a change wherever the layer stores any tile: they are what
-   fix the coordinate each stored value denotes (`[R-GEO-06]`), so
-   under new ones the same bytes denote samples the writer did not
-   store there — the layer is re-tiled or transposed over bytes it
-   never stored that way, and where the product of the tile extents
-   and the set of padding positions are preserved no listed quantity
-   moves, not one index entry changes, and every checksum in §8
-   certifies the result. The escape is the re-type's: a new layer,
-   or a whole-file rewrite. An extent's growth and shrink, below,
-   are the geometry changes this step permits.
+   such a change wherever the layer stores any tile: given its tile,
+   they are what fix the coordinate each stored value denotes
+   (§11.4), so under new ones the same bytes denote samples
+   the writer did not store there — the layer is re-tiled or
+   transposed over bytes it never stored that way, and where the
+   product of the tile extents and the set of padding positions are
+   preserved no other listed quantity moves, not one index entry
+   changes, and every checksum in §8 certifies the result. The
+   escape is the re-type's above: a new layer, or a whole-file
+   rewrite. An extent's growth and shrink, below, are permitted:
+   tile coordinates and in-tile positions turn on the tile extents
+   alone (§11.4), so neither moves the coordinate a stored value
+   denotes.
 
-   One effect is barred beside it, on the same tense and on its own
-   ground: the §14 bar does not reach it, an ordinal move being no
-   effect on any stored tile's bytes, and what it disturbs is instead
-   the re-emission rule above, whose stated occasions for a
-   renumbering are a geometry change and a permitted change to a
-   planar layer's channel declarations. For a **planar** layer, a
+   One effect is barred beside the §14 bar, on the same tense and on
+   its own ground: that bar does not reach it, an ordinal move being
+   no effect on any stored tile's bytes, on their decoding, or on the
+   coordinates their values denote, which the tile's grid position
+   fixes whatever its ordinal; what it disturbs is instead the
+   re-emission rule above, whose stated occasions for a renumbering
+   are a geometry change and a channel-declaration change this bar
+   leaves permitted, wherever either moves an entry. For a
+   **planar** layer, a
    commit MUST NOT change the channel declarations in a way that
    alters the disk ordinal `[R-GEO-06]` assigns any tile the layer
    stores in the generation this commit supersedes. A channel's tiles
@@ -3268,8 +3288,9 @@ An appender MUST, in order:
    do below, and the recommendation below to produce a new file
    instead reaches a commit that would strand a large share of a
    layer's stored bytes this way too. As there, de-addressing rescues
-   nothing: a commit that also alters what §14 fixes for a tile the
-   layer stores in the generation this commit supersedes is barred.
+   nothing: a commit that also alters what the §14 bar protects for a
+   tile the layer stores in the generation this commit supersedes is
+   barred.
    **The
    test is the effect on a stored tile, not the shape of the edit**: a
    commit that moves only the ordinals of channels the superseded
@@ -3310,8 +3331,8 @@ An appender MUST, in order:
    `[R-SLB-01]`), and the recommendation to produce a new file
    instead where a commit would strand a large share of a layer's
    stored bytes — bind a shrink as they bind any commit. A shrink is permitted
-   exactly where it alters nothing §14 fixes for any tile the layer
-   stores in the generation this commit supersedes. Dropping a tile
+   exactly where it alters nothing the §14 bar protects for any tile
+   the layer stores in the generation this commit supersedes. Dropping a tile
    out of the addressed set is not itself such an alteration — a tile
    the new state does not address carries no §14 obligation and its
    extent becomes slack, whether §11.2's grid count fell, which is a
@@ -3321,9 +3342,9 @@ An appender MUST, in order:
    stored tile.
    Unstoring that tile in the same commit does not rescue it either,
    and for the same reason: the quantifier is the superseded
-   generation's, so a shrink that alters what §14 fixes for a tile
-   stored there is barred whether or not the new state still stores
-   it. What counts as such an alteration is the §14 bar and nothing
+   generation's, so a shrink that alters what the §14 bar protects
+   for a tile stored there is barred whether or not the new state
+   still stores it. What counts as such an alteration is the §14 bar and nothing
    else, its carve-out included — a new padding position whose stored
    byte, or bit in a packed plane, already holds the fill `[R-SER-05]`
    fixes is not one, so a
@@ -3417,9 +3438,10 @@ An appender MUST, in order:
 > where that channel carries no padding position and no pad bit in any
 > tile the layer stores in the generation the commit supersedes, or
 > dropping a PE = 0 record where §20.4 licenses the drop, any extent
-> it owned becoming slack. Only
+> it owned becoming slack, a run the figure below does not draw. Only
 > the directory is re-emitted. A fill change on a channel that carries
-> either in a tile the layer **stored** in that generation is not an
+> a padding position or a pad bit in a tile the layer **stored** in
+> that generation is not an
 > appender's operation at all (step 4): it would invalidate every
 > stored tile it reaches. A layer that stored no tile in the
 > generation the commit supersedes is re-declared freely, subject to
@@ -3456,14 +3478,19 @@ register, the definition it implements the type from supplies the
 flags, and the stored bits never do (`[R-CNT-22]`, §10.3). For a type
 the updater does not implement, the
 stored flags are authoritative (§7.3, `[R-CNT-15]`; MU = 1 with
-PE = 0 is read as PE = 1, `[R-CNT-12]`). Whichever source governs,
-its flags carry these obligations:
+PE = 0 is read as PE = 1, `[R-CNT-12]`). The table states what an
+updater owes a record it does not logically modify, read under
+whichever flags govern it. Its MU = 1 row reaches only a type the
+updater does not implement — an updater implements both registered
+types and understands an unregistered type it implements from its
+definition, modifying their records as §20.3 and that definition
+provide — so for an implemented type only the PE bit bites:
 
 | Governing flags | Updater obligation |
 |---|---|
 | MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. At either scope a compactor MUST refuse to compact the file, on `[R-WRT-06]`'s own ground: such a type can define references this specification does not (§7.2), so its bytes cannot be safely relocated. |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
-| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. The licence is the bit's own: the writer that stored PE = 0 declined preservation across edits, so an updater MAY drop the record in any commit it is otherwise free to make — one whose only effect is the drop included — and a compactor MAY drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. The licence is the bit's own: whoever fixed PE = 0 for the record, the writer that stored it or the definition that governs it, declined preservation across edits, so an updater MAY drop the record in any commit it is otherwise free to make — one whose only effect is the drop included — and a compactor MAY drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
 No commit therefore removes a layer record, or a user-metadata
 record at either scope. Both registered types carry PE = 1, and an
@@ -3932,7 +3959,7 @@ reported as `[R-ERR-04]` requires.
 | A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes. No document rule attaches at such an encoding, so a verifier certifies, reporting the record it ignored | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]`, `[R-MTA-10]` |
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
 | A standardized key (§18.4) appears outside its listed scope, or carries a value whose shape its row does not give | Conforming: placement and value shape are writer guidance, and a reader ignores the key and reads the rest of the document, exactly as for an unrecognized key above | `[R-MTA-07]` |
-| A user-metadata document's decoded size, or its frame's declared `Window_Size`, exceeds the reader's own bound, which is no smaller than §21.9's guarantee | Ignore-record on resource grounds — the narrowest-scope decline `[R-ERR-04]` names for a document — reported as a resource limit and not as corruption; the file is conforming, and the reader MAY instead decline the whole file | `[R-MTA-09]`, `[R-ERR-04]` |
+| A user-metadata document's decoded size, or its frame's declared `Window_Size`, exceeds the reader's own bound, which is no smaller than §21.9's guarantee | Ignore-record on resource grounds — the narrowest-scope decline `[R-ERR-04]` names for a document — reported as a resource limit and not as corruption; the file is conforming, and the reader MAY instead decline any scope containing the record, the whole file included | `[R-MTA-09]`, `[R-ERR-04]` |
 | A payload contains a byte string that mimics a trailer | Inert: nothing enumerates slack, and a recovery tool re-verifies its output whole (§9.6) — which catches any mimic that is not itself a consistent generation; §9.6's second caution covers the rest | `[R-LIF-06]` |
 | Under a compressing codec (2–4), a stored tile's decoded size differs from its stored length | Expected: codecs compress, and can expand — codec 1's equality is `[R-COD-04]`'s subject | `[R-COD-08]` |
 
@@ -4070,16 +4097,18 @@ range over declarations, which every file and every layer carries.
 
 A file exceeding any of these remains conforming, and a reader MAY
 decline it: at the whole file, or at the narrowest scope whose
-stated or derived quantities exceed what it can serve, which is a
-layer, a tile, or the record carrying a user-metadata document, as
-§18.2 assigns. It MAY also decline at any scope that contains the
+stated or derived quantities exceed what it can serve, be that a
+layer, a tile, the record carrying a user-metadata document (as
+§18.2 assigns), or the file itself where the quantity is the file's,
+as layers per file and dir_length are. It MAY also decline at any
+scope that contains the
 narrowest one, as `[R-COD-06]` provides for a frame's window and
 `[R-CNF-11]` presupposes. Software that declines **on that ground** a file whose every quantity lies
 within the table is not a conforming reader (`[R-CNF-03]`) — the two
 capability refusals §21.6's closing paragraph names, a foreign format
 major and an unimplemented top-level MU = 1 type, are not this
 ground — the
-guarantees are the floor, not a suggestion. Either way, a refusal
+guarantees are the floor, not a suggestion. In every case, a refusal
 on resource grounds MUST be reported as a resource limit and not as
 a validity error: the two send a user to opposite remedies, and a
 reader that reports "too large" as "corrupt" invites the deletion
@@ -4776,9 +4805,9 @@ file within §21.9's minimum guarantees and reports any resource
 refusal as a limit rather than as corruption (`[R-ERR-04]`); applies
 the outcome and scope §21 assigns; never returns padding positions (§11.3) and never returns
 fill for a rejected tile (§2.4); returns sample bit patterns unaltered
-(§3.2), the sole resolved byte (`[R-TYP-04]`, §12.3) being a
-nonconforming interleaved boolean it chooses to return rather than
-reject (`[R-SER-08]`, §14.2).
+(§3.2), the sole resolved case (`[R-TYP-04]`, §12.3) being a
+nonconforming interleaved boolean byte it chooses to return rather
+than reject (`[R-SER-08]`, §14.2).
 
 **Conforming writer** — emits only conforming files (§2.3); records
 fill for every channel (`[R-TYP-06]`, §13.1); fill-encodes edge
@@ -4786,9 +4815,10 @@ padding and pad bits (`[R-SER-05]`, §14.5); emits interleaved boolean
 values as only 0x00 or 0x01 (`[R-SER-08]`, §14.2); sorts
 user-metadata object members by their keys' UTF-8 bytes
 (`[R-MTA-05]`, §18.2); follows the commit protocol
-including both barriers (§9.2); writes flags = 0 on creation
-(`[R-CNT-08]`, §6.3); honors any alignment or slab it
-declares (§16). Advisory, and not a conformance condition: a writer
+including both barriers (§9.2); writes flags = 0 when it creates a
+file, a compactor instead carrying its input's unknown ignore-lane
+bits forward and setting no other (`[R-CNT-08]`, §6.3, §20.5); honors
+any alignment or slab it declares (§16). Advisory, and not a conformance condition: a writer
 SHOULD zero the gaps it creates (`[R-CNT-03]`, §5.2).
 
 **Conforming updater** — everything a writer does for the bytes it

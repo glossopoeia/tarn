@@ -79,3 +79,17 @@
 0121|this text defining none for it to mean anything by, so a bit is set only by a writer under the later minor version that defines it and carried by every tool after: ADR-0121's Decision quotes the reason clause as it landed; the erratum narrows the carry claim.
 0122|Dropping a tile out of the addressed set — §11.2's grid count falling, or a channel removed from a planar layer taking its N tiles with it: ADR-0122's Decision quotes the carve-out as it landed; the erratum separates the two mechanisms.
 0119|another non-layer top-level record: ADR-0119's Context quotes §20.4's third limb as it stood when round 30 rediscovered Q-B7; ADR-0120 withdrew the limb the same day.
+# Decision-section quotations of ADR-0123 superseded by its pre-round-32 erratum (2026-09-08).
+0123|the coordinate ([R-GEO-06]) each value in the image denotes: the list item as it landed; the erratum cites §11.4, whose first bullet fixes the coordinate, [R-GEO-06] closing the list that fixes ordinals.
+0123|the value each denotes, at the coordinate it denotes it: the gloss as it landed, quantified over bytes; the erratum quantifies it over values for the packed plane.
+0123|A layer's declared tile extents, and the declared order of its dimensions, are such declarations too: the geometry paragraph as it landed; the erratum adds "given its tile", cites §11.4, and replaces its closing sentence.
+0123|the geometry changes this step permits: the paragraph's closing claim as it landed, exhaustive and false of a free re-declaration and a rename; cut by the erratum.
+0123|because the verifier declined a scope on resource grounds ([R-ERR-04]): the third cause as it landed at §5.2 and §9.7; the erratum narrows it to a layer, a tile's or a document's decode declined leaving the walk complete.
+0123|bits 0–15 (incompat lane) all zero, a set bit being reject-file (F19); bits 16–31 (ignore lane) 0 when created under this text: §6.2's cell as it landed; the erratum names the creator and the tiers that carry bits forward.
+0123|writes flags = 0 on creation: Appendix H's writer line as it landed; the erratum adds the compactor's carve-out.
+0123|A growth is permitted outright: §11.1's Rationale as it landed; the erratum names the extent and the proviso.
+0123|a geometry change, or a permitted change to a planar layer's channel declarations, renumbers ordinals wherever [R-GEO-06] moves them: the parenthetical as it landed; the erratum says which bar permits.
+0123|a commit that also alters what §14 fixes for a tile the layer stores in the generation this commit supersedes is barred: the antecedent as it landed; the erratum's sweep says "what the §14 bar protects".
+0123|Whichever source governs, its flags carry these obligations: §20.4's introducing clause as it landed, which routed every implemented type into the table; the erratum restores the table's scope.
+0123|a permitted change: the erratum quotes the circular phrase the round-31 repair put in the ordinal bar's ground and its parenthetical; both now say "a channel-declaration change this bar leaves permitted".
+0123|0 when created under this text: the erratum quotes §6.2's cell as the round-31 repair left it; the cell now names the creator and the tiers that carry bits forward.
