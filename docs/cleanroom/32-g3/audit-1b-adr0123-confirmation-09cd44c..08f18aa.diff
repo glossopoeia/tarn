@@ -1,0 +1,22 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index ade2280..4df47d1 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -4069,11 +4069,12 @@ that row, whatever its declarations would derive. The first five rows
+ range over declarations, which every file and every layer carries.
+ 
+ A file exceeding any of these remains conforming, and a reader MAY
+-decline it — at the whole file, at the narrowest scope whose
+-stated or derived quantities exceed what it can serve — a layer, a
+-tile, or the record carrying a user-metadata document, as §18.2
+-assigns — or at any scope containing that one, as `[R-COD-06]`
+-provides for a frame's window and `[R-CNF-11]` presupposes. Software that declines **on that ground** a file whose every quantity lies
++decline it: at the whole file, or at the narrowest scope whose
++stated or derived quantities exceed what it can serve, which is a
++layer, a tile, or the record carrying a user-metadata document, as
++§18.2 assigns. It MAY also decline at any scope that contains the
++narrowest one, as `[R-COD-06]` provides for a frame's window and
++`[R-CNF-11]` presupposes. Software that declines **on that ground** a file whose every quantity lies
+ within the table is not a conforming reader (`[R-CNF-03]`) — the two
+ capability refusals §21.6's closing paragraph names, a foreign format
+ major and an unimplemented top-level MU = 1 type, are not this
