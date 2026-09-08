@@ -1103,7 +1103,13 @@ is unfixed. From round 25's recovered verifier walk.
   violation — and ADR-0123 adds it at §5.2 and §9.7. This entry's own question,
   what a file-scope rejection's partial total is, is exactly where it was.
 
-### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [Resolved → ADR-0113, amended by ADR-0114]
+### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [Resolved → ADR-0113, amended by ADR-0114; superseded by ADR-0124]
+**ADR-0124 (2026-09-08) supersedes both answers with a closed list:** a layer
+that stores a tile keeps every declaration but its names, a grown extent, a
+planar channel added or removed at the end, and its slab and alignment
+declarations. A re-type and a channel reorder are rewrites whatever the file.
+The bars and their carve-outs are withdrawn; the history below is kept as it
+stood.
 **Resolution:** The sample type: **yes, it always did**, and saying otherwise was
 the error. The §14 bar's own gloss states its test as "a change that leaves every
 one of those tiles' stored bytes meaning exactly what they meant", with the
@@ -1221,7 +1227,11 @@ section §20.3.
   permitted; `[R-CNF-06]` binds an updater to every writer requirement for the
   bytes it produces, and step 4 is a MUST.
 
-### Q-B10. May a commit remove a channel whose tiles the superseded generation stored? [Resolved → ADR-0122]
+### Q-B10. May a commit remove a channel whose tiles the superseded generation stored? [Resolved → ADR-0122; superseded by ADR-0124]
+**ADR-0124 (2026-09-08) supersedes ADR-0122:** a planar channel may be removed
+only from the end of the list, its stored tiles becoming slack; a removal
+anywhere else is a rewrite, and the de-addressing carve-out is withdrawn with
+the bar it carved. The history below is kept as it stood.
 **Resolution (ADR-0122): yes — the carve-out covers any de-addressing.** §20.3
 step 4 now names both mechanisms — a grid count falling, or a channel removed
 from a planar layer taking its N tiles with it — and the planar-ordinal
@@ -1509,6 +1519,13 @@ file and every vector built from §21's register is nonconforming."
   the witness, (b) is right and costs nothing.
 
 ### Q-B8. Can §11.1's growth Rationale carry the re-emission rule? [shaping]
+- **ADR-0124 (2026-09-08) settles this entry's premise.** Under the closed
+  list of changes §20.3 step 4 now permits a layer that stores a tile, a growth
+  is the only permitted change that moves an ordinal, and a growth that changes
+  any grid count changes entry_count unless the product is already zero; so
+  keying re-emission to entry_count in §13.3's Note is sound, and the Note and
+  the Rationale now say the list and nothing else. What remains of this entry is
+  whether the two blocks should restate the rule at all.
 **Question:** §11.1's Rationale and §13.3's sparse-writing Note both state when
 a commit re-emits a layer's whole tile-index region. The rule is stated
 normatively once, in §20.3 step 4 (`[R-WRT-04]`): "Every layer whose stored-tile

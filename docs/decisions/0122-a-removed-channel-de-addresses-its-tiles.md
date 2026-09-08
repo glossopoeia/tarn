@@ -1,6 +1,6 @@
 # 0122. A removed channel de-addresses its tiles, as a shrink does
 
-- Status: Accepted (resolves Q-B10)
+- Status: Accepted (resolves Q-B10) — Superseded by ADR-0124, under which a planar channel is removed only from the end
 - Date: 2026-09-03
 - Covers: §20.3 step 4's de-addressing carve-out and its planar-ordinal
   paragraph; §11.1's Rationale

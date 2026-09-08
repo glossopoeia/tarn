@@ -1,6 +1,6 @@
 # 0123. Round 31's repairs, and the geometry the §14 bar did not name
 
-- Status: Accepted (resolves round 31's repairable findings)
+- Status: Accepted (resolves round 31's repairable findings) — decision 1 superseded in the form it landed by ADR-0124, which puts the tile extents and dimension order on a populated layer's fixed list
 - Date: 2026-09-03
 - Covers: §20.3 step 4's §14 bar, its gloss and a new paragraph on the tile
   extents and dimension order; §11.1's Rationale; §2.3 `[R-CNF-03]`; §21.9

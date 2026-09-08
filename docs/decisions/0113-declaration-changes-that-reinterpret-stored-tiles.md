@@ -1,6 +1,6 @@
 # 0113. A commit may not reinterpret a stored tile: the sample-type and disk-ordinal bars
 
-- Status: Accepted (resolves Q-B6)
+- Status: Accepted (resolves Q-B6) — Superseded by ADR-0124, which fixes a populated layer's channel list but its end
 - Date: 2026-09-01
 - Covers: §20.3 step 4's declaration-change bar; §21.7's account of unwitnessed
   obligations

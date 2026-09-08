@@ -1,6 +1,6 @@
 # 0114. The sample-type bar is withdrawn: the §14 bar already tests it, and tests it better
 
-- Status: Accepted (supersedes ADR-0113 in part; resolves Q-B6's sample-type limb)
+- Status: Accepted (supersedes ADR-0113 in part; resolves Q-B6's sample-type limb) — Superseded by ADR-0124, which withdraws the §14 bar and its gloss for a closed list of permitted changes
 - Date: 2026-09-02
 - Covers: §20.3 step 4's §14 bar and the withdrawn sample-type bar; §11.1's
   Rationale; §21.7's witness account
