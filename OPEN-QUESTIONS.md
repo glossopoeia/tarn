@@ -1494,6 +1494,12 @@ duty, unlike the better-protected structures around it and unlike
 `[R-MTA-10]`'s uninspected extents, which §22.3 requires be counted and
 named. Options: give it a report duty matching `[R-MTA-10]`'s; state that
 none is owed and why; or extend a checksum to it. Owning section §8.1.
+- **Round 33 (2026-09-08) found it again from the other side** (verifier-02):
+  `[R-MTA-10]`'s "counted and named, never silent" duty is stated for the
+  checksummed uninspected extent of an experimental-encoding document and not
+  for the unchecksummed extent of an unassigned-type record, which satisfies
+  the duty's own rationale more strongly. All three passes graded it a design
+  decision. The first option above closes both.
 
 ### Q-I3. Does `[R-VEC-04]`'s intact-sibling rule reach ignore-record vectors? [shaping]
 **Question:** `[R-VEC-04]` requires an intact sibling for vectors of two of
@@ -1726,6 +1732,45 @@ what its first sentence and `[R-SER-07]` require. Owning section §22.2.
   new universal over what the rule reaches, and two repairs written in that shape
   this week each replaced a false universal with a narrower false one (ADR-0106),
   so whichever option is taken owes the derivation a new rule owes.
+
+### Q-C10. Does a compactor's duty to refuse a malformed index entry turn on its placement choice? [shaping]
+**Question:** §20.5 makes a compactor regenerate a tile-index region only where
+its output relocates one of that region's stored extents, and says regenerating
+a region means classifying every entry, so an entry `[R-IDX-03]` classifies
+reject-tile on a structural ground obliges refusal once met; `[R-WRT-09]`'s
+checks otherwise reach the index chain and each entry's crc and not an entry's
+value domain, which §20.5 says "bounds how far a compactor goes looking". So a
+compactor that keeps a layer's tiles where they were carries the entry forward
+and one that packs differently must refuse, on one input. Round 32 (adversary-05)
+and round 33 (quiz-03) each raised it; three passes in round 33 graded it a
+design decision, and round 32 declined it on the ground that the asymmetry is
+stated in terms.
+- **Options:** (a) State the asymmetry as intended, in one sentence beside
+  `[R-WRT-07]`: a compactor owes an entry's classification only where it
+  regenerates the region. (b) Oblige every compactor to classify every entry of
+  every region it carries, regenerated or not, which extends `[R-WRT-09]`'s
+  depth to the value domain. (c) Oblige regeneration of every region, which
+  removes the copy path and the asymmetry with it.
+- **What settles it:** whether a compacted file may carry a structurally
+  malformed entry its compactor never looked at. If not, (b) or (c); if the
+  copy path is worth keeping, (a) and the sentence.
+
+### Q-I7. Should §21.1's own rules carry requirement identifiers, and how does a two-claimant row individuate its instances? [shaping]
+**Question:** Round 33 (register-05, register-03). §21.1 states rules nothing
+else states — the rule-governs tiebreak, the completeness clause, the
+specialization rule, the Instances arithmetic — in normative text with no
+`[R-…]` identifier, against §2.2's convention; and F33 and L18 individuate a
+two-claimant overlap by single claimant kinds, so which pair each instance
+names is undetermined and `[R-VEC-03]`'s one-vector-per-instance promise has
+no fixed target. Both are register bookkeeping and neither moves a byte.
+- **Options:** for the first, (a) give §21.1's rules identifiers in a new
+  family, or (b) state in §2.2 that §21.1's conventions are normative without
+  identifiers, as the register's own rules; for the second, (a) individuate
+  F33 and L18 by claimant pair, which changes the instance counts, or (b) say
+  in §21.1 that a symmetric two-claimant condition's instances name the
+  claimant the vector damages, the other being any.
+- **What settles it:** whether the register's conventions are ever cited by
+  identifier elsewhere, and whether the corpus needs a pair-level target.
 
 ### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
 **Resolution:** a non-normative Appendix G — codec 1 or a named codec

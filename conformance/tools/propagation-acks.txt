@@ -173,3 +173,4 @@ R-CNT-17 -> R-CNT-17: the same erratum rested §20.3's channel-removal sentence 
 R-SER-01 -> R-CNT-17: the same erratum carried §11.1's second entry-free growth, "one that raises a grid count while another stays 0", into §13.3's Note in §11.1's own words; §11.1 is the source.
 R-WRT-03 -> R-LIF-01: the same erratum re-keyed §20.5's slack Note to "whose stored-tile set or index content a commit changed"; §20.3's re-emission clause is the source of that key and is unchanged.
 R-CNT-22 -> R-CNF-12: the same erratum gave §21.1's sentence the clause "[R-CNF-12]'s licence to reject the nonconforming file being untouched", the words §7.4's [R-CNT-18] uses for its own case; §7.4 is the source and was restated deliberately.
+R-CNT-10 -> R-CNT-27: ADR-0126 made §19.1's step 1 state the 128-byte floor before F − 64 is computed, citing [R-CNT-27] and F5; the F5 row is the register's statement of that condition and was not the subject.

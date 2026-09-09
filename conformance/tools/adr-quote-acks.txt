@@ -142,3 +142,7 @@
 0125|obliges the reader to serve the structure unchanged: §21.1's clause the erratum bounds, quoted as the defect.
 0125|MAY use a wider representation: §18.2's licence the erratum ties to the conversion, quoted as the defect.
 0125|the list above: the anaphor the erratum names, quoted as the defect.
+# Quotations in ADR-0126 of text it replaces or rejects (2026-09-08).
+0126|a slab or alignment declaration MAY be declared, re-established or cleared as this step provides below: the fifth member as ADR-0124's erratum wrote it, quoted as the text decision 1 extends with "changed".
+0126|the position of every planar channel but the last: the fixed list's clause repair 3 replaces with "the position of every planar channel the new state keeps", quoted as the defect.
+0126|a change to a declared alignment or slab value: the wording of the rejected alternative, which would have added it to the give-up list; not in the spec by design.

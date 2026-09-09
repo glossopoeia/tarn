@@ -172,8 +172,9 @@ Conformance is defined for five classes.
   file-conformance violation binds the actor in the same way; §6.3's
   flags rules against a set ignore-lane bit — a creator's flags = 0,
   and an updater's or compactor's copy-forward and set-no-other
-  (§20.5) — and §6.2's pre-trailer gap longer than `[R-LIF-02]` step
-  5's pad are the cases this text states, and each is declared where
+  (§20.5) — §6.2's pre-trailer gap longer than `[R-LIF-02]` step
+  5's pad, and `[R-LIF-02]`'s barriers (§9.2) are the cases this text
+  states, and each is declared where
   it arises rather than enumerated here. `[R-CNF-02]`
 - **Conforming reader.** A reader MUST accept every conforming file of
   a format major version it implements, carrying no top-level record of
@@ -611,8 +612,9 @@ every other field this specification defines is structural.
 > and valid range, each table giving the columns its structure needs.
 > A packed variable-length payload — the layer
 > record's inline payload (§7.4) — has no fixed offsets to give; its
-> table omits the offset and class columns, and each field's class
-> follows from the definitions above. §6.1's block is a 16-byte
+> table omits the offset, size and class columns, a field's size
+> following from its type and each field's class
+> from the definitions above. §6.1's block is a 16-byte
 > constant, where a Value column replaces type and range, and §7.2
 > folds each field's range into its Field cell. A variable-length field's value
 > includes its length prefix, so a name is structural: it determines
@@ -632,9 +634,10 @@ every other field this specification defines is structural.
 A TARN file is written generation by generation (§9). Byte 0 begins the
 constant 16-byte **front signature block** (§6.1). The final 64 bytes of
 the file are the live **trailer** (§6.2). Between them lie the
-structures the file's commits appended — stored-tile payloads,
+regions the file's commits appended — stored-tile payloads,
 tile-index regions, record extents (§5.2), the directory each commit
-appended, and each prior generation's trailer — with slack (§5.2)
+appended, and each prior generation's trailer, the superseded ones
+slack and no structure (§5.2) — with slack
 wherever a commit left a gap; a commit appends its own directory,
 pre-trailer pad, and trailer last, in that order (§6.2,
 `[R-LIF-02]` steps 3 and 5). The file size of a conforming file
@@ -723,7 +726,8 @@ declined leaves the walk complete, that claimant being enumerated
 from its index entry or extent slot. An entry `[R-IDX-03]`
 classifies reject-tile on a structural ground leaves it complete
 too, and for the opposite reason: it contributes no claimant, the
-walk passes over it, and its bytes fall to slack (§9.7). A rejected
+walk passes over it, and the bytes it nominally addresses fall to
+slack where no other claimant claims them (§15.3, §9.7). A rejected
 layer's claimants
 are not enumerated, whether or not the rejection impeded reading
 them, and where the rejection is one the walk itself established,
@@ -1524,7 +1528,8 @@ the sum is reported as partial, and
 reports beside it. An entry `[R-IDX-03]` classifies
 reject-tile on a *structural* ground does not make the walk
 incomplete: the walk passes over
-it, and the bytes it nominally addresses fall to slack (§15.3).
+it, and the bytes it nominally addresses fall to slack where no other
+claimant claims them (§15.3).
 `[R-LIF-08]`
 
 > **Note.** Nothing here enumerates prior commits. A verifier
@@ -1653,8 +1658,8 @@ region of it returns no samples. `[R-GEO-02]`
 > extents may grow and not shrink; a planar layer's channel list may
 > be extended or shortened at its end, one or the other in a commit;
 > its names may change, and a
-> slab or alignment declaration may be declared, re-established or
-> cleared; several of these in one commit, each subject to every rule
+> slab or alignment declaration may be declared, changed,
+> re-established or cleared; several of these in one commit, each subject to every rule
 > the declarations it produces are under; and every other declaration
 > is fixed while the layer stores a tile, a change to one being a new
 > layer or a whole-file rewrite. A layer that stored no tile in the
@@ -2707,7 +2712,9 @@ decline is one of the unchecked requirements `[R-CNF-11]` obliges
 the verifier to report, and it fixes the file's verdict as *cannot
 establish* only where the verifier established no violation
 elsewhere; the verifier SHOULD report the bound it applied and the
-stored length of the extent it declined. The decline presupposes an
+stored length of the extent it declined, since an unreported decline
+is indistinguishable from a document the verifier never met. The
+decline presupposes an
 encoding this specification assigns, whose document it defines; an
 encoding it does not assign leaves no document rule attached and is
 `[R-MTA-10]`'s subject, not a decline. Any violation here is
@@ -2892,7 +2899,9 @@ governing rule's own outcome.
 A conforming reader opens a file by these steps, in order:
 
 1. **End of file.** Obtain the transport-authoritative file size F
-   (`[R-CNT-10]`). These steps are ordered by dependency, not by
+   (`[R-CNT-10]`); an F below 128 is a validity error at file scope
+   before any byte is fetched (`[R-CNT-27]`, F5). These steps are
+   ordered by dependency, not by
    I/O: a remote reader's suffix range for step 2 carries F in its
    own response, so steps 1 and 2 cost one request between them
    (§6.4), and a local reader obtains F without any. A reader
@@ -3200,7 +3209,8 @@ An appender MUST, in order:
    an extent MAY grow, and MUST NOT shrink; a planar layer's channel
    list MAY be extended at its end or shortened from its end, but not
    both in one commit; and a slab or alignment declaration MAY be
-   declared, re-established or cleared as this step provides below.
+   declared, changed, re-established or cleared as this step provides
+   below.
    A commit MAY make several of these changes at once, an extension
    and a shortening of one channel list excepted: a commit that
    shortens a planar layer's channel list appends no channel to it and
@@ -3211,10 +3221,13 @@ An appender MUST, in order:
    the index encoding, the codec and the filter, the rank and the
    dimension order, every tile extent, every channel's type and fill,
    an interleaved layer's channel list (its names aside), and the
-   position of every planar channel but the last. A commit MUST NOT
-   change one of
+   position of every planar channel the new state keeps. A commit MUST
+   NOT change one of
    these; the change is a new layer, or a whole-file rewrite under a
-   fresh file_id (`[R-LIF-01]`, §20.5). Between them the two lists
+   fresh file_id (`[R-LIF-01]`, §20.5). This bar binds the commit as
+   an actor: the file a violating commit would produce is conforming,
+   the violation is not a file-conformance violation (`[R-CNF-02]`),
+   and no register row records it (§21.7). Between them the two lists
    reach every declaration field of §7.4, and where a field is on
    both sides — a dimension extent, a planar layer's channel list, an
    interleaved layer's channel list — the permitted side states the
@@ -3296,7 +3309,8 @@ An appender MUST, in order:
    charged for by its length wherever storage is metered, so slack
    that is not data the caller chose to discard is paid for and never
    read. Extents this commit supersedes become slack (`[R-CNT-21]`);
-   a slab declaration is re-established or cleared (`[R-SLB-04]`),
+   a slab declaration is declared, changed, re-established or
+   cleared (`[R-SLB-04]`),
    and an aligned layer's stored tiles — every one the new state
    keeps, not only those this commit adds — satisfy its invariant or
    the declaration is cleared (`[R-SLB-01]`, `[R-CNF-05]`).
@@ -3582,7 +3596,8 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
 > (`[R-LIF-06]`) also shorten a file, but neither reclaims any. Slack
 > accumulates a directory, a pad and a trailer per commit, plus a whole
 > index region for each layer whose stored-tile set or index content a
-> commit changed (§20.3); a verifier
+> commit changed, plus every payload and record extent a commit
+> supersedes, which is the largest term (§20.3); a verifier
 > whose walk completes reports the total (§9.7), and that total is
 > what tells an operator when to run this.
 
@@ -3606,13 +3621,15 @@ The register — §21.2 through §21.5 (`[R-ERR-02]`) — enumerates
 every detectable file-conformance violation this specification names: each row is one
 malformed condition, with the outcome class its scope determines
 (§2.4) — except where a rule assigns one expressly, as `[R-CNT-25]`'s
-quarantine does for every §21.5 row, whatever the containing scope —
+quarantine and `[R-MTA-09]` do for every §21.5 row, whatever the
+containing scope —
 the actor obliged to detect it (`[R-CNF-04]`, `[R-CNF-11]`),
 the point by which detection is due (§19.2), and the requirement that
 defines it. A Governing rule cell names that requirement first; any
 identifiers following it in parentheses are the further rules the
-condition reads, cited without brackets to keep them distinct from
-the governing one. Its **completeness is normative** — a
+condition reads, or the section defining a value set it reads (L26,
+L31), cited without brackets to keep them distinct from the
+governing one. Its **completeness is normative** — a
 *detectable* file-conformance violation this specification names and
 the register omits is a defect in this document, detectability being the gate
 `[R-CNF-07]` already applies and §21.7 states the test for: a
@@ -3867,7 +3884,7 @@ blast radius and never makes the file conforming (`[R-CNF-12]`);
 | R7 | A decoded user-metadata document is not well-formed JSON, its top-level value is not an object, or it carries a leading U+FEFF byte-order mark | not well-formed JSON, top-level document; not well-formed JSON, layer sub-record document; top-level value not an object, top-level document; top-level value not an object, layer sub-record document; leading U+FEFF, top-level document; leading U+FEFF, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R8 | A user-metadata document contains a non-finite number — a magnitude whose binary64 interpretation overflows (`1e400`), or one of the bare tokens `NaN`, `Infinity` and `-Infinity`, which RFC 8259 does not admit | overflowing magnitude, top-level document; overflowing magnitude, layer sub-record document; bare token, top-level document; bare token, layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
 | R9 | Two members of one object in a user-metadata document carry the same key, identity being the decoded string and not the JSON source bytes (`"a"` and `"\u0061"` are the same key) | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25) |
-| R10 | A user-metadata document key is longer than 255 bytes | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-ENC-12) |
+| R10 | A user-metadata document key is longer than 255 bytes | top-level document; layer sub-record document | reader | extent use | `[R-MTA-04]` (R-CNT-25, R-ENC-12) |
 
 #### 21.6 Conditions that are not violations
 
@@ -3922,8 +3939,8 @@ publishing experimental values binds a writer's conduct and not the
 bytes. In both the outcome records a reader's capability, not a defect
 in the bytes, and the diagnostic ought to distinguish the two.
 Neither is a register row: the register enumerates file-conformance
-violations (§21.1), and a file this document declines to judge is not
-one. What is registered in each case is the neighbouring condition
+violations (§21.1), the first is a file this document declines to
+judge, and the second carries none. What is registered in each case is the neighbouring condition
 that *is* a violation — version_major = 0, which declares no major at
 all (F18, `[R-CNT-07]`), and a *reserved*-range
 type, whose emission `[R-CNT-15]` does make a violation (F35, F36,
@@ -4541,7 +4558,9 @@ is a new format major version.
 - **[IEEE 754]** IEEE 754-2019 — binary16, binary32, and binary64 (§12.1),
   and the conversion from decimal text to binary64 under IEEE 754's
   default rounding-direction attribute, roundTiesToEven (§18.2).
+- **[RFC 1950]** ZLIB Compressed Data Format Specification version 3.3 — the wrapper codec 2 excludes (§17.2, T15).
 - **[RFC 1951]** DEFLATE Compressed Data Format Specification version 1.3 — codec 2 (§17.2).
+- **[RFC 1952]** GZIP file format specification version 4.3 — the wrapper codec 2 excludes (§17.2, T15).
 - **[RFC 8878]** Zstandard Compression and the `application/zstd` Media Type — codec 3 and metadata encoding 2 (§17.2, §18.2).
 - **[LZ4 Block]** LZ4 Block Format Description, version 1.0 — `doc/lz4_Block_format.md` in the lz4/lz4 repository, as published with lz4 release v1.9.4 — codec 4 (§17.2).
 - **[RFC 8259]** The JavaScript Object Notation (JSON) Data Interchange Format — the user-metadata document (§18.2).
@@ -4763,7 +4782,7 @@ layer it modifies (§20.3); changes a layer that stores a tile in the
 generation its commit supersedes only as §20.3 step 4 permits — its
 names, a grown extent, a planar channel list extended at its end or
 shortened from it (not both in one commit), a slab or alignment
-declaration declared, re-established or cleared —
+declaration declared, changed, re-established or cleared —
 and makes any other change to it as a new layer or a whole-file
 rewrite (§20.3);
 re-emits every retained record it does not logically modify
