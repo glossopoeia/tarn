@@ -1,6 +1,7 @@
 # 0127. Round 34's repairs: a verb that named the default, and the slab clause grounded as its alignment half is
 
-- Status: Accepted (resolves round 34's repairable findings)
+- Status: Accepted (resolves round 34's repairable findings; repairs 1 and
+  15 confirmed by the maintainer on 2026-09-09)
 - Date: 2026-09-09
 - Covers: §20.3 step 4's permitted list at its three sites (with §11.1's
   Rationale and Appendix H's updater entry), its tie-break sentence, its
@@ -9,12 +10,13 @@
   table; §18.2's layout table; §21.1's verifier-detected sentence and its
   Instances sentence; §21.2 F5; §21.6's trailer-mimic entry; §21.8
   `[R-ERR-02]`; Appendix F; Appendix G item 8
-- Confirm: one repair the maintainer can reverse. Repair 15 lists RFC 9110
-  in Appendix F for the transport vocabulary §6.4 and `[R-CNT-10]` are
-  stated in; the alternative, stated below, is a transport-neutral
-  restatement of `[R-CNT-10]`. Nothing here takes a decision about what a
-  conforming actor may do: ADR-0126's decision 1 stands unchanged, *changed*
-  staying at every site.
+- Confirm: none. Two repairs were put to the maintainer and confirmed on
+  2026-09-09: repair 15, that Appendix F lists RFC 9110 for the transport
+  vocabulary §6.4 and `[R-CNT-10]` are stated in, its alternative stated below
+  so a superseding ADR can choose it; and repair 1, which drops a verb from
+  the member whose wording ADR-0126's decision 1 carried, that decision's
+  substance standing and *changed* staying at every site. Nothing here takes
+  a decision about what a conforming actor may do.
 
 ## Context
 
