@@ -1,14 +1,16 @@
 # 0126. Round 33's repairs: a declared alignment or slab may change, and the bar names its own category
 
-- Status: Accepted (resolves round 33's repairable findings)
+- Status: Accepted (resolves round 33's repairable findings; decision 1
+  confirmed by the maintainer on 2026-09-09)
 - Date: 2026-09-08
 - Covers: §20.3 step 4's permitted list, its closing paragraph and its
   fixed list; §11.1's Rationale; Appendix H's updater and reader entries;
   §2.3 `[R-CNF-02]`; §4.7's Note; §5.1 `[R-CNT-01]`; §5.2 `[R-CNT-21]`; §9.7
   `[R-LIF-08]`; §18.2 `[R-MTA-09]`; §19.1 `[R-RDR-01]`; §20.5's slack Note;
   §21.1; §21.5 R10; §21.6's closing paragraph; Appendix F
-- Confirm: one decision is put to the maintainer, with its alternative stated
-  below so a superseding ADR can choose it: that a layer which stores a tile
+- Confirm: none. One decision was put to the maintainer and confirmed on
+  2026-09-09, with its alternative stated below so a superseding ADR can
+  choose it: that a layer which stores a tile
   MAY have an already-declared alignment or slab changed to another value in
   one commit, the new invariant holding over every stored tile the new state
   keeps or the declaration cleared, as `[R-SLB-04]` already provides for a
