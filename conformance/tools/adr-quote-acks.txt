@@ -188,3 +188,13 @@
 0128|Given a conforming input the output is a conforming file: §20.5's conditional as ADR-0128 quoted it; ADR-0129 restates it over what a rewrite carries forward, re-creates and drops.
 0128|A compactor's verification depth follows reliance over everything it carries: [R-WRT-09]'s opening as ADR-0128 quoted it; ADR-0129 says a rewriter's depth over what it carries follows reliance.
 0128|The duty follows what the compactor carries and not where it places it: decision 1's placement sentence as it landed; ADR-0129 names the actor a rewriter.
+0068|both registered types carry PE = 1, so neither can be dropped: ADR-0130 gives the layer record PE = 0; §20.4's flags paragraph now says which type is droppable
+0068|records it does not understand: ADR-0068 is superseded by ADR-0130; the quote is of the text ADR-0068 decided, restated since
+0068|the preservation obligations of Part I: ADR-0068 is superseded by ADR-0130; the quote is of the text ADR-0068 decided, restated since
+0068|respects unknown records' MU and PE bits: ADR-0068 is superseded by ADR-0130; the quote is of the text ADR-0068 decided, restated since
+0068|a commit that removes data removes only its reachability: ADR-0068 is superseded by ADR-0130; the quote is of the text ADR-0068 decided, restated since
+0129|would cost what it appears to save: ADR-0130 removes ADR-0068's cost sentence from §20.4, the cost now stated as a warning
+0129|dropping a layer, which no commit removes (§20.4) and a rewrite does by omitting the layer's record, index region and stored tiles: decision 2 withdrawn by ADR-0130; §20.5's dropping case restated
+0129|it omits the dropped layer's record, index region and stored tiles from its output, and carries every other record under the table: decision 2 withdrawn by ADR-0130; §20.4's table has no exception
+0130|would cost what it appears to save: quotes ADR-0068's sentence, which this ADR removes from §20.4
+0130|unstoring or superseding every tile of a layer and re-declaring it is one operation, and it is a rewrite: quotes step 4's tense sentence, which this ADR restates as a scope

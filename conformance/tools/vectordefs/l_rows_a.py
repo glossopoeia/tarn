@@ -89,8 +89,8 @@ def _tail(entry_count=1, index_encoding=1, crc_arr=CRC_ARR) -> bytes:
 
 
 def _record(inline: bytes, *, il=INLINE, eo=IDX_OFF, el=IDX_LEN) -> bytes:
-    """A layer record: §7.2's 24-byte header, flags MU=1 PE=1 per §7.3."""
-    rec = struct.pack("<HHIQQ", 1, 0b11, il, eo, el) + inline
+    """A layer record: §7.2's 24-byte header, flags MU=0 PE=0 per §7.3 (ADR-0130)."""
+    rec = struct.pack("<HHIQQ", 1, 0b00, il, eo, el) + inline
     assert len(rec) == REC_LEN, f"record is {len(rec)} B, must be {REC_LEN}"
     return rec
 

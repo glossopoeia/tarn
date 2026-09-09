@@ -59,7 +59,7 @@ VECTORS = [
            must_not_serve=["tile:bad:0"], serves=["ok"]),
 
     Vector("TV-0009", "pair", "layer `bad` reserved flag bit 2 set", False,
-           patches=[Patch("layer[bad].flags", u16(0b111))],
+           patches=[Patch("layer[bad].flags", u16(0b100))],
            repair=["directory.crc", "trailer.crc"],
            row="L47", rule="R-CNT-12", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"},

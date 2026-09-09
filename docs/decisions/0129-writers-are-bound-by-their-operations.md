@@ -1,7 +1,8 @@
 # 0129. Writers are bound by their operations: three tiers, two classes, and compaction one rewrite among several
 
 - Status: Accepted (resolves Q-A8 on the maintainer's direction of
-  2026-09-09)
+  2026-09-09; decision 2 withdrawn by ADR-0130 the same day, the layer
+  record carrying PE = 0)
 - Date: 2026-09-09
 - Covers: §20.1's tiers and `[R-WRT-01]`; §2.3 `[R-CNF-06]` and
   `[R-CNF-02]`'s flags gloss; §20.5 whole, retitled, with `[R-WRT-06]`,

@@ -5,7 +5,7 @@
   "record_type": {
     "width": "u16", "reserved": "0x0003-0x7FFF", "experimental": ">=0x8000",
     "assigned": [
-      {"id": 1, "name": "layer", "scope": "file", "mu": 1, "pe": 1},
+      {"id": 1, "name": "layer", "scope": "file", "mu": 0, "pe": 0},
       {"id": 2, "name": "user_metadata", "scope": "file or layer", "mu": 0, "pe": 1}
     ]
   },

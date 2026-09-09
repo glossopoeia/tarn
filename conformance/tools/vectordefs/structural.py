@@ -195,7 +195,7 @@ def _bad_c0() -> bytes:
               + nm(b"y" * 7) + u64(2) + u64(2)                 # +6 bytes of name
               + nm(b"x") + u64(2) + u64(2)
               + u8(1) + u64(1) + _BAD_CRC_ARR)
-    rec = struct.pack("<HHIQQ", 1, 0b11, len(inline),
+    rec = struct.pack("<HHIQQ", 1, 0b00, len(inline),
                       _BAD_IDX_OFF, _BAD_IDX_LEN) + inline
     assert len(rec) == _BAD_LEN, f"{len(rec)} vs {_BAD_LEN}"
     return rec

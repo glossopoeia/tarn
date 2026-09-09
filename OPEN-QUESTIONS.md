@@ -1914,7 +1914,39 @@ the tiers separate what the classes join.
   decision is an ADR's, under rule 3 of the working instructions, and it
   reaches every section that names a compactor.
 
-### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
+### Q-A9. Should the layer record carry PE = 0, so that a commit may drop a layer? [Resolved → ADR-0130]
+**Resolution (ADR-0130):** yes. The layer record's registry-fixed flags are
+MU = 0 and PE = 0, a commit MAY drop a layer under §20.4's PE = 0 row with
+its stranding cost stated as a warning and a SHOULD to rewrite instead, ADR-0068
+is superseded, ADR-0129's decision 2 is withdrawn, the fixed-declaration bar
+is restated as binding the layer's identity, and the corpus is rebuilt.
+**Question:** ADR-0068 made layer deletion no defined operation on the
+ground that an in-place removal strands the layer's tiles and index as slack
+and "would cost what it appears to save", so both registered types carried
+PE = 1 and a file without a layer was a creator's new file. ADR-0129 named a
+layer-dropping rewrite and needed §20.4's table to state an exception for it.
+The maintainer read the cost as a warning rather than a bar (2026-09-09): in
+the object-storage case a kilobyte commit that drops a layer beats rewriting
+gigabytes to reclaim it.
+- **Why it matters.** With PE = 1 a layer is undroppable by any updater; with
+  PE = 0 it is droppable by the table's own licence, by commit or by rewrite,
+  and no exception is needed. `[R-CNT-12]` forbids MU = 1 with PE = 0 on the
+  wire, so PE = 0 needs MU = 0 too, or a registered-type carve-out that
+  would falsify L46 and move the register. MU is inert for the layer within
+  major 1, every conforming reader and updater implementing the type.
+- **Options:** (a) MU = 0, PE = 0 for the layer record: the registry, §7.3,
+  Appendix C and the seed builder change, every vector with a layer is
+  rebuilt, the register does not move; §20.4's paragraph, §20.3's tense
+  sentence, §20.5's dropping case, §23.1 and Appendix H follow. (b) Keep
+  MU = 1 and carve registered types out of the combination rule: L46's
+  condition names the layer record and would be false. (c) Keep PE = 1 and
+  ADR-0129's exception.
+- **What settles it:** whether anything binds on the layer's MU bit within
+  major 1 (nothing does), and whether the fixed-declaration bar survives a
+  commit that drops a layer and adds one under its name, which it does as a
+  rule about a layer's identity rather than about bytes.
+
+
 **Resolution:** a non-normative Appendix G — codec 1 or a named codec
 build (byte-identity across implementations is unattainable for
 compressed tiles), file_id from a content hash, tiles in disk-ordinal

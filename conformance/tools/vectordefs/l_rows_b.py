@@ -553,10 +553,10 @@ VECTORS = [
 
     # -- L47 · a reserved flag bit of a layer record is set ---------------
     # Bit 2 is TV-0009; this is the top of the reserved lane. MU and PE
-    # keep §7.3's fixed 1/1, so neither L46 nor L49 rides along.
+    # keep §7.3's fixed 0/0 (ADR-0130), so neither L46 nor L49 rides along.
     Vector("TV-0305", "pair",
            "layer `bad` reserved flag bit 15 set (the lane's top bit)", False,
-           patches=[Patch("layer[bad].flags", u16(0b11 | (1 << 15)))],
+           patches=[Patch("layer[bad].flags", u16(0b00 | (1 << 15)))],
            repair=REPAIR_DIR,
            row="L47", rule="R-CNT-12", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"},
@@ -564,30 +564,26 @@ VECTORS = [
            must_not_serve=[], serves=["ok", "bad"]),
 
     # -- L49 · a stored flag bit differs from §7.3's registry -------------
-    # Instance: layer record flags. §7.3 fixes type 0x0001 at MU = 1,
-    # PE = 1; this file stores MU = 0, PE = 1. Clearing MU rather than PE
-    # is deliberate: MU = 1 with PE = 0 would also be L46's condition,
-    # and the file would evidence two rows.
-    # L49's other layer-record instance. §7.3 fixes 0x0001 at MU = 1, PE = 1,
-    # so clearing PE alone would also be MU = 1 / PE = 0 — row L46. flags = 0
-    # clears both: MU and PE each differ from the registry, and no other row
-    # fires (L46 needs MU = 1; L47's reserved bits stay clear). It witnesses
-    # the PE-bit instance without dragging L46 in.
+    # Instance: layer record flags. §7.3 fixes type 0x0001 at MU = 0,
+    # PE = 0 (ADR-0130). Setting a bit the registry clears is the mismatch;
+    # setting MU alone would be MU = 1 with PE = 0, row L46 as well, so the
+    # MU instance sets both bits and the PE instance sets PE alone. Neither
+    # file evidences L46 (PE = 1 in both) or L47 (reserved bits clear).
     Vector("TV-0956", "pair",
-           "layer `bad` stores flags = 0 where the registry fixes MU = 1, "
-           "PE = 1 (instance: layer record flags bit 1)", False,
-           patches=[Patch("layer[bad].flags", u16(0),
-                          "§7.3 fixes 0x0001 at MU = 1, PE = 1")],
+           "layer `bad` stores PE = 1 where the registry fixes PE = 0 "
+           "(instance: layer record flags bit 1)", False,
+           patches=[Patch("layer[bad].flags", u16(0b10),
+                          "§7.3 fixes 0x0001 at MU = 0, PE = 0")],
            repair=REPAIR_DIR,
            row="L49", rule="R-CNT-22", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"},
            detector="verifier", detected="certification",
            must_not_serve=[], serves=["ok", "bad"]),
     Vector("TV-0306", "pair",
-           "layer `bad` stores MU = 0 where the registry fixes MU = 1 "
+           "layer `bad` stores MU = 1, PE = 1 where the registry fixes both 0 "
            "(instance: layer record flags)", False,
-           patches=[Patch("layer[bad].flags", u16(0b10),
-                          "§7.3 fixes 0x0001 at MU = 1, PE = 1")],
+           patches=[Patch("layer[bad].flags", u16(0b11),
+                          "§7.3 fixes 0x0001 at MU = 0, PE = 0")],
            repair=REPAIR_DIR,
            row="L49", rule="R-CNT-22", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"},
@@ -630,7 +626,7 @@ SKIPPED = {
            "single-file witness at all.",
     "L46": "Not isolable in format major 1. MU = 1 with PE = 0 on a layer "
            "record is simultaneously L49, since §7.3 fixes type 0x0001 at "
-           "MU = 1, PE = 1; on a user-metadata sub-record it is likewise "
+           "MU = 0, PE = 0; on a user-metadata sub-record it is likewise "
            "L49 (0x0002 is fixed at MU = 0, PE = 1); and on a sub-record of "
            "an unassigned type, MU = 1 is L24. No file can carry this "
            "condition alone. See the summary.",

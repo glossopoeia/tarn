@@ -1,6 +1,7 @@
 # 0068. No commit removes a layer
 
-- Status: Accepted
+- Status: Superseded by ADR-0130, which gives the layer record PE = 0 and
+  lets a commit drop a layer
 - Date: 2026-08-16
 - Covers: whether layer deletion is a defined operation; `[R-CNF-06]`'s
   citation and scope; §23.1's account of what a commit removes

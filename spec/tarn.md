@@ -1085,7 +1085,7 @@ subject. `[R-CNT-15]`
 
 | Type | Name | Scope | Flags (fixed by registry) |
 |---|---|---|---|
-| 0x0001 | layer | file (container for layer scope) | MU = 1, PE = 1 |
+| 0x0001 | layer | file (container for layer scope) | MU = 0, PE = 0 |
 | 0x0002 | user metadata | file when top-level; layer as sub-record | MU = 0, PE = 1 |
 
 All other type values are unassigned (registry and experimental
@@ -3268,8 +3268,13 @@ An appender MUST, in order:
    subject whether or not the layer stores a tile. The tense is the
    prior generation's (§3.1 defines *stored* against a generation),
    so a commit does not earn an empty layer's freedom by emptying the
-   layer as it re-declares it: unstoring or superseding every tile of
-   a layer and re-declaring it is one operation, and it is a rewrite.
+   layer as it re-declares it: a layer that stored a tile keeps its
+   declarations through the commit that empties it. The bar binds the
+   layer's identity and nothing else: a commit MAY drop the layer
+   (§20.4) and add a new one under its name and other declarations,
+   the new layer being new whatever bytes its entries address within
+   §5.2's partition, and what the bar removes is a re-declaration
+   carried as the same layer over the tiles it stored.
    A layer that stores no tile in the generation this commit
    supersedes MAY be re-declared freely, subject to every rule its
    new declarations are subject to, which is what schema-first
@@ -3412,9 +3417,10 @@ An appender MUST, in order:
 > too; retained ones do not move.
 >
 > **(c) A change confined to the directory** — clearing a slab
-> declaration, renaming a layer, or dropping a PE = 0 record where
-> §20.4 licenses the drop, any extent it owned becoming slack, a run
-> the figure below does not draw. Only the directory is re-emitted. A
+> declaration, renaming a layer, or dropping a layer or another
+> PE = 0 record where §20.4 licenses the drop, any extent it owned, a
+> dropped layer's tiles and index region included, becoming slack, a
+> run the figure below does not draw. Only the directory is re-emitted. A
 > change to any fixed declaration of a layer that **stored** a tile in
 > the generation the commit supersedes — a fill value, a type, a tile
 > extent — is not an appender's operation at all (step 4): it would
@@ -3453,10 +3459,11 @@ under its writer obligations (`[R-CNF-05]`). `[R-WRT-05]`
 
 Persistence governs every record type; only the authoritative source
 of the flags differs. For a type §7.3 registers, the registry's fixed
-flags govern rather than the stored ones (`[R-CNT-22]`) — both
-registered types carry PE = 1, so neither can be dropped, and
-implementing a record's type confers understanding of it, not
-permission to drop it. For a type the updater implements that this specification does not
+flags govern rather than the stored ones (`[R-CNT-22]`) — the layer
+record carries PE = 0 and is dropped under the table's last row, the
+user-metadata record PE = 1 and never; implementing a record's type
+confers understanding of it, and the permission to drop it is the
+bit's alone. For a type the updater implements that this specification does not
 register, the definition it implements the type from supplies the
 flags, and the stored bits never do (`[R-CNT-22]`, §10.3). For a type
 the updater does not implement, the
@@ -3475,18 +3482,16 @@ provide — so for an implemented type only the PE bit bites:
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
 | MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. The licence is the bit's own: whoever fixed PE = 0 for the record, the writer that stored it or the definition that governs it, declined preservation across edits, so an updater MAY drop the record in any commit it is otherwise free to make — one whose only effect is the drop included — and a rewriter MAY drop it in any rewrite. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
-No commit therefore removes a layer record, or a user-metadata
-record at either scope. Both registered types carry PE = 1, and an
-in-place removal would strand that layer's stored tiles and index
-region as slack (§5.2) which only a rewrite reclaims, leaving the
-file no smaller than before — so the operation would cost what it
-appears to save. A producer that wants a file without a layer writes
-one: a rewrite that drops the layer under a fresh file_id, which
-`[R-LIF-01]` already sanctions (§20.5); it is not compaction, which
-carries every layer of its input forward. That rewrite is this
-table's one exception: it omits the dropped layer's record, index
-region and stored tiles from its output, and carries every other
-record under the table.
+A commit MAY therefore drop a layer record, and never removes a
+user-metadata record at either scope. Dropping a layer by commit
+strands its stored tiles and tile-index region as slack (§5.2), which
+only a rewrite reclaims, so the file is no smaller than before and
+the bytes remain in it (§23.1): a writer SHOULD instead rewrite where
+a drop would strand a large share of the file's stored bytes, a
+rewrite that drops the layer (§20.5) reclaiming what the commit would
+strand, and an updater that drops a layer reports the loss as the
+table requires. A dropped layer's name is free to the same commit and
+to any later one (§20.3 step 4, §19.1).
 
 An updater MUST NOT re-encode a record whose type it does not
 implement, and MUST NOT modify one except by relocating its
@@ -3521,9 +3526,9 @@ dropped, under the rule for what is done to it, and the output MAY
 add what a creator could. This text names three rewrites:
 **compaction**, which carries every structure forward and changes
 nothing but placement, and is the rewrite that reclaims slack;
-**dropping** a layer, which no commit removes (§20.4) and a rewrite
-does by omitting the layer's record, index region and stored tiles,
-or a record §20.4's table licenses dropping;
+**dropping** a layer or another record §20.4's table licenses
+dropping, which a commit does by omitting the record and stranding
+what it addressed (§20.4) and a rewrite does reclaiming it;
 and **re-declaring** a layer that stores a tile in the input, the
 rewrite §20.3 step 4 reserves for a change to a fixed declaration. A
 rewrite MAY be several of these at once. A rewriter satisfies every
@@ -3539,9 +3544,10 @@ conforming file. A rewriter MUST refuse to rewrite when any check
 violation it has detected: it can neither re-emit the structure
 corrected (`[R-WRT-05]`), nor keep it and call the output clean.
 Dropping is the one disposal that answers, and only where §20.4's
-table licenses it: a record dropped is not in the output, so the
-output carries no violation and the prohibition — which bites on what
-the output carries — is satisfied. Where the table does not license a
+table licenses it: a record dropped, a layer with its index region
+and stored tiles among them, is not in the output, so the output
+carries no violation and the prohibition — which bites on what the
+output carries — is satisfied. Where the table does not license a
 drop the rewriter MUST refuse. It MUST mint a fresh file_id for the
 output — a new draw under §9.3's randomness advice, not merely a value
 compared against the input's: a rewritten file is a whole-file
@@ -3609,10 +3615,10 @@ its stored extent now lies. An entry §15.3 classifies reject-tile on a
 structural ground is neither — `[R-IDX-03]` gives it no stored extent
 for a re-pointing to target — so regenerating the region cannot
 proceed without meeting it, and the violation is thereafter one the
-rewriter has detected. `[R-WRT-06]` then obliges refusal: the
-rewriter can neither reproduce the entry nor invent a replacement,
-and no drop is available, a tile-index entry being no record §20.4's
-table licenses dropping. That `[R-WRT-09]`'s checks reach the index
+rewriter has detected. `[R-WRT-06]` then leaves it two disposals,
+since it can neither reproduce the entry nor invent a replacement:
+drop the layer, which §20.4's table licenses and the rewriter
+reports, or refuse. That `[R-WRT-09]`'s checks reach the index
 chain and the checksum over each extent it copies rather than an
 entry's own value domain bounds how far a rewriter goes looking,
 not what it owes on what regenerating the region has already put in
@@ -4324,8 +4330,8 @@ extent goes the same way whether a commit drops the record (§20.4) or
 supersedes it — editing a user-metadata document appends a new extent
 and strands the old one (§20.3 places this with shape (b)), which is
 the case most
-likely to strand content a caller believes it deleted; no commit
-removes a layer at all. **Where the structure carrying the bytes leaves the
+likely to strand content a caller believes it deleted, and a commit
+that drops a layer (§20.4) strands every tile it stored. **Where the structure carrying the bytes leaves the
 live state**, they remain in the file as slack (`[R-CNT-21]`),
 readable by anyone with the bytes and a hex editor, and recoverable
 by any tool that scans backward for an earlier trailer (§9.6). That
@@ -4573,7 +4579,7 @@ this specification; §10.2's table and this snapshot restate it, and
 where any of the three diverge the section defining the space governs
 (`[R-EXT-05]`).
 
-**Record types** (§7.3): 0x0001 layer (MU = 1, PE = 1); 0x0002 user
+**Record types** (§7.3): 0x0001 layer (MU = 0, PE = 0); 0x0002 user
 metadata (MU = 0, PE = 1).
 
 **Sample types** (§12.1): 1 bool · 2–5 int8/16/32/64 · 6–9
@@ -4895,17 +4901,18 @@ obligations (§20.4, `[R-WRT-05]`); copies forward the input's unknown
 ignore-lane flag bits, clears none and sets no other (`[R-CNT-08]`,
 §6.3); respects every record's MU and PE bits, the
 registry's fixed values governing for a registered type (§20.4,
-`[R-CNT-22]`); never removes a layer record, or a
-user-metadata record at either scope by commit (§20.4); never modifies a scope governed by an unknown critical
+`[R-CNT-22]`); drops a layer record only under §20.4's PE = 0
+licence, reporting the loss, and never removes a user-metadata record
+at either scope by commit (§20.4); never modifies a scope governed by an unknown critical
 record, and rejects outright a file carrying an unimplemented
 top-level MU = 1 record (`[R-CNT-15]`, §20.4). A rewriter, in
 addition, mints a fresh file_id and follows the creation path
 (`[R-WRT-06]`); carries every structure it does not decode forward
 verbatim, regenerating each index region it relocates and re-pointing
 every slot (`[R-WRT-07]`); verifies the checksum over every extent it
-copies (`[R-WRT-09]`); drops a layer only by a rewrite that carries
-every other structure forward, and refuses to rewrite a file carrying
-an unimplemented MU = 1 record (§20.5).
+copies (`[R-WRT-09]`); drops a layer or a PE = 0 record by omitting
+it, reclaiming what it addressed, and refuses to rewrite a file
+carrying an unimplemented MU = 1 record (§20.5).
 
 **Conforming verifier** — every reader obligation, plus the checks
 readers are exempt from: the live-state coverage partition and the

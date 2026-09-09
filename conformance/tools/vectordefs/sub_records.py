@@ -23,7 +23,7 @@ sub-record while L10, L11 and L12 sit on a user-metadata one: those three rows
 **Registry-fixed flags are not free.** §7.3 fixes MU/PE per registered type,
 and L49 makes a stored bit differing from the registry a violation. So the
 user-metadata sub-records here carry flags 0b10 (MU = 0, PE = 1) and the
-nested layer record carries 0b11, and only reserved bit 2 — which the registry
+nested layer record carries 0b00, and only reserved bit 2 — which the registry
 does not fix — is available to a flags recipe (L47).
 
 **Some shapes cannot be reached by patching.** A recipe overwrites a field at
@@ -139,11 +139,11 @@ def _seed_nested_layer():
     """L26: a record of type 0x0001 in the sub-record sequence.
 
     It is emptied of everything a reader might trip over first — inline_length
-    0, extent slot (0, 0), the registry's own MU = 1 / PE = 1 — so the type's
+    0, extent slot (0, 0), the registry's own MU = 0 / PE = 0 — so the type's
     placement is all that is wrong with it.
     """
     return build_with_layout([_ok(), _sub(
-        [Record(0x0001, inline=b"", extent=None, flags=_MU | _PE)])])
+        [Record(0x0001, inline=b"", extent=None, flags=0)])])
 
 
 def _with_residue(subs: list, residue: bytes):
@@ -427,7 +427,7 @@ VECTORS = [
              instance="sub-record flags bit 0"),
     # L46's sub-record instance. The inert sub-record's type is unassigned,
     # so §7.3 fixes no flags for it and the MU = 1 / PE = 0 combination is
-    # L46 alone -- unlike a layer record, where the registry's MU = 1, PE = 1
+    # L46 alone -- unlike a layer record, where the registry's MU = 0, PE = 0
     # makes the same combination co-violate L49.
     # L46's sub-record instance. MU = 1 on a type the reader does not
     # implement is reject-layer under [R-CNT-18] — TV-0813 is the conforming
@@ -492,7 +492,7 @@ SKIPPED = {
         "placement is L26; on any unassigned type MU = 1 is L24, which a "
         "reader detects at layer access, ahead of the certification this row "
         "is detected at. No file carries L46's sub-record half alone. The "
-        "layer-record half is unreachable too — §7.3 fixes PE = 1 for type "
-        "0x0001, so clearing it is L49 — which is why the row has no vector "
+        "layer-record half is unreachable too — §7.3 fixes MU = 0 for type "
+        "0x0001, so setting it is L49 — which is why the row has no vector "
         "in either container."),
 }

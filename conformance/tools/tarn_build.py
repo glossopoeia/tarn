@@ -331,7 +331,7 @@ def build(layers: list[Layer], records: list[Record] | None = None,
             inline += (u16(sub.type) + u16(sub.flags) + u32(len(sub.inline))
                        + u64(sub_slots[id(sub)][0]) + u64(sub_slots[id(sub)][1])
                        + sub.inline)
-        seq += u16(1) + u16(0b11) + u32(len(inline)) + u64(off) + u64(ln) + inline
+        seq += u16(1) + u16(0b00) + u32(len(inline)) + u64(off) + u64(ln) + inline   # §7.3: layer MU = 0, PE = 0 (ADR-0130)
     for rec, (off, ln) in zip(records, record_slots):
         seq += (u16(rec.type) + u16(rec.flags) + u32(len(rec.inline))
                 + u64(off) + u64(ln) + rec.inline)

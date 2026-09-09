@@ -69,8 +69,8 @@ VECTORS.append(Vector(
     "L46 layer record flags MU = 1 with PE = 0", False,
     # §7.2: "Writers MUST NOT emit the combination MU = 1 with PE = 0; a
     # reader or updater encountering it MUST treat the record as PE = 1".
-    # Type 0x0001's registry-fixed flags are MU = 1, PE = 1 (§7.3), so
-    # clearing PE necessarily also makes the stored bits differ from the
+    # Type 0x0001's registry-fixed flags are MU = 0, PE = 0 (§7.3, ADR-0130),
+    # so setting MU necessarily also makes the stored bits differ from the
     # registry — L49. Both are verifier rows at the same scope and tier, so
     # neither masks the other; the co-violation is declared rather than
     # hidden, since no file can carry L46 on a layer record without it.
