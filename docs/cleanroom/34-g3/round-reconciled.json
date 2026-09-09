@@ -1,0 +1,539 @@
+{
+ "merged": [
+  {
+   "members": [
+    "reader-01",
+    "adversary-01",
+    "quiz-01"
+   ],
+   "title": "The closed exception list's fourth verb \"re-established\" has no counterpart in the clause it delegates to, which says \"kept\"",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "editorial",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "reader-02",
+    "writer-02"
+   ],
+   "title": "\u00a720.3's fixed-declaration bar is said to belong to \u00a721.7's \"no condition a file can exhibit\" class; reporters say it is unwitnessed instead",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "PARTIAL",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "editorial",
+    "skeptic": "none"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "writer-04",
+    "adversary-02"
+   ],
+   "title": "\"where a field is on both sides\" names a dimension extent, which the fixed list does not contain; and the reach claim's relation to entry_count and friends",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "verifier-01",
+    "adversary-04"
+   ],
+   "title": "\u00a74.7's structural test ranges over \"a conforming reader or verifier\" and its descriptive restatement over \"a conforming reader\" alone",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "writer-01"
+   ],
+   "title": "Appendix G item 8 says a compactor's output varies \"only modulo its trailer\", but \u00a720.4 lets it drop a PE = 0 record and no profile item pins that",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "design-decision",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-03"
+   ],
+   "title": "\u00a720.3 states the slab obligation over a *kept* declaration with no trigger, while [R-SLB-04], the rule it cites, fires only on five named changes",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "verifier-02"
+   ],
+   "title": "The coverage walk's incompleteness test said to be stipulative at layer scope and factual at file scope, its tile gloss naming only two tile cases",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "PARTIAL",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "design-decision",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "diagrams-01"
+   ],
+   "title": "Example shape (c) appears to enclose free re-declaration of an empty layer under \"Only the directory is re-emitted\"",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "figure",
+    "implementer": "figure",
+    "skeptic": "figure"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "diagrams-02"
+   ],
+   "title": "\u00a74.7's presentation Note under-describes \u00a76.1's table and over-states \u00a77.2's range folding",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-03"
+   ],
+   "title": "\u00a718.2's Valid-values cell reads \"1 or 2\" while a file carrying an experimental-range encoding is conforming",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "diagrams-04"
+   ],
+   "title": "F5's Condition cell names the pre-trailer pad as a component of a 128-byte floor that excludes it",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-01"
+   ],
+   "title": "\u00a721.1's \"\u2014 F27 and L48\" leaves it apparently open whether it names [R-MTA-05]'s rows or both rules'",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "none"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-02"
+   ],
+   "title": "\u00a721.6's trailer-mimic entry states a condition about a payload and justifies it with a fact about slack",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-03"
+   ],
+   "title": "\"which every file and every layer carries\" is falsified, or at least made non-supporting, by a conforming zero-layer file",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "none"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-04"
+   ],
+   "title": "\u00a721.1's \"the row is the rule\" reads against the same subsection's \"where a row and the rule it cites diverge, the rule governs\"",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-05"
+   ],
+   "title": "\u00a721.8's \"one vector per instance\" drops the \"at least\" that [R-VEC-03] carries for the same inherited obligation",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-03"
+   ],
+   "title": "\"the new state keeps\" said to carry two incompatible senses within one step, the slab clause inheriting the narrower",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-05"
+   ],
+   "title": "The enumeration of decoded-size rows the register witnesses omits L44, which a re-tiled codec-4 layer exhibits",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "REFUTED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "none",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-06"
+   ],
+   "title": "A MUST-level rule is stated in HTTP range-request vocabulary that Appendix F pins no reference for",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "design-decision",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-02"
+   ],
+   "title": "Deciding which \u00a721.4 row records a half-sentinel index entry requires T11's exclusion clause, which \u00a715.3 does not carry",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-03"
+   ],
+   "title": "\u00a721.1's normative rules \u2014 completeness, rule-over-row, and the specialization test \u2014 carry no requirement identifier",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "design-decision",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  }
+ ],
+ "pass_ok": {
+  "correctness": true,
+  "implementer": true,
+  "skeptic": true
+ }
+}
