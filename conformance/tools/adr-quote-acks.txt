@@ -146,3 +146,11 @@
 0126|a slab or alignment declaration MAY be declared, re-established or cleared as this step provides below: the fifth member as ADR-0124's erratum wrote it, quoted as the text decision 1 extends with "changed".
 0126|the position of every planar channel but the last: the fixed list's clause repair 3 replaces with "the position of every planar channel the new state keeps", quoted as the defect.
 0126|a change to a declared alignment or slab value: the wording of the rejected alternative, which would have added it to the give-up list; not in the spec by design.
+# Quotations in ADR-0126 of text its pre-round-34 audit erratum replaces (2026-09-09).
+0126|a slab declaration is declared, changed, re-established or cleared ([R-SLB-04]): the closing paragraph's slab sentence as decision 1 landed it, quoted in the Decision; the erratum restates it as the obligation [R-SLB-04] states.
+0126|This bar binds the commit as an actor: the file a violating commit would produce is conforming, the violation is not a file-conformance violation ([R-: decision 2's sentence as it landed, quoted in the Decision; the erratum restates it in [R-CNF-02]'s and [R-ERR-01]'s terms.
+0126|the file a violating commit would produce is conforming: the clause the erratum replaces, quoted as the defect.
+0126|which is the largest term: the slack Note's ranking the erratum cuts, quoted as the defect.
+0126|before any byte is fetched: §19.1's clause the erratum replaces, quoted as the defect.
+0126|the superseded ones: §5.1's anaphor the erratum replaces, quoted as the defect.
+0126|the wrapper: Appendix F's definite article the erratum replaces, quoted as the defect.

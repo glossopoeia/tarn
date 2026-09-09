@@ -164,18 +164,19 @@ Conformance is defined for five classes.
   not a finding about its bytes, while the failure of a reaching
   condition is.
   A few obligations this specification places on writers govern their
-  *conduct* rather than their output — where a value is published, or
-  which registry version a writer targets (§10.3, §18.3) — and a file
+  *conduct* rather than their output — where a value is published,
+  which registry version a writer targets (§10.3, §18.3), or the
+  barriers a commit performs (§9.2) — and a file
   is never nonconforming by virtue of one: conduct rules bind the
   actor, the predicate binds the bytes. A writer obligation whose
   violation this specification expressly declares not to be a
   file-conformance violation binds the actor in the same way; §6.3's
-  flags rules against a set ignore-lane bit — a creator's flags = 0,
-  and an updater's or compactor's copy-forward and set-no-other
-  (§20.5) — §6.2's pre-trailer gap longer than `[R-LIF-02]` step
-  5's pad, and `[R-LIF-02]`'s barriers (§9.2) are the cases this text
-  states, and each is declared where
-  it arises rather than enumerated here. `[R-CNF-02]`
+  flags rules against a set ignore-lane bit (a creator's flags = 0,
+  and an updater's or compactor's copy-forward and set-no-other,
+  §20.5), §6.2's pre-trailer gap longer than `[R-LIF-02]` step 5's
+  pad, and §20.3 step 4's bar on the fixed declarations of a layer
+  that stores a tile are the cases this text states, and each is
+  declared where it arises rather than enumerated here. `[R-CNF-02]`
 - **Conforming reader.** A reader MUST accept every conforming file of
   a format major version it implements, carrying no top-level record of
   a type it does not implement with MUST_UNDERSTAND = 1 — in a
@@ -613,8 +614,8 @@ every other field this specification defines is structural.
 > A packed variable-length payload — the layer
 > record's inline payload (§7.4) — has no fixed offsets to give; its
 > table omits the offset, size and class columns, a field's size
-> following from its type and each field's class
-> from the definitions above. §6.1's block is a 16-byte
+> following from its type or its length prefix and each field's
+> class from the definitions above. §6.1's block is a 16-byte
 > constant, where a Value column replaces type and range, and §7.2
 > folds each field's range into its Field cell. A variable-length field's value
 > includes its length prefix, so a name is structural: it determines
@@ -636,9 +637,9 @@ constant 16-byte **front signature block** (§6.1). The final 64 bytes of
 the file are the live **trailer** (§6.2). Between them lie the
 regions the file's commits appended — stored-tile payloads,
 tile-index regions, record extents (§5.2), the directory each commit
-appended, and each prior generation's trailer, the superseded ones
-slack and no structure (§5.2) — with slack
-wherever a commit left a gap; a commit appends its own directory,
+appended, and each prior generation's trailer — with the superseded
+among them slack and no structure (§5.2), and slack wherever a
+commit left a gap; a commit appends its own directory,
 pre-trailer pad, and trailer last, in that order (§6.2,
 `[R-LIF-02]` steps 3 and 5). The file size of a conforming file
 equals the live trailer's committed file length F, and F is a multiple
@@ -726,8 +727,9 @@ declined leaves the walk complete, that claimant being enumerated
 from its index entry or extent slot. An entry `[R-IDX-03]`
 classifies reject-tile on a structural ground leaves it complete
 too, and for the opposite reason: it contributes no claimant, the
-walk passes over it, and the bytes it nominally addresses fall to
-slack where no other claimant claims them (§15.3, §9.7). A rejected
+walk passes over it, and the bytes of the file it nominally addresses
+fall to slack where no other claimant claims them (§15.3, §9.7). A
+rejected
 layer's claimants
 are not enumerated, whether or not the rejection impeded reading
 them, and where the rejection is one the walk itself established,
@@ -1528,8 +1530,8 @@ the sum is reported as partial, and
 reports beside it. An entry `[R-IDX-03]` classifies
 reject-tile on a *structural* ground does not make the walk
 incomplete: the walk passes over
-it, and the bytes it nominally addresses fall to slack where no other
-claimant claims them (§15.3).
+it, and the bytes of the file it nominally addresses fall to slack
+where no other claimant claims them (§15.3).
 `[R-LIF-08]`
 
 > **Note.** Nothing here enumerates prior commits. A verifier
@@ -2712,8 +2714,10 @@ decline is one of the unchecked requirements `[R-CNF-11]` obliges
 the verifier to report, and it fixes the file's verdict as *cannot
 establish* only where the verifier established no violation
 elsewhere; the verifier SHOULD report the bound it applied and the
-stored length of the extent it declined, since an unreported decline
-is indistinguishable from a document the verifier never met. The
+stored length of the extent it declined, since the report
+`[R-CNF-11]` requires names the requirement and the ground but not
+the quantities an operator needs to raise the bound and re-run the
+check. The
 decline presupposes an
 encoding this specification assigns, whose document it defines; an
 encoding it does not assign leaves no document rule attached and is
@@ -2900,7 +2904,8 @@ A conforming reader opens a file by these steps, in order:
 
 1. **End of file.** Obtain the transport-authoritative file size F
    (`[R-CNT-10]`); an F below 128 is a validity error at file scope
-   before any byte is fetched (`[R-CNT-27]`, F5). These steps are
+   decided from F alone and needing no other byte of the file
+   (`[R-CNT-27]`, F5). These steps are
    ordered by dependency, not by
    I/O: a remote reader's suffix range for step 2 carries F in its
    own response, so steps 1 and 2 cost one request between them
@@ -3225,9 +3230,12 @@ An appender MUST, in order:
    NOT change one of
    these; the change is a new layer, or a whole-file rewrite under a
    fresh file_id (`[R-LIF-01]`, §20.5). This bar binds the commit as
-   an actor: the file a violating commit would produce is conforming,
-   the violation is not a file-conformance violation (`[R-CNF-02]`),
-   and no register row records it (§21.7). Between them the two lists
+   an actor: no file is nonconforming by virtue of its violation, and
+   no register row records the violation itself, the register
+   enumerating file-conformance violations (§21.1) and the bar stating
+   no condition a file can exhibit (§21.7, `[R-ERR-01]`, `[R-CNF-02]`);
+   a file such a commit leaves can be nonconforming on its own terms,
+   as the paragraph below sets out. Between them the two lists
    reach every declaration field of §7.4, and where a field is on
    both sides — a dimension extent, a planar layer's channel list, an
    interleaved layer's channel list — the permitted side states the
@@ -3309,8 +3317,9 @@ An appender MUST, in order:
    charged for by its length wherever storage is metered, so slack
    that is not data the caller chose to discard is paid for and never
    read. Extents this commit supersedes become slack (`[R-CNT-21]`);
-   a slab declaration is declared, changed, re-established or
-   cleared (`[R-SLB-04]`),
+   a slab declaration declared, changed or kept has its invariants
+   re-established over every run the new state keeps, or is cleared
+   (`[R-SLB-04]`),
    and an aligned layer's stored tiles — every one the new state
    keeps, not only those this commit adds — satisfy its invariant or
    the declaration is cleared (`[R-SLB-01]`, `[R-CNF-05]`).
@@ -3594,10 +3603,12 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
 > This is the only operation that reclaims slack; truncation past F
 > (`[R-LIF-04]`) and recovery to an earlier commit boundary
 > (`[R-LIF-06]`) also shorten a file, but neither reclaims any. Slack
-> accumulates a directory, a pad and a trailer per commit, plus a whole
-> index region for each layer whose stored-tile set or index content a
-> commit changed, plus every payload and record extent a commit
-> supersedes, which is the largest term (§20.3); a verifier
+> accumulates a directory, a pad and a trailer per commit, the gaps an
+> alignment or slab declaration leaves before the structures it places
+> (§16), a whole index region for each layer whose stored-tile set or
+> index content a commit changed, and every payload and every other
+> record extent a commit supersedes, unstores or drops, with every
+> tile a shortening strands (§20.3, §23.1); a verifier
 > whose walk completes reports the total (§9.7), and that total is
 > what tells an operator when to run this.
 
@@ -3621,15 +3632,16 @@ The register — §21.2 through §21.5 (`[R-ERR-02]`) — enumerates
 every detectable file-conformance violation this specification names: each row is one
 malformed condition, with the outcome class its scope determines
 (§2.4) — except where a rule assigns one expressly, as `[R-CNT-25]`'s
-quarantine and `[R-MTA-09]` do for every §21.5 row, whatever the
-containing scope —
+quarantine does for every §21.5 row and `[R-MTA-09]` for the frame
+constraints R4 registers, whatever the containing scope —
 the actor obliged to detect it (`[R-CNF-04]`, `[R-CNF-11]`),
 the point by which detection is due (§19.2), and the requirement that
 defines it. A Governing rule cell names that requirement first; any
 identifiers following it in parentheses are the further rules the
-condition reads, or the section defining a value set it reads (L26,
-L31), cited without brackets to keep them distinct from the
-governing one. Its **completeness is normative** — a
+condition reads, or the section stating what it reads where no
+requirement identifier does, a value set (L31) or a registered
+type's scope (L26), cited without brackets to keep them distinct
+from the governing one. Its **completeness is normative** — a
 *detectable* file-conformance violation this specification names and
 the register omits is a defect in this document, detectability being the gate
 `[R-CNF-07]` already applies and §21.7 states the test for: a
@@ -3795,7 +3807,7 @@ layer unaffected. 49 conditions.
 | L28 | Layer record has slab S = 0 but a nonzero slab alignment A_slab | — | reader | layer access | `[R-CNT-23]` (R-SLB-02) |
 | L29 | Layer record declares S ≠ 0 with an A_slab that is not a power of two in 1 … 2^62 (A_slab = 0 included) | A_slab = 0; A_slab not a power of two; A_slab above 2^62 | reader | layer access | `[R-CNT-23]` (R-SLB-02) |
 | L30 | A channel entry's fill length prefix differs from the element size of the channel's declared type | prefix longer than the element size; prefix shorter than the element size | reader | layer access | `[R-CNT-23]` (R-TYP-06) |
-| L31 | Layer record's index_encoding is a value other than 1 — 0, reserved 2–0x7F, or experimental ≥ 0x80 | index_encoding 0; reserved 2-0x7F; experimental >= 0x80 | reader | layer access | `[R-CNT-23]` (§15.1) |
+| L31 | Layer record's index_encoding is a value other than 1 — 0, reserved 2–0x7F, or experimental ≥ 0x80 | index_encoding 0; reserved 2-0x7F; experimental >= 0x80 | reader | layer access | `[R-CNT-23]` (§7.4) |
 | L32 | A layer geometry field whose floor is 1 is 0 | rank d; channel count C; tile extent Tᵢ | reader | layer access | `[R-GEO-01]` (R-CNT-23) |
 | L33 | Layer record's linearization is a value other than 1 — 0, reserved 2–3, reserved 4–0x7FFF, or experimental ≥ 0x8000 | linearization 0; reserved 2-3; reserved 4-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-GEO-05]` (R-CNT-23) |
 | L34 | A channel entry's type is outside 1 … 13 — 0, reserved 14–19, reserved 20–0x7FFF, or experimental ≥ 0x8000 | type 0; reserved 14-19; reserved 20-0x7FFF; experimental >= 0x8000 | reader | layer access | `[R-TYP-03]` (R-CNT-23, R-CNF-04) |
@@ -3902,7 +3914,7 @@ reported as `[R-ERR-04]` requires.
 | A record type this specification has not assigned, from the experimental range (≥ 0x8000, §10.2), carries MU = 0 | Ignored, and preserved or dropped per its PE bit; a *reserved*-range type is read the same way, but emitting one is a violation (F36, L25) | `[R-CNT-15]`, `[R-CNT-18]`, `[R-WRT-08]` |
 | An ignore-lane flag bit (16–31) is set | Ignored; the file is conforming — such bits are defined by later minor versions | `[R-CNT-08]` |
 | version_minor is higher than this text defines | Accepted; minors never gate | `[R-CNT-07]` |
-| Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded structures | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier — as a partial total — an upper bound naming what stopped the walk — where its walk did not complete; only compaction reclaims it | `[R-CNT-21]` |
+| Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded regions | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier; where its walk did not complete, as a partial total, an upper bound naming what stopped the walk; only compaction reclaims it | `[R-CNT-21]` |
 | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
 | A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes. No document rule attaches at such an encoding, so a verifier certifies, reporting the record it ignored | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]`, `[R-MTA-10]` |
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
@@ -3939,8 +3951,10 @@ publishing experimental values binds a writer's conduct and not the
 bytes. In both the outcome records a reader's capability, not a defect
 in the bytes, and the diagnostic ought to distinguish the two.
 Neither is a register row: the register enumerates file-conformance
-violations (§21.1), the first is a file this document declines to
-judge, and the second carries none. What is registered in each case is the neighbouring condition
+violations (§21.1); the first is a file this document declines to
+judge under format major 1 (§2.3, `[R-CNF-13]`), and the file in the
+second carries no violation at all. What is registered in each case
+is the neighbouring condition
 that *is* a violation — version_major = 0, which declares no major at
 all (F18, `[R-CNT-07]`), and a *reserved*-range
 type, whose emission `[R-CNT-15]` does make a violation (F35, F36,
@@ -4558,9 +4572,9 @@ is a new format major version.
 - **[IEEE 754]** IEEE 754-2019 — binary16, binary32, and binary64 (§12.1),
   and the conversion from decimal text to binary64 under IEEE 754's
   default rounding-direction attribute, roundTiesToEven (§18.2).
-- **[RFC 1950]** ZLIB Compressed Data Format Specification version 3.3 — the wrapper codec 2 excludes (§17.2, T15).
+- **[RFC 1950]** ZLIB Compressed Data Format Specification version 3.3 — a wrapper codec 2 excludes (§17.2, T15).
 - **[RFC 1951]** DEFLATE Compressed Data Format Specification version 1.3 — codec 2 (§17.2).
-- **[RFC 1952]** GZIP file format specification version 4.3 — the wrapper codec 2 excludes (§17.2, T15).
+- **[RFC 1952]** GZIP file format specification version 4.3 — a wrapper codec 2 excludes (§17.2, T15).
 - **[RFC 8878]** Zstandard Compression and the `application/zstd` Media Type — codec 3 and metadata encoding 2 (§17.2, §18.2).
 - **[LZ4 Block]** LZ4 Block Format Description, version 1.0 — `doc/lz4_Block_format.md` in the lz4/lz4 repository, as published with lz4 release v1.9.4 — codec 4 (§17.2).
 - **[RFC 8259]** The JavaScript Object Notation (JSON) Data Interchange Format — the user-metadata document (§18.2).

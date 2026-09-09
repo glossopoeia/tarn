@@ -171,3 +171,79 @@ deferred.
 - **ADR-0091**: a rule's reach is settled by an ADR; this is the ADR.
 - **ADR-0119**: the repair list against the diff.
 - **ADR-0104**: editorial repairs ride with the decision.
+
+## Erratum, 2026-09-09 — the pre-round-34 audit
+
+Six lanes read the seventeen hunks of this decision's commit the next
+morning, on the shape the two previous audits set: four subject lanes on
+Sonnet from the start, and two cross-hunk passes on Opus, one grouped by
+rule and one by operation. Opus refused the by-rule pass three times, at
+launch and on two resumes, and it ran on Sonnet; the by-operation pass
+completed twice on Opus, once at launch and once re-run on the first resume,
+and was refused on the second. The four lanes returned 10 findings between
+them; the two Opus results returned 12 and 13, largely the same twelve seen
+twice; the by-rule pass, on Sonnet after its three refusals, returned 3, two of them
+the Opus passes' and one its own, a double-count in the slack Note. Thirty-eight findings merge by hand into seventeen distinct defects, every one in this
+decision's wording, and every one is repaired in the commit carrying this
+erratum. The lanes are fallback-grade; the Opus pass did the substantive
+work, and the lanes converged on it in five places and added five.
+
+**None is byte-level by the hand-check.** One Opus result graded the bar's
+category sentence byte-level, the other and the lane an overclaim: the
+sentence said *"the file a violating commit would produce is conforming"*
+of every violation of the bar, while the paragraph below names nine rows
+that witness a changed codec, filter, fill or geometry on a stored tile. A
+verifier applies the rows to the bytes and reads no history, so no verdict
+moves on the sentence; it was false, and it is repaired. It now says what
+`[R-CNF-02]` and `[R-ERR-01]` between them give: *"no file is nonconforming
+by virtue of its violation, and no register row records the violation
+itself"*, the register enumerating file-conformance violations and the
+bar stating no condition a file can exhibit,, and *"a file such
+a commit leaves can be nonconforming on its own terms, as the paragraph
+below sets out"*.
+
+**The fourth verb landed in the wrong clause.** Decision 1 added *changed*
+to the permitted list, where it belongs, and repair 1 pasted the same four
+verbs into the closing paragraph's slab sentence, which had restated
+`[R-SLB-04]`'s two discharges and now listed its two triggers beside them,
+so that the step's one statement of the slab obligation read as a
+permission. It reads *"a slab declaration declared, changed or kept has its
+invariants re-established over every run the new state keeps, or is cleared
+(`[R-SLB-04]`)"*, the parity the alignment sentence beside it already had.
+
+**The bar's category was declared and `[R-CNF-02]`'s list not told**, in the
+same commit that edited the list; and the barriers the list gained sit in
+§9.2 under `[R-CNF-02]`'s first category, conduct rules, not its second. The
+barriers now stand beside §10.3 and §18.3 as a conduct rule, the bar joins
+the second list as its third member, and the flags gloss sits in parentheses
+so that the list's commas are its own.
+
+**Below the line.** The slack Note's *"which is the largest term"* was false
+on §20.3's own figures, which point both ways; the Note names the sources
+§5.2 names, alignment and slab gaps included, and the operations that strand
+bytes, and ranks nothing, and counts an index region once, as a record extent
+of its own kind. §19.1's *"before any byte is fetched"* was false of
+the remote reader the next sentence describes; the floor is *"decided from F
+alone and needing no other byte of the file"*. `[R-MTA-09]`'s new reason for
+its SHOULD argued for the MUST above it; it gives the SHOULD's own, the
+quantities an operator needs to raise the bound. §21.1's parenthetical gloss
+fit L31 and not L26, whose section states a registered type's scope, and
+L31's own cell pointed at §15.1 where §7.4 defines the value set; the gloss
+names both and L31 cites §7.4. §21.1's *"and `[R-MTA-09]`"* distributed the
+rule over every §21.5 row; it governs R4's frame constraints and says so.
+§21.6's *"the first is a file this document declines to judge"* sat in a
+paragraph that had just called both cases conforming files; it declines to
+judge *"under format major 1"*, and the second *"carries no violation at
+all"*. §5.1's *"the superseded ones"* resolved to the trailers alone; the
+gloss now ranges over the list, and §21.6's slack row says *"superseded
+regions"* and no longer nests one dash pair inside another. §4.7's Note explained the missing size column by a property the
+variable-length fields lack; a size follows *"from its type or its length
+prefix"*. Appendix F's two entries each called their subject *"the
+wrapper"*; each is *"a wrapper"*. And the slack qualifier at §5.2 and §9.7
+now says *"the bytes of the file it nominally addresses"*, an entry's nominal
+range being free to reach past F.
+
+**Register unchanged**: 120 conditions, 277 instances, 331 vectors;
+`tarn_check` PASS; seven quotation and two propagation acknowledgements.
+The repair list of this erratum was ticked against its diff: eighteen
+edits and the row's dashes, nineteen hunks, none deferred.
