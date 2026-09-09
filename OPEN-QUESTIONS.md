@@ -1821,6 +1821,85 @@ no fixed target. Both are register bookkeeping and neither moves a byte.
   an instance by §21.1's own test; the corpus has no vector for it, the gate
   fails on an instance with none, so the split lands with TV-0963.
 
+### Q-A8. Are the writer tiers bundles of operations, and is compaction one rewrite among several? [shaping]
+**Question:** §2.3 defines five conformance classes and §20.1 three writer
+tiers, creator, appender and compactor, on two axes the document never
+relates. The classes bundle obligations: a writer answers for the bytes it
+produces, an updater additionally for what it carries forward. The tiers are
+shapes of operation, indexed by whether the operation has an input file and
+whether its output keeps that file's identity: a creator has no input, an
+appender extends its input under the same file_id, a compactor rewrites it
+under a fresh one. So an appender and a compactor are both updaters and a
+creator is only a writer, and no sentence says so. §20.5 then specifies the
+compactor closely, and its history is a fork in every sentence that restates
+a general rule for that one tier: Q-A6 (whether the creation path binds it,
+decided twice), ADR-0083 (version_minor), ADR-0120 (the drop licence),
+ADR-0128 (the checksum duty over what it copies). Meanwhile the document
+routes two other operations to "a whole-file rewrite under a fresh file_id"
+and specifies neither: §20.3 step 4 sends a changed fixed declaration of a
+layer that stores tiles to one, citing §20.5, and §20.4 sends dropping a
+layer to one, adding "That is not compaction, which carries every layer of
+its input forward". A rewrite that re-declares one layer, or drops one, and
+must still preserve the records it does not understand has no rules. Round
+35 (2026-09-09) exposed the gap, and the maintainer asked the same day why
+the tiers separate what the classes join.
+- **Why it matters.** The tiers bind claims, not files. File conformance is
+  a predicate on bytes (`[R-CNF-02]`), so a tool that reads a file with a
+  library and writes what it understood through the creation path emits a
+  conforming file and is a conforming reader and creator; what it is not is
+  an updater, and the difference shows only in what the input carried that
+  the tool did not understand: a PE = 1 record dropped, an ignore-lane bit
+  cleared, an unknown MU = 1 layer skipped where a compactor must refuse. The
+  tier names therefore carry no obligation of their own. Every obligation in
+  §20.5 attaches to an operation the compactor happens to perform: creating a
+  file (`[R-LIF-02]`'s creation path, a fresh file_id, flags = 0 unless a bit
+  is carried); carrying forward a structure it did not decode (byte-identical
+  re-emission, §20.4's table, and verification of what is copied, which
+  ADR-0128 fixed); relocating a structure (index regeneration, slot
+  re-pointing, the MU = 1 refusal, the classification of every entry the
+  regeneration meets); and, in the two unspecified rewrites, re-creating a
+  layer's content or dropping one. Stated by operation, each rule binds
+  whichever tool performs the operation, the three tiers become the bundles
+  a typical tool performs, and the sentences the forks have lived in, §20.5's
+  restatements of general rules, have no reason to exist.
+- **Options:** (a) **Two classes, obligations by operation, three tiers as
+  named bundles, compaction one rewrite among several.** §2.3 or §20.1 states
+  the mapping once: a creator is a writer; an appender and a rewriter are
+  updaters, the appender's commit extending the file under its identity and
+  the rewriter's output a new file under a fresh one. §20.5 becomes the
+  rewrite's section, its rules stated conditionally on the operation: what an
+  updater copies it verifies; what it relocates it regenerates and re-points;
+  a type it does not implement with MU = 1 it refuses to relocate; what it
+  re-creates is new output under the creator's rules. It names the rewrites:
+  **compaction**, which relocates freely and changes nothing, claiming
+  content identity under `[R-MDL-02]`; **dropping a layer or record**, §20.4's
+  rewrite; and **re-declaring a layer that stores tiles**, §20.3 step 4's
+  rewrite, in which the re-declared layer is new output and every other
+  structure is carried. Physical reordering is a placement choice inside any
+  rewrite, not a case of its own, since a rewriter preserves no placement.
+  `[R-LIF-01]`'s "(compaction, §20)" becomes "(a rewrite, §20.5)", §20.3 step
+  4's and §20.4's citations follow, Appendix H's writer and updater entries
+  carry the mapping, Appendix G item 8 speaks of a rewriter, and the
+  document's sixty-odd uses of *compact*, *compaction* and *compactor* are
+  read against the new frame, most surviving as the named case. Q-A7 and
+  Q-C10 are restated over rewriters. **The maintainer directed this option
+  on 2026-09-09.** (b) **A sixth class, conforming compactor**, with its own
+  §2.3 definition and Appendix H checklist, §20.5 left as its section. Gives
+  the claim a meaning to a user; adds a class whose obligations are conduct
+  rules with no register row, and leaves the other two rewrites unspecified.
+  (c) **Leave the tiers**, adding only the one sentence that maps them to the
+  classes. Cheapest; leaves §20.5's restatements where the forks have lived
+  and the two rewrites without rules.
+- **What settles it:** whether any obligation in §20.5 binds a compactor and
+  not a tool performing the same operation under another name. If none does,
+  the tiers are names and (a) is the honest form; if one does, the class in
+  (b) is what names it. And whether the two unspecified rewrites owe
+  preservation at all: a tool that drops a layer or re-declares one and may
+  drop what it does not understand is a creator and needs no rule, while one
+  that owes preservation is a rewriter and only (a) gives it rules. The
+  decision is an ADR's, under rule 3 of the working instructions, and it
+  reaches every section that names a compactor.
+
 ### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
 **Resolution:** a non-normative Appendix G — codec 1 or a named codec
 build (byte-identity across implementations is unattainable for
