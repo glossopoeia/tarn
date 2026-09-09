@@ -154,3 +154,11 @@
 0126|before any byte is fetched: §19.1's clause the erratum replaces, quoted as the defect.
 0126|the superseded ones: §5.1's anaphor the erratum replaces, quoted as the defect.
 0126|the wrapper: Appendix F's definite article the erratum replaces, quoted as the defect.
+
+# Quotations of text ADR-0127 (round 34's repairs) replaces, and of text it left behind in earlier ADRs (2026-09-09).
+0127|declared, changed, re-established or cleared: the fifth member's verbs as ADR-0126 left them, quoted as the defect; repair 1 drops the third verb.
+0127|every run the new state keeps: the erratum's slab clause quantifier, quoted as the defect; repair 5 restates it over every run of the new state.
+0126|a slab or alignment declaration MAY be declared, changed, re-established: decision 1's member as it landed; ADR-0127 drops re-established as naming the default the list is carved out of, changed staying at every site.
+0126|1 or 2; see below: §18.2's cell as round 33 declined it; ADR-0127 makes the cell state the value set, a second reporter having read it the same way.
+0126|a slab declaration declared, changed or kept has its invariants re-established: the erratum's restatement of the slab obligation; ADR-0127 grounds it in [R-SLB-03] and [R-CNF-05] as the alignment half is.
+0124|Between them the two lists reach every declaration field of: the tie-break sentence with a dimension extent among its both-sides examples; ADR-0127 drops that example, the fixed list being the permitted list's complement by construction.

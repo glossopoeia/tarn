@@ -1102,6 +1102,16 @@ is unfixed. From round 25's recovered verifier walk.
   verifier's resource decline under `[R-ERR-04]`, which establishes no
   violation — and ADR-0123 adds it at §5.2 and §9.7. This entry's own question,
   what a file-scope rejection's partial total is, is exactly where it was.
+- **Round 34 (2026-09-09) found the test from the tile side** (verifier-02):
+  §5.2 stipulates the layer-scope rule with its counter-factual spelled out,
+  *whether or not the rejection impeded reading them*, states no file-scope
+  rule, and at tile scope names two cases that leave the walk complete while
+  saying nothing of a tile-scope row found after its claimant was enumerated
+  (T1 through T5, T13 through T26). All three passes read the operative
+  criterion, *does not enumerate every region's claimants*, as deciding every
+  case, and graded the silence a reading hazard rather than a fork: the
+  verdict is *nonconforming* under every reading (`[R-CNF-11]`). Option (a)'s
+  sentence would state the tile-scope case beside the file-scope one.
 
 ### Q-B6. Does §20.3 step 4's bar reach a channel's sample type and the channel order? [Resolved → ADR-0113, amended by ADR-0114; superseded by ADR-0124]
 **ADR-0124 (2026-09-08) supersedes both answers with a closed list:** a layer
@@ -1431,6 +1441,13 @@ profile's criterion so the list follows from it. Owning section Appendix G.
   no field of the format can refute. Whatever criterion option (c) produces must
   decide declaration order too, and see **Q-B6**, where a channel-order change is
   now a byte-level fork in its own right.
+- **Round 34 (2026-09-09, writer-01): a degree of freedom the profile does not
+  pin, a compactor's drop licence.** §20.4 lets a compactor drop any record
+  whose governing flags are MU = 0 and PE = 0 whenever it rewrites the file,
+  and item 8 claimed a compactor's output reproducible modulo its trailer
+  alone. ADR-0127 makes item 8 name the licence; whether the profile should
+  pin retention is this entry's question, since the criterion option (c)
+  produces must decide it as it must decide declaration order.
 
 ### Q-A7. Can a compactor obtain the fact §20.5's version_minor floor turns on? [shaping]
 **Question:** §20.5 makes the output's `version_minor` SHOULD be at least
@@ -1771,6 +1788,13 @@ no fixed target. Both are register bookkeeping and neither moves a byte.
   claimant the vector damages, the other being any.
 - **What settles it:** whether the register's conventions are ever cited by
   identifier elsewhere, and whether the corpus needs a pair-level target.
+- **Round 34 (2026-09-09, quiz-03) found the first question again, cold:**
+  §21.1 states the completeness rule, the rule-over-row tie-break and the
+  specialization test in normative text with no identifier while §21.7
+  through §21.9 each declare one, and §2.2 says normative requirements carry
+  identifiers. Two passes graded it a decision; the third held that §2.2's
+  convention is stated over *requirements* and leaves the register's reading
+  rules outside it, which is option (b)'s ground.
 
 ### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
 **Resolution:** a non-normative Appendix G — codec 1 or a named codec
