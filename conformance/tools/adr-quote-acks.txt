@@ -162,3 +162,13 @@
 0126|1 or 2; see below: §18.2's cell as round 33 declined it; ADR-0127 makes the cell state the value set, a second reporter having read it the same way.
 0126|a slab declaration declared, changed or kept has its invariants re-established: the erratum's restatement of the slab obligation; ADR-0127 grounds it in [R-SLB-03] and [R-CNF-05] as the alignment half is.
 0124|Between them the two lists reach every declaration field of: the tie-break sentence with a dimension extent among its both-sides examples; ADR-0127 drops that example, the fixed list being the permitted list's complement by construction.
+
+# Quotations in ADR-0127 of text its pre-round-35 audit erratum replaces (2026-09-09).
+0127|every one the new state keeps, not only those this commit adds: the alignment half as decision-era text left it, quoted in the Context; the erratum sweeps it onto the slab half's quantifier.
+0127|its value determines nothing a conforming reader or verifier does: repair 3's gloss as it landed, quoted in the Decision; the erratum cuts the gloss, the four-item test standing alone.
+0127|A re-declaration that changes the layer's index content re-emits the region: repair 6's sentence as it landed; the erratum restates it with the no-tile case and cites [R-WRT-04].
+0127|folds a field's range into its Field cell where it states one, its length and extent: repair 7's clause as it landed; the erratum says a field's remaining bounds.
+0127|so the front block, directory and trailer cannot all fit: repair 9's F5 clause as it landed; the erratum restores the 64-aligned-offset qualifier [R-CNT-27] turns on.
+0127|no reader scans backward ([R-LIF-05]), the coverage walk claims a live payload's bytes as its tile's extent: repair 11's live half as it landed; the erratum names every claimant the walk has.
+0127|the row is the unit, and each instance is one file: repair 12's sentence as it landed; the erratum says what the row is the unit of and that an instance is covered by at least one vector.
+0127|the value being distinct from S (non-sentinel): repair 16's rider as it landed; the erratum makes it neither field being S and sweeps [R-IDX-02], the sum row and T11.

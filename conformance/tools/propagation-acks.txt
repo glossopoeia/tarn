@@ -182,3 +182,7 @@ R-SLB-03 -> R-SLB-03: ADR-0127 grounded §20.3 step 4's closing slab clause in [
 R-ENC-03 -> R-IDX-03: ADR-0127 gave §15.3's value-domain row the exclusion T11's cell already carries, the value being distinct from the sentinel; T11 is the restatement the rule now matches and was not changed.
 R-SLB-03 -> R-SLB-01: the alignment sentence beside the slab clause is the parity ADR-0127 restated the slab clause to, quantified over every kept tile and grounded in [R-SLB-01] and [R-CNF-05]; it was the model, not the subject.
 R-MTA-05 -> R-CNF-12: ADR-0127 named both rules' rows in §21.1's verifier-detected sentence and rewrapped its tail, so the clause "[R-CNF-12]'s licence to reject the nonconforming file being untouched", ADR-0125's erratum's and unchanged in words, moved lines; §21.6's closing paragraph and §7.4's [R-CNT-18] use the phrase for their own cases and were not the subject.
+
+# ADR-0127's erratum, the pre-round-35 audit (2026-09-09).
+R-CNT-12 -> R-SER-08: the erratum restated [R-TYP-04]'s one-case sentence in §21.1 with the scope §12.3 gives it, a sample value; §12.3 is the source and was not the subject.
+R-CNT-12 -> R-CNT-12: the erratum named F25, F26, L46 and L47 in §21.1's inventory of verifier-detected rows and cited [R-CNT-12]'s reading of MU = 1 with PE = 0; the rows themselves and §7.3's [R-CNT-22] sentence that groups them with [R-CNT-12]'s are the sources and were not the subject.

@@ -600,8 +600,7 @@ conforming reader or verifier does with the bytes it reads — where a
 byte lies, how it decodes, what a decoded value is, or whether the
 file, layer or tile is accepted at all, which is the sense
 `[R-CNT-07]`, `[R-MTA-02]` and `[R-SEC-06]` already use. It is
-**descriptive** if it determines none of those: its value determines
-nothing a conforming reader or verifier does, and a reader MUST NOT
+**descriptive** if it determines none of those, and a reader MUST NOT
 alter decoding based on it; each descriptive field's definition states
 what a reader does when the field contradicts the data it describes. In
 format major 1 `version_minor` is the only descriptive field, and
@@ -618,8 +617,8 @@ every other field this specification defines is structural.
 > class from the definitions above. §6.1's block is a 16-byte
 > constant, where a Value column replaces type, name and range, and
 > §7.2 folds a field's range into its Field cell where it states one,
-> its length and extent fields' bounds being stated in the rules below
-> the table. A variable-length field's value
+> a field's remaining bounds being stated in the rules below the
+> table. A variable-length field's value
 > includes its length prefix, so a name is structural: it determines
 > where the field after it begins. Every non-obvious encoding is followed by a worked numeric
 > example, and every sentinel or overloaded encoding additionally has a
@@ -945,9 +944,10 @@ directory is conforming and merely costs the second request.
 > request counts are what it costs a reader that fetches exactly what it
 > needs.
 
-A remote reader MUST handle a 200 response to a range request (abort
-or accept the full body deliberately — never treat the body prefix as
-the requested range) and SHOULD fall back to a size probe plus an
+A remote reader MUST handle a 200 response to a range request (HTTP's
+terms, RFC 9110, where the transport is HTTP; abort or accept the full
+body deliberately — never treat the body prefix as the requested
+range) and SHOULD fall back to a size probe plus an
 absolute range on transports without suffix-range support — without
 the fallback, remote open fails outright on such transports. The size
 a remote reader compares against committed_file_length MUST be
@@ -1662,8 +1662,8 @@ region of it returns no samples. `[R-GEO-02]`
 > extents may grow and not shrink; a planar layer's channel list may
 > be extended or shortened at its end, one or the other in a commit;
 > its names may change, and a
-> slab or alignment declaration may be declared, changed,
-> or cleared; several of these in one commit, each subject to every rule
+> slab or alignment declaration may be declared, changed or
+> cleared; several of these in one commit, each subject to every rule
 > the declarations it produces are under; and every other declaration
 > is fixed while the layer stores a tile, a change to one being a new
 > layer or a whole-file rewrite. A layer that stored no tile in the
@@ -2208,7 +2208,8 @@ bytes `FF ×16 00 ×4`. A sentinel tile contributes fill to the
 reference array (§3.2, §13). Sentinel entries are a reserved pattern,
 not offsets or lengths: `[R-ENC-03]`'s value-domain rule and
 `[R-ENC-04]`'s sum rule apply to the fields of non-sentinel entries
-only. `[R-IDX-02]`
+only, and an entry with exactly one field at the sentinel value is
+§15.3's own row before either rule reads it. `[R-IDX-02]`
 
 > **Rationale.** All-ones was chosen over zero/zero for its failure
 > modes: a zeroed index region (uninitialized buffer, filesystem
@@ -2245,8 +2246,8 @@ continuity, and in the coverage walk. `[R-IDX-03]`
 | offset = S ∧ length ≠ S, or offset ≠ S ∧ length = S | *structural*: reject-tile |
 | length = 0 (non-sentinel) | *structural*: reject-tile — absence is spelled sentinel; no codec emits zero bytes |
 | offset < 16 (non-sentinel) | *structural*: reject-tile — the front block is never payload |
-| offset > 2⁶³ − 1 or length > 2⁶³ − 1, the value being distinct from S (non-sentinel) | *structural*: reject-tile (`[R-ENC-03]`) |
-| offset + length overflows, or offset + length > F − 64 (non-sentinel) | *structural*: reject-tile — the extent would touch the live trailer or beyond |
+| offset > 2⁶³ − 1 or length > 2⁶³ − 1, neither field being S (non-sentinel) | *structural*: reject-tile (`[R-ENC-03]`) |
+| offset + length overflows, or offset + length > F − 64, each field alone being in domain (non-sentinel) | *structural*: reject-tile — the extent would touch the live trailer or beyond |
 | stored bytes fail the entry's crc | reject-tile (§8.2) — the entry itself is well-formed; its extent stands |
 | two stored extents of the same layer overlap, or a stored extent overlaps its own layer's index region or sub-record extents | *verifier*: reject-layer (§7.2) |
 | a stored extent overlaps any structure outside its own layer | *verifier*: reject-file (§7.2) |
@@ -3203,7 +3204,8 @@ An appender MUST, in order:
    emitted per §15, and every other entry byte-identical at its
    disk-ordinal position (a growth renumbers ordinals wherever
    `[R-GEO-06]` moves them, and nothing else this step permits moves
-   one). A layer
+   one). A layer the new state leaves addressing no tile has no region
+   to re-emit and the slot (0, 0) (§15.4, `[R-CNT-17]`). A layer
    whose record alone changes keeps its extent slot, pointing at
    the existing region, as does a layer the commit leaves
    untouched (`[R-WRT-05]`); relocating a live index region is
@@ -3213,7 +3215,8 @@ An appender MUST, in order:
    A layer that stores a tile **in the generation this commit
    supersedes** keeps its declarations, with these exceptions and no
    other: its name, and its dimension and channel names, MAY change;
-   an extent MAY grow, and MUST NOT shrink; a planar layer's channel
+   a dimension extent MAY grow, and MUST NOT shrink; a planar layer's
+   channel
    list MAY be extended at its end or shortened from its end, but not
    both in one commit; and a slab or alignment declaration MAY be
    declared, changed or cleared as this step provides below.
@@ -3318,12 +3321,13 @@ An appender MUST, in order:
    charged for by its length wherever storage is metered, so slack
    that is not data the caller chose to discard is paid for and never
    read. Extents this commit supersedes become slack (`[R-CNT-21]`);
-   a slab declaration declared, changed or kept has its invariants
-   satisfied over every run of the new state, the runs this commit adds
-   included, or is cleared (`[R-SLB-03]`, `[R-SLB-04]`, `[R-CNF-05]`),
-   and an aligned layer's stored tiles — every one the new state
-   keeps, not only those this commit adds — satisfy its invariant or
-   the declaration is cleared (`[R-SLB-01]`, `[R-CNF-05]`).
+   on a layer this commit modifies, a slab declaration declared,
+   changed or kept has its invariants satisfied over every run of the
+   new state, the runs this commit adds included, or is cleared
+   (`[R-SLB-03]`, `[R-SLB-04]`, `[R-CNF-05]`), and an aligned layer's
+   stored tiles, every one the new state holds and those this commit
+   adds included, satisfy its invariant or the declaration is cleared
+   (`[R-SLB-01]`, `[R-CNF-05]`).
 5. **Re-emit the directory** per §20.4, followed by its CRC
    (`[R-LIF-02]` step 3).
 6. **Commit** (`[R-LIF-02]` steps 4–6): barrier; pad;
@@ -3371,7 +3375,9 @@ An appender MUST, in order:
 >
 > **(b) Tiles added to an existing layer.** That layer's index is
 > re-emitted whole; a commit that supersedes stored tiles takes the
-> same shape, hatching the superseded payloads as well.
+> same shape, hatching the superseded payloads as well, and so does a re-declaration
+> of an empty layer that changes its index content, with no tile
+> written (see (c)).
 >
 > ```
 > before │front│ tiles │ index │ dir₁│pad│tr₁│
@@ -3396,10 +3402,14 @@ An appender MUST, in order:
 > generation the commit supersedes is re-declared freely, subject to
 > every rule its new declarations are subject to, which is the same step's
 > permission — a layer the commit itself empties does not qualify. A
-> re-declaration that changes the layer's index content re-emits the
-> region (step 4, `[R-CNT-17]`) and is shape (b); one that leaves it
-> unchanged is this shape. Editing
-> user metadata is not this shape:
+> re-declaration that changes the layer's index content takes shape (b)
+> with no tile written, the region re-emitted whole at a new placement
+> (step 4, `[R-WRT-04]`), unless the new declarations address no tile:
+> then there is no region to emit (`[R-CNT-17]`), the extent slot becomes
+> (0, 0), the old region falls to slack, and the commit is shape (c). A
+> re-declaration that leaves the index content unchanged is shape (c)
+> too. Editing
+> user metadata is not shape (c):
 > its document lives in an extent (`[R-CNT-25]`), so a new extent is
 > appended and the old one becomes slack, as in (b).
 >
@@ -3676,8 +3686,10 @@ the same terms a row does, and where such an entry and the rule it
 cites diverge, the rule governs there too.
 
 The **Instances** column enumerates what a conformance corpus builds
-for that row (§21.8): the row is the unit, and each instance is one
-file. An instance names a field the condition ranges over, a
+for that row (§21.8): the row is the unit a vector is attributed to
+(`[R-VEC-02]`), and each instance is one distinguishable file, covered
+by at least one vector (`[R-VEC-03]`). An instance names a field the
+condition ranges over, a
 container it can occur in, one of several alternatives the condition
 text states, or any combination of the three — a condition applying
 to two alternatives in two containers has four. What a cell
@@ -3714,12 +3726,14 @@ several such rows it obliges the reader that serves the structure to
 serve it unchanged (`[R-CNT-22]`, whose registered type keeps its
 fixed semantics, F28 and L49; and `[R-MTA-05]`, whose unsorted
 document readers process as they find it, F27 and L48), `[R-CNF-12]`'s
-licence to reject the nonconforming file being untouched in each.
-`[R-SER-08]` is the one rule that
-goes the other way: it resolves a nonconforming interleaved boolean
-byte to a value rather than serving it through, which is why
-`[R-TYP-04]` (§12.3) makes it the one case where a reader resolves a
-byte rather than serving it through.
+licence to reject the nonconforming file being untouched in each, as
+it is for `[R-CNT-12]`'s reserved-flag rows (F26, L47), whose bits
+readers ignore. `[R-SER-08]` is the one rule that goes the other way
+for a value a reader returns: it resolves a nonconforming interleaved
+boolean byte to a sample value rather than serving it through, which
+is why `[R-TYP-04]` (§12.3) makes it the one case where a reader
+resolves a byte to a sample value rather than serving it through; `[R-CNT-12]`'s reading of MU = 1 with PE = 0 as PE = 1 (F25,
+L46) resolves a flag and returns no data.
 
 #### 21.2 File-scope violations
 
@@ -3737,7 +3751,7 @@ premise is unmet and `[R-CNT-07]` governs (§21.6).
 | F2 | A u64 offset, length, or count field holds a value above 2^63 - 1 | dir_offset; dir_length; committed_file_length; non-layer top-level record extent_offset; extent_length | reader | open | `[R-ENC-03]` (R-CNT-06, R-CNT-13) |
 | F3 | A sum of a u64 offset and length taken from the file exceeds 2^63 - 1 although each field alone is in domain | dir_offset + dir_length; non-layer top-level record extent_offset + extent_length | reader | open | `[R-ENC-04]` (R-CNT-06, R-CNT-13) |
 | F4 | Two layer records in the live directory carry byte-identical name fields, both obtainable within their records' inline_length (comparison is raw bytes, no normalization) | layer record name | reader | open | `[R-ENC-15]` (R-ENC-13) |
-| F5 | File size is below the 128-byte minimum, so the front block, directory and trailer cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-27]` (R-CNT-01, R-CNT-06) |
+| F5 | File size is below the 128-byte minimum, so the front block, a directory at an offset of at least 16 and the trailer at a 64-aligned offset cannot all fit | F (physical file size); committed_file_length | reader | open | `[R-CNT-27]` (R-CNT-01, R-CNT-06) |
 | F6 | The 16-byte front signature block is not byte-identical to the constant; the obligation binds a reader holding those bytes resident, and a reader that would have to fetch them MAY defer or omit the check (`[R-CNT-04]`); a verifier holds no such exemption (§2.3) | magic bytes [0,8); reserved bytes [8,16) | reader | open | `[R-CNT-04]` |
 | F7 | A structure occupies bytes between the live directory's end and the live trailer | stored-tile extents; tile-index regions; record extents; sub-record extents | verifier | certification | `[R-CNT-05]` (R-CNT-02) |
 | F8 | The 8 bytes at F-64 are not exactly the trailer magic 8A 4E 52 41 54 0D 0A 1A | trailer magic | reader | open | `[R-CNT-06]` |
@@ -3852,7 +3866,7 @@ states what a reader does. 26 conditions.
 | T8 | A non-sentinel tile-index entry has offset < 16, addressing bytes of the front signature block | — | reader | tile use | `[R-IDX-03]` |
 | T9 | A non-sentinel tile-index entry's extent ends past F − 64, touching the live trailer or running beyond the committed file length | — | reader | tile use | `[R-IDX-03]` (R-CNT-13) |
 | T10 | A non-sentinel tile-index entry has length = 0 | — | reader | tile use | `[R-IDX-03]` (R-COD-08) |
-| T11 | A non-sentinel tile-index entry's offset or length exceeds 2⁶³ − 1 (bit 63 set), the value being distinct from the all-ones sentinel | offset; length | reader | tile use | `[R-IDX-03]` (R-ENC-03) |
+| T11 | A non-sentinel tile-index entry's offset or length exceeds 2⁶³ − 1 (bit 63 set), neither field being the all-ones sentinel | offset; length | reader | tile use | `[R-IDX-03]` (R-ENC-03) |
 | T12 | A non-sentinel tile-index entry's offset + length exceeds 2⁶³ − 1 although each field alone is in domain | — | reader | tile use | `[R-IDX-03]` (R-ENC-04) |
 | T13 | A stored tile is not independently decodable from its own extent and layer record — the decode needs state or side data outside the extent; the check that detects it is T25's, and this row records the cause rather than a procedure of its own | deflate stream carrying a previous tile's history window; lz4 block whose match offset reaches back into a previous tile's output | reader | tile use | `[R-COD-02]` (R-COD-06, R-COD-08) |
 | T14 | Codec 1 (none) declared and a non-sentinel index entry's length differs from the tile's decoded size | interleaved P·Q, length longer; interleaved P·Q, length shorter; planar numeric P·Bᶜ, length longer; planar numeric P·Bᶜ, length shorter; packed planar bool ⌈P/8⌉, length longer; packed planar bool ⌈P/8⌉, length shorter | reader | tile use | `[R-COD-04]` |
@@ -3925,7 +3939,7 @@ reported as `[R-ERR-04]` requires.
 | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
 | A standardized key (§18.4) appears outside its listed scope, or carries a value whose shape its row does not give | Conforming: placement and value shape are writer guidance, and a reader ignores the key and reads the rest of the document, exactly as for an unrecognized key above | `[R-MTA-07]` |
 | A user-metadata document's decoded size, or its frame's declared `Window_Size`, exceeds the reader's own bound, which is no smaller than §21.9's guarantee | Ignore-record on resource grounds — the narrowest-scope decline `[R-ERR-04]` names for a document — reported as a resource limit and not as corruption; the file is conforming, and the reader MAY instead decline any scope containing the record, the whole file included | `[R-MTA-09]`, `[R-ERR-04]` |
-| A payload contains a byte string that mimics a trailer | Inert: no reader scans backward (`[R-LIF-05]`), the coverage walk claims a live payload's bytes as its tile's extent and enumerates nothing in slack, and a recovery tool re-verifies its output whole (§9.6) — which catches any mimic that is not itself a consistent generation; §9.6's second caution covers the rest | `[R-LIF-05]`, `[R-LIF-06]` |
+| A payload contains a byte string that mimics a trailer | Inert: no reader scans backward (`[R-LIF-05]`), the coverage walk claims a live payload's bytes as the extent or region carrying them, a tile's, a record's or the directory's (`[R-LIF-08]`), and enumerates nothing in slack, and a recovery tool re-verifies its output whole (§9.6) — which catches any mimic that is not itself a consistent generation; §9.6's second caution covers the rest | `[R-LIF-05]`, `[R-LIF-06]`, `[R-LIF-08]` |
 | Under a compressing codec (2–4), a stored tile's decoded size differs from its stored length | Expected: codecs compress, and can expand — codec 1's equality is `[R-COD-04]`'s subject | `[R-COD-08]` |
 
 Two conditions that once sat in this table are violations and are
@@ -4196,7 +4210,9 @@ updater does would surface the damage. And a payload can contain a byte string t
 a trailer; recovery tooling that scans backward can land on one, which
 is why recovery output is re-verified as a whole file before being
 trusted (`[R-LIF-06]`): under live-state coverage a mimic in slack
-is inert — nothing enumerates it — but a recovery tool that
+is inert — nothing enumerates it — and one in a live payload is the
+bytes of the extent or region the walk claims (`[R-LIF-08]`), but a
+recovery tool that
 truncates to one produces a different file. And the extent of a user-metadata
 record under an experimental-range encoding is covered by its
 terminal CRC
@@ -4584,7 +4600,7 @@ is a new format major version.
 - **[LZ4 Block]** LZ4 Block Format Description, version 1.0 — `doc/lz4_Block_format.md` in the lz4/lz4 repository, as published with lz4 release v1.9.4 — codec 4 (§17.2).
 - **[RFC 8259]** The JavaScript Object Notation (JSON) Data Interchange Format — the user-metadata document (§18.2).
 - **[RFC 3339]** Date and Time on the Internet: Timestamps — the `tarn.created` key (§18.4).
-- **[RFC 9110]** HTTP Semantics — the range requests, status codes and content length in which §6.4's remote open accounting and `[R-CNT-10]` are stated (§6.4).
+- **[RFC 9110]** HTTP Semantics — the 200 status code and the range requests `[R-CNT-10]` names for an HTTP transport (§6.4).
 - **[Unicode]** The Unicode Standard — UTF-8, and Normalization Form C where §4.6 advises it.
 
 Informative: the OCP OFP8 specification, cited only to pin what
@@ -4803,7 +4819,8 @@ SHOULD zero the gaps it creates (`[R-CNT-03]`, §5.2).
 produces, plus: validates the trailer and full directory, and every
 layer it modifies (§20.3); changes a layer that stores a tile in the
 generation its commit supersedes only as §20.3 step 4 permits — its
-names, a grown extent, a planar channel list extended at its end or
+names, a grown dimension extent, a planar channel list extended at its
+end or
 shortened from it (not both in one commit), a slab or alignment
 declaration declared, changed or cleared —
 and makes any other change to it as a new layer or a whole-file

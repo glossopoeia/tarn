@@ -193,3 +193,82 @@ over sixteen items, and none is deferred.
 - **ADR-0124**: the closed list and the principle beside it.
 - **ADR-0119**: the repair list against the diff.
 - **ADR-0104**: editorial repairs ride with the decision.
+
+## Erratum, 2026-09-09 — the pre-round-35 audit
+
+Six lanes read the eighteen hunks of this decision's commit the same
+afternoon, on the shape the three previous audits set: four subject lanes on
+Sonnet from the start, and two cross-hunk passes on Opus, one grouped by rule
+and one by operation. For the first time no lane was refused: every one
+completed at launch, in forty minutes. The four lanes returned 5 findings
+between them, one lane empty with a full account of its sweeps; the two Opus
+passes returned 9 and 11. Twenty-five findings merge by hand into twelve
+distinct defects, every one in this decision's wording, and every one is
+repaired in the commit carrying this erratum. The lanes are fallback-grade;
+the Opus passes did the substantive work, and the lanes converged on it in
+four places and added one.
+
+**None is byte-level by the hand-check, and none was graded so by any
+lane.** The nearest was the by-operation pass's reading of the closing slab
+clause: grounded in `[R-SLB-03]` and `[R-CNF-05]` with no trigger, it reaches
+on its face a slab-declared layer the commit does not touch, where a stale
+declaration would oblige a clearing that `[R-WRT-05]`'s byte-identical
+re-emission forbids. The pass graded it down itself, on the paragraph's
+opening scope and on the input being nonconforming under both readings, and
+the hand-check agrees; the clause now opens *"on a layer this commit
+modifies"*, which is where `[R-WRT-05]`'s duty ends and where every trigger
+of `[R-SLB-04]` lies.
+
+**Two repairs undershot and one overshot.** F5's cell dropped the pad and
+the 64-alignment with it, leaving a reason false over 84 ≤ F < 128; it names
+*"a directory at an offset of at least 16 and the trailer at a 64-aligned
+offset"*, as `[R-CNT-27]` does. The slab half of the closing sentence was
+moved off *keeps* and the alignment half beside it was not; both halves now
+range over the new state, *"every one the new state holds and those this
+commit adds included"*. §4.7's gloss, *its value determines nothing a
+conforming reader or verifier does*, outran the four-item test beside it,
+since a verifier's SHOULD-deviation advisory (`[R-CNF-12]`) on version_minor
+is a thing its value determines; the gloss is cut and the four-item test
+stands alone.
+
+**The sentinel carve-out reached one row and not its neighbours.** §15.3's
+value-domain row gained a per-field rider while `[R-IDX-02]` still scoped the
+two domain rules per entry and the sum row beside it carried no rider at all;
+the three now say one thing: *"neither field being S"* on the value row and
+*"neither field being the all-ones sentinel"* on T11, *"each field alone
+being in domain"* on the sum row as T12 has it, and `[R-IDX-02]` saying that
+*"an entry with exactly one field at the sentinel value is §15.3's own row
+before either rule reads it"*.
+
+**Below the line.** Shape (c)'s new sentence sent every index-changing
+re-declaration to shape (b), which is false where the new declarations
+address no tile: there is no region to emit, the slot becomes (0, 0), and the
+commit is shape (c). The sentence says so, cites `[R-WRT-04]` for the
+re-emission and `[R-CNT-17]` for the absent region, shape (b)'s heading
+admits the no-tile-written case, step 4's re-emission clause states the
+no-region case, and the old *this shape* reads *"shape (c)"* where a fresh *(b)* had
+been planted before it. The trailer-mimic entry's live half named a tile's
+extent where the walk's claimants are three; it names *"the extent or region
+carrying them, a tile's, a record's or the directory's"*, cites `[R-LIF-08]`,
+and §22.3's account carries the live half too. *"the row is the unit"* named
+a unit of nothing, and *each instance is one file* read as exactly one
+against §21.8's *at least*; the sentence says *"the unit a vector is
+attributed to"* and *"one distinguishable file, covered by at least one
+vector"*. Dropping *a dimension extent* from the tie-break left *an extent
+MAY grow* with no site saying which extent; the permitted list and Appendix H
+say *"a dimension extent"*. The RFC 9110 entry pluralised a status code,
+named a content length `[R-CNT-10]` offers as one of three, called §6.4's
+accounting stated in its terms when §6.4's Note removes the accounting from
+conformance, and was cited by nothing; it names *"the 200 status code and the
+range requests `[R-CNT-10]` names for an HTTP transport"*, and `[R-CNT-10]`
+cites it. §4.7's Note named two of the four §7.2 fields whose bounds sit
+below the table; it says *"a field's remaining bounds"*. §21.1's *the one
+rule that goes the other way* was falsified by `[R-CNT-12]`'s reading of
+MU = 1 with PE = 0 as PE = 1, and its restatement of `[R-TYP-04]` had dropped
+*sample or fill*; both are restored, and the reserved-flag rows F26 and L47
+join the inventory. And §11.1's Rationale had gained an Oxford comma the
+member and Appendix H lack; it is gone.
+
+**Register unchanged**: 120 conditions, 277 instances, 331 vectors;
+`tarn_check` PASS; eight quotation and two propagation acknowledgements. The repair list of this erratum was ticked
+against its diff: twenty edits, twelve defects, none deferred.
