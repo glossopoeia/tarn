@@ -1,0 +1,564 @@
+{
+ "merged": [
+  {
+   "members": [
+    "writer-02",
+    "adversary-03"
+   ],
+   "title": "\u00a720.3 step 4's MUST NOT binds an actor while leaving a conforming file, and the document never says which category that is",
+   "verdicts": {
+    "correctness": "CONFIRMED (split across 2)",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-01",
+    "quiz-02"
+   ],
+   "title": "\u00a75.2 and \u00a79.7 restate \u00a715.3's disposal of a structurally-rejected entry's bytes without its \"that no other claimant claims\" qualifier",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-04",
+    "register-04"
+   ],
+   "title": "\u00a721.1 says the Governing-rule parenthetical holds requirement identifiers; L26 and L31 put section references there",
+   "verdicts": {
+    "correctness": "CONFIRMED (split across 2)",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "reader-01"
+   ],
+   "title": "\u00a719.1's consolidated open path omits the 128-byte floor before directing the reader to compute F - 64",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "REFUTED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "reader-02"
+   ],
+   "title": "\u00a72.3's closed list of expressly-declared writer obligations omits \u00a79.2's barriers, which \u00a79.2 expressly so declares",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "REFUTED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "reader-03"
+   ],
+   "title": "\u00a718.2's encoding row gives \"Valid values: 1 or 2; see below\" where an unassigned value is conforming",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "REFUTED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "writer-01"
+   ],
+   "title": "\u00a720.3 step 4's closed list does not say whether an already-declared alignment or slab may take a different nonzero value in one commit",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "byte-level",
+    "implementer": "byte-level",
+    "skeptic": "byte-level"
+   },
+   "byte_level": {
+    "correctness": true,
+    "implementer": true,
+    "skeptic": true
+   },
+   "reporter_bl": [
+    "writer-01"
+   ],
+   "any_bl": true,
+   "unanimous_bl": true,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-02"
+   ],
+   "title": "The \"counted and named, never silent\" duty is stated for the checksummed uninspected extent and not for the unchecksummed one",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "design-decision",
+    "skeptic": "design-decision"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-03"
+   ],
+   "title": "[R-CNF-13] cites [R-CNT-04]'s residency exemption as an example that \"applies unchanged\"",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "REFUTED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "diagrams-01"
+   ],
+   "title": "\u00a74.7's Note says \u00a77.4's table omits the offset and class columns; it omits offset, size and class",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-02"
+   ],
+   "title": "\u00a720.5's slack-accumulation inventory omits superseded payloads and superseded record extents",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "figure",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "diagrams-03"
+   ],
+   "title": "Appendix F is normative and omits RFC 1950 and RFC 1952, which [R-COD-05] and T15 cite",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-01"
+   ],
+   "title": "\u00a721.6's single reason for excluding both capability refusals from the register is false of the second, which the same paragraph calls conforming",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-02"
+   ],
+   "title": "\u00a721.1 attributes every \u00a721.5 row's outcome to [R-CNT-25]'s quarantine, whose unreadability predicate does not reach R4's frame-constraint instances",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-03"
+   ],
+   "title": "F33's Instances cell individuates a two-claimant overlap by single claimant kinds, leaving which pair each instance names undetermined",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-05"
+   ],
+   "title": "\u00a721.1's governing rules \u2014 the tiebreak, the completeness clause, specialization, the Instances arithmetic \u2014 carry no requirement identifier",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "design-decision",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-06"
+   ],
+   "title": "F5's second instance names committed_file_length, which [R-CNT-27] does not state",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-01"
+   ],
+   "title": "\u00a75.1 applies the word \"structure\" to superseded directories and prior trailers, which \u00a75.2 expressly defines as live-state-only",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "REFUTED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-02"
+   ],
+   "title": "\u00a721.5's experimental-encoding exception is stated over \"the rows below\" and names only R1 as surviving",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "REFUTED",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-04"
+   ],
+   "title": "\u00a720.3's gloss \"replacing the last channel ... is two commits or a rewrite\" is stated over a result the permitted channel rename also produces",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "REFUTED",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-01"
+   ],
+   "title": "\"the position of every planar channel but the last\" reads as barring a trailing-run removal the same step's permitted side allows",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "REFUTED",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-03"
+   ],
+   "title": "Whether a compactor must refuse a file carrying a structurally invalid index entry turns on a placement choice \u00a720.5 leaves free",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "design-decision",
+    "implementer": "design-decision",
+    "skeptic": "design-decision"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  }
+ ],
+ "pass_ok": {
+  "correctness": true,
+  "implementer": true,
+  "skeptic": true
+ }
+}
