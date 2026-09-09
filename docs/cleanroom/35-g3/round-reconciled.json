@@ -1,0 +1,562 @@
+{
+ "merged": [
+  {
+   "members": [
+    "reader-01",
+    "verifier-01"
+   ],
+   "title": "\u00a720.3 step 4's \"no check any actor owes able to see it\" excepts only (T24, T25) for a changed codec, while T17 is a reader-owed check that witnesses a re-declaration to codec 3",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "register-bookkeeping",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-02",
+    "adversary-04"
+   ],
+   "title": "[R-WRT-09] obliges verification over \"every structure it copies\" in its premise and over \"each relocated extent\" in its enumeration, and \u00a720.5 turns the difference into refuse-or-emit",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "byte-level",
+    "implementer": "byte-level",
+    "skeptic": "byte-level"
+   },
+   "byte_level": {
+    "correctness": true,
+    "implementer": true,
+    "skeptic": true
+   },
+   "reporter_bl": [],
+   "any_bl": true,
+   "unanimous_bl": true,
+   "agree": true
+  },
+  {
+   "members": [
+    "quiz-01",
+    "quiz-02"
+   ],
+   "title": "\u00a720.3 step 4's fifth exception names three dispositions for a slab or alignment declaration where the clause it delegates to names four",
+   "verdicts": {
+    "correctness": "REFUTED (split across 2)",
+    "implementer": "PARTIAL",
+    "skeptic": "REFUTED (split across 2)"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "editorial",
+    "skeptic": "none"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "reader-02"
+   ],
+   "title": "\u00a76.1 says the local/remote classification governs \u00a76.4's request accounting \"and nothing else\", but [R-CNT-06] in \u00a76.2 turns on it and [R-CNT-10]'s MUSTs are not request accounting",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-01"
+   ],
+   "title": "Appendix G item 3 says \"a declared alignment\" where the next clause says \"a declared A or A_slab\", and neither reaches a structure that is not a stored tile",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "writer-02"
+   ],
+   "title": "Appendix G item 5's justification for pinning the layout is non-discriminating for a single-channel numeric layer, and omits the reason that still applies",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "writer-03"
+   ],
+   "title": "\"entries new to this generation (added tiles, grown extents, an appended channel)\" \u2014 \"added tiles\" is claimed to belong to the clause's first class",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "writer-04"
+   ],
+   "title": "\u00a722.3 states byte coverage as \"every byte a reader can reach belongs to one named structure\", where [R-CNT-02] puts the front signature block outside \"structure\"",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-03"
+   ],
+   "title": "\"The fixed declarations are \u2026\" characterises them through \u00a714, \u00a711.4 and \u00a715, which do not own the codec or the filter",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-01"
+   ],
+   "title": "\u00a721.1 says [R-CNT-25]'s quarantine assigns the outcome for \"every \u00a721.5 row\", but its trigger is a closed list of ways a document can be unreadable and several R4 instances leave it readable",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-02"
+   ],
+   "title": "\u00a721.6's Rule column mixes citation conventions and \u00a721.1 extends governance to it in the singular over cells that cite several rules",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-03"
+   ],
+   "title": "The Governing rule parenthetical, defined as \"the further rules the condition reads\", omits rules that four groups of rows demonstrably read",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-04"
+   ],
+   "title": "Individuation of a \"condition\" is traced through a chain that ends at the register's rows, and no guidance is stated for a condition with no row",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "design-decision",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "register-05"
+   ],
+   "title": "\u00a721.1's [R-SER-08] sentence explains its claim by restating the claim verbatim",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "register-06"
+   ],
+   "title": "[R-EXT-03] and [R-RDR-03] send a reader to \u00a715.1 for the index-encoding value set, which \u00a715.1 does not state",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-01"
+   ],
+   "title": "Appendix G's closing inventory of the freedoms the profile closes omits item 5's filter, tile-extent and layout pins",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "PARTIAL",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-02"
+   ],
+   "title": "[R-EXT-02] opens with a universal over every numeric identifier space and closes by naming the trailer's flag lanes as a space its table excludes and its universal cannot describe",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-03"
+   ],
+   "title": "L23's Detected cell splits the name field out of an instance its Instances cell does not split, so no vector is owed for the open-tier case \u00a719.1 step 4 gives a distinct consequence",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-05"
+   ],
+   "title": "[R-CNT-09] and \u00a719.1 step 1 assert that a suffix-range response carries the transport-authoritative size, without naming the case [R-CNT-10] provides for",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "adversary-06"
+   ],
+   "title": "\u00a74.7's Note puts a variable-length field's length prefix inside its value; \u00a713.1 puts the fill field's prefix outside it to deny that the field locates any byte",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "quiz-03"
+   ],
+   "title": "[R-ENC-16]'s structural test now names the verifier, and \"each class being what the one before it is not\" names nothing for the first class",
+   "verdicts": {
+    "correctness": "PARTIAL",
+    "implementer": "CONFIRMED",
+    "skeptic": "PARTIAL"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "quiz-04"
+   ],
+   "title": "[R-ERR-04]'s \"narrowest scope\" is said to be unsettled between layer and tile for a tile's decoded size",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "CONFIRMED",
+    "skeptic": "REFUTED"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "editorial",
+    "skeptic": "none"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  }
+ ],
+ "pass_ok": {
+  "correctness": true,
+  "implementer": true,
+  "skeptic": true
+ }
+}
