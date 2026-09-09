@@ -172,3 +172,6 @@
 0127|no reader scans backward ([R-LIF-05]), the coverage walk claims a live payload's bytes as its tile's extent: repair 11's live half as it landed; the erratum names every claimant the walk has.
 0127|the row is the unit, and each instance is one file: repair 12's sentence as it landed; the erratum says what the row is the unit of and that an instance is covered by at least one vector.
 0127|the value being distinct from S (non-sentinel): repair 16's rider as it landed; the erratum makes it neither field being S and sweeps [R-IDX-02], the sum row and T11.
+
+# Quotations in ADR-0128 (round 35's repairs) of text it replaces (2026-09-09).
+0128|it relies structurally on every structure it copies, so it MUST verify each link of the chain: [R-WRT-09] as it stood, quoted in the Context as the flag; decision 1 quantifies the list over every extent copied.

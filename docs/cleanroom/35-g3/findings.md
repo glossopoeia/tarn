@@ -235,7 +235,6 @@ that says so validated it against §4.5's check vector.
 | `[R-EXT-03]` and `[R-RDR-03]` send a reader to §15.1 for the index-encoding value set, which §7.4 states | register-06 | §7.4 in both lists and in §10.2's row |
 | Appendix G's closing inventory omits item 5's filter, tile-extent and layout pins | adversary-01 | the three kinds added in the paragraph's own form |
 | `[R-EXT-02]` calls the trailer's flag lanes a numeric identifier space its own universal does not partition | adversary-02 | the lanes are not a space of this kind and are not tabulated |
-| L23's Detected cell splits the name field out of an instance its Instances cell does not split | adversary-03 | the name field is its own instance; the register moves to 278, and the corpus owes L23's name-field vector |
 | `[R-CNT-09]` and §19.1 step 1 assert a suffix-range response carries F, which `[R-CNT-10]` provides against | adversary-05 | both hedged to a transport that discloses the complete length |
 | §4.7's Note puts a length prefix inside a field's value where §13.1 puts it in §7.4's framing | adversary-06 | the Note rests a name's structurality on `[R-ENC-15]` and calls the prefix framing |
 | `[R-ENC-16]`'s *each class being what the one before it is not* names an order two classes do not have | quiz-03 | the clause is cut; the descriptive test's *none of those* carries it |
@@ -245,6 +244,7 @@ that says so validated it against §4.5's check vector.
 | Defect | Reporters | Where |
 |---|---|---|
 | A condition's individuation chains through `[R-CNF-13]` and §21.1 back to the register's rows, the vacuity §21.7 closes for detectability and not for this | register-04 | Q-I7, round-35 note: a third question beside the identifiers and the pair individuation |
+| L23's Detected cell splits the name field out of an instance its Instances cell does not split | adversary-03 | Q-I7, round-35 note: an instance by §21.1's own test, split when its vector ships, since the gate fails on an instance with none |
 
 ### Declined
 

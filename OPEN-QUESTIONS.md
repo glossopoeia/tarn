@@ -1771,6 +1771,17 @@ stated in terms.
 - **What settles it:** whether a compacted file may carry a structurally
   malformed entry its compactor never looked at. If not, (b) or (c); if the
   copy path is worth keeping, (a) and the sentence.
+- **Round 35 (2026-09-09) found the same placement dependence in
+  `[R-WRT-09]`'s checksum duty**, quantified over *each relocated extent*
+  against a premise over *every structure it copies*, so that a compactor
+  keeping a corrupt user-metadata extent at its input offset owed its CRC
+  under one reading and not the other, and could emit the file under one
+  and not the other; all three passes graded it byte-level and the
+  uphold-refuter stood. ADR-0128's decision 1 takes the checksum duty off
+  placement: it reaches every extent the compactor copies. This entry's
+  question, an entry's value-domain classification, is where it was, and
+  option (a)'s asymmetry is now the only placement-keyed duty a compactor
+  has.
 
 ### Q-I7. Should §21.1's own rules carry requirement identifiers, and how does a two-claimant row individuate its instances? [shaping]
 **Question:** Round 33 (register-05, register-03). §21.1 states rules nothing
@@ -1795,6 +1806,20 @@ no fixed target. Both are register bookkeeping and neither moves a byte.
   identifiers. Two passes graded it a decision; the third held that §2.2's
   convention is stated over *requirements* and leaves the register's reading
   rules outside it, which is option (b)'s ground.
+- **Round 35 (2026-09-09, register-04) adds a third question**: how a
+  condition is individuated. §21.7 says *as `[R-CNF-13]` individuates them*,
+  `[R-CNF-13]` says *as §21.1 individuates them*, and §21.1 says *each row is
+  one malformed condition*, so the chain the completeness clause needs for a
+  condition with no row ends at the rows, which is the vacuity §21.7 closes
+  in terms for detectability and not for individuation. One pass graded it
+  a decision and two held §21.1's own principles (the finest structure
+  damaged, the specialization rule, one distinguishable file) supply the
+  criterion by analogy; the repair the three converge on is one sentence in
+  §21.1 stating the criterion independently of the rows, on §21.7's model.
+  And L23's name field (adversary-03), detected at open with a consequence
+  for F4 while its Instances cell folds it into the leading fixed fields, is
+  an instance by §21.1's own test; the corpus has no vector for it, the gate
+  fails on an instance with none, so the split lands with TV-0963.
 
 ### Q-I1. Reproducible-writer profile. [Resolved → ADR-0047]
 **Resolution:** a non-normative Appendix G — codec 1 or a named codec

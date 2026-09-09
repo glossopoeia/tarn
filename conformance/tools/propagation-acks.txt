@@ -186,3 +186,9 @@ R-MTA-05 -> R-CNF-12: ADR-0127 named both rules' rows in §21.1's verifier-detec
 # ADR-0127's erratum, the pre-round-35 audit (2026-09-09).
 R-CNT-12 -> R-SER-08: the erratum restated [R-TYP-04]'s one-case sentence in §21.1 with the scope §12.3 gives it, a sample value; §12.3 is the source and was not the subject.
 R-CNT-12 -> R-CNT-12: the erratum named F25, F26, L46 and L47 in §21.1's inventory of verifier-detected rows and cited [R-CNT-12]'s reading of MU = 1 with PE = 0; the rows themselves and §7.3's [R-CNT-22] sentence that groups them with [R-CNT-12]'s are the sources and were not the subject.
+
+# ADR-0128, round 35's repairs (2026-09-09).
+R-ENC-15 -> R-ENC-15: ADR-0128 rested §4.7's Note on [R-ENC-15]'s rows F4 and L9 for a name's structurality; the rows are the source and were not the subject.
+R-TYP-04 -> R-CNT-12: ADR-0128 cut a tautology from §21.1's [R-SER-08] sentence, which names [R-CNT-12]'s reading of MU = 1 with PE = 0 (F25, L46) as the flag case; the rows are the source and were not the subject.
+R-MTA-09 -> R-MTA-10: ADR-0128 narrowed §21.1's quarantine clause to every way a §21.5 row makes the document unreadable; the §21.5 rows it ranges over are the source and were not the subject.
+R-VEC-02 -> R-VEC-02: ADR-0128 made §21.1's §21.6 clause say each rule a Rule cell lists governs the part it states; the register's own tie-break sentence above it is the model and was not the subject.
