@@ -192,3 +192,11 @@ R-ENC-15 -> R-ENC-15: ADR-0128 rested §4.7's Note on [R-ENC-15]'s rows F4 and L
 R-TYP-04 -> R-CNT-12: ADR-0128 cut a tautology from §21.1's [R-SER-08] sentence, which names [R-CNT-12]'s reading of MU = 1 with PE = 0 (F25, L46) as the flag case; the rows are the source and were not the subject.
 R-MTA-09 -> R-MTA-10: ADR-0128 narrowed §21.1's quarantine clause to every way a §21.5 row makes the document unreadable; the §21.5 rows it ranges over are the source and were not the subject.
 R-VEC-02 -> R-VEC-02: ADR-0128 made §21.1's §21.6 clause say each rule a Rule cell lists governs the part it states; the register's own tie-break sentence above it is the model and was not the subject.
+
+# ADR-0129, writers are bound by their operations (2026-09-09).
+R-CNF-06 -> R-WRT-09: ADR-0129's new §20.5 opening names the records §20.4's table licenses dropping; [R-WRT-07]'s regeneration paragraph uses the phrase for the entry no table row licenses, and was not the subject.
+R-CNF-05 -> R-CNF-06: ADR-0129's §20.1 mapping restates the updater's "every writer requirement for the bytes it produces" from §2.3's [R-CNF-06], which is the source and was not the subject.
+R-CNF-06 -> R-CNF-06: the same mapping, same source.
+R-CNF-06 -> R-LIF-01: ADR-0129's §20.5 opening names the re-declaring rewrite over "a layer that stores a tile in the input", §20.3 step 4's phrase; step 4's head is the source and was not the subject.
+R-CNF-06 -> R-WRT-05: Appendix H's updater entry restates step 4's "a layer that stores a tile" clause and was not the subject.
+R-CNF-06 -> R-WRT-01: ADR-0129's §20.5 opening restates [R-WRT-01]'s "a violation latent in a structure it carries forward" as §20.5 always did; §20.3 step 2's use is the source and was not the subject.

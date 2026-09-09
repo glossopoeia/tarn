@@ -1450,6 +1450,9 @@ profile's criterion so the list follows from it. Owning section Appendix G.
   produces must decide it as it must decide declaration order.
 
 ### Q-A7. Can a compactor obtain the fact §20.5's version_minor floor turns on? [shaping]
+- **ADR-0129 (2026-09-09)** restated §20.5 over a rewriter, of which a
+  compactor is the case that changes nothing; this entry's question is
+  unchanged and reaches every rewrite that carries a feature forward.
 **Question:** §20.5 makes the output's `version_minor` SHOULD be at least
 the input's where the output carries a feature a later minor defines and
 the compactor does not implement. Round 24's reader walk found the rule
@@ -1782,6 +1785,9 @@ stated in terms.
   question, an entry's value-domain classification, is where it was, and
   option (a)'s asymmetry is now the only placement-keyed duty a compactor
   has.
+- **ADR-0129 (2026-09-09)** restated §20.5 over a rewriter; the duty this
+  entry asks about is a rewriter's, in every rewrite that relocates a
+  region.
 
 ### Q-I7. Should §21.1's own rules carry requirement identifiers, and how does a two-claimant row individuate its instances? [shaping]
 **Question:** Round 33 (register-05, register-03). §21.1 states rules nothing
@@ -1821,7 +1827,15 @@ no fixed target. Both are register bookkeeping and neither moves a byte.
   an instance by §21.1's own test; the corpus has no vector for it, the gate
   fails on an instance with none, so the split lands with TV-0963.
 
-### Q-A8. Are the writer tiers bundles of operations, and is compaction one rewrite among several? [shaping]
+### Q-A8. Are the writer tiers bundles of operations, and is compaction one rewrite among several? [Resolved → ADR-0129]
+**Resolution (ADR-0129, option (a)):** the tiers are shapes of operation and
+the classes their obligations, stated once in §20.1: a creator is a writer,
+an appender and a rewriter are updaters. §20.5 is the rewrite's section, its
+obligations attached to operations, and it names three rewrites, compaction,
+dropping a layer, and re-declaring a layer that stores a tile; physical
+reordering is a placement choice inside any of them. The one new permission,
+that a rewrite MAY omit a layer where no commit may, is ADR-0129's decision
+2. The document's compactor vocabulary survives where it names the case.
 **Question:** §2.3 defines five conformance classes and §20.1 three writer
 tiers, creator, appender and compactor, on two axes the document never
 relates. The classes bundle obligations: a writer answers for the bytes it
