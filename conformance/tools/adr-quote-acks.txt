@@ -179,3 +179,12 @@
 # Quotations in ADR-0129 (writers are bound by their operations) of text it replaces (2026-09-09).
 0129|a whole-file rewrite under a fresh file_id: the routing phrase §20.3 step 4 and §20.4 carried, quoted in the Context; decision 1 names the rewrite each routes to.
 0129|That is not compaction, which carries every layer of its input forward: §20.4's sentence as it stood, quoted in the Context; decision 2 makes the layer drop a named rewrite and the table's one exception.
+
+# Quotations in ADR-0125 and ADR-0128 of text ADR-0129 (the rewriter) and ADR-0128 itself replaced (2026-09-09).
+0125|bounds how far a compactor goes looking: [R-WRT-07]'s restatement as ADR-0125 quoted it; ADR-0129 names the actor a rewriter.
+0125|a decode that fails outright under a changed codec or filter (T24, T25): the principle parenthetical as ADR-0125's erratum wrote it; ADR-0128's repair 2 added T17 and the framing-check clause.
+0128|A compactor MUST refuse to compact when any check [R-WRT-09] obliges fails: §20.5's refusal as ADR-0128 quoted it; ADR-0129 says a rewriter MUST refuse to rewrite.
+0128|a violation latent in a structure they carry forward unmodified travels with it, seen or unseen: [R-WRT-01] as ADR-0128 quoted it; ADR-0129 restated the sentence in the singular over an appender and a rewriter.
+0128|Given a conforming input the output is a conforming file: §20.5's conditional as ADR-0128 quoted it; ADR-0129 restates it over what a rewrite carries forward, re-creates and drops.
+0128|A compactor's verification depth follows reliance over everything it carries: [R-WRT-09]'s opening as ADR-0128 quoted it; ADR-0129 says a rewriter's depth over what it carries follows reliance.
+0128|The duty follows what the compactor carries and not where it places it: decision 1's placement sentence as it landed; ADR-0129 names the actor a rewriter.

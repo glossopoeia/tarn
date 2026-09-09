@@ -1,6 +1,7 @@
 # 0128. Round 35's repairs: a compactor's checksum duty reaches every extent it copies, and seventeen wording repairs
 
-- Status: Accepted (resolves round 35's repairable findings)
+- Status: Accepted (resolves round 35's repairable findings; decision 1
+  confirmed by the maintainer on 2026-09-09)
 - Date: 2026-09-09
 - Covers: §20.5 `[R-WRT-09]` and `[R-WRT-07]`'s restatement of it; §20.3
   step 4's principle parenthetical, its re-emission clause and its
@@ -10,12 +11,13 @@
   parenthetical convention, its §21.6 clause and its `[R-SER-08]` sentence;
   §21.6's zero-layers entry; §22.3
   `[R-SEC-03]`; Appendix G items 3 and 5 and its closing paragraph
-- Confirm: one decision is put to the maintainer, with its alternative
-  stated below so a superseding ADR can choose it: that a compactor's
-  verification duty reaches the checksum §8.1 states over every extent it
-  copies, whether or not its output relocates the extent, so that a
-  compactor meeting a failed CRC on an extent it would carry forward
-  unmoved MUST refuse as §20.5 already obliges it to on any failed check.
+- Confirm: none. Decision 1 was put to the maintainer and confirmed on
+  2026-09-09, with its alternative stated below so a superseding ADR can
+  choose it: that a compactor's verification duty reaches the checksum §8.1
+  states over every extent it copies, whether or not its output relocates
+  the extent, so that a compactor meeting a failed CRC on an extent it
+  would carry forward unmoved MUST refuse as §20.5 already obliges it to
+  on any failed check. ADR-0129 has since restated the actor as a rewriter.
 
 ## Context
 

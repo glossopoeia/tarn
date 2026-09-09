@@ -1,7 +1,8 @@
 # 0125. Round 32's repairs: a channel list changes one way per commit, and the binary64 test names its rounding
 
 - Status: Accepted (resolves round 32's repairable findings; both decisions
-  confirmed by the maintainer on 2026-09-08)
+  confirmed by the maintainer on 2026-09-08; the erratum's name-swap
+  decision confirmed on 2026-09-09)
 - Date: 2026-09-08
 - Covers: §20.3 step 4's permitted list, its several-at-once sentence,
   its bounds paragraph and its witness parenthetical; §18.2 `[R-MTA-04]`;
@@ -303,7 +304,8 @@ list's own terms but stated loosely enough to be read against it.**
   included, the dimension order and the channel order being positional and
   fixed"*. That is a small decision taken on ADR-0124's ground, that a name
   enters no map, and the maintainer can reverse it by adding a composition
-  rule for renames beside the channel-list one.
+  rule for renames beside the channel-list one. The maintainer confirmed
+  it on 2026-09-09.
 
 **Below the line.** The channel-removal sentence's two-branch account of
 why the index region is re-emitted was false of a shortening taken with a
