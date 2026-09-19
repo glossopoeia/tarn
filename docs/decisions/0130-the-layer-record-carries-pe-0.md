@@ -1,7 +1,8 @@
 # 0130. The layer record carries PE = 0: a commit MAY drop a layer
 
 - Status: Accepted (resolves Q-A9 on the maintainer's direction of
-  2026-09-09; supersedes ADR-0068 and withdraws ADR-0129's decision 2)
+  2026-09-09; supersedes ADR-0068 and withdraws ADR-0129's decision 2; the
+  erratum's decision E1 confirmed by the maintainer on 2026-09-19)
 - Date: 2026-09-09
 - Covers: §7.3's registry table and `spec/registry.json`; Appendix C; §20.4's
   flags paragraph and its layer-removal paragraph; §20.3 step 4's tense
@@ -13,9 +14,10 @@
   superseding ADR can withdraw it alone: a rewriter that detects a violation
   in a layer while regenerating its region may drop the layer, reporting the
   loss, where ADR-0082 had it refuse (decision 3). The erratum of
-  2026-09-19 asks confirmation of two decisions the pre-round-36 audit
-  forced: a dropped layer goes whole, its sub-records with it (E1), and a
-  sub-record of an unimplemented type with MU = 1 blocks the drop (E2).
+  2026-09-19 took two decisions the pre-round-36 audit forced. E1, that a
+  dropped layer goes whole, its sub-records with it, was confirmed by the
+  maintainer on 2026-09-19. E2, that a sub-record of an unimplemented type
+  with MU = 1 blocks the drop, is still put to the maintainer.
 
 ## Context
 
@@ -184,8 +186,9 @@ and *"A commit never removes a user-metadata record from a scope it keeps"*;
 its flags paragraph reads *"the user-metadata record PE = 1 and is dropped
 only with a layer that carries it"*; §20.5's disposal sentence names *"a
 layer with its sub-records, its index region and stored tiles"*; Appendix H
-says the same. **Confirm.** The alternative, that a PE = 1 sub-record pins
-its layer, is stated so the maintainer can choose it: the drop paragraph
+says the same. **Confirmed by the maintainer on 2026-09-19.** The
+alternative, that a PE = 1 sub-record pins its layer, stays stated so a
+superseding ADR can choose it: the drop paragraph
 would say so, and a caller would have no way to make such a layer
 droppable, PE = 1 forbidding the sub-record's removal first.
 
