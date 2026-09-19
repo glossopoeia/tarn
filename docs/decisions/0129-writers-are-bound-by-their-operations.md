@@ -16,7 +16,8 @@
   and named the rewrites. One consequence is a permission the document did
   not carry and is stated below so a superseding ADR can withdraw it: a
   rewrite MAY omit a layer from its output, which no commit may (decision
-  2).
+  2). The erratum of 2026-09-19 asks confirmation of one byte-level repair:
+  §20.1's two class tests made exclusive on this ADR's own ground.
 
 ## Context
 
@@ -167,3 +168,75 @@ deferred.
 - **ADR-0128**: the checksum duty follows what the actor carries.
 - **ADR-0091**: a rule's reach is settled by an ADR; this is the ADR.
 - **ADR-0119**: the repair list against the diff.
+
+## Erratum, 2026-09-19 — the pre-round-36 audit
+
+The audit ADR-0130's erratum describes, nine lanes and every one
+fallback-grade, both Opus cross-hunk passes having been refused twice, found
+sixteen distinct defects in this decision's wording. Thirteen are repaired in
+the commit carrying this erratum and three declined.
+
+**One is byte-level by the hand-check: §20.1's two class tests.** Three
+lanes converged on it and both cross-hunk passes graded it byte-level; the
+tiers lane graded it down, having missed the trailer. Decision 1's mapping
+said an appender and a rewriter are updaters, and then that a writer that
+decodes everything it writes is a creator, whatever it read. A tool that
+reads a file whole and writes a new one from decoded content is a rewriter
+by §20.1's bullet and §20.5's opening, and a creator by the test; on an
+input carrying an unknown ignore-lane bit the first MUST copy the bit
+forward (`[R-WRT-06]`) and the second MUST write flags = 0 (`[R-CNT-08]`),
+and both outputs are conforming files. The same test, read of an appender
+that implements every record it meets, made it a creator and freed it from
+§20.4. **Repaired on this decision's own ground**, the Context's *Why the
+tiers bind claims and not files*, which says such a tool is a conforming
+reader and creator and not an updater, the difference showing in an
+ignore-lane bit cleared: the test governs a new file, and the tiers are
+exclusive. §20.1 reads *"a writer that extends an input file, or carries
+forward into a new one any structure of an input file it did not decode, is
+an updater"* and *"one whose output is a new file in which it decodes
+everything it writes is a creator, whatever it read, and not a rewriter:
+§20.2 binds it and §20.5 does not, it writes flags = 0"*. **Confirm**: the
+repair follows what this ADR argued, but it decides a trailer's bytes, and
+the alternative, that any new file written from an existing one is a rewrite
+whatever its writer decodes, is stated so the maintainer can choose it.
+
+**The renaming's leftovers.** §3.3's Note kept *compactors*, deliberately,
+for the actors that cannot decode; six of the nine lanes reported it as the
+rename's one survivor, and the word names no tier now: *"rewriters carrying
+a layer forward"*. `[R-PRV-02]` said compaction is the only operation that
+removes slack, and §9.3's Note that compaction is the continuation past F's
+ceiling; both are true of every rewrite and say *"A rewrite (§20.5)"*.
+Appendix G item 8, which the decision kept as compaction's claim, attributed
+to a compaction's output the records §20.4 lets it drop, and compaction as
+§20.5 defines it drops nothing (four lanes): *"A rewriter's output"*. §20.5's
+"A rewrite MAY be several of these at once" could not be true of compaction
+as defined, which changes nothing but placement: *"A rewrite MAY do several
+of these at once, dropping one layer, re-declaring another and carrying the
+rest forward, and is compaction only where it does nothing but carry"*. The
+Example's "moves live bytes" was compaction's and reads *"changes what a
+range holds"*.
+
+**Restatements of an updater's duties.** §2.3 defines an updater as a tool
+that modifies an existing file and then names the rewriter, whose output is
+a new file, as one of its tiers: *"A tool that modifies an existing file, or
+writes a new one from it"*. `[R-CNF-02]`'s flags gloss cited §20.5 alone for
+an updater's copy-forward: *"§20.3 step 6 and §20.5"*. `[R-CNT-08]`'s MUST
+ranged over "the file it modifies": *"its input file"*. Appendix H's updater
+entry, headed for both tiers, stated step 4's list of what a commit may
+change as though it bound a rewriter: *"as an appender, changes a layer that
+stores a tile"*. Its rewriter sentence keyed regeneration to each index
+region the rewriter relocates, where `[R-WRT-07]`'s trigger is a region any
+of whose stored extents the output relocates, and called the regenerated
+result verbatim; it restates `[R-WRT-07]` in that rule's words.
+`[R-WRT-06]`'s version_minor sentence carried three dashes, the second
+opening an aside inside the first pair: a colon.
+
+**Declined.** The rewrite lane's C-01, which it graded byte-level: decision
+1 says in terms that what a re-created layer denotes is the rewriter's to
+declare, the lane itself found one reading, and a constraint there would be
+vacuous while a rewrite MAY drop a layer and add what a creator could. The
+tiers lane's D-08: Appendix H cites `[R-WRT-06]` for the fresh file_id, and
+the identifier closes the two paragraphs it labels; §6.3, §23.2 and
+Appendix G cite it the same way. The tiers lane's D-07: §20.4's last row
+says an updater MAY drop the record in any commit; an updater that commits
+is an appender, and the row's next clause names the rewriter.

@@ -1,0 +1,516 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 572d99f..5a3b522 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -172,7 +172,7 @@ Conformance is defined for five classes.
+   violation this specification expressly declares not to be a
+   file-conformance violation binds the actor in the same way; §6.3's
+   flags rules against a set ignore-lane bit (a creator's flags = 0,
+-  and an updater's or compactor's copy-forward and set-no-other,
++  and an updater's copy-forward and set-no-other,
+   §20.5), §6.2's pre-trailer gap longer than `[R-LIF-02]` step 5's
+   pad, and §20.3 step 4's bar on the fixed declarations of a layer
+   that stores a tile are the cases this text states, and each is
+@@ -209,7 +209,8 @@ Conformance is defined for five classes.
+   necessarily understanding all of its content. An updater MUST satisfy
+   every writer requirement for the bytes it produces, and additionally
+   MUST honor the preservation obligations of §20.4 — which govern every
+-  record type, not only those it does not understand. `[R-CNF-06]`
++  record type, not only those it does not understand. Its tiers, the
++  appender and the rewriter, are §20.1's. `[R-CNF-06]`
+ - **Conforming verifier.** A reader that additionally checks every
+   file-level requirement — including those ordinary readers are
+   exempted from — and certifies conformance. Verifiers and updaters are
+@@ -686,7 +687,7 @@ scope. `[R-CNT-27]`
+ > new placement (§20.3, `[R-WRT-04]`). The commit that added layer B
+ > emitted B's index region for the first time; a later commit changing
+ > B's stored-tile set would re-emit it at a new placement. A commit never relocates a live index region
+-> otherwise; that is compaction's operation (§20.5, `[R-WRT-07]`).
++> otherwise; that is a rewrite's operation (§20.5, `[R-WRT-07]`).
+ >
+ > This is what tail-anchored discovery buys. Because the structures that
+ > must change on every commit are the last ones in the file, a commit
+@@ -741,7 +742,8 @@ claimants the walk did enumerate — an upper bound on the file's true
+ slack, never an under-count — and a verifier reporting one MUST say
+ which scope or violation stopped the walk. It is not the file's slack
+ total but a bound on it, tightening to the exact total when the walk
+-completes. Only compaction (§20.5) reclaims it.
++completes. Only a rewrite (§20.5) reclaims it, compaction being the
++rewrite an operator runs for that alone.
+ `[R-CNT-21]` Slack that holds superseded data is a privacy
+ consideration (§23).
+ 
+@@ -832,7 +834,7 @@ The trailer occupies the final 64 bytes of the file, beginning at a
+ | 0 | 8 | bytes | trailer magic | structural | `8A 4E 52 41 54 0D 0A 1A` (`\x8A`, "NRAT", CR, LF, ctrl-Z) |
+ | 8 | 2 | u16 | version_major | structural | 1 (0 invalid; others: §6.3) |
+ | 10 | 2 | u16 | version_minor | descriptive | any (see §6.3) |
+-| 12 | 4 | u32 | flags | structural | bits 0–15 (incompat lane) all zero, a set bit being reject-file (F19); bits 16–31 (ignore lane) 0 from a creator, carried forward unchanged by an updater or a compactor, a set bit ignored (§6.3) |
++| 12 | 4 | u32 | flags | structural | bits 0–15 (incompat lane) all zero, a set bit being reject-file (F19); bits 16–31 (ignore lane) 0 from a creator, carried forward unchanged by an updater, appender or rewriter alike, a set bit ignored (§6.3) |
+ | 16 | 8 | u64 | dir_offset | structural | ≥ 16 |
+ | 24 | 8 | u64 | dir_length | structural | ≥ 4; dir_offset + dir_length ≤ F − 64 |
+ | 32 | 8 | u64 | committed_file_length | structural | = F; multiple of 64 |
+@@ -899,15 +901,15 @@ are defined: a writer creating a file under this text MUST write
+ flags = 0, but a set ignore-lane bit is not a file-conformance
+ violation — such bits are defined by later minor versions, and files
+ carrying them are conforming files this text's readers ignore. A
+-compactor, though its output is a new file, carries the input's
++rewriter, though its output is a new file, carries the input's
+ unknown ignore-lane bits into its output trailer rather than writing
+ flags = 0, and sets no other (§20.5, `[R-WRT-06]`). An updater MUST
+ copy forward unknown ignore-lane bits of the file it modifies, MUST
+ NOT clear them, and MUST NOT set any other: no writer under this text
+ originates an ignore-lane bit, this text defining none for it to mean
+ anything by, so a bit is set only by a writer under the later minor
+-version that defines it and carried forward by every updater and
+-compactor under this text. An updater encountering an unknown
++version that defines it and carried forward by every updater under
++this text, appender and rewriter alike. An updater encountering an unknown
+ incompat-lane bit is a reader first, and therefore rejects the file
+ before modifying anything. `[R-CNT-08]`
+ 
+@@ -1041,7 +1043,7 @@ therefore reject-layer, consistent with `[R-CNT-17]`. For a record
+ with MU = 0, the extent slot is its only sanctioned reference to bytes
+ outside the record sequence: neither its inline payload nor its extent
+ contents encode offsets or lengths of other file bytes — this is what
+-lets a compactor relocate an unknown ancillary's extent without
++lets a rewriter relocate an unknown ancillary's extent without
+ parsing it (§20). Records with MU = 1 carry further references only
+ where this specification or registry review (§10) defines them; the
+ layer record's tile index (§15), whose entries reference stored-tile
+@@ -1268,7 +1270,7 @@ that extends the file and never modifies a committed byte. Bytes in
+ [0, F) — F being the live trailer's committed file length — are
+ immutable: a writer MUST NOT modify them, and every conforming
+ mutation of a file is either a commit (§9.2) or a whole-file rewrite
+-under a new file_id (compaction, §20). `[R-LIF-01]` The owning scope
++under a new file_id (a rewrite, §20.5). `[R-LIF-01]` The owning scope
+ of the structures this section defines is the file.
+ 
+ #### 9.2 The commit protocol
+@@ -1543,7 +1545,7 @@ where no other claimant claims them (§15.3).
+ > certifies what a reader can reach and counts what it cannot, which
+ > is decidable from the live trailer in one pass and does not depend
+ > on reconstructing the file's history — a history the format does
+-> not promise to keep and compaction is expected to discard.
++> not promise to keep and a rewrite is expected to discard.
+ 
+ ### 10. Extension Points and Registry
+ 
+@@ -3124,17 +3126,29 @@ governs it.
+ - **appender** — extends an existing file by commits (§9.2):
+   adding layers or records, superseding tiles, growing extents,
+   amending metadata.
+-- **compactor** — rewrites a file whole under a new identity
+-  (§20.5), reclaiming slack.
+-
+-A creator emits only conforming files (`[R-CNF-05]`). An appender
+-and a compactor satisfy every writer requirement for the bytes
+-they produce and the preservation obligations of §20.4 for what
+-they carry forward (`[R-CNF-06]`), and are readers of every
+-structure they process (`[R-CNF-11]`) — a violation latent in a
+-structure they carry forward unmodified travels with it, seen or
++- **rewriter** — writes a new file from an existing one under a new
++  identity (§20.5), carrying structures forward, re-creating some, or
++  dropping some; compaction, which carries every structure forward
++  and changes nothing but placement, is the rewrite that reclaims
++  slack.
++
++The tiers are shapes of operation and §2.3's classes are the
++obligations they carry. A creator is a writer and nothing more: it
++emits only conforming files (`[R-CNF-05]`). An appender and a
++rewriter are updaters: each satisfies every writer requirement for
++the bytes it produces and the preservation obligations of §20.4 for
++what it carries forward (`[R-CNF-06]`), and is a reader of every
++structure it processes (`[R-CNF-11]`) — a violation latent in a
++structure it carries forward unmodified travels with it, seen or
+ unseen, and certifying the whole file is a verifier's office (§9.7).
+-`[R-WRT-01]`
++The appender's commit extends its input under the input's file_id;
++the rewriter's output is a new file under a fresh one (`[R-LIF-01]`).
++Every obligation of §20.3 through §20.5 attaches to an operation and
++binds whichever writer performs it: a writer that carries forward any
++structure of an input file it did not decode is an updater and owes
++§20.4's preservation for every record of that file, whatever else it
++changes, and one that decodes everything it writes is a creator,
++whatever it read. `[R-WRT-01]`
+ 
+ #### 20.2 Creation
+ 
+@@ -3214,7 +3228,7 @@ An appender MUST, in order:
+    whose record alone changes keeps its extent slot, pointing at
+    the existing region, as does a layer the commit leaves
+    untouched (`[R-WRT-05]`); relocating a live index region is
+-   compaction's operation (§20.5, `[R-WRT-07]`), not an
++   a rewriter's operation (§20.5, `[R-WRT-07]`), not an
+    appender's.
+ 
+    A layer that stores a tile **in the generation this commit
+@@ -3237,8 +3251,8 @@ An appender MUST, in order:
+    an interleaved layer's channel list (its names aside), and the
+    position of every planar channel the new state keeps. A commit MUST
+    NOT change one of
+-   these; the change is a new layer, or a whole-file rewrite under a
+-   fresh file_id (`[R-LIF-01]`, §20.5). This bar binds the commit as
++   these; the change is a new layer, or a rewrite that re-declares
++   it under a fresh file_id (`[R-LIF-01]`, §20.5). This bar binds the commit as
+    an actor: no file is nonconforming by virtue of its violation, and
+    no register row records the violation itself, the register
+    enumerating file-conformance violations (§21.1) and the bar stating
+@@ -3361,7 +3375,7 @@ An appender MUST, in order:
+ > directory (every record byte-identical except the modified
+ > layer's), the pad, and the 64-byte trailer. The prior index
+ > region and the superseded payload become slack, reclaimable
+-> only by compaction.
++> only by a rewrite (§20.5).
+ 
+ > **Example — the three shapes a commit takes.** Regions, not offsets;
+ > ▓ marks what the commit turned to slack.
+@@ -3457,19 +3471,22 @@ provide — so for an implemented type only the PE bit bites:
+ 
+ | Governing flags | Updater obligation |
+ |---|---|
+-| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. At either scope a compactor MUST refuse to compact the file, on `[R-WRT-06]`'s own ground: such a type can define references this specification does not (§7.2), so its bytes cannot be safely relocated. |
++| MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. At either scope a rewriter MUST refuse to rewrite the file, on `[R-WRT-06]`'s own ground: such a type can define references this specification does not (§7.2), so its bytes cannot be safely relocated. |
+ | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
+-| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. The licence is the bit's own: whoever fixed PE = 0 for the record, the writer that stored it or the definition that governs it, declined preservation across edits, so an updater MAY drop the record in any commit it is otherwise free to make — one whose only effect is the drop included — and a compactor MAY drop it whenever it rewrites the file. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
++| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. The licence is the bit's own: whoever fixed PE = 0 for the record, the writer that stored it or the definition that governs it, declined preservation across edits, so an updater MAY drop the record in any commit it is otherwise free to make — one whose only effect is the drop included — and a rewriter MAY drop it in any rewrite. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+ 
+ No commit therefore removes a layer record, or a user-metadata
+ record at either scope. Both registered types carry PE = 1, and an
+ in-place removal would strand that layer's stored tiles and index
+-region as slack (§5.2) which only compaction reclaims, leaving the
++region as slack (§5.2) which only a rewrite reclaims, leaving the
+ file no smaller than before — so the operation would cost what it
+ appears to save. A producer that wants a file without a layer writes
+-one: a whole-file rewrite under a fresh file_id, which `[R-LIF-01]`
+-already sanctions. That is not compaction, which carries every layer
+-of its input forward (§20.5).
++one: a rewrite that drops the layer under a fresh file_id, which
++`[R-LIF-01]` already sanctions (§20.5); it is not compaction, which
++carries every layer of its input forward. That rewrite is this
++table's one exception: it omits the dropped layer's record, index
++region and stored tiles from its output, and carries every other
++record under the table.
+ 
+ An updater MUST NOT re-encode a record whose type it does not
+ implement, and MUST NOT modify one except by relocating its
+@@ -3494,27 +3511,40 @@ no-embedded-offsets rule (§7.2) makes safe for MU = 0 records.
+ > states from the physical file (§9.6), and gets only the ones that
+ > file still carries.
+ 
+-#### 20.5 Compaction
+-
+-A compactor's output contains only the structures reachable from the
+-input's live trailer — the live committed state (§7.2), less any
+-record §20.4 lets it drop — so slack is never carried. Given a
+-conforming input the output is a conforming file. A compactor
+-satisfies every writer requirement for the bytes it produces
+-(`[R-CNF-06]`), and a violation latent in a structure it carries
+-forward verbatim travels into its output (`[R-WRT-01]`) — its
+-verification depth is `[R-WRT-09]`'s and reaches no decoded content.
+-A compactor MUST refuse to compact when any check `[R-WRT-09]`
+-obliges fails, and MUST NOT emit a file carrying a violation it has
+-detected: it can neither re-emit the structure corrected
+-(`[R-WRT-05]`), nor keep it and call the output clean. Dropping is
+-the one disposal that answers, and only where §20.4's table licenses
+-it: a record dropped is not in the output, so the output carries no
+-violation and the prohibition — which bites on what the output
+-carries — is satisfied. Where the table does not license a drop the
+-compactor MUST refuse. It MUST mint a fresh file_id for the output
+-— a new draw under §9.3's randomness advice, not merely a value
+-compared against the input's: a compacted file is a whole-file
++#### 20.5 Rewriting
++
++A rewriter's output is a new file under a fresh file_id, built from
++the structures reachable from the input's live trailer — the live
++committed state (§7.2) — and carrying no slack. Each structure of the
++input is carried forward verbatim, re-created as new output, or
++dropped, under the rule for what is done to it, and the output MAY
++add what a creator could. This text names three rewrites:
++**compaction**, which carries every structure forward and changes
++nothing but placement, and is the rewrite that reclaims slack;
++**dropping** a layer, which no commit removes (§20.4) and a rewrite
++does by omitting the layer's record, index region and stored tiles,
++or a record §20.4's table licenses dropping;
++and **re-declaring** a layer that stores a tile in the input, the
++rewrite §20.3 step 4 reserves for a change to a fixed declaration. A
++rewrite MAY be several of these at once. A rewriter satisfies every
++writer requirement for the bytes it produces (`[R-CNF-06]`), and a
++violation latent in a structure it carries forward verbatim travels
++into its output (`[R-WRT-01]`) — its verification depth over what it
++carries is `[R-WRT-09]`'s and reaches no decoded content, and what it
++re-creates it decodes as a reader (`[R-CNF-11]`) and writes as a
++creator (§20.2). Given a conforming input, an output that carries
++forward, re-creates and drops as this section provides is a
++conforming file. A rewriter MUST refuse to rewrite when any check
++`[R-WRT-09]` obliges fails, and MUST NOT emit a file carrying a
++violation it has detected: it can neither re-emit the structure
++corrected (`[R-WRT-05]`), nor keep it and call the output clean.
++Dropping is the one disposal that answers, and only where §20.4's
++table licenses it: a record dropped is not in the output, so the
++output carries no violation and the prohibition — which bites on what
++the output carries — is satisfied. Where the table does not license a
++drop the rewriter MUST refuse. It MUST mint a fresh file_id for the
++output — a new draw under §9.3's randomness advice, not merely a value
++compared against the input's: a rewritten file is a whole-file
+ rewrite under a new file_id by definition (`[R-LIF-01]`), and
+ reusing the input's would break the (file_id, range) cache contract
+ of `[R-LIF-03]`, since relocation puts different bytes at the same
+@@ -3524,46 +3554,54 @@ its input, and `[R-LIF-03]` reaches that verdict on file_id alone,
+ before any comparison of committed_file_length. What is lost is
+ smaller and worth naming: nothing in the output's trailer records
+ that it is a first committed state — no field counts commits — so a
+-compacted file and a file appended to a hundred times are
+-indistinguishable by their live trailers alone. A compactor MUST follow
++rewritten file and a file appended to a hundred times are
++indistinguishable by their live trailers alone. A rewriter MUST follow
+ `[R-LIF-02]`'s **creation path**, as §20.2 obliges a creator: the
+ output has no prior trailer, which is the case that path states,
+-and `[R-WRT-01]` already has a compactor satisfying every writer
++and `[R-WRT-01]` already has a rewriter satisfying every writer
+ requirement for the bytes it produces. The pad of step 5 and the
+ barriers of steps 4 and 6 — both, not one — are owed here as they
+-are of a creator. That a compaction is a whole-file rewrite rather
+-than a commit (`[R-LIF-01]`) fixes what the output *is*, not which
+-rules govern the writing of it.
++are of a creator. That a rewrite is not a commit (`[R-LIF-01]`)
++fixes what the output *is*, not which rules govern the writing of
++it.
+ 
+ The output
+ trailer MUST copy the input's unknown ignore-lane flag bits forward
+ and set no other, in place of the flags = 0 §6.3 requires of a file
+ created under this text (`[R-CNT-08]`). Where the output carries a feature a later minor
+-defines and this compactor does not — on a conforming input a carried
++defines and this rewriter does not — on a conforming input a carried
+ ignore-lane bit (§6.3) or an unrecognized `tarn.` key in a record it
+ never decoded (§18.3), the two of §10.1's four vehicles §21.6 makes
+ conforming, the other two reaching such a file only as values this
+ text still registers as reserved-range violations — F36 and L25 for a
+ record type, and one row for each of the other seven spaces §10.2
+ tabulates (L31, L33, L34, L36, L43, L45, R1) —
+-the output's version_minor SHOULD be at least the input's: a compactor cannot know which minor version defined a
++the output's version_minor SHOULD be at least the input's: a rewriter cannot know which minor version defined a
+ feature it does not implement, and a lower minor understates the
+ file's feature floor to tooling, the mirror of the overstatement
+ `[R-CNT-26]` names. Otherwise version_minor follows `[R-CNT-26]`'s
+-floor. A compactor MUST refuse to compact a file carrying any record
++floor. A rewriter MUST refuse to rewrite a file carrying any record
+ whose type it does not implement with MU = 1: such a type can
+ define references this specification does not (§7.2), so its
+ bytes cannot be safely relocated. `[R-WRT-06]`
+ 
+-A compactor MUST preserve content, and preserves no placement — placement is not among the things it carries forward, and it is free to place structures anywhere §5.2 admits and every declared layout invariant permits (`[R-SLB-01]`, `[R-SLB-03]`): every stored
+-tile's bytes verbatim — each index entry's crc is unchanged — and
+-every retained record per §20.4, except that relocation re-points
++A rewriter MUST preserve the content of every structure it carries
++forward, and preserves no placement — placement is not among the
++things it carries forward, and it is free to place structures
++anywhere §5.2 admits and every declared layout invariant permits
++(`[R-SLB-01]`, `[R-SLB-03]`): every carried stored tile's bytes
++verbatim — each index entry's crc is unchanged — and every retained
++record per §20.4, except that relocation re-points
+ extent slots, regenerates each tile-index region any of whose stored
+ extents the output relocates (entry
+ offsets new; entry lengths, entry crcs, and sentinel entries
+ unchanged; segment CRCs recomputed over the entries as
+ re-emitted), and updates the layer-record fields covering a
+-regenerated region (crc_of_crc_array).
++regenerated region (crc_of_crc_array). A layer the rewrite
++re-creates is new output: its record, its tile-index region and its
++stored tiles are written under §20.2's rules from content the
++rewriter decoded (§19.3, §19.4), and nothing of the input's copy of
++that layer is carried forward.
+ 
+ Regenerating a region means classifying every entry in it: a sentinel
+ is re-emitted unchanged, and every other entry is re-pointed to where
+@@ -3571,26 +3609,27 @@ its stored extent now lies. An entry §15.3 classifies reject-tile on a
+ structural ground is neither — `[R-IDX-03]` gives it no stored extent
+ for a re-pointing to target — so regenerating the region cannot
+ proceed without meeting it, and the violation is thereafter one the
+-compactor has detected. `[R-WRT-06]` then obliges refusal: the
+-compactor can neither reproduce the entry nor invent a replacement,
++rewriter has detected. `[R-WRT-06]` then obliges refusal: the
++rewriter can neither reproduce the entry nor invent a replacement,
+ and no drop is available, a tile-index entry being no record §20.4's
+ table licenses dropping. That `[R-WRT-09]`'s checks reach the index
+ chain and the checksum over each extent it copies rather than an
+-entry's own value domain bounds how far a compactor goes looking,
++entry's own value domain bounds how far a rewriter goes looking,
+ not what it owes on what regenerating the region has already put in
+ front of it.
+ 
+ No other record payload
+ carries a file offset: MU = 0 records by rule (§7.2), and an
+-MU = 1 type the compactor does not implement never reaches this
++MU = 1 type the rewriter does not implement never reaches this
+ step (`[R-WRT-06]`). An MU = 1 type it *does* implement is the
+ remaining case, and §7.2 admits it — such a type carries further
+ references where this specification or registry review defines
+-them — so a compactor implementing one relocates whatever that
+-registration defines, on the same terms as the tile index. The output's
+-reference arrays MUST equal the
+-live generation's bit for bit (`[R-MDL-02]`): compaction changes
+-where bytes live, never what a layer denotes. `[R-WRT-07]`
++them — so a rewriter implementing one relocates whatever that
++registration defines, on the same terms as the tile index. The
++reference array of every layer the output carries forward MUST equal
++the live generation's bit for bit (`[R-MDL-02]`): a rewrite changes
++where bytes live, never what a carried layer denotes, and what a
++re-created layer denotes is the rewriter's to declare. `[R-WRT-07]`
+ 
+ > **Example — what compaction reclaims.** Regions, not offsets; ▓ marks
+ > slack.
+@@ -3612,17 +3651,17 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
+ > extents moved is regenerated — the ′ marks B's (`[R-WRT-07]`). In
+ > this placement A's stored extents happen not to move, so A's index
+ > is copied and only its slot re-pointed; under a placement that moved
+-> them it would be regenerated too, placement being the compactor's
++> them it would be regenerated too, placement being the rewriter's
+ > to choose.
+ > Placement is what changes, which is why the output is a different
+ > file rather than a later generation of the same one. The fresh
+ > file_id is the mechanism, not bookkeeping: a
+ > cache keyed (file_id, range) is sound precisely because ranges never
+-> change beneath a file_id (§9.3), and compaction is the one operation
++> change beneath a file_id (§9.3), and a rewrite is the one operation
+ > that moves live bytes. Reusing the input's identifier would serve
+ > the input's bytes for the output's ranges.
+ >
+-> This is the only operation that reclaims slack; truncation past F
++> A rewrite is the only operation that reclaims slack; truncation past F
+ > (`[R-LIF-04]`) and recovery to an earlier commit boundary
+ > (`[R-LIF-06]`) also shorten a file, but neither reclaims any. Slack
+ > accumulates a directory, a pad and a trailer per commit, the gaps an
+@@ -3634,18 +3673,20 @@ where bytes live, never what a layer denotes. `[R-WRT-07]`
+ > whose walk completes reports the total (§9.7), and that total is
+ > what tells an operator when to run this.
+ 
+-A compactor's verification depth follows reliance over
+-everything it carries (`[R-WRT-03]`): it relies structurally on every
++A rewriter's verification depth over what it carries follows
++reliance (`[R-WRT-03]`): it relies structurally on every
+ structure it copies, so it MUST verify each link of the chain —
+ the open (§19.1), each retained layer's record (§19.3) and full
+ index chain (`[R-IDX-04]`), and the checksum §8.1 states over each
+ extent it copies, every stored tile's entry crc among them — before
+-emitting that structure's bytes. The duty follows what the compactor
++emitting that structure's bytes. The duty follows what the rewriter
+ carries and not where it places it: an extent the output leaves at
+-its input offset owes the same check as one it relocates.
++its input offset owes the same check as one it relocates. What it
++re-creates it decodes as a reader first, owing every check §19.3 and
++§19.4 place at that use (`[R-CNF-11]`).
+ `[R-WRT-09]`
+ 
+-> **Note.** Compaction is the only true removal: logical deletion
++> **Note.** A rewrite is the only true removal: logical deletion
+ > supersedes bytes but leaves them in the file as slack
+ > (`[R-CNT-21]`) — a privacy consideration (§23).
+ 
+@@ -3948,7 +3989,7 @@ reported as `[R-ERR-04]` requires.
+ | A record type this specification has not assigned, from the experimental range (≥ 0x8000, §10.2), carries MU = 0 | Ignored, and preserved or dropped per its PE bit; a *reserved*-range type is read the same way, but emitting one is a violation (F36, L25) | `[R-CNT-15]`, `[R-CNT-18]`, `[R-WRT-08]` |
+ | An ignore-lane flag bit (16–31) is set | Ignored; the file is conforming — such bits are defined by later minor versions | `[R-CNT-08]` |
+ | version_minor is higher than this text defines | Accepted; minors never gate | `[R-CNT-07]` |
+-| Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded regions | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier; where its walk did not complete, as a partial total, an upper bound naming what stopped the walk; only compaction reclaims it | `[R-CNT-21]` |
++| Bytes the live state does not claim — alignment gaps, the pre-trailer pad, superseded regions | Slack: unconstrained content, no conformance requirement, counted and reported by a verifier; where its walk did not complete, as a partial total, an upper bound naming what stopped the walk; only a rewrite reclaims it | `[R-CNT-21]` |
+ | A layer mixes bool and numeric channels, in either layout | Defined: planar bool planes pack, interleaved bool values are single bytes; a reader MUST NOT reject the layer for the combination | `[R-SER-09]` |
+ | A user-metadata record declares an experimental-range (≥ 0x80) document encoding | Ignored (ignore-record); the file is conforming — §10.3's prohibition binds a writer's conduct, not the bytes. No document rule attaches at such an encoding, so a verifier certifies, reporting the record it ignored | `[R-MTA-03]`, `[R-EXT-03]`, `[R-CNF-02]`, `[R-MTA-10]` |
+ | A user-metadata document carries an unrecognized `tarn.`-prefixed key | Conforming: later minor versions register keys, and this text's readers ignore the key and read the rest of the document | `[R-MTA-06]` |
+@@ -4323,7 +4364,7 @@ the superseded trailers that committed-prefix immutability keeps in
+ place (§9.1, §9.6). No field carries a count of the commits that
+ produced a file, so their number follows only from that probe: it is
+ unavailable to anyone holding just the live trailer, and absent
+-altogether from a compacted file (§20.5), which retains no earlier
++altogether from a rewritten file (§20.5), which retains no earlier
+ trailer to find.
+ Writers handling sensitive material SHOULD treat names and metadata
+ as published content, and SHOULD compact before publication when the
+@@ -4334,7 +4375,7 @@ across every generation of a file - high-entropy only when its
+ writer follows §9.3's randomness advice, which `[R-LIF-03]` states
+ as a SHOULD. It is what makes
+ `(file_id, range)` caching sound, and equally what lets an observer
+-correlate two copies of a file as the same artifact. Compaction
++correlate two copies of a file as the same artifact. A rewrite
+ mints a new one (`[R-WRT-06]`) - the only defined way to break
+ *file_id* linkage, and not an unlinkability measure: `[R-WRT-07]`
+ preserves every stored tile's bytes and every index entry's crc bit
+@@ -4654,7 +4695,7 @@ the file.
+    some and as an arithmetic magnitude by others. The value
+    0x0000000000000001 is
+    substituted in the measure-zero case that they are all zero
+-   (§6.2 forbids `file_id` = 0). This is a creator's rule: a compactor
++   (§6.2 forbids `file_id` = 0). This is a creator's rule: a rewriter
+    adopting the profile takes `[R-WRT-06]`'s fresh draw instead, since
+    a derived value is not a draw and re-deriving it on an already-
+    compact input would reproduce the input's own `file_id`.
+@@ -4745,19 +4786,19 @@ the file.
+    exist, not merely about eight bytes of the layer record.
+ 8. **`version_minor` at the floor** `[R-CNT-26]` states, and
+    `flags` = 0. The `flags` half is a creator's rule, as item 2's
+-   identifier is: a compactor adopting the profile carries its input's
++   identifier is: a rewriter adopting the profile carries its input's
+    unknown ignore-lane bits forward instead, setting no other
+    (`[R-CNT-08]`). The
+-   version_minor floor binds a compactor too, save where its output
++   version_minor floor binds a rewriter too, save where its output
+    carries a feature it does not implement, when §20.5's floor governs
+-   instead (`[R-WRT-06]`). A compactor's output is therefore
++   instead (`[R-WRT-06]`). A compaction's output is therefore
+    reproducible only modulo its trailer and the records §20.4 lets it
+    drop: `[R-WRT-06]`'s fresh file_id is no function of content, this
+-   item's floor turns on which features the compactor implements, and
++   item's floor turns on which features the rewriter implements, and
+    a record whose governing flags are MU = 0 and PE = 0 is retained or
+-   dropped at the compactor's choice (§20.4), which no item here pins.
++   dropped at the rewriter's choice (§20.4), which no item here pins.
+    An adopter needing byte-identity
+-   across compactors pins the compactor, as items 1 and 9 pin their
++   across rewriters pins the rewriter, as items 1 and 9 pin their
+    producers.
+ 9. **User metadata either absent, or serialized by a named JSON
+    writer at a named version, at a fixed storage encoding (§18.2) —
+@@ -4789,7 +4830,7 @@ fixing of a declared alignment and slab, which §16 leaves to the
+ writer; a fixed filter, which §17.3 leaves to the writer; fixed
+ declared tile extents, of which §11.3 imposes none; a fixed layout,
+ which §14.1 leaves to the writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
+-SHOULD — item 8, binding creator and compactor alike save §20.5's
++SHOULD — item 8, binding creator and rewriter alike save §20.5's
+ carried-feature case, its `flags` half a creator's rule alone; a
+ derived `file_id`, where §9.3 states only advice; NFC-normalized
+ names, which `[R-ENC-14]` states as a SHOULD; and the
+@@ -4833,13 +4874,13 @@ values as only 0x00 or 0x01 (`[R-SER-08]`, §14.2); sorts
+ user-metadata object members by their keys' UTF-8 bytes
+ (`[R-MTA-05]`, §18.2); follows the commit protocol
+ including both barriers (§9.2); writes flags = 0 when it creates a
+-file, a compactor instead carrying its input's unknown ignore-lane
++file, a rewriter instead carrying its input's unknown ignore-lane
+ bits forward and setting no other (`[R-CNT-08]`, §6.3, §20.5); honors
+ any alignment or slab it declares (§16). Advisory, and not a conformance condition: a writer
+ SHOULD zero the gaps it creates (`[R-CNT-03]`, §5.2).
+ 
+-**Conforming updater** — everything a writer does for the bytes it
+-produces, plus: validates the trailer and full directory, and every
++**Conforming updater**, an appender or a rewriter (§20.1) — everything
++a writer does for the bytes it produces, plus: validates the trailer and full directory, and every
+ layer it modifies (§20.3); changes a layer that stores a tile in the
+ generation its commit supersedes only as §20.3 step 4 permits — its
+ names, a grown dimension extent, a planar channel list extended at its
+@@ -4855,9 +4896,16 @@ ignore-lane flag bits, clears none and sets no other (`[R-CNT-08]`,
+ §6.3); respects every record's MU and PE bits, the
+ registry's fixed values governing for a registered type (§20.4,
+ `[R-CNT-22]`); never removes a layer record, or a
+-user-metadata record at either scope (§20.4); never modifies a scope governed by an unknown critical
++user-metadata record at either scope by commit (§20.4); never modifies a scope governed by an unknown critical
+ record, and rejects outright a file carrying an unimplemented
+-top-level MU = 1 record (`[R-CNT-15]`, §20.4).
++top-level MU = 1 record (`[R-CNT-15]`, §20.4). A rewriter, in
++addition, mints a fresh file_id and follows the creation path
++(`[R-WRT-06]`); carries every structure it does not decode forward
++verbatim, regenerating each index region it relocates and re-pointing
++every slot (`[R-WRT-07]`); verifies the checksum over every extent it
++copies (`[R-WRT-09]`); drops a layer only by a rewrite that carries
++every other structure forward, and refuses to rewrite a file carrying
++an unimplemented MU = 1 record (§20.5).
+ 
+ **Conforming verifier** — every reader obligation, plus the checks
+ readers are exempt from: the live-state coverage partition and the

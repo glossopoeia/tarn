@@ -209,3 +209,28 @@ edits over eighteen items, and none is deferred.
 - **ADR-0091**: a rule's reach is settled by an ADR; this is the ADR.
 - **ADR-0119**: the repair list against the diff.
 - **ADR-0104**: editorial repairs ride with the decision.
+
+## Erratum, 2026-09-19 — the pre-round-36 audit
+
+The audit ADR-0130's erratum describes, nine lanes and every one
+fallback-grade, found four distinct defects in this decision's wording, none
+byte-level, all repaired in the commit carrying this erratum. **Decision 1's
+requantified duty drew no finding**: the rewrite lane listed every kind of
+extent a rewriter copies against §8.1's map, found the one kind with no
+checksum already stated there as such, and swept for a surviving
+placement-keyed restatement of the duty and found none.
+
+Step 4's repaired parenthetical on entries new to a generation named the
+tiles a grown extent or an appended channel adds to the addressed set. It
+reads as a definition, and it omits every entry of a layer the commit adds
+or re-declares, which left those entries to the clause on every other entry
+being byte-identical, where there is no earlier entry to be identical to:
+*"every entry of a layer this commit adds or re-declares, and the tiles a
+grown extent or an appended channel adds to the addressed set"*. §6.4's hedge
+conditioned the saving and left the sentence above it, that the baseline
+remote open is two requests, unconditioned: the parenthetical says *"a
+separate size probe then making the baseline three"*. Appendix G item 5's
+*neither* had two candidate pairs, the tile extents and the layout or the
+layout's two effects, and §14.4's Note supports only the second: *"Where
+neither effect of the layout reaches the data"*. Appendix C still cited
+§15.1 for the index encoding after §10.2's row moved to §7.4.

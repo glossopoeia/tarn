@@ -1,0 +1,261 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 4ac4341..572d99f 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -594,8 +594,7 @@ defined by the user-metadata document (§18).
+ #### 4.7 Field taxonomy and presentation
+ 
+ Every field this specification defines is classified by what its
+-*value* determines, each class being what the one before it is not.
+-A field is **structural** if its value determines anything a
++*value* determines. A field is **structural** if its value determines anything a
+ conforming reader or verifier does with the bytes it reads — where a
+ byte lies, how it decodes, what a decoded value is, or whether the
+ file, layer or tile is accepted at all, which is the sense
+@@ -618,9 +617,9 @@ every other field this specification defines is structural.
+ > constant, where a Value column replaces type, name and range, and
+ > §7.2 folds a field's range into its Field cell where it states one,
+ > a field's remaining bounds being stated in the rules below the
+-> table. A variable-length field's value
+-> includes its length prefix, so a name is structural: it determines
+-> where the field after it begins. Every non-obvious encoding is followed by a worked numeric
++> table. A name is structural: a duplicate is a validity error at file
++> or layer scope (`[R-ENC-15]`, F4, L9), and its length prefix is §7.4's
++> framing, not its value. Every non-obvious encoding is followed by a worked numeric
+ > example, and every sentinel or overloaded encoding additionally has a
+ > paired conformance vector. All named constants appear once in
+ > Appendix B.
+@@ -794,7 +793,9 @@ A **local reader** is one whose transport serves any byte range at no
+ per-range round trip — a local file or a memory mapping being the
+ ordinary cases — and a **remote reader** one whose transport charges a
+ round trip per range (§6.4). That distinction governs the request
+-accounting of §6.4 and nothing else; the obligation over the front
++accounting of §6.4, `[R-CNT-10]`'s obligations over the transport size
++and what the file size denotes in §6.2's gate (`[R-CNT-06]`); the
++obligation over the front
+ block turns on residency instead, because a transport can be classified
+ either way at the margin while residency is decidable at any reader's
+ own open path.
+@@ -920,8 +921,10 @@ gate) but misstates the file's feature floor to tooling. `[R-CNT-26]`
+ 
+ The baseline remote open is two requests, each with an exact target:
+ (1) fetch the final 64 bytes — a suffix range, whose response also
+-carries the transport-authoritative file size F (`[R-CNT-10]`), so that
+-§19.1's first two steps cost one request between them; validate per
++carries the transport-authoritative file size F where the transport
++discloses a range response's complete length (`[R-CNT-10]`, which
++governs where it does not), so that §19.1's first two steps cost one
++request between them; validate per
+ §6.2–§6.3; (2) fetch
+ [dir_offset, dir_offset + dir_length); verify and decode per §7.1. A
+ reader MAY instead speculatively fetch a suffix window in one request
+@@ -1577,13 +1580,14 @@ collected here:
+ | sample type (§12.2) | u16 | 1–13 | 14–0x7FFF | ≥ 0x8000 |
+ | codec (§17.2) | u16 | 1–4 | 5–0x7FFF | ≥ 0x8000 |
+ | filter (§17.3) | u16 | 1, 2 | 3–0x7FFF | ≥ 0x8000 |
+-| index encoding (§7.4, §15.1) | u8 | 1 | 2–0x7F | ≥ 0x80 |
++| index encoding (§7.4) | u8 | 1 | 2–0x7F | ≥ 0x80 |
+ | metadata encoding (§18.2) | u8 | 1, 2 | 3–0x7F | ≥ 0x80 |
+ 
+-Value 0 is invalid in every space above. Two spaces carry no
++Value 0 is invalid in every space above. One space carries no
+ experimental range: channel layout, whose `u8` field is too narrow
+-to spare one — 3 through 255 stay reserved to this specification —
+-and the trailer's flag lanes, which §6.3 partitions instead.
++to spare one, 3 through 255 staying reserved to this specification.
++The trailer's flag lanes are not a space of this kind and are not
++tabulated above; §6.3 partitions them instead.
+ `[R-EXT-02]`
+ 
+ #### 10.3 The experimental range
+@@ -1597,8 +1601,8 @@ emitted at all before this specification assigns it — an
+ unregistered value that escapes into circulation is precisely the
+ failure the experimental range exists to absorb. A reader
+ encountering either treats it as its space's rules require: a
+-validity error at the owning scope for the value sets of §11.4,
+-§12.2, §14.1, §15.1, §17.2, and §17.3; for record types, the MU-bit
++validity error at the owning scope for the value sets of §7.4,
++§11.4, §12.2, §14.1, §17.2, and §17.3; for record types, the MU-bit
+ outcome of `[R-CNT-15]` at file scope and `[R-CNT-18]` for layer
+ sub-records; and for the metadata-encoding space of §18.2,
+ ignore-record under the quarantine (`[R-CNT-25]`), never a
+@@ -2910,7 +2914,8 @@ A conforming reader opens a file by these steps, in order:
+    decided from F alone and needing no other byte of the file
+    (`[R-CNT-27]`, F5). These steps are
+    ordered by dependency, not by
+-   I/O: a remote reader's suffix range for step 2 carries F in its
++   I/O: where the transport discloses a range response's complete
++   length, a remote reader's suffix range for step 2 carries F in its
+    own response, so steps 1 and 2 cost one request between them
+    (§6.4), and a local reader obtains F without any. A reader
+    whose open leaves bytes [0, 16) resident — a speculative suffix
+@@ -3013,7 +3018,7 @@ sub-record walk, and sub-record multiplicity (`[R-CNT-18]`,
+ `[R-ENC-12]`, `[R-ENC-15]`), the framing rules a user-metadata
+ sub-record carries — no (0, 0) slot, extent_length at least 5,
+ inline_length exactly 1 (`[R-CNT-25]`, `[R-MTA-03]`) — the u64 value
+-domain of §4.2 (`[R-ENC-03]`), the value sets of §11.4, §12.2, §14.1, §15.1,
++domain of §4.2 (`[R-ENC-03]`), the value sets of §7.4, §11.4, §12.2, §14.1,
+ §17.2, and §17.3, the per-type fill constraints (§13.2,
+ `[R-TYP-07]`), the codec declaration bounds (`[R-COD-07]`), the
+ geometry floor and its arithmetic (`[R-GEO-01]`–`[R-GEO-03]`),
+@@ -3200,8 +3205,8 @@ An appender MUST, in order:
+    (`[R-LIF-01]`), with entries for tiles this commit stores or
+    supersedes written to their new state, entries for tiles that
+    become unstored written as the sentinel, entries new to this
+-   generation (added tiles, grown extents, an appended channel)
+-   emitted per §15, and every other entry byte-identical at its
++   generation (tiles a grown extent or an appended channel adds to the
++   addressed set) emitted per §15, and every other entry byte-identical at its
+    disk-ordinal position (a growth renumbers ordinals wherever
+    `[R-GEO-06]` moves them, and nothing else this step permits moves
+    one). A layer the new state leaves addressing no tile has no region
+@@ -3261,13 +3266,15 @@ An appender MUST, in order:
+    its value sequence, its byte layout, the fill its padding
+    positions hold (§14.5) — the ones §11.4 assigns its ordinal and
+    its values' coordinates by, as a rule rather than as the numbers
+-   the rule yields, and the one §15 gives the layer's index region
+-   its shape by. Under new ones the same bytes would denote values,
++   the rule yields, the one §15 gives the layer's index region its
++   shape by, and the ones §17 produces its stored bytes from, its
++   filter and its codec. Under new ones the same bytes would denote values,
+    coordinates or padding the writer did not store, with every
+    checksum in §8 certifying the result and, but for a stored tile's
+    decoded size, a padding position or pad bit, or a boolean byte the
+    register witnesses (T3, T14, T21, T22, T4, T5, T2) and a decode that fails
+-   outright under a changed codec or filter (T24, T25), no check any
++   outright, or a codec's framing check that precedes it, under a
++   changed codec or filter (T17, T24, T25), no check any
+    actor owes able to see it (§21.7). The permitted changes
+    touch none of that: a name enters no map this specification
+    defines, and a commit MAY change several names at once, two
+@@ -3568,9 +3575,10 @@ compactor has detected. `[R-WRT-06]` then obliges refusal: the
+ compactor can neither reproduce the entry nor invent a replacement,
+ and no drop is available, a tile-index entry being no record §20.4's
+ table licenses dropping. That `[R-WRT-09]`'s checks reach the index
+-chain and each stored tile's entry crc rather than an entry's own
+-value domain bounds how far a compactor goes looking, not what it
+-owes on what regenerating the region has already put in front of it.
++chain and the checksum over each extent it copies rather than an
++entry's own value domain bounds how far a compactor goes looking,
++not what it owes on what regenerating the region has already put in
++front of it.
+ 
+ No other record payload
+ carries a file offset: MU = 0 records by rule (§7.2), and an
+@@ -3630,9 +3638,12 @@ A compactor's verification depth follows reliance over
+ everything it carries (`[R-WRT-03]`): it relies structurally on every
+ structure it copies, so it MUST verify each link of the chain —
+ the open (§19.1), each retained layer's record (§19.3) and full
+-index chain (`[R-IDX-04]`), and each relocated extent's checksum,
+-including every stored tile's entry crc — before emitting that
+-structure's bytes. `[R-WRT-09]`
++index chain (`[R-IDX-04]`), and the checksum §8.1 states over each
++extent it copies, every stored tile's entry crc among them — before
++emitting that structure's bytes. The duty follows what the compactor
++carries and not where it places it: an extent the output leaves at
++its input offset owes the same check as one it relocates.
++`[R-WRT-09]`
+ 
+ > **Note.** Compaction is the only true removal: logical deletion
+ > supersedes bytes but leaves them in the file as slack
+@@ -3646,13 +3657,15 @@ The register — §21.2 through §21.5 (`[R-ERR-02]`) — enumerates
+ every detectable file-conformance violation this specification names: each row is one
+ malformed condition, with the outcome class its scope determines
+ (§2.4) — except where a rule assigns one expressly, as `[R-CNT-25]`'s
+-quarantine does for every §21.5 row and `[R-MTA-09]` for the frame
+-constraints R4 registers, whatever the containing scope —
++quarantine does for every way a §21.5 row makes the document
++unreadable and `[R-MTA-09]` for the frame constraints R4 registers,
++whatever the containing scope —
+ the actor obliged to detect it (`[R-CNF-04]`, `[R-CNF-11]`),
+ the point by which detection is due (§19.2), and the requirement that
+ defines it. A Governing rule cell names that requirement first; any
+-identifiers following it in parentheses are the further rules the
+-condition reads, or the section stating what it reads where no
++identifiers following it in parentheses are further rules the
++condition reads, a finding aid and not the whole of them, or the
++section stating what it reads where no
+ requirement identifier does, a value set (L31) or a registered
+ type's scope (L26), cited without brackets to keep them distinct
+ from the governing one. Its **completeness is normative** — a
+@@ -3682,8 +3695,10 @@ part of the register and carry no rows: neither this completeness
+ clause nor the instance arithmetic below reaches §21.6's defined
+ non-violations, §21.7's test for what no check detects, or
+ §21.9's limits. §21.6's entries restate their governing rules on
+-the same terms a row does, and where such an entry and the rule it
+-cites diverge, the rule governs there too.
++the same terms a row does, each rule its Rule cell lists governing
++the part of the entry it states and none first among them, and where
++such an entry and a rule it cites diverge, the rule governs there
++too.
+ 
+ The **Instances** column enumerates what a conformance corpus builds
+ for that row (§21.8): the row is the unit a vector is attributed to
+@@ -3731,9 +3746,9 @@ it is for `[R-CNT-12]`'s reserved-flag rows (F26, L47), whose bits
+ readers ignore. `[R-SER-08]` is the one rule that goes the other way
+ for a value a reader returns: it resolves a nonconforming interleaved
+ boolean byte to a sample value rather than serving it through, which
+-is why `[R-TYP-04]` (§12.3) makes it the one case where a reader
+-resolves a byte to a sample value rather than serving it through; `[R-CNT-12]`'s reading of MU = 1 with PE = 0 as PE = 1 (F25,
+-L46) resolves a flag and returns no data.
++`[R-TYP-04]` (§12.3) records as the one such case; `[R-CNT-12]`'s
++reading of MU = 1 with PE = 0 as PE = 1 (F25, L46) resolves a flag
++and returns no data.
+ 
+ #### 21.2 File-scope violations
+ 
+@@ -3929,7 +3944,7 @@ reported as `[R-ERR-04]` requires.
+ | An index entry is the sentinel | The tile is addressed but not stored; every sample position it carries inside the layer's extents reads, for each channel the tile carries, as that channel's fill | `[R-IDX-02]`, `[R-TYP-08]` |
+ | A requested coordinate lies outside the layer's extents | The request fails as a request, with no verdict on the file; a region request returns the intersection, empty if disjoint | `[R-MDL-01]`, `[R-GEO-02]`, `[R-RDR-04]` |
+ | A dimension has extent 0 | A valid, empty layer: zero addressed tiles, an empty index, reads returning no samples | `[R-GEO-02]` |
+-| The file contains zero layers | A conforming file: a directory carrying no layer record is a conforming generation whether or not it carries other records, an empty directory included | `[R-CNT-14]` (R-CNT-02) |
++| The file contains zero layers | A conforming file: a directory carrying no layer record is a conforming generation whether or not it carries other records, an empty directory included | `[R-CNT-14]`, `[R-CNT-02]` |
+ | A record type this specification has not assigned, from the experimental range (≥ 0x8000, §10.2), carries MU = 0 | Ignored, and preserved or dropped per its PE bit; a *reserved*-range type is read the same way, but emitting one is a violation (F36, L25) | `[R-CNT-15]`, `[R-CNT-18]`, `[R-WRT-08]` |
+ | An ignore-lane flag bit (16–31) is set | Ignored; the file is conforming — such bits are defined by later minor versions | `[R-CNT-08]` |
+ | version_minor is higher than this text defines | Accepted; minors never gate | `[R-CNT-07]` |
+@@ -4183,7 +4198,8 @@ Extents are owned exactly once (`[R-CNT-13]`): no two structures
+ overlap, which removes aliasing — two index entries pointing at one
+ payload, or a payload overlapping a structure that governs it — as
+ a class. Byte coverage (`[R-CNT-02]`) partitions the *live* state
+-exactly: every byte a reader can reach belongs to one named structure.
++exactly: every byte a reader can reach is the front signature block or
++belongs to exactly one named structure.
+ It bounds nothing outside that — slack is unconstrained and can
+ hold anything (§23.1) — so coverage makes bytes reachable by a reader
+ accounted for, and makes everything else *countable* rather than
+@@ -4678,8 +4694,10 @@ the file.
+    is otherwise free to vary, as is structure placement
+    (`[R-LIF-02]` step 2). The first structure begins at 16, directly
+    after the front signature block, which §5.2 counts as no
+-   structure — or, where a declared alignment admits no structure at
+-   16, at the least position above it the declaration admits; each
++   structure — or, where that structure is a stored tile and a declared
++   A or A_slab admits none at 16, at the least position above it the
++   declaration admits, a structure no declaration constrains beginning
++   at 16 like any other; each
+    later structure begins where the previous one
+    ended, save where alignment forces a gap — a
+    declared A or A_slab, or §6.2's 64-byte trailer alignment, the
+@@ -4712,7 +4730,10 @@ the file.
+    above still disagree on bytes: the tile extents fix every tile's
+    shape and with it the grid count, while the layout fixes how many
+    tile-index entries the layer addresses (§11.2) and how each tile's
+-   values are arranged (§14.2).
++   values are arranged (§14.2). Where neither reaches the data, as
++   §14.4's Note says of a single-channel numeric layer, the layer
++   record's own layout field still differs, and the pin is needed for
++   that byte.
+ 6. **The sentinel for every all-fill tile**, so that a tile whose
+    samples all equal fill is never stored; otherwise two writers
+    agreeing on content still disagree on bytes.
+@@ -4765,7 +4786,9 @@ a writer records when its caller chooses none (`[R-TYP-10]`, a
+ SHOULD); the sentinel for every all-fill tile, which no rule requires;
+ a single generation, which §9 nowhere constrains; the absence or
+ fixing of a declared alignment and slab, which §16 leaves to the
+-writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
++writer; a fixed filter, which §17.3 leaves to the writer; fixed
++declared tile extents, of which §11.3 imposes none; a fixed layout,
++which §14.1 leaves to the writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
+ SHOULD — item 8, binding creator and compactor alike save §20.5's
+ carried-feature case, its `flags` half a creator's rule alone; a
+ derived `file_id`, where §9.3 states only advice; NFC-normalized

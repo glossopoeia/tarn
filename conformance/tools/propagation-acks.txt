@@ -200,3 +200,14 @@ R-CNF-06 -> R-CNF-06: the same mapping, same source.
 R-CNF-06 -> R-LIF-01: ADR-0129's §20.5 opening names the re-declaring rewrite over "a layer that stores a tile in the input", §20.3 step 4's phrase; step 4's head is the source and was not the subject.
 R-CNF-06 -> R-WRT-05: Appendix H's updater entry restates step 4's "a layer that stores a tile" clause and was not the subject.
 R-CNF-06 -> R-WRT-01: ADR-0129's §20.5 opening restates [R-WRT-01]'s "a violation latent in a structure it carries forward" as §20.5 always did; §20.3 step 2's use is the source and was not the subject.
+
+# The pre-round-36 audit's errata to ADR-0128, ADR-0129 and ADR-0130 (2026-09-19).
+R-CNT-26 -> R-VEC-02: the erratum turned a third dash into a colon in [R-WRT-06]'s version_minor sentence, which names F36 and L25; §21.1's instance sentence names the same rows for another purpose and was not the subject.
+R-CNF-03 -> R-MDL-02: the erratum states the layer record's tile index as §7.2's one exception to the MU = 0 rule and leaves the MU = 1 sentence standing; §20.5's restatement of that sentence, for an MU = 1 type a rewriter implements, is still true and was not the subject.
+R-WRT-06 -> R-SLB-01: the erratum restated Appendix H's rewriter sentence in [R-WRT-07]'s own words; [R-WRT-07]'s preservation sentence is the source and was not the subject.
+R-WRT-06 -> R-IDX-03: the same sentence, keyed to [R-WRT-07]'s regeneration trigger, which is the source.
+R-WRT-06 -> R-WRT-07: the same trigger as §20.5's Example restates it; the Example was already right and was not the subject.
+R-WRT-08 -> R-WRT-08: the erratum gave §20.4's drop paragraph the table's own SHOULD for the report; the table row is the source and was not the subject.
+R-PRV-02 -> R-LIF-04: the erratum widened [R-PRV-02]'s "Compaction is the only operation that removes slack" to a rewrite, as §20.5's Example already reads; the Example is the model and was not the subject.
+R-WRT-05 -> R-CNF-06: the erratum scoped Appendix H's step-4 clause to an appender; §20.5's opening names the re-declaring rewrite in step 4's phrase and was not the subject.
+R-WRT-05 -> R-LIF-01: the same clause; §20.3 step 4's head is the source and was not the subject.

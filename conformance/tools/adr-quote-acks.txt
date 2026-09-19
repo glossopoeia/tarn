@@ -198,3 +198,10 @@
 0129|it omits the dropped layer's record, index region and stored tiles from its output, and carries every other record under the table: decision 2 withdrawn by ADR-0130; §20.4's table has no exception
 0130|would cost what it appears to save: quotes ADR-0068's sentence, which this ADR removes from §20.4
 0130|unstoring or superseding every tile of a layer and re-declaring it is one operation, and it is a rewrite: quotes step 4's tense sentence, which this ADR restates as a scope
+0129|Every obligation of §20.3 through §20.5 attaches to an operation and binds whichever writer performs it: decision 1's mapping sentence as decided; its two class tests were made exclusive under this ADR's erratum of 2026-09-19
+0129|A rewrite MAY be several of these at once: decision 1's sentence as decided; restated under this ADR's erratum of 2026-09-19 so that compaction's definition survives it
+0130|the layer record carries PE = 0 and is dropped under the table's last row, the user-metadata record PE = 1 and never: decision 1's flags sentence as decided; the erratum's decision E1 restates its user-metadata half
+0130|A commit MAY therefore drop a layer record, and never removes a user-metadata record at either scope: decision 1's removal sentence as decided; the erratum's decisions E1 and E2 restate it
+0130|a layer that stored a tile keeps its declarations through the commit that empties it. The bar binds the layer's identity: decision 2's sentence as decided; the erratum replaces the undefined term and the §5.2 warrant
+0130|a layer with its index region and stored tiles: decision 3's disposal phrase as decided; the erratum's decision E1 adds the layer's sub-records
+0130|[R-WRT-06] then leaves it two disposals: decision 3's sentence as decided; the erratum gives its report the table's SHOULD

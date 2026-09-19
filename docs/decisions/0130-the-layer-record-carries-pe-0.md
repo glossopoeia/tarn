@@ -12,7 +12,10 @@
   reading ADR-0068's cost as a warning. One consequence is stated below so a
   superseding ADR can withdraw it alone: a rewriter that detects a violation
   in a layer while regenerating its region may drop the layer, reporting the
-  loss, where ADR-0082 had it refuse (decision 3).
+  loss, where ADR-0082 had it refuse (decision 3). The erratum of
+  2026-09-19 asks confirmation of two decisions the pre-round-36 audit
+  forced: a dropped layer goes whole, its sub-records with it (E1), and a
+  sub-record of an unimplemented type with MU = 1 blocks the drop (E2).
 
 ## Context
 
@@ -133,3 +136,119 @@ corpus rebuilt behind `tarn_check`'s coverage checks.
 - **ADR-0124**: the closed list and the principle beside it; decision 2
   states that principle's scope.
 - **ADR-0119**: the repair list against the diff.
+
+## Erratum, 2026-09-19 — the pre-round-36 audit
+
+Nine lanes read the 49 hunks of `f987777..4151e57`, the commits of ADR-0128,
+ADR-0129 and this decision as one combined diff: seven subject lanes on
+Sonnet from the start, and two cross-hunk passes started on Opus, one grouped
+by rule and one by operation. **Opus refused both passes at zero tokens, at
+launch and on the unchanged resume**, the first audit in which the cross-hunk
+brief was refused outright, and both ran on Sonnet after their calls were
+changed. So every lane of this audit is fallback-grade, no Opus reading of
+this surface exists, and the hand-check carries more of the verdict than in
+any audit since the model policy was set. The nine returned 44 findings: 5,
+5, 8, 8, 4, 0 and 4 from the lanes, the register lane empty with a full
+account of its sweeps, and 4 and 6 from the passes. They merge by hand into
+twenty-nine distinct defects, nine in this decision's wording, sixteen in
+ADR-0129's and four in ADR-0128's. Each ADR's erratum records its own;
+twenty-five are repaired and four declined in the commit carrying the three.
+
+**Two are byte-level by the hand-check, both are this decision's, and one
+lane of nine saw them.** The drop lane asked what becomes of a dropped
+layer's sub-records, and no sentence answered. §20.4 said in one breath that
+a commit MAY drop a layer record and "never removes a user-metadata record at
+either scope", while a layer record carries its sub-records in its own
+inline payload (§7.4) and a user-metadata sub-record carries PE = 1. Under
+one reading the drop takes the sub-record with it and the *never* is false;
+under the other the PE = 1 row's *Retain byte-identical* pins every layer
+that carries user metadata, and no commit and no rewrite could ever drop
+one. The table's MU = 1 row forks the same way over a sub-record of a type
+the updater does not implement: its bar on modifying the layer either
+reaches the drop or does not. The disputed file, the input less the layer,
+is conforming under both readings of both, and one reading of each lets an
+updater emit it, which is the byte-level test. Neither this ADR nor ADR-0129
+mentions a sub-record, and neither cross-hunk pass raised either.
+
+**Decision E1. A dropped layer goes whole.** A sub-record's flags govern it
+within a layer the updater keeps; a layer dropped under its own PE = 0 takes
+its sub-records and their extents with it, whatever their PE bits. The
+ground is this decision's purpose, a layer removed by one commit, which the
+other reading withholds from every layer carrying user metadata, by commit
+and by rewrite alike; and containment, a sub-record being bytes of the layer
+record's payload, and layer-scoped state having no scope to persist in
+without its layer. §20.4 reads *"the drop takes the layer whole: a
+sub-record's flags govern it within a layer the updater keeps, so a dropped
+layer's sub-records and their extents go with it whatever their PE bits"*
+and *"A commit never removes a user-metadata record from a scope it keeps"*;
+its flags paragraph reads *"the user-metadata record PE = 1 and is dropped
+only with a layer that carries it"*; §20.5's disposal sentence names *"a
+layer with its sub-records, its index region and stored tiles"*; Appendix H
+says the same. **Confirm.** The alternative, that a PE = 1 sub-record pins
+its layer, is stated so the maintainer can choose it: the drop paragraph
+would say so, and a caller would have no way to make such a layer
+droppable, PE = 1 forbidding the sub-record's removal first.
+
+**Decision E2. A sub-record of a type the updater does not implement with
+MU = 1 blocks the drop.** The ground is the MU = 1 row's own words, *"The
+updater MUST NOT modify the scope the record governs"*, removing a scope
+being the limiting case of modifying it, and `[R-CNT-12]`'s gloss on why
+MU = 1 with PE = 0 is read as PE = 1, *"never silently deletable"*: a tool
+that cannot read a critical record does not delete it by deleting its
+container. The row reads *"blocks modification of that layer, its drop
+included"*, the drop paragraph names the one blocking sub-record, and
+Appendix H reads *"never modifies or drops a scope governed by an unknown
+critical record"*. A rewriter already refuses such a file whole
+(`[R-WRT-06]`). **Confirm.** The alternative, that the layer record's own
+PE = 0 licenses the drop whatever the layer carries, is the smaller text and
+is stated so it can be chosen.
+
+**The scope sentence.** Decision 2's sentence said the bar binds "the
+layer's identity", a property the document nowhere defines and no byte
+carries, and cited §5.2's partition as though it warranted the new layer's
+newness, which a rule about byte ownership does not. It reads *"The bar
+binds a layer the commit keeps and nothing else"* and *"§5.2's partition
+being over the new state alone"*. The step lane and the by-rule pass both
+observed that a drop and addition over the dropped layer's own extents
+yields, byte for byte, the directory a barred re-declaration would; the lane
+graded it byte-level and the pass did not. **Not byte-level by the
+hand-check**: decision 2 says *whatever bytes its entries address* in terms,
+so the text has one reading, the file is emittable under it, and the bar
+binds conduct. The sentence now says so: *"no byte tells the two apart,
+which is the sense in which the bar binds the commit as an actor and makes
+no file nonconforming"*. What that leaves with the maintainer: the principle
+paragraph beside the bar still gives as its reason that under new
+declarations the same bytes would denote values the writer did not store,
+which is what the permitted route does. Whether a new layer's entries should
+be held to bytes its own commit wrote is a decision, and this erratum does
+not take it.
+
+**Sentences written on the old registry value.** §7.2 gave the layer
+record's tile index as its example of an MU = 1 record carrying further
+references, two sentences after ruling that an MU = 0 record's extent
+contents encode no offsets; with the layer record at MU = 0 the rule was
+false of the specification's own record type, in normative text (the rewrite
+lane and the by-operation pass). It reads *"The layer record is the one
+exception, and this specification's own"*, on this decision's ground that
+every conforming reader and updater implements the type (`[R-CNF-03]`).
+§7.4's worked Example still stated MU = 1, PE = 1 beside a citation of §7.3
+(three lanes).
+
+**The report's keyword.** The table says an updater that drops a record
+SHOULD report the loss. This decision's three restatements said "reports the
+loss as the table requires", "the rewriter reports", and, in Appendix H's
+list of duties, a flat "reporting the loss". All three carry the table's
+SHOULD, Appendix H as an advisory sentence on its own convention. The
+Consequences above say a rewriter's drop comes at the price of reporting it;
+if that is meant as an obligation it is a MUST the table does not carry, and
+a decision.
+
+**Declined.** The step lane's B-05, that the bar's give-up sentence reads as
+a closed two-way choice until the scope sentence five sentences on: the
+paragraph states the third route, and a forward pointer would be one more
+rewording of a sentence no reading of which is wrong.
+
+**Register unchanged**: 120 conditions, 277 instances, 331 vectors;
+`tarn_check` PASS; seven quotation and nine propagation acknowledgements.
+The repair list of the three errata was ticked against the diff: twenty-seven edits over twenty-five defects, four declined, none
+deferred.
