@@ -2,7 +2,8 @@
 
 - Status: Accepted (resolves Q-A8 on the maintainer's direction of
   2026-09-09; decision 2 withdrawn by ADR-0130 the same day, the layer
-  record carrying PE = 0)
+  record carrying PE = 0; §20.1's mapping restated as two positions on the
+  maintainer's direction of 2026-09-21, the erratum of that date)
 - Date: 2026-09-09
 - Covers: §20.1's tiers and `[R-WRT-01]`; §2.3 `[R-CNF-06]` and
   `[R-CNF-02]`'s flags gloss; §20.5 whole, retitled, with `[R-WRT-06]`,
@@ -16,8 +17,10 @@
   and named the rewrites. One consequence is a permission the document did
   not carry and is stated below so a superseding ADR can withdraw it: a
   rewrite MAY omit a layer from its output, which no commit may (decision
-  2). The erratum of 2026-09-19 asks confirmation of one byte-level repair:
-  §20.1's two class tests made exclusive on this ADR's own ground.
+  2). The erratum of 2026-09-19 put one byte-level repair to the
+  maintainer, §20.1's two class tests made exclusive on a decode test; the
+  maintainer declined it on 2026-09-21 and directed the two positions of
+  the erratum of that date (E3). Nothing is outstanding.
 
 ## Context
 
@@ -199,6 +202,7 @@ everything it writes is a creator, whatever it read, and not a rewriter:
 repair follows what this ADR argued, but it decides a trailer's bytes, and
 the alternative, that any new file written from an existing one is a rewrite
 whatever its writer decodes, is stated so the maintainer can choose it.
+*(Declined and replaced on 2026-09-21; see the erratum of that date.)*
 
 **The renaming's leftovers.** §3.3's Note kept *compactors*, deliberately,
 for the actors that cannot decode; six of the nine lanes reported it as the
@@ -240,3 +244,64 @@ the identifier closes the two paragraphs it labels; §6.3, §23.2 and
 Appendix G cite it the same way. The tiers lane's D-07: §20.4's last row
 says an updater MAY drop the record in any commit; an updater that commits
 is an appender, and the row's next clause names the rewriter.
+
+## Erratum, 2026-09-21 — the maintainer's ruling on §20.1's class tests
+
+The erratum of 2026-09-19 repaired §20.1's two class tests by making them
+exclusive on a decode test, and put the repair to the maintainer. **The
+maintainer declined it on 2026-09-21 and directed another.** The ruling:
+both tools the fork names are legitimate, a converter that preserves what it
+does not understand and a copier that carries data alone; both outputs are
+conforming files, and neither is to be barred. §20.1 was drawing the line
+without the mechanics that matter, and a rewriter is better defined by what
+it undertakes to preserve.
+
+**What was wrong with the first repair.** A line drawn at whether the writer
+decoded every byte it wrote makes a tool's class turn on its input. A
+converter that re-creates every layer and carries unknown records verbatim
+is a rewriter on a file that holds an unknown PE = 1 record, and copies an
+unknown ignore-lane bit forward; on a file that holds none, everything it
+writes is decoded, the repair made it a creator, and the same tool was
+obliged to clear the bit. In that second case the repair also barred the
+preserving converter outright. The repair was the driver's, and the error
+with it.
+
+**Decision E3. A writer of a new file from an existing one takes one of two
+positions, and the choice is its own.** The mechanic is the one §2.3 already
+carries. A creator answers for every byte it emits (`[R-CNF-05]`) and owes
+its input nothing. An updater answers for the bytes it produces
+(`[R-CNF-06]`), a violation latent in what it carries forward unmodified
+travelling with it (`[R-WRT-01]`), and owes preservation in exchange. §20.1
+reads *"A writer of a new file from an existing one takes one of two
+positions, and the choice is its own"*; of the rewriter, that it undertakes
+to preserve its input and *"in return it answers for what it carries forward
+unmodified only to `[R-WRT-09]`'s depth"*; and of the creator, that *"it
+answers for every byte of its output (`[R-CNF-05]`), bytes it copied from
+another file included"*. The appender's half stays forced, because it is
+observable: *"A writer that extends an input file is an appender and an
+updater, whatever it decodes: the file it leaves holds every byte of its
+input"*, which closes the hole the decode test had opened for an appender
+that implements every record it meets. No prohibition on mixing the two
+positions is needed: a writer that does not undertake preservation is a
+creator, and a creator has no carve-out to take. A rewriter that re-creates
+every structure of its input still copies the ignore-lane bits forward,
+having undertaken preservation; exempting full re-creation would bring back
+the flip.
+
+**With it.** §20.1's rewriter bullet described a shape of operation the
+data-only copier fits too, and says *"preserving what it does not understand
+as §20.4 provides"*. §2.3's updater clause, which the erratum of 2026-09-19
+had widened to any tool that writes a new file from an existing one, says
+*"writes a new one that preserves it (§20.1)"*.
+
+**What this costs** is what this decision's Context already accepted: a tool
+sold as a compactor may be a creator that loses what it did not understand,
+and no byte shows it. Such a tool cannot claim updater conformance, and a
+claim is the only place the line can sit, a new file under a fresh file_id
+recording nothing of where its content came from.
+
+**The fork is closed by barring neither reading.** An implementer asking
+which class their tool is reads that the choice is its own, and each choice
+determines the trailer's flags. Decided by the maintainer; no confirmation
+is outstanding on this ADR. Register unchanged: 120 conditions, 277
+instances, 331 vectors. Three edits, ticked against the diff.

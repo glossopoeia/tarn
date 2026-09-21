@@ -211,3 +211,6 @@ R-WRT-08 -> R-WRT-08: the erratum gave §20.4's drop paragraph the table's own S
 R-PRV-02 -> R-LIF-04: the erratum widened [R-PRV-02]'s "Compaction is the only operation that removes slack" to a rewrite, as §20.5's Example already reads; the Example is the model and was not the subject.
 R-WRT-05 -> R-CNF-06: the erratum scoped Appendix H's step-4 clause to an appender; §20.5's opening names the re-declaring rewrite in step 4's phrase and was not the subject.
 R-WRT-05 -> R-LIF-01: the same clause; §20.3 step 4's head is the source and was not the subject.
+
+# ADR-0129's erratum of 2026-09-21: §20.1's two positions, on the maintainer's direction.
+R-CNT-08 -> R-CNF-05: the erratum states the two positions a new-file writer takes, the creator answering for every byte under [R-CNF-05]; the sentence above it in §20.1, a creator emitting only conforming files and an appender and a rewriter being updaters, is the ground the positions stand on and was not the subject.

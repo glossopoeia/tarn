@@ -205,3 +205,7 @@
 0130|a layer that stored a tile keeps its declarations through the commit that empties it. The bar binds the layer's identity: decision 2's sentence as decided; the erratum replaces the undefined term and the §5.2 warrant
 0130|a layer with its index region and stored tiles: decision 3's disposal phrase as decided; the erratum's decision E1 adds the layer's sub-records
 0130|[R-WRT-06] then leaves it two disposals: decision 3's sentence as decided; the erratum gives its report the table's SHOULD
+0129|writes a new file from an existing one under a new identity (§20.5), carrying structures forward, re-creating some, or dropping some: decision 1's rewriter bullet as decided; the erratum of 2026-09-21 adds the preservation the rewriter undertakes
+0129|a writer that extends an input file, or carries forward into a new one any structure of an input file it did not decode, is an updater: the erratum of 2026-09-19's repair of §20.1, declined by the maintainer and replaced by the two positions of the erratum of 2026-09-21
+0129|one whose output is a new file in which it decodes everything it writes is a creator, whatever it read, and not a rewriter: the same declined repair, replaced by the erratum of 2026-09-21
+0129|A tool that modifies an existing file, or writes a new one from it: the erratum of 2026-09-19's widening of §2.3's updater clause, narrowed to a new file that preserves its input by the erratum of 2026-09-21
