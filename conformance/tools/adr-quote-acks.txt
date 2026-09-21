@@ -215,3 +215,6 @@
 0130|the user-metadata record PE = 1 and is dropped only with a layer that carries it: decision E1's flags clause as first written; split by scope under the scoped second audit's erratum of 2026-09-21
 0130|never modifies or drops a scope governed by an unknown critical record: decision E2's Appendix H clause as first written; names the layer and the sub-record under the scoped second audit's erratum of 2026-09-21
 0130|no byte tells the two apart, which is the sense in which the bar binds the commit as an actor and makes no file nonconforming: the erratum of 2026-09-19's addition to step 4's scope sentence, which decision E1 falsifies; cut under the scoped second audit's erratum of 2026-09-21
+0131|so appenders, and rewriters carrying a layer forward, operate on files whose layers they cannot decode: decision 1's Note as first repaired; the erratum of 2026-09-21, the pre-round-37 audit, makes the participle a relative clause ("that carry a layer forward")
+0131|└────────┘ every entry, re-emitted: decision 2's bracket as first drawn, opening on the field's left separator; the erratum of 2026-09-21 opens it one column inside, at the figure's own convention
+0131|appenders, and rewriters carrying a layer forward,: the erratum of 2026-09-21 quoting the text it replaces, the participle boxed by commas

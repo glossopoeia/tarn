@@ -127,3 +127,66 @@ ADR-0119's rule: three items, three edits, none deferred.
   and found settled.
 - **ADR-0119**: the repair list against the diff.
 - **ADR-0104**: editorial repairs ride with the round that found them.
+
+## Erratum, 2026-09-21 — the pre-round-37 audit
+
+`tarn_chain` opened on this commit, and the maintainer chose the audit's
+shape on 2026-09-21: one subject lane over all three hunks, check by check,
+and one cross-hunk pass, both on Sonnet under the project-wide policy, in
+place of the six lanes and two passes a wider surface gets. `wf-r37-audit.js`
+(from the Sonnet-throughout base of the scoped second audit) ran over
+`965f209..1bac8e4`, three hunks, at the first launch: no refusal, no stall,
+21 minutes, 101 tool calls, 0.38 M tokens, both agents on `claude-sonnet-5`
+by the runtime's metadata. The lane returned one finding and the pass two:
+**three findings, two distinct defects, none byte-level by either lane or by
+the hand-check**, and both repaired in the commit carrying this erratum.
+Coverage is sonnet-grade, and the hand-check read all three clauses again
+against every site the briefs named.
+
+**Decision 3 drew nothing.** Both readers traced the row's actors to their
+definitions and found the repair's premise stated by the document itself:
+`[R-LIF-01]` makes every mutation a commit or a rewrite, §20.5 says in terms
+that a rewrite is not a commit, `[R-CNF-06]` makes an updater an appender or
+a rewriter and nothing else, and Appendix H and Appendix G item 8 had
+already split the drop by tier, so the row's old *an updater* was the odd
+one out. The restatement sweep (§7.2's Note, §20.1, §20.3 steps 2 and 4 and
+shape (c), §20.5, §21.6, §23.1, Appendices G and H) found every site
+agreeing with the row as it now reads.
+
+**Figure (b)'s bracket, one column and a label** (both readers, computed by
+script). The figure's own other bracket and both of figure (a)'s open one
+column inside the field they mark, at the left separator plus one, and close
+on the field's right separator; the repair opened its bracket on the left
+separator itself, columns 54 to 63, which is §5.1's convention and not this
+figure's. Decision 2's *between that field's two separators* described the
+intent and not the bytes. It opens at column 55 now: *"└───────┘ every
+entry, re-emitted"*. Both readers also asked for the caption inside the
+bracket, as the document's other four brackets carry theirs. Not done: the
+field is eight columns wide and the caption twenty-three characters; the
+caption stays outside, as §9.2's crash figure already captions its marks,
+and the record says so rather than widening a field to fit a label.
+
+**§3.3's Note, one comma** (the cross-hunk pass; the subject lane read the
+sentence and closed it). Striking the first actor left *"appenders, and
+rewriters carrying a layer forward,"* with the participle boxed by commas, a
+shape that lets *carrying a layer forward* be read over both actors and so
+narrow an unconditional claim about appenders to one about appenders that
+leave the layer alone. The two readers disagreed on whether the parse
+exists; the repair costs a word and removes the question: *"so appenders,
+and rewriters that carry a layer forward, operate on files whose layers
+they cannot decode"*. A labelled Note; nothing normative defers to it.
+
+**Disclosures.** Both agents disclosed injected context and used none of it.
+Both disclosed a breach of their own: the subject lane ran `ls -la` on the
+shared output directory while locating its output path, and the cross-hunk
+pass ran one `ls` on the case directory to confirm the path the brief gave;
+each saw file names and opened nothing. Five agents in two runs now: *do not
+list it* goes into the ACCESS block wherever a brief names a directory, the
+round-37 harness's debt. The subject lane also reported that the document
+carries five lines of box-drawing corners where its brief said four: the
+brief counted `└` and `┘` and the lane counted `┌` and `┐` too; a discrepancy
+reported rather than reconciled, as the brief asks.
+
+**Register unchanged**: 120 conditions, 277 instances, 331 vectors;
+`tarn_check` PASS. The repair list was ticked against the diff: two defects,
+two edits, +2/−2, none deferred.

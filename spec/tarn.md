@@ -436,7 +436,7 @@ point payloads included; type semantics are §12's subject). `[R-MDL-02]`
 
 > **Note.** Part I (container) is independent of Part II (array model)
 > by construction: no Part I structure requires decoding sample
-> payloads, so appenders, and rewriters carrying a layer forward,
+> payloads, so appenders, and rewriters that carry a layer forward,
 > operate on files whose layers they cannot decode — that
 > independence is load-bearing for the updater rules of §7 and §20.
 
@@ -3430,7 +3430,7 @@ An appender MUST, in order:
 > ```
 > before │front│ tiles │ index │ dir₁│pad│tr₁│
 > after  │front│ tiles │▓index▓│▓▓▓▓▓▓▓▓▓▓▓▓▓│ +tiles │ index′ │ dir₂│pad│tr₂│
->                       └ old ─┘                      └────────┘ every entry, re-emitted
+>                       └ old ─┘                       └───────┘ every entry, re-emitted
 > ```
 >
 > The whole region moves because it is addressed by one extent slot, so
