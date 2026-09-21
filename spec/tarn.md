@@ -436,8 +436,8 @@ point payloads included; type semantics are §12's subject). `[R-MDL-02]`
 
 > **Note.** Part I (container) is independent of Part II (array model)
 > by construction: no Part I structure requires decoding sample
-> payloads, so verifiers, appenders, and rewriters carrying a layer
-> forward operate on files whose layers they cannot decode — that
+> payloads, so appenders, and rewriters carrying a layer forward,
+> operate on files whose layers they cannot decode — that
 > independence is load-bearing for the updater rules of §7 and §20.
 
 ### 4. Encoding Conventions
@@ -3430,7 +3430,7 @@ An appender MUST, in order:
 > ```
 > before │front│ tiles │ index │ dir₁│pad│tr₁│
 > after  │front│ tiles │▓index▓│▓▓▓▓▓▓▓▓▓▓▓▓▓│ +tiles │ index′ │ dir₂│pad│tr₂│
->                       └ old ─┘                      └ every entry, re-emitted
+>                       └ old ─┘                      └────────┘ every entry, re-emitted
 > ```
 >
 > The whole region moves because it is addressed by one extent slot, so
@@ -3504,7 +3504,7 @@ provide — so for an implemented type only the PE bit bites:
 |---|---|
 | MU = 1 | Retain byte-identical. The updater MUST NOT modify the scope the record governs. At layer scope an unknown critical record blocks modification of that layer, its drop included, leaving other layers editable (`[R-CNT-18]`). At file scope no commit is available at all: the updater is a reader of the file first (§2.3), and `[R-CNT-15]` makes an unimplemented top-level MU = 1 record reject-file — the same treatment §6.3 gives an unknown incompat-lane bit. At either scope a rewriter MUST refuse to rewrite the file, on `[R-WRT-06]`'s own ground: such a type can define references this specification does not (§7.2), so its bytes cannot be safely relocated. |
 | MU = 0, PE = 1 | Retain byte-identical, extent content unmodified. |
-| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. The licence is the bit's own: whoever fixed PE = 0 for the record, the writer that stored it or the definition that governs it, declined preservation across edits, so an updater MAY drop the record in any commit it is otherwise free to make — one whose only effect is the drop included — and a rewriter MAY drop it in any rewrite. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
+| MU = 0, PE = 0 | Retain byte-identical, or drop it — its extent becoming slack. The licence is the bit's own: whoever fixed PE = 0 for the record, the writer that stored it or the definition that governs it, declined preservation across edits, so an appender MAY drop the record in any commit it is otherwise free to make — one whose only effect is the drop included — and a rewriter MAY drop it in any rewrite. An updater that drops such a record SHOULD report the loss; unreported, application state disappears with no diagnostic. |
 
 A commit MAY therefore drop a layer record, and the drop takes the
 layer whole: a sub-record's flags govern it within a layer the updater
