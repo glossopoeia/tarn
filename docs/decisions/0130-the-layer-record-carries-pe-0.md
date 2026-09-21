@@ -261,3 +261,58 @@ rewording of a sentence no reading of which is wrong.
 `tarn_check` PASS; seven quotation and nine propagation acknowledgements.
 The repair list of the three errata was ticked against the diff: twenty-seven edits over twenty-five defects, four declined, none
 deferred.
+
+## Erratum, 2026-09-21 — the scoped second audit
+
+The erratum of 2026-09-19 took two decisions and made twenty-five other
+edits, the maintainer's rulings added §7.2's Note and ADR-0129's E3, and no
+audit had read any of it: `tarn_chain` hands a repair committed before a
+charter to the round, a convention built for wording repairs and not for
+decisions. On the maintainer's go-ahead a scoped audit read
+`4151e57..cfa1073`, 26 hunks: two subject lanes on Sonnet over the fifteen
+hunks that carry decisions, the drop and the positions, and two cross-hunk
+passes over all 26. **Opus refused both passes at zero tokens, at launch and
+on an unchanged retry**, as it had in the first audit, and both ran on
+Sonnet; every lane is again fallback-grade. The four returned 7, 4, 3 and 4:
+eighteen findings, twelve distinct defects, **none byte-level by any lane or
+by the hand-check**. E1, E2 and ADR-0129's E3 drew no finding against what
+they decide: the by-operation pass carried a drop through every kind of
+sub-record a layer can hold, and four writers through the two positions to
+the trailer's bytes, and found each decided. Seven of the twelve are this
+decision's, all in the erratum's own wording or in sentences it should have
+swept, and all are repaired in the commit carrying this erratum.
+
+**The erratum's own overclaim.** Step 4's scope sentence had gained *no byte
+tells the two apart* as the sense in which the bar binds the commit as an
+actor. E1 falsifies it: a commit never removes a user-metadata sub-record
+from a layer it keeps, so a layer that carried one and carries none under
+the same name was dropped and added, and a byte says so. The paragraph above
+already gives the true reason, that the bar states no condition a file can
+exhibit, and the added clause is cut; the sentence ends *"What the bar
+removes is a re-declaration carried as the same layer over the tiles it
+stored."*
+
+**What a dropped layer strands, swept.** §20.4 says a dropped layer strands
+its tiles, its index region and its sub-records' extents; shape (c) of
+§20.3's Example named the first two (three lanes) and §23.1 the first alone
+(two lanes), and §23.1 is the privacy section, where a layer's user-metadata
+document is the thing to name. They read *"a dropped layer's tiles, index
+region and sub-records' extents included"* and *"strands every tile it
+stored, its tile-index region and its sub-records' extents, a layer's
+user-metadata document among them"*.
+
+**Below the line.** The flags paragraph spoke of "the user-metadata record"
+being dropped only with a layer that carries it, one clause for a record
+that occurs at two scopes (two lanes): *"a top-level one never dropped and a
+sub-record only with the layer that carries it"*. §7.2 cited `[R-CNF-03]`
+for a claim about an updater that rests on `[R-CNF-11]`'s inheritance; it
+cites both. Appendix H's *drops a scope governed by an unknown critical
+record* did not read at file scope, where the next clause governs: *"a layer
+that carries an unknown critical sub-record"*. Its advisory sentence on the
+report followed the rewriter's list and says *"of an appender and a rewriter
+alike"*.
+
+**Register unchanged**: 120 conditions, 277 instances, 331 vectors;
+`tarn_check` PASS. The repair list of the three errata of this date was
+ticked against the diff: eleven edits over eleven defects, one declined,
+none deferred.

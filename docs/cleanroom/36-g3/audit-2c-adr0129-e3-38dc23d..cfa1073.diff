@@ -1,0 +1,51 @@
+diff --git a/spec/tarn.md b/spec/tarn.md
+index 7591ed6..bb7d6b7 100644
+--- a/spec/tarn.md
++++ b/spec/tarn.md
+@@ -206,7 +206,7 @@ Conformance is defined for five classes.
+   promise canonical bytes, and two conforming writers given identical
+   input MAY produce different conforming files.
+ - **Conforming updater.** A tool that modifies an existing file, or
+-  writes a new one from it, without
++  writes a new one that preserves it (§20.1), without
+   necessarily understanding all of its content. An updater MUST satisfy
+   every writer requirement for the bytes it produces, and additionally
+   MUST honor the preservation obligations of §20.4 — which govern every
+@@ -3139,7 +3139,8 @@ governs it.
+   adding layers or records, superseding tiles, growing extents,
+   amending metadata.
+ - **rewriter** — writes a new file from an existing one under a new
+-  identity (§20.5), carrying structures forward, re-creating some, or
++  identity (§20.5), preserving what it does not understand as §20.4
++  provides, and carrying structures forward, re-creating some, or
+   dropping some; compaction, which carries every structure forward
+   and changes nothing but placement, is the rewrite that reclaims
+   slack.
+@@ -3156,15 +3157,18 @@ unseen, and certifying the whole file is a verifier's office (§9.7).
+ The appender's commit extends its input under the input's file_id;
+ the rewriter's output is a new file under a fresh one (`[R-LIF-01]`).
+ Every obligation of §20.3 through §20.5 attaches to an operation and
+-binds whichever writer performs it: a writer that extends an input
+-file, or carries forward into a new one any structure of an input
+-file it did not decode, is an updater and owes §20.4's preservation
+-for every record of that file, whatever else it changes; and one
+-whose output is a new file in which it decodes everything it writes
+-is a creator, whatever it read, and not a rewriter: §20.2 binds it
+-and §20.5 does not, it writes flags = 0 (`[R-CNT-08]`), and whatever
+-its input carried that it did not understand is not in its output.
+-`[R-WRT-01]`
++binds whichever writer performs it. A writer that extends an input
++file is an appender and an updater, whatever it decodes: the file it
++leaves holds every byte of its input. A writer of a new file from an
++existing one takes one of two positions, and the choice is its own.
++As a **rewriter** it undertakes to preserve its input: §20.4's table
++for every record, the unknown ignore-lane bits (`[R-CNT-08]`), and
++§20.5 whole; in return it answers for what it carries forward
++unmodified only to `[R-WRT-09]`'s depth, a latent violation
++travelling with it. As a **creator** it undertakes nothing toward its
++input, whatever it read: §20.2 binds it, it writes flags = 0, and it
++answers for every byte of its output (`[R-CNF-05]`), bytes it copied
++from another file included. `[R-WRT-01]`
+ 
+ #### 20.2 Creation
+ 

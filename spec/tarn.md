@@ -206,7 +206,7 @@ Conformance is defined for five classes.
   promise canonical bytes, and two conforming writers given identical
   input MAY produce different conforming files.
 - **Conforming updater.** A tool that modifies an existing file, or
-  writes a new one that preserves it (§20.1), without
+  as a rewriter writes a new one from it (§20.1), without
   necessarily understanding all of its content. An updater MUST satisfy
   every writer requirement for the bytes it produces, and additionally
   MUST honor the preservation obligations of §20.4 — which govern every
@@ -926,8 +926,8 @@ The baseline remote open is two requests, each with an exact target:
 (1) fetch the final 64 bytes — a suffix range, whose response also
 carries the transport-authoritative file size F where the transport
 discloses a range response's complete length (`[R-CNT-10]`, which
-governs where it does not, a separate size probe then making the
-baseline three), so that §19.1's first two steps cost one
+governs where it does not: a reader that probes separately spends a
+third request, and one that cannot fails the open), so that §19.1's first two steps cost one
 request between them; validate per
 §6.2–§6.3; (2) fetch
 [dir_offset, dir_offset + dir_length); verify and decode per §7.1. A
@@ -1056,7 +1056,7 @@ lets a rewriter relocate an unknown ancillary's extent without
 parsing it (§20). The layer record is the one exception, and this
 specification's own: its tile index (§15), whose entries reference
 stored-tile extents, is defined here, and every conforming reader and
-updater implements the type (`[R-CNF-03]`), so none meets it as an
+updater implements the type (`[R-CNF-03]`, `[R-CNF-11]`), so none meets it as an
 unknown ancillary. Records with MU = 1 carry further references only
 where this specification or registry review (§10) defines them.
 Extents are owned exactly once: within the
@@ -3139,9 +3139,9 @@ governs it.
   adding layers or records, superseding tiles, growing extents,
   amending metadata.
 - **rewriter** — writes a new file from an existing one under a new
-  identity (§20.5), preserving what it does not understand as §20.4
-  provides, and carrying structures forward, re-creating some, or
-  dropping some; compaction, which carries every structure forward
+  identity (§20.5), undertaking to preserve it as §20.4 provides, and
+  carrying structures forward, re-creating some, or dropping some;
+  compaction, which carries every structure forward
   and changes nothing but placement, is the rewrite that reclaims
   slack.
 
@@ -3296,9 +3296,7 @@ An appender MUST, in order:
    the new layer being new whatever bytes its entries address, the
    dropped layer's former extents included, §5.2's partition being
    over the new state alone. What the bar removes is a re-declaration
-   carried as the same layer over the tiles it stored; no byte tells
-   the two apart, which is the sense in which the bar binds the commit
-   as an actor and makes no file nonconforming.
+   carried as the same layer over the tiles it stored.
    A layer that stores no tile in the generation this commit
    supersedes MAY be re-declared freely, subject to every rule its
    new declarations are subject to, which is what schema-first
@@ -3443,7 +3441,8 @@ An appender MUST, in order:
 > **(c) A change confined to the directory** — clearing a slab
 > declaration, renaming a layer, or dropping a layer or another
 > PE = 0 record where §20.4 licenses the drop, any extent it owned, a
-> dropped layer's tiles and index region included, becoming slack, a
+> dropped layer's tiles, index region and sub-records' extents
+> included, becoming slack, a
 > run the figure below does not draw. Only the directory is re-emitted. A
 > change to any fixed declaration of a layer that **stored** a tile in
 > the generation the commit supersedes — a fill value, a type, a tile
@@ -3485,8 +3484,8 @@ Persistence governs every record type; only the authoritative source
 of the flags differs. For a type §7.3 registers, the registry's fixed
 flags govern rather than the stored ones (`[R-CNT-22]`) — the layer
 record carries PE = 0 and is dropped under the table's last row, the
-user-metadata record PE = 1 and is dropped only with a layer that
-carries it; implementing a record's type
+user-metadata record PE = 1, a top-level one never dropped and a
+sub-record only with the layer that carries it; implementing a record's type
 confers understanding of it, and the permission to drop it is the
 bit's alone. For a type the updater implements that this specification does not
 register, the definition it implements the type from supplies the
@@ -4366,7 +4365,9 @@ supersedes it — editing a user-metadata document appends a new extent
 and strands the old one (§20.3 places this with shape (b)), which is
 the case most
 likely to strand content a caller believes it deleted, and a commit
-that drops a layer (§20.4) strands every tile it stored. **Where the structure carrying the bytes leaves the
+that drops a layer (§20.4) strands every tile it stored, its
+tile-index region and its sub-records' extents, a layer's
+user-metadata document among them. **Where the structure carrying the bytes leaves the
 live state**, they remain in the file as slack (`[R-CNT-21]`),
 readable by anyone with the bytes and a hex editor, and recoverable
 by any tool that scans backward for an earlier trailer (§9.6). That
@@ -4921,8 +4922,8 @@ any alignment or slab it declares (§16). Advisory, and not a conformance condit
 SHOULD zero the gaps it creates (`[R-CNT-03]`, §5.2).
 
 **Conforming updater**, an appender or a rewriter (§20.1) — everything
-a writer does for the bytes it produces, plus: validates the trailer and full directory, and every
-layer it modifies (§20.3); as an appender, changes a layer that stores a tile in the
+a writer does for the bytes it produces, plus: validates, as an appender, the trailer and full directory, and every
+layer it modifies (§20.3), a rewriter's depth being `[R-WRT-09]`'s; as an appender, changes a layer that stores a tile in the
 generation its commit supersedes only as §20.3 step 4 permits — its
 names, a grown dimension extent, a planar channel list extended at its
 end or
@@ -4938,8 +4939,8 @@ ignore-lane flag bits, clears none and sets no other (`[R-CNT-08]`,
 registry's fixed values governing for a registered type (§20.4,
 `[R-CNT-22]`); drops a layer record only under §20.4's PE = 0
 licence, its sub-records with it, and never removes a user-metadata
-record from a scope it keeps (§20.4); never modifies or drops a scope governed by an unknown critical
-record, and rejects outright a file carrying an unimplemented
+record from a scope it keeps (§20.4); never modifies or drops a layer that carries an unknown critical
+sub-record, and rejects outright a file carrying an unimplemented
 top-level MU = 1 record (`[R-CNT-15]`, §20.4). A rewriter, in
 addition, mints a fresh file_id and follows the creation path
 (`[R-WRT-06]`); preserves the content of every structure it carries
@@ -4949,8 +4950,8 @@ each tile-index region any of whose stored extents it relocates
 copies (`[R-WRT-09]`); drops a layer or a PE = 0 record by omitting
 it, reclaiming what it addressed, and refuses to rewrite a file
 carrying an unimplemented MU = 1 record (§20.5). Advisory, and not a
-conformance condition: an updater that drops a record SHOULD report
-the loss (§20.4).
+conformance condition, of an appender and a rewriter alike: an updater
+that drops a record SHOULD report the loss (§20.4).
 
 **Conforming verifier** — every reader obligation, plus the checks
 readers are exempt from: the live-state coverage partition and the

@@ -234,3 +234,15 @@ separate size probe then making the baseline three"*. Appendix G item 5's
 layout's two effects, and §14.4's Note supports only the second: *"Where
 neither effect of the layout reaches the data"*. Appendix C still cited
 §15.1 for the index encoding after §10.2's row moved to §7.4.
+
+## Erratum, 2026-09-21 — the scoped second audit
+
+The audit ADR-0130's erratum of this date describes found one defect in this
+decision's wording, in the erratum of 2026-09-19's own repair of §6.4. Its
+parenthetical said a separate size probe makes *the baseline three*, two
+sentences after the paragraph fixes the baseline at two, and named only the
+probe where `[R-CNT-10]` gives a reader that cannot obtain a transport size
+two courses, to probe separately or to fail the open (both cross-hunk
+passes). It reads *"a reader that probes separately spends a third request,
+and one that cannot fails the open"*. Not byte-level: §6.4's own Note takes
+request counts out of conformance.

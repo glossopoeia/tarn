@@ -305,3 +305,34 @@ which class their tool is reads that the choice is its own, and each choice
 determines the trailer's flags. Decided by the maintainer; no confirmation
 is outstanding on this ADR. Register unchanged: 120 conditions, 277
 instances, 331 vectors. Three edits, ticked against the diff.
+
+## Erratum, 2026-09-21 — the scoped second audit
+
+The audit ADR-0130's erratum of this date describes, four lanes and every
+one fallback-grade, read E3 the day it landed. **It found nothing against
+the two positions**: the by-operation pass carried a compaction, a rewrite
+re-creating every layer, a tool writing a new file from decoded content and a
+tool copying tiles undecoded to the trailer's bytes, on an input carrying an
+unknown ignore-lane bit, an unimplemented PE = 1 record and a higher minor,
+and found each decided; and an appender implementing every record it meets
+is an updater still. Four defects are this decision's, three repaired and
+one declined.
+
+**Two are in the text E3 added beside the paragraph.** The rewriter bullet
+said *preserving what it does not understand as §20.4 provides*, where
+`[R-CNF-06]` has §20.4 govern every record type, *"not only those it does
+not understand"*, and the paragraph below it says every record (two lanes):
+*"undertaking to preserve it as §20.4 provides"*. §2.3's updater clause said
+a tool that writes a new file *that preserves it*, which a rewrite that
+drops a layer or re-declares one does not do on the words' face: *"as a
+rewriter writes a new one from it (§20.1)"*. And Appendix H's updater entry,
+whose step-4 clause the erratum of 2026-09-19 scoped to an appender, left
+the validation clause beside it unscoped, citing §20.3 for a duty that is
+`[R-WRT-09]`'s in a rewriter: *"validates, as an appender, the trailer and
+full directory"*, with *"a rewriter's depth being `[R-WRT-09]`'s"*.
+
+**Declined.** The positions lane's B-01, that *§20.4's table for every
+record* overclaims against the table's own licence to drop. What a rewriter
+undertakes is the table, and the table is what licenses the drop; the bullet
+above names dropping, and the by-operation pass read the same words as the
+correct quantifier. The maintainer's sentence stands as approved.

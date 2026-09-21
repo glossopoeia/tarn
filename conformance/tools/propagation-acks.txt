@@ -214,3 +214,8 @@ R-WRT-05 -> R-LIF-01: the same clause; §20.3 step 4's head is the source and wa
 
 # ADR-0129's erratum of 2026-09-21: §20.1's two positions, on the maintainer's direction.
 R-CNT-08 -> R-CNF-05: the erratum states the two positions a new-file writer takes, the creator answering for every byte under [R-CNF-05]; the sentence above it in §20.1, a creator emitting only conforming files and an appender and a rewriter being updaters, is the ground the positions stand on and was not the subject.
+
+# The scoped second audit's errata to ADR-0128, ADR-0129 and ADR-0130 (2026-09-21).
+R-WRT-09 -> R-CNF-06: the erratum scoped Appendix H's validation clause to an appender and named a rewriter's depth as [R-WRT-09]'s; the line also carries step 4's "a layer that stores a tile" phrase, which §20.5's opening uses for the re-declaring rewrite and which was not the subject.
+R-WRT-09 -> R-LIF-01: the same line; §20.3 step 4's head is the source of the phrase and was not the subject.
+R-CNT-21 -> R-CNT-08: the erratum says Appendix H's advisory report is an appender's and a rewriter's alike; [R-CNT-08] uses "appender and rewriter alike" of the ignore-lane bits, a different duty, and was not the subject.
