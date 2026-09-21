@@ -1,0 +1,209 @@
+{
+ "merged": [
+  {
+   "members": [
+    "reader-01"
+   ],
+   "title": "\u00a720.3 step 4's summarizing sentence misstates which list names which layout's channel-list field",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "reader-02"
+   ],
+   "title": "\u00a720.4's MU=1 row states the rewriter's rationale but not the parallel appender rationale in one place",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "writer-01"
+   ],
+   "title": "\u00a73.3's Note claims verifiers generally operate without decoding, which is false of the mandatory core-codec regime and of a certifying verifier",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-01"
+   ],
+   "title": "\u00a721.8's stated '277 instances' total is not independently re-derivable by hand and its correctness is unverified",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "register-bookkeeping",
+    "implementer": "register-bookkeeping",
+    "skeptic": "register-bookkeeping"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "verifier-02"
+   ],
+   "title": "The crc-only-failing entry's non-transparency to slab-run continuity is already stated explicitly, in one place, redundantly in two",
+   "verdicts": {
+    "correctness": "REFUTED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "none",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": false
+  },
+  {
+   "members": [
+    "diagrams-01"
+   ],
+   "title": "Figure (b)'s second annotation bracket is unclosed, unlike every other bracketed label in the document's diagrams",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "figure",
+    "implementer": "figure",
+    "skeptic": "figure"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-01"
+   ],
+   "title": "\u00a715.1's tile-index layout diagram is an unlabeled blockquote inside otherwise normative prose, inviting mis-triage under R-CNF-01's label test",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  },
+  {
+   "members": [
+    "adversary-02"
+   ],
+   "title": "PE=0 drop-licence sentence's 'an updater... in any commit' clause is loosely scoped to a class whose rewriter tier never commits, but is harmless because the rewriter's own clause independently and completely governs its case",
+   "verdicts": {
+    "correctness": "CONFIRMED",
+    "implementer": "CONFIRMED",
+    "skeptic": "CONFIRMED"
+   },
+   "severities": {
+    "correctness": "editorial",
+    "implementer": "editorial",
+    "skeptic": "editorial"
+   },
+   "byte_level": {
+    "correctness": false,
+    "implementer": false,
+    "skeptic": false
+   },
+   "reporter_bl": [],
+   "any_bl": false,
+   "unanimous_bl": false,
+   "agree": true
+  }
+ ],
+ "pass_ok": {
+  "correctness": true,
+  "implementer": true,
+  "skeptic": true
+ }
+}
