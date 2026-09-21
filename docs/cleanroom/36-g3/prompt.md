@@ -7,9 +7,9 @@ the previous round's repairs returns zero too, was met at round 34 and held at
 round 35, whose chartered text returned zero. Round 35 found one byte-level
 ambiguity outside that text, in a rule no recent cycle had touched, so the
 criterion's first half was reopened and repaired. This round reads that repair,
-the two decisions the maintainer took after it, the audit of all three and the
-maintainer's rulings on the audit: a zero here meets the criterion in both
-halves, and a flag in that text reopens the second.
+the two decisions the maintainer took after it, two audits and the maintainer's
+rulings between them: a zero here meets the criterion in both halves, and a
+flag in that text reopens the second.
 
 ## Why this round exists
 
@@ -22,9 +22,9 @@ grading, its refuter could not overturn the uphold, and the hand-check
 confirmed it as new, in a section no recent cycle had touched. So the
 criterion's first half, zero byte-level ambiguities anywhere, was reopened and
 repaired. This round reads that repair, the two decisions the maintainer took
-after it, the audit of all three and the maintainer's rulings on the audit;
-a zero here meets the criterion in both halves, and a flag in that text
-reopens the second.
+after it, two audits and the maintainer's rulings between them; a zero here
+meets the criterion in both halves, and a flag in that text reopens the
+second.
 
 The surface is wider than any recent round's — three decisions and the audit
 of them. The first moved a writer's checksum duty from the structures it
@@ -43,8 +43,11 @@ before this round found twenty-nine defects, three of them byte-level, and
 repaired twenty-five in one further commit, deciding in the three two
 questions the decisions had not asked. The maintainer then confirmed two of
 those three repairs, directed a different repair of the third, and had one
-Note added. You are reading all of that too, and the last of it is the
-freshest text in the document: nothing but this round has read it.
+Note added; and a second, narrower audit read all of that, found twelve
+defects in it, none byte-level, and repaired eleven. You are reading all of
+it too. Neither audit was as strong a reading as this project usually gives
+a decision, and the last repairs are the freshest text in the document:
+nothing but this round has read them.
 
 **Do not read a clean passage as a checked passage.** The single most reliable
 finding in this project's history is that heavy recent attention predicts
@@ -57,8 +60,8 @@ You are told none of what those readers found, or where.
 ## The changed surface
 
 **Thirty-one passages** — §2.3; §3.3; §4.7; §5.1; §5.2; §6.1; §6.2; §6.3; §6.4; §7.2; §7.3; §7.4; §9.1; §9.3; §9.7; §10.2; §10.3; §19.1; §19.3; §20.1; §20.3; §20.4; §20.5; §21.1; §21.6; §22.3; §23.1; §23.2; and Appendix C and Appendix G and Appendix H — 55 hunks over
-6 commits, 294 lines inserted and 178 deleted. The document is
-4,980 lines and about 49,800 words.
+7 commits, 296 lines inserted and 179 deleted. The document is
+4,981 lines and about 49,800 words.
 
 Six things that shape carries:
 
@@ -407,9 +410,9 @@ with every divergence resolved by a spec fix or a key correction; zero findings
 left without a disposition. This being an acceptance round, G3 additionally
 requires **zero byte-level ambiguities outright**, surviving the refute phase —
 and this round reads round 35's repair of the one fork it found, the two
-decisions taken after it, the audit of all three and the maintainer's rulings
-on the audit, so a zero here meets the criterion in both halves, and a flag in
-that text reopens the second. A flag
+decisions taken after it, two audits and the maintainer's rulings between
+them, so a zero here meets the criterion in both halves, and a flag in that
+text reopens the second. A flag
 that is a known open question is recorded against that question and is not
 new; a flag in text this round was chartered to read is.
 
