@@ -7,9 +7,9 @@ the previous round's repairs returns zero too, was met at round 34 and held at
 round 35, whose chartered text returned zero. Round 35 found one byte-level
 ambiguity outside that text, in a rule no recent cycle had touched, so the
 criterion's first half was reopened and repaired. This round reads that repair,
-the two decisions the maintainer took after it, and the audit of all three: a
-zero here meets the criterion in both halves, and a flag in that text reopens
-the second.
+the two decisions the maintainer took after it, the audit of all three and the
+maintainer's rulings on the audit: a zero here meets the criterion in both
+halves, and a flag in that text reopens the second.
 
 ## Why this round exists
 
@@ -22,8 +22,9 @@ grading, its refuter could not overturn the uphold, and the hand-check
 confirmed it as new, in a section no recent cycle had touched. So the
 criterion's first half, zero byte-level ambiguities anywhere, was reopened and
 repaired. This round reads that repair, the two decisions the maintainer took
-after it, and the audit of all three; a zero here meets the criterion in both
-halves, and a flag in that text reopens the second.
+after it, the audit of all three and the maintainer's rulings on the audit;
+a zero here meets the criterion in both halves, and a flag in that text
+reopens the second.
 
 The surface is wider than any recent round's — three decisions and the audit
 of them. The first moved a writer's checksum duty from the structures it
@@ -38,10 +39,12 @@ commit does into a permission with a warning, and a sentence that forbade by
 fusing two operations into one into a statement of what a bar binds and what
 it does not. These are decisions, not wording repairs, and the text around a
 decision was written under the rule it replaced. The audit that read them
-before this round found twenty-nine defects, three of them byte-level,
-repaired twenty-five in one further commit, and in repairing the three
-decided two questions the decisions had not asked; you are reading those
-repairs too, and they are the freshest text in the document.
+before this round found twenty-nine defects, three of them byte-level, and
+repaired twenty-five in one further commit, deciding in the three two
+questions the decisions had not asked. The maintainer then confirmed two of
+those three repairs, directed a different repair of the third, and had one
+Note added. You are reading all of that too, and the last of it is the
+freshest text in the document: nothing but this round has read it.
 
 **Do not read a clean passage as a checked passage.** The single most reliable
 finding in this project's history is that heavy recent attention predicts
@@ -53,18 +56,21 @@ You are told none of what those readers found, or where.
 
 ## The changed surface
 
-**Thirty-one passages** — §2.3; §3.3; §4.7; §5.1; §5.2; §6.1; §6.2; §6.3; §6.4; §7.2; §7.3; §7.4; §9.1; §9.3; §9.7; §10.2; §10.3; §19.1; §19.3; §20.1; §20.3; §20.4; §20.5; §21.1; §21.6; §22.3; §23.1; §23.2; and Appendix C and Appendix G and Appendix H — 54 hunks over
-4 commits, 282 lines inserted and 177 deleted. The document is
-4,969 lines and about 49,700 words.
+**Thirty-one passages** — §2.3; §3.3; §4.7; §5.1; §5.2; §6.1; §6.2; §6.3; §6.4; §7.2; §7.3; §7.4; §9.1; §9.3; §9.7; §10.2; §10.3; §19.1; §19.3; §20.1; §20.3; §20.4; §20.5; §21.1; §21.6; §22.3; §23.1; §23.2; and Appendix C and Appendix G and Appendix H — 55 hunks over
+6 commits, 294 lines inserted and 178 deleted. The document is
+4,980 lines and about 49,800 words.
 
 Six things that shape carries:
 
 - **Obligations attached to operations rather than to an actor's name.**
-  Where the document says which writer owes a duty by what the writer does —
-  carries a structure forward, re-creates it, drops it; extends a file, or
-  writes a new one — take a concrete tool and classify it by every test the
-  text gives. A tool two tests classify differently is the finding; so is a
-  duty stated of a class that one of its tiers cannot perform.
+  Where the document says which writer owes a duty by what the writer does
+  or undertakes — carries a structure forward, re-creates it, drops it;
+  extends a file, or writes a new one — take a concrete tool and ask of
+  every sentence that classifies it what the tool then owes and what it is
+  answerable for. A tool two sentences classify differently is the finding;
+  so is a duty stated of a class that one of its tiers cannot perform, and
+  so is a choice the text gives a writer without saying what follows from
+  each side of it.
 - **An actor renamed across many sections.** A sentence written for the
   narrow case can be false of the wide one. Where a sentence names the
   renamed actor or its operation, ask which of the operation's named cases
@@ -401,8 +407,9 @@ with every divergence resolved by a spec fix or a key correction; zero findings
 left without a disposition. This being an acceptance round, G3 additionally
 requires **zero byte-level ambiguities outright**, surviving the refute phase —
 and this round reads round 35's repair of the one fork it found, the two
-decisions taken after it and the audit of all three, so a zero here meets the
-criterion in both halves, and a flag in that text reopens the second. A flag
+decisions taken after it, the audit of all three and the maintainer's rulings
+on the audit, so a zero here meets the criterion in both halves, and a flag in
+that text reopens the second. A flag
 that is a known open question is recorded against that question and is not
 new; a flag in text this round was chartered to read is.
 
