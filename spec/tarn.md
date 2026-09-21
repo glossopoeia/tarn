@@ -1033,6 +1033,13 @@ verifier's: a verifier MUST treat a nonzero reserved flag bit or
 the MU = 1 with PE = 0 combination as a validity error at the
 record's governing scope. `[R-CNT-12]`
 
+> **Note.** The two flag bits are not orthogonal. `[R-CNT-12]` leaves a
+> record three states, not four, and they are §20.4's three rows:
+> MU = 1, whose PE bit is read as 1 whatever is stored; MU = 0 with
+> PE = 1; and MU = 0 with PE = 0. PE is a choice within MU = 0. An
+> updater that does not implement an MU = 1 record's type never drops
+> the record, alone or with the scope it governs (§20.4).
+
 The **extent slot** (extent_offset, extent_length): (0, 0) means no
 extent. Any other combination with either half zero, an
 extent_offset < 16, an extent extending past F − 64, or an

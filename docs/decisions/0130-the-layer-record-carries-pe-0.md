@@ -2,7 +2,8 @@
 
 - Status: Accepted (resolves Q-A9 on the maintainer's direction of
   2026-09-09; supersedes ADR-0068 and withdraws ADR-0129's decision 2; the
-  erratum's decision E1 confirmed by the maintainer on 2026-09-19)
+  erratum's decisions E1 and E2 confirmed by the maintainer, on 2026-09-19
+  and 2026-09-21)
 - Date: 2026-09-09
 - Covers: §7.3's registry table and `spec/registry.json`; Appendix C; §20.4's
   flags paragraph and its layer-removal paragraph; §20.3 step 4's tense
@@ -16,8 +17,8 @@
   loss, where ADR-0082 had it refuse (decision 3). The erratum of
   2026-09-19 took two decisions the pre-round-36 audit forced. E1, that a
   dropped layer goes whole, its sub-records with it, was confirmed by the
-  maintainer on 2026-09-19. E2, that a sub-record of an unimplemented type
-  with MU = 1 blocks the drop, is still put to the maintainer.
+  maintainer on 2026-09-19, and E2, that a sub-record of an unimplemented
+  type with MU = 1 blocks the drop, on 2026-09-21.
 
 ## Context
 
@@ -202,9 +203,14 @@ container. The row reads *"blocks modification of that layer, its drop
 included"*, the drop paragraph names the one blocking sub-record, and
 Appendix H reads *"never modifies or drops a scope governed by an unknown
 critical record"*. A rewriter already refuses such a file whole
-(`[R-WRT-06]`). **Confirm.** The alternative, that the layer record's own
-PE = 0 licenses the drop whatever the layer carries, is the smaller text and
-is stated so it can be chosen.
+(`[R-WRT-06]`). **Confirmed by the maintainer on 2026-09-21**, who chose the
+blocking reading over the alternative, that the layer record's own PE = 0
+licenses the drop whatever the layer carries; the alternative stays stated
+so a superseding ADR can choose it. The maintainer asked with it that the
+coupling of the two bits be surfaced, PE having become a choice within
+MU = 0: §7.2 gains a Note under `[R-CNT-12]`, *"The two flag bits are not
+orthogonal"*, which names the three states the rule leaves a record as
+§20.4's three rows and adds no rule.
 
 **The scope sentence.** Decision 2's sentence said the bar binds "the
 layer's identity", a property the document nowhere defines and no byte
