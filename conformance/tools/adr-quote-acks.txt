@@ -218,3 +218,4 @@
 0131|so appenders, and rewriters carrying a layer forward, operate on files whose layers they cannot decode: decision 1's Note as first repaired; the erratum of 2026-09-21, the pre-round-37 audit, makes the participle a relative clause ("that carry a layer forward")
 0131|└────────┘ every entry, re-emitted: decision 2's bracket as first drawn, opening on the field's left separator; the erratum of 2026-09-21 opens it one column inside, at the figure's own convention
 0131|appenders, and rewriters carrying a layer forward,: the erratum of 2026-09-21 quoting the text it replaces, the participle boxed by commas
+0132|carried forward unchanged by an updater, appender or rewriter alike: §6.2's flags cell as round 37 found it; decision 1 puts it in §6.3's idiom, every updater, appender and rewriter alike

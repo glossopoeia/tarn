@@ -48,6 +48,10 @@ missed. **The driver records the second zero and does not declare the
 criterion met**: the weighing of the instrument is the maintainer's, and the
 two Sonnet rounds are now the evidence to weigh.
 
+**The maintainer's verdict, 2026-09-22: G3 is declared met**, on this round
+and round 36 together. ADR-0132 records the declaration with the record it
+rests on and makes this round's one repair.
+
 ## The hand-check
 
 Every verdict of this round is in the direction that clears the gate, so
