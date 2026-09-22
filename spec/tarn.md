@@ -835,7 +835,7 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 | 0 | 8 | bytes | trailer magic | structural | `8A 4E 52 41 54 0D 0A 1A` (`\x8A`, "NRAT", CR, LF, ctrl-Z) |
 | 8 | 2 | u16 | version_major | structural | 1 (0 invalid; others: §6.3) |
 | 10 | 2 | u16 | version_minor | descriptive | any (see §6.3) |
-| 12 | 4 | u32 | flags | structural | bits 0–15 (incompat lane) all zero, a set bit being reject-file (F19); bits 16–31 (ignore lane) 0 from a creator, carried forward unchanged by every updater, appender and rewriter alike, a set bit ignored (§6.3) |
+| 12 | 4 | u32 | flags | structural | bits 0–15 (incompat lane) all zero, a set bit being reject-file (F19); bits 16–31 (ignore lane) 0 from a creator, carried forward unchanged by every updater (appender and rewriter alike), a set bit ignored (§6.3) |
 | 16 | 8 | u64 | dir_offset | structural | ≥ 16 |
 | 24 | 8 | u64 | dir_length | structural | ≥ 4; dir_offset + dir_length ≤ F − 64 |
 | 32 | 8 | u64 | committed_file_length | structural | = F; multiple of 64 |

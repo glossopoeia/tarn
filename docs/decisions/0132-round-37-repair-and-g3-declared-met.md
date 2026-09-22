@@ -177,3 +177,13 @@ and `adr0132-audit-the-cell.md` under `docs/cleanroom/37-g3/`, with round
 37's own record, there being no round 38 directory to precede. The lane
 disclosed injected context and used none of it, and listed no directory;
 the audit brief now says *read or list*.
+
+**The held repair was made later the same day, on the maintainer's
+direction, with no audit after it.** The cell reads *"carried forward
+unchanged by every updater (appender and rewriter alike), a set bit ignored
+(§6.3)"*. One clause, +1/−1, ticked against the diff. The maintainer chose
+not to audit it: the repair-audit convention (ADR-0081) and the chain
+invariant (ADR-0097) were built for the drafting cycle G3 closes, and the
+editing process that follows a declared gate is the maintainer's to set.
+Until it is, `tarn_chain` reports this commit uncovered, by decision and not
+by omission.
