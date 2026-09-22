@@ -147,3 +147,33 @@ none deferred.
 - **ADR-0055**: a gate declared on evidence the record can reproduce; G5's
   is computed, G3's is a judgement recorded with what it weighed.
 - **ADR-0119**: the repair list against the diff.
+
+## Erratum, 2026-09-22 — the audit of this ADR's repair
+
+On the maintainer's direction, an audit read `cadb44b..ab0c096`, one hunk,
+to close the audit chain: one subject lane and no cross-hunk pass, on
+Sonnet, nine minutes, 27 tool calls, 0.14 M tokens, no refusal. It returned
+**one finding, not byte-level, and the hand-check agrees with it.** Decision
+1 undershot. *"carried forward unchanged by every updater, appender and
+rewriter alike"* borrows §6.3's tokens without the words that disambiguate
+them there: in §6.3, *under this text* stands between the class and its
+tiers, so *appender and rewriter alike* reads as a gloss; in the cell, three
+nouns stand before *alike*, the shape of a three-item list, and the reading
+the repair was written to remove is still available to a reader of the
+table alone. The lane swept the document's five uses of *alike* and found
+this cell and its §6.3 source the only two with a bare noun before the pair.
+Under either reading no obligation moves: `[R-CNT-08]` binds every updater
+and `[R-CNF-06]` leaves no third tier, which is why it is not byte-level.
+
+**The repair is one clause and is not made here.** The maintainer's
+direction was to close the chain, and a spec commit reopens it; the form the
+lane proposes, and the driver would make, is *"carried forward unchanged by
+every updater (appender and rewriter alike), a set bit ignored (§6.3)"*, a
+parenthetical rather than a dash pair. It is held for the maintainer's
+decision on the editing process, taken after this audit.
+
+The audit's diff and transcript are `audit-adr0132-cadb44b..ab0c096.diff`
+and `adr0132-audit-the-cell.md` under `docs/cleanroom/37-g3/`, with round
+37's own record, there being no round 38 directory to precede. The lane
+disclosed injected context and used none of it, and listed no directory;
+the audit brief now says *read or list*.
