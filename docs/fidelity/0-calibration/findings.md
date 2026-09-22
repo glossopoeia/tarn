@@ -183,3 +183,43 @@ recorded as ADR-0133's erratum and owed before the first real round:
 
 Until item 1 has run, the fidelity round's sensitivity to a semantic change
 in rewritten prose is unmeasured, and a zero from it is recorded as such.
+
+## Debts paid, 2026-09-22
+
+Items 2 through 5 are paid in the harness, on the maintainer's direction,
+before the rewrite begins; item 1 waits on rewritten text.
+
+- **The quiz.** A divergence now carries the kind `QUIZ_DIVERGENCE` and goes
+  to a **quiz comparator** per slate, which reads both editions and the two
+  takers' answers and grades each divergence EQUIVALENT, REPORTER_ERROR,
+  LOSS or ADDITION; only a LOSS or ADDITION reaches triage, so no refuter is
+  spent on a phrasing. Takers are told that the `answer` field holds the
+  answer alone, in the form asked, with every word of gloss in `reasoning`:
+  thirteen of calibration 0's fourteen divergences were gloss in that field.
+  The matcher strips parentheticals, enumerators, articles and thousands
+  separators first; a defect in its separator handling (`4,200,016` became
+  `4200,016`) was found by replaying calibration 0's answers and fixed.
+- **The probes.** Every walker is told to cite every sentence in the document
+  that bears on the act and to report any two that disagree, and three writer
+  probes are added: W9 (a layer drop blocked by an unimplemented MU = 1
+  sub-record, S1's act), W10 (an appender's drop of a carried-forward PE = 0
+  record, read from the procedure's steps and §20.4 both, S2's act), and W11
+  (which row governs an implemented MU = 1 type, S3's act).
+- **The refute phase.** Candidates are ordered by weight (distinct reporters
+  calling the group a difference, then byte-level), splits before unanimous
+  downgrades; every refute brief names its five required fields,
+  `decisive_quotes` among them; a refuter that returns nothing is logged for
+  recovery from its transcript and the result records the count.
+- **The seed tool.** `fidelity-seed.py` takes its seeds from a spec file
+  (`fidelity-seeds-0.json` keeps this run's six) and records, per seed, how
+  many times the source edition states the rule; a seed stated more than once
+  is labelled a restatement removal that tests restraint, with EQUIVALENT as
+  its correct grade. Run over edition A it reproduces this run's edition B
+  byte for byte and labels S1 and S6 (stated three times each) as such.
+- **The sweeps** are told that a textual diff says where the words differ,
+  not whether the rules do, and to read side by side where the rewrite has
+  touched a section.
+
+Preflight passes with the calibration arguments and renders 24 prompts, the
+two quiz-comparator briefs among them; every call on Sonnet. The harness as
+it ran here is kept as `wf-fidelity.js.cal0` beside the paid version.
