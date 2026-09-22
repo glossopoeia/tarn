@@ -168,3 +168,28 @@ length of the rewrite and one afterwards.
 - **ADR-0003**: stable requirement IDs and the register, which are what make
   the contract mechanical.
 - **ADR-0132**: G3, and the last repair made unaudited by decision.
+
+## Erratum, 2026-09-22 — calibration 0
+
+The calibration decision 4 requires ran the day of acceptance
+(`docs/fidelity/0-calibration/`): thirty-five Sonnet agents over a copy of A
+carrying six seeds, 59 minutes. **Every seed was found and graded as the
+hand-check grades it**: S2 and S3 byte-level losses, S4 and S5 losses, S1
+and S6 equivalent, the last two being restatement removals decision 3
+permits, which the passes and refuters recognised with the surviving
+statement quoted. `tarn_inventory.py` caught its three; the blind walks
+caught two (a B walker seeing its edition disagree with itself); the quiz
+and the probes caught none; every two-edition agent found all six by
+diffing the near-identical files. So the mechanical contract, the grading
+and the refute phase are measured and sound, and **the reading of the
+sweeps, comparators and adversary is not yet measured**: a copy of A cannot
+test it. Decision 4's calibration is therefore two runs, and the second is
+owed over a stretch of B the rewrite has reworded, with seeds whose rule A
+states once. Until it has run, a fidelity zero is recorded with that
+caveat. The findings file lists the brief changes owed: probes that demand
+every bearing sentence and cover the acts S1 and S2 sit on; a
+`QUIZ_DIVERGENCE` kind with its own comparator and no refuter of its own;
+seeds that record their single-statement grep. One refuter returned its
+result off-schema five times and was failed by the runtime; its verdict was
+recovered from its transcript, as ADR-0034's rule for a started agent with
+no result directs.

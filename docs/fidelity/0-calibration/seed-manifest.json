@@ -1,0 +1,56 @@
+[
+ {
+  "id": "S1",
+  "kind": "prose",
+  "expected_catcher": "agents",
+  "location": "§20.4, the paragraph below the preservation table",
+  "change": "the sentence that an unimplemented MU = 1 sub-record blocks a layer's drop is cut",
+  "old": "whatever their PE bits. One sub-record blocks the drop, a sub-record of a type the updater does not implement with MU = 1, the drop being a modification of the scope it governs (the table's first row). A commit never removes",
+  "new": "whatever their PE bits. A commit never removes"
+ },
+ {
+  "id": "S2",
+  "kind": "prose",
+  "expected_catcher": "agents",
+  "location": "§20.3 step 2",
+  "change": "the carve-out that lets an appender drop a record where §20.4 licenses it is cut",
+  "old": "and MUST NOT drop the record save where §20.4 licenses the drop.",
+  "new": "and MUST NOT drop the record."
+ },
+ {
+  "id": "S3",
+  "kind": "prose",
+  "expected_catcher": "agents",
+  "location": "§20.4, the lead-in sentence above the table",
+  "change": "the MU = 1 row's reach is widened from unimplemented types to every type",
+  "old": "Its MU = 1 row reaches only a type the updater does not implement",
+  "new": "Its MU = 1 row reaches every type, implemented or not"
+ },
+ {
+  "id": "S4",
+  "kind": "register",
+  "expected_catcher": "tarn_inventory (hard)",
+  "location": "§21.2 row F19, the Instances cell",
+  "change": "the incompat lane's instance narrowed from bits 0-15 to bits 0-7",
+  "old": "| flags bits 0-15 |",
+  "new": "| flags bits 0-7 |"
+ },
+ {
+  "id": "S5",
+  "kind": "example",
+  "expected_catcher": "tarn_inventory (soft)",
+  "location": "§20.3's superseding Example",
+  "change": "the index region's size 644 becomes 664",
+  "old": "32 · 20 + 4 = 644",
+  "new": "32 · 20 + 4 = 664"
+ },
+ {
+  "id": "S6",
+  "kind": "id-text",
+  "expected_catcher": "tarn_inventory (hard)",
+  "location": "§6.3 [R-CNT-08]",
+  "change": "the clause forbidding an updater to clear an ignore-lane bit is cut",
+  "old": "MUST NOT clear them, and MUST NOT set any other",
+  "new": "MUST NOT set any other"
+ }
+]

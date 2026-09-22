@@ -1,0 +1,64 @@
+diff --git a/scratch/cleanroom/editions/a/tarn.md b/scratch/cleanroom/editions/b/tarn.md
+index e4f070c..2f50a3d 100644
+--- a/scratch/cleanroom/editions/a/tarn.md
++++ b/scratch/cleanroom/editions/b/tarn.md
+@@ -905,8 +905,7 @@ carrying them are conforming files this text's readers ignore. A
+ rewriter, though its output is a new file, carries the input's
+ unknown ignore-lane bits into its output trailer rather than writing
+ flags = 0, and sets no other (§20.5, `[R-WRT-06]`). An updater MUST
+-copy forward unknown ignore-lane bits of its input file, MUST
+-NOT clear them, and MUST NOT set any other: no writer under this text
++copy forward unknown ignore-lane bits of its input file, MUST NOT set any other: no writer under this text
+ originates an ignore-lane bit, this text defining none for it to mean
+ anything by, so a bit is set only by a writer under the later minor
+ version that defines it and carried forward by every updater under
+@@ -3216,8 +3215,7 @@ An appender MUST, in order:
+    byte-identically at its disk-ordinal position under step 4, not
+    repaired to a sentinel. Against any other structure the appender
+    carries forward, it MUST NOT repair the defect — `[R-LIF-01]`
+-   freezes the committed prefix — and MUST NOT drop the record save
+-   where §20.4 licenses the drop.
++   freezes the committed prefix — and MUST NOT drop the record.
+    Reproducing a structure's bytes unchanged is not
+    authoring them: an appender satisfies its writer obligations for
+    the bytes it produces, and a violation latent in a structure it
+@@ -3397,7 +3395,7 @@ An appender MUST, in order:
+ 
+ > **Example.** Superseding one 100,000-byte stored tile of a
+ > 32-tile interleaved layer appends: the new payload (100,000
+-> bytes), the layer's full new index region (32 · 20 + 4 = 644
++> bytes), the layer's full new index region (32 · 20 + 4 = 664
+ > bytes — one entry re-pointed, 31 byte-identical), the new
+ > directory (every record byte-identical except the modified
+ > layer's), the pad, and the 64-byte trailer. The prior index
+@@ -3494,8 +3492,8 @@ the updater does not implement, the
+ stored flags are authoritative (§7.3, `[R-CNT-15]`; MU = 1 with
+ PE = 0 is read as PE = 1, `[R-CNT-12]`). The table states what an
+ updater owes a record it does not logically modify, read under
+-whichever flags govern it. Its MU = 1 row reaches only a type the
+-updater does not implement — an updater implements both registered
++whichever flags govern it. Its MU = 1 row reaches every type,
++implemented or not — an updater implements both registered
+ types and understands an unregistered type it implements from its
+ definition, modifying their records as §20.3 and that definition
+ provide — so for an implemented type only the PE bit bites:
+@@ -3509,9 +3507,7 @@ provide — so for an implemented type only the PE bit bites:
+ A commit MAY therefore drop a layer record, and the drop takes the
+ layer whole: a sub-record's flags govern it within a layer the updater
+ keeps, so a dropped layer's sub-records and their extents go with it
+-whatever their PE bits. One sub-record blocks the drop, a sub-record
+-of a type the updater does not implement with MU = 1, the drop being
+-a modification of the scope it governs (the table's first row). A
++whatever their PE bits. A
+ commit never removes a user-metadata record from a scope it keeps: a
+ top-level one from the file, or a sub-record from a layer the commit
+ retains. Dropping a layer by commit
+@@ -3860,7 +3856,7 @@ premise is unmet and `[R-CNT-07]` governs (§21.6).
+ | F16 | Trailer dir_length is less than 4, too small to hold the directory region's terminal CRC-32C | dir_length | reader | open | `[R-CNT-06]` (R-ENC-07) |
+ | F17 | Trailer committed_file_length does not equal the transport-authoritative file size (physical file not truncated or extended to it) | committed_file_length, physical file shorter; committed_file_length, physical file longer | reader | open | `[R-CNT-06]` (R-LIF-04, R-CNT-10) |
+ | F18 | Trailer version_major is 0, which declares no major at all | version_major | reader | open | `[R-CNT-07]` |
+-| F19 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-15 | reader | open | `[R-CNT-08]` |
++| F19 | Any bit of the flags incompat lane (bits 0-15) is set; this text defines no flag bits, so every such bit is unimplemented | flags bits 0-7 | reader | open | `[R-CNT-08]` |
+ | F20 | The final 4 bytes of the directory region do not equal the CRC-32C of the preceding dir_length - 4 bytes (the raw record sequence) | directory region CRC | reader | open | `[R-CNT-11]` (R-CNT-20, R-ENC-10) |
+ | F21 | A top-level user-metadata record (type 0x0002) carries extent slot (0, 0) | — | reader | open | `[R-CNT-25]` |
+ | F22 | A top-level user-metadata record's extent_length is less than 5, too short to hold both a document and the terminal CRC-32C of its final 4 bytes | — | reader | open | `[R-CNT-25]` (R-ENC-07) |
