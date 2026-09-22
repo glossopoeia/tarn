@@ -1,7 +1,8 @@
 # 0133. The readable edition, and the fidelity process that guards it
 
-- Status: Proposed (drafted 2026-09-22 at the maintainer's request; in force
-  on the maintainer's acceptance, and nothing here touches spec text)
+- Status: Accepted (drafted 2026-09-22 at the maintainer's request and
+  accepted by the maintainer the same day; branch `readable` and tag
+  `edition-a` at `81e2ad2` as drafted; nothing here touches spec text)
 - Covers: how the specification is edited after G3; the two editions and
   which governs; the equivalence contract between them; the fidelity round;
   how the readable edition is accepted and what becomes of the reference;
@@ -108,6 +109,9 @@ what that text says".
    over the seeded copy, and the findings file records which instrument
    caught each seed. A round whose instruments missed a seed is not trusted
    on a zero until the brief that missed it is changed and the seed is caught.
+   Fidelity artifacts land in `docs/fidelity/<NN>-<name>/`, the calibration
+   run as `0-calibration`: `findings.md`, the seed manifest, every transcript
+   and the reconciled result, on the pattern of `docs/cleanroom/`.
 
 5. **Acceptance and the end state.** B replaces A on `main` when a fidelity
    round over the final B returns no LOSS and no unreviewed ADDITION after
