@@ -9,88 +9,144 @@ ADR and this document diverge, this document governs.
 
 License: CC BY 4.0 (see [LICENSE-SPEC](../LICENSE-SPEC)).
 
-> **Note.** How to read this document. Sections follow a fixed
-> rubric where applicable: purpose, byte-layout table, writer rules, reader
-> rules, error handling, worked examples. On-disk structures are presented
-> as layout tables whose columns suit the structure — §4.7 states what
-> they carry, and a packed variable-length payload has no offsets to
-> give. Every field is classified as
-> **structural** (its value affects where a byte lies, how it decodes,
-> what a decoded value is, or whether the file, layer or tile is
-> accepted at all) or
-> **descriptive** (none of those — §4.7). Normative requirements carry
-> stable identifiers like `[R-IDX-03]`, and test vectors cite those
-> identifiers rather than prose positions.
-
 ---
 
 ## Part 0 — Preliminaries
 
 ### 1. Introduction
 
-TARN is a single-file container for tiled, N-dimensional arrays,
-designed to be read directly over a network by byte range and to be
-implementable from this document alone.
+TARN is a single-file container for tiled, N-dimensional arrays. A file
+holds a set of named layers; each layer is a grid of samples cut into
+tiles, and each tile is stored, checksummed and read as a unit. The
+format is designed to be read directly from remote storage by byte range
+and to be implemented from this document alone.
 
-An array format has to answer four questions: where the data is, what
-shape it has, how to find one piece of it, and what to do when the
-bytes are wrong. TARN answers them with a fixed 64-byte trailer that
-commits each state of the file, a consolidated metadata directory
-reachable in one further request, a per-layer index with one entry per
-tile, and an outcome class attached to every violation this document
-names. There are no subset profiles, no subset readers, and no
-feature a conforming reader can decline.
+Five goals shape the design:
 
-The design pillars, each paid for elsewhere in this document:
-
-- **Random access without a server.** Opening a file costs two range
-  requests whatever its size (§6.4); reading one tile costs that
-  layer's segment-CRC array, the index segment covering the tile, and
-  the tile's own bytes (§19.4) — the array being the only term that
-  grows with the layer, which is what §21.9's tile-count guarantee is
-  sized against.
+- **Random access without a server.** Opening a file, and reading any
+  one tile of it, each take a small fixed number of range requests,
+  whatever the size of the file.
 - **Integrity by default.** Every structure whose contents this
   specification defines is checksummed, and verification is a reader
-  obligation with no flag that disables it (§8). Corruption is
-  detected at the finest scope it damages, so one
-  bad tile does not condemn a file.
-- **Append without rewriting.** A commit appends payloads, a complete
-  directory, and a trailer, in that order; committed bytes are never
-  modified, so a torn write cannot damage the previous state — a
-  recovery tool truncates back to it (§9.6), while a conforming
-  reader declines the torn file rather than scanning backward (§9.5).
-  Superseded bytes remain as slack until compaction reclaims
-  them: this is a write-mostly artifact, not a version store, and
-  bulk work followed by compaction is the shape it is built for. A
-  long series of small edits is supported and wasteful — each costs a
-  full tile and its layer's whole index (§20.3).
-- **Defined behavior at the edges.** Sparse tiles, zero-extent
-  dimensions, padding content, malformed index entries, and every
-  other boundary have stated answers rather than conventions (§21).
-- **A closed core with an open edge.** The type list, codec menu, and
-  filter set are closed; growth happens through four enumerated
-  vehicles and a registry (§10).
+  obligation with no flag that disables it. Corruption is detected
+  at the finest scope it damages, so one bad tile does not condemn a
+  file.
+- **Append without rewriting.** A file is updated in place only by
+  appending a commit; committed bytes are never modified, so an
+  interrupted write cannot damage the state before it. Superseded bytes
+  stay in the file until a compaction reclaims them.
+- **Defined behavior at the edges.** Every boundary case this document
+  names has a stated answer, and every violation it names has a stated
+  consequence.
+- **A closed core with an open edge.** The sample types, codecs and
+  filters are closed lists, and there is no subset of the core a
+  conforming reader can decline; the format grows through a fixed set
+  of extension vehicles and a registry.
 
-What TARN is not: a database — it has no transactions, no queries, and
-one writer at a time; an image format — it carries no colour model,
-orientation, or display semantics; and a compression format — codecs
-are pinned external references, not contributions of this document.
-It provides no confidentiality and no authenticity: checksums detect
-accidental corruption, not tampering (§22.5).
+TARN is not a database: it has no transactions, no queries, and one
+writer at a time. It is not an image format: it carries no colour model,
+orientation, or display semantics. It is not a compression format: its
+codecs are references to external specifications. It provides no
+confidentiality and no authenticity: its checksums detect accidental
+corruption, not tampering.
 
-**Reading this document.** §2 fixes the conformance vocabulary every
-later section uses, and is worth reading first. Part I (§5–§10) is the
-container and can be implemented without decoding a single sample;
-Part II (§11–§18) is the array model; Part III (§19–§24) states the
-reader, writer, and updater algorithms, the consequences of getting
-them wrong, and what the conformance corpus does and does not prove.
-§21's register lists every violation with its outcome, and the
-appendices carry the constants, an annotated minimal file, and the
-registry. Part I alone yields a container reader — one that opens
-files, walks the directory, and lists layers without decoding a
-sample; returning sample values needs Part II as well, since §19.3's
-layer validation resolves into Part II's value sets and geometry
-rules at every step.
+**How to read this document.** Sections follow a fixed rubric where it
+applies: purpose, byte-layout table, writer rules, reader rules, error
+handling, worked examples. On-disk structures are presented as layout
+tables whose columns suit the structure; §4.7 says what the columns
+carry and classifies every field as structural or descriptive.
+
+### 3. Terminology and Data Model
+
+#### 3.1 Terms
+
+The following terms are used throughout this specification with exactly
+these meanings.
+
+- **file** — a single TARN artifact: a byte sequence satisfying this
+  specification's file-level requirements.
+- **layer** — a named N-dimensional array within a file. All layers of a
+  file are equally first-class.
+- **dimension** — one axis of a layer's grid, having a name (§4.6), an
+  **extent** (the number of sample positions along the axis), and a
+  **tile extent** (the number of sample positions per tile along the
+  axis). Dimensions are declared in order; the declared order is
+  load-bearing (§11.4).
+- **rank** — a layer's number of dimensions, written *d*.
+- **channel** — a named, typed per-sample value of a layer (§12).
+  Channels are declared in order; a channel's **index** is its 0-based
+  position in that order, and the order is load-bearing (§11.4, §14).
+- **channel layout** — whether a layer's channels are stored together
+  within each tile (*interleaved*) or each channel is tiled separately
+  (*planar*); encoded in the layer record (§7.4), byte-layout semantics
+  in §14.
+- **sample** — the tuple of one value per channel at one coordinate.
+- **coordinate** — a *d*-tuple (x₀, …, x_{d−1}), in declared dimension
+  order, with 0 ≤ xᵢ < Eᵢ, identifying one sample position of a layer
+  with extents (E₀, …, E_{d−1}).
+- **tile** — the unit a tile-index entry addresses: in an interleaved
+  layer, one cell of the tiling grid carrying all channels; in a planar
+  layer, one cell of the grid for one channel. Every tile of a layer has
+  the same logical shape, a block of ∏ Tᵢ sample positions (§11.3).
+- **addressed tile / stored tile** — every tile of a layer is
+  *addressed*. A tile is *stored in a generation* if and only if that
+  generation's tile-index entry for it is not the sentinel (§15);
+  unqualified *stored* means stored in the live generation. Superseded
+  payload bytes from earlier generations do not make a tile stored. An
+  addressed tile that is not stored reads as fill (§13).
+- **fill value** — the per-channel value that a channel's samples take
+  wherever the tile carrying that channel is not stored (§13).
+- **slab** — a declared run of consecutive stored tiles kept physically
+  contiguous as one I/O unit (§16).
+- **tile index** — the per-layer table with one entry per addressed
+  tile, locating and checksumming the stored ones and marking the rest
+  with the sentinel (§15).
+- **directory** — the consolidated metadata structure through which
+  everything else in a generation is reached: a sequence of records
+  (§7), including every layer record, followed by its checksum, located
+  from the trailer. Each commit appends a *complete* directory — never
+  a delta (§9.2) — so a conforming commit adds one directory per
+  generation; unqualified, *the directory* means the live
+  generation's.
+- **trailer** — the fixed-size 64-byte structure that commits a
+  generation (§6); each commit appends one, and the *live* trailer
+  occupies the final 64 bytes of the file.
+- **front signature block** — the constant 16 bytes at offset 0 (§6).
+- **generation** — one committed state of a file (§9). No field
+  numbers generations; successive generations of one file are ordered
+  by the strictly increasing committed file length their trailers
+  carry (§9.3).
+- **user metadata** — the structured document carrying non-structural,
+  application-level information (§18).
+
+#### 3.2 The reference array
+
+Each layer of a conforming file denotes exactly one **reference array**:
+the *d*-dimensional array with the layer's extents whose element at each
+coordinate is the sample at that coordinate, determined per channel. If
+the tile carrying that channel at that coordinate is stored, the
+channel's value is the one decoded from that tile under Part II's rules;
+otherwise it is that channel's fill value (§13). In an interleaved layer
+one tile carries every channel, so a coordinate's channel values are
+stored or fill together; in a planar layer each channel's storedness is
+independent, and a single sample can mix decoded and fill values.
+Sample positions that exist only as edge-tile padding (§11.3) have
+coordinates outside the layer's extents and are not part of the
+reference array. `[R-MDL-01]`
+
+The reference array is this specification's conformance target: a
+conforming reader that reads any portion of a layer MUST return exactly
+the corresponding portion of the reference array, bit-for-bit — sample
+values are bit patterns, and decoding MUST NOT alter them (floating-
+point payloads included; type semantics are §12's subject). `[R-MDL-02]`
+
+#### 3.3 Container and array model
+
+> **Note.** Part I (container) is independent of Part II (array model)
+> by construction: no Part I structure requires decoding sample
+> payloads, so appenders, and rewriters that carry a layer forward,
+> operate on files whose layers they cannot decode — that
+> independence is load-bearing for the updater rules of §7 and §20.
 
 ### 2. Conformance
 
@@ -347,98 +403,6 @@ implementation. Readers MAY enforce resource limits, but MUST accept any
 conforming file within the minimum guarantees stated in §21's limits
 table; writers MAY rely on those minimums; the table is §21.9.
 `[R-CNF-10]`
-
-### 3. Terminology and Data Model
-
-#### 3.1 Terms
-
-The following terms are used throughout this specification with exactly
-these meanings.
-
-- **file** — a single TARN artifact: a byte sequence satisfying this
-  specification's file-level requirements.
-- **layer** — a named N-dimensional array within a file. All layers of a
-  file are equally first-class.
-- **dimension** — one axis of a layer's grid, having a name (§4.6), an
-  **extent** (the number of sample positions along the axis), and a
-  **tile extent** (the number of sample positions per tile along the
-  axis). Dimensions are declared in order; the declared order is
-  load-bearing (§11.4).
-- **rank** — a layer's number of dimensions, written *d*.
-- **channel** — a named, typed per-sample value of a layer (§12).
-  Channels are declared in order; a channel's **index** is its 0-based
-  position in that order, and the order is load-bearing (§11.4, §14).
-- **channel layout** — whether a layer's channels are stored together
-  within each tile (*interleaved*) or each channel is tiled separately
-  (*planar*); encoded in the layer record (§7.4), byte-layout semantics
-  in §14.
-- **sample** — the tuple of one value per channel at one coordinate.
-- **coordinate** — a *d*-tuple (x₀, …, x_{d−1}), in declared dimension
-  order, with 0 ≤ xᵢ < Eᵢ, identifying one sample position of a layer
-  with extents (E₀, …, E_{d−1}).
-- **tile** — the unit a tile-index entry addresses: in an interleaved
-  layer, one cell of the tiling grid carrying all channels; in a planar
-  layer, one cell of the grid for one channel. Every tile of a layer has
-  the same logical shape, a block of ∏ Tᵢ sample positions (§11.3).
-- **addressed tile / stored tile** — every tile of a layer is
-  *addressed*. A tile is *stored in a generation* if and only if that
-  generation's tile-index entry for it is not the sentinel (§15);
-  unqualified *stored* means stored in the live generation. Superseded
-  payload bytes from earlier generations do not make a tile stored. An
-  addressed tile that is not stored reads as fill (§13).
-- **fill value** — the per-channel value that a channel's samples take
-  wherever the tile carrying that channel is not stored (§13).
-- **slab** — a declared run of consecutive stored tiles kept physically
-  contiguous as one I/O unit (§16).
-- **tile index** — the per-layer table with one entry per addressed
-  tile, locating and checksumming the stored ones and marking the rest
-  with the sentinel (§15).
-- **directory** — the consolidated metadata structure through which
-  everything else in a generation is reached: a sequence of records
-  (§7), including every layer record, followed by its checksum, located
-  from the trailer. Each commit appends a *complete* directory — never
-  a delta (§9.2) — so a conforming commit adds one directory per
-  generation; unqualified, *the directory* means the live
-  generation's.
-- **trailer** — the fixed-size 64-byte structure that commits a
-  generation (§6); each commit appends one, and the *live* trailer
-  occupies the final 64 bytes of the file.
-- **front signature block** — the constant 16 bytes at offset 0 (§6).
-- **generation** — one committed state of a file (§9). No field
-  numbers generations; successive generations of one file are ordered
-  by the strictly increasing committed file length their trailers
-  carry (§9.3).
-- **user metadata** — the structured document carrying non-structural,
-  application-level information (§18).
-
-#### 3.2 The reference array
-
-Each layer of a conforming file denotes exactly one **reference array**:
-the *d*-dimensional array with the layer's extents whose element at each
-coordinate is the sample at that coordinate, determined per channel. If
-the tile carrying that channel at that coordinate is stored, the
-channel's value is the one decoded from that tile under Part II's rules;
-otherwise it is that channel's fill value (§13). In an interleaved layer
-one tile carries every channel, so a coordinate's channel values are
-stored or fill together; in a planar layer each channel's storedness is
-independent, and a single sample can mix decoded and fill values.
-Sample positions that exist only as edge-tile padding (§11.3) have
-coordinates outside the layer's extents and are not part of the
-reference array. `[R-MDL-01]`
-
-The reference array is this specification's conformance target: a
-conforming reader that reads any portion of a layer MUST return exactly
-the corresponding portion of the reference array, bit-for-bit — sample
-values are bit patterns, and decoding MUST NOT alter them (floating-
-point payloads included; type semantics are §12's subject). `[R-MDL-02]`
-
-#### 3.3 Container and array model
-
-> **Note.** Part I (container) is independent of Part II (array model)
-> by construction: no Part I structure requires decoding sample
-> payloads, so appenders, and rewriters that carry a layer forward,
-> operate on files whose layers they cannot decode — that
-> independence is load-bearing for the updater rules of §7 and §20.
 
 ### 4. Encoding Conventions
 
