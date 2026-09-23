@@ -65,6 +65,10 @@ these meanings.
 
 - **file** — a single TARN artifact: a byte sequence satisfying this
   specification's file-level requirements.
+- **generation** — one committed state of a file (§9). No field
+  numbers generations; successive generations of one file are ordered
+  by the strictly increasing committed file length their trailers
+  carry (§9.3).
 - **layer** — a named N-dimensional array within a file. All layers of a
   file are equally first-class.
 - **dimension** — one axis of a layer's grid, having a name (§4.6), an
@@ -114,10 +118,6 @@ these meanings.
   generation (§6); each commit appends one, and the *live* trailer
   occupies the final 64 bytes of the file.
 - **front signature block** — the constant 16 bytes at offset 0 (§6).
-- **generation** — one committed state of a file (§9). No field
-  numbers generations; successive generations of one file are ordered
-  by the strictly increasing committed file length their trailers
-  carry (§9.3).
 - **user metadata** — the structured document carrying non-structural,
   application-level information (§18).
 

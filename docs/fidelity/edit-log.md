@@ -21,6 +21,27 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-23 — §3.1: *generation* moved ahead of its first use
+
+- **Commit:** `Readable: §3.1 — generation defined before its first use` (the
+  commit carrying this entry).
+- **Sections:** §3.1 only.
+- **Edits.** The *generation* entry (four lines, verbatim) moves from the
+  seventeenth position to the second, directly after *file*, so that
+  *addressed tile / stored tile*, *directory* and *trailer* no longer use
+  the term before it is defined. The list now runs: file, generation,
+  layer, dimension, rank, channel, channel layout, sample, coordinate,
+  tile, addressed tile / stored tile, fill value, slab, tile index,
+  directory, trailer, front signature block, user metadata. Forward
+  references remaining inside the list: *generation* names trailers,
+  *channel* names samples, *sample* names coordinates, *tile* names the
+  tile index; every one is a mutual dependency the list cannot order away.
+- **Removed restatements:** none.
+- **Reworded IDs:** none.
+- **Soft items:** unchanged from the previous entry (`TERM_TEXT_CHANGED` ×3,
+  `HEADINGS`); the term's text is byte-identical, so the move adds none.
+- **Questions raised:** none.
+
 ### 2026-09-23 — §3.1 and §12: "load-bearing" replaced by what the declared order fixes
 
 - **Commit:** `Readable: §3.1, §12 — dimension, channel and channel-layout
