@@ -21,6 +21,29 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-23 — §3.1: the list reordered, container terms first
+
+- **Commit:** `Readable: §3.1 — terms reordered, container structures before
+  the array model's` (the commit carrying this entry).
+- **Sections:** §3.1 only.
+- **Edits.** The eighteen entries stay one list, every entry byte-identical,
+  in a new order: the container's structures first (file, front signature
+  block, generation, trailer, directory), then the array model's in their
+  existing order (layer, dimension, rank, channel, channel layout, sample,
+  coordinate, tile, addressed tile / stored tile, fill value, slab, tile
+  index, user metadata). The lead-in sentence is unchanged. A version with
+  the two groups as separate lists under a lead-in each was tried and
+  dropped at the maintainer's preference for one list; it had also shown
+  that the inventory tool's term parser reads a paragraph between two
+  entries as the tail of the preceding term (a spurious
+  `TERM_TEXT_CHANGED`), which is worth a parser fix if a lead-in is ever
+  wanted inside the list.
+- **Removed restatements:** none.
+- **Reworded IDs:** none.
+- **Soft items:** unchanged (`TERM_TEXT_CHANGED` ×3 from the earlier
+  rewording, `HEADINGS`).
+- **Questions raised:** none.
+
 ### 2026-09-23 — §3.1: *generation* moved ahead of its first use
 
 - **Commit:** `Readable: §3.1 — generation defined before its first use` (the
