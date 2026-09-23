@@ -107,8 +107,8 @@ these meanings.
   unqualified *stored* means stored in the live generation. Superseded
   payload bytes from earlier generations do not make a tile stored. An
   addressed tile that is not stored reads as fill (§13).
-- **fill value** — the per-channel value that a channel's samples take
-  wherever the tile carrying that channel is not stored (§13).
+- **fill value** — the value that a channel's samples take wherever the
+  tile carrying that channel is not stored (§13).
 - **slab** — a declared run of consecutive stored tiles kept physically
   contiguous as one I/O unit (§16).
 - **tile index** — the per-layer table with one entry per addressed

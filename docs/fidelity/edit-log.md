@@ -21,6 +21,20 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-23 — §3.1: *fill value* entry, "per-channel" dropped
+
+- **Commit:** `Readable: §3.1 — fill value entry, redundant per-channel
+  dropped` (the commit carrying this entry).
+- **Sections:** §3.1 only.
+- **Edits.** *fill value*: "the per-channel value that a channel's samples
+  take …" becomes "the value that a channel's samples take …"; the sentence
+  already says whose value it is.
+- **Removed restatements:** none.
+- **Reworded IDs:** none. No keyword, no ID.
+- **Soft items:** `TERM_TEXT_CHANGED` for *fill value*, added to the five
+  from earlier entries; `HEADINGS`.
+- **Questions raised:** none.
+
 ### 2026-09-23 — §3.1: *directory* and *generation* entries shortened
 
 - **Commit:** `Readable: §3.1 — directory and generation entries shortened`
