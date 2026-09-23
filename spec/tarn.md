@@ -70,16 +70,18 @@ these meanings.
 - **dimension** — one axis of a layer's grid, having a name (§4.6), an
   **extent** (the number of sample positions along the axis), and a
   **tile extent** (the number of sample positions per tile along the
-  axis). Dimensions are declared in order; the declared order is
-  load-bearing (§11.4).
+  axis). Dimensions are declared in order, and the declared order fixes
+  the sample order on disk: within a tile the last-declared dimension
+  varies fastest, and tile ordinals follow the same order (§11.4).
 - **rank** — a layer's number of dimensions, written *d*.
 - **channel** — a named, typed per-sample value of a layer (§12).
   Channels are declared in order; a channel's **index** is its 0-based
-  position in that order, and the order is load-bearing (§11.4, §14).
+  position in that order, which fixes where the channel's value sits
+  within each interleaved sample (§14) and where its tiles fall in a
+  planar layer's index (§11.4).
 - **channel layout** — whether a layer's channels are stored together
   within each tile (*interleaved*) or each channel is tiled separately
-  (*planar*); encoded in the layer record (§7.4), byte-layout semantics
-  in §14.
+  (*planar*).
 - **sample** — the tuple of one value per channel at one coordinate.
 - **coordinate** — a *d*-tuple (x₀, …, x_{d−1}), in declared dimension
   order, with 0 ≤ xᵢ < Eᵢ, identifying one sample position of a layer
@@ -1757,7 +1759,7 @@ A channel is declared by its layer record's channel entry (§7.4): a
 name (§4.6), a sample type (`u16`, structural), and a fill value
 (§13). The owning scope (§2.4) of a channel declaration is the layer
 (`[R-CNT-23]`); channels are declared in order, and the declared
-order is load-bearing (§3.1, §11.4).
+order fixes each channel's index (§3.1, §11.4).
 
 #### 12.1 Core sample types
 

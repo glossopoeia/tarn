@@ -21,11 +21,47 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-23 — §3.1 and §12: "load-bearing" replaced by what the declared order fixes
+
+- **Commit:** `Readable: §3.1, §12 — dimension, channel and channel-layout
+  entries reworded; load-bearing replaced` (the commit carrying this entry).
+- **Sections:** §3.1 (three term entries), §12 (opening paragraph).
+- **Edits.**
+  1. §3.1 *dimension*: "the declared order is load-bearing (§11.4)" becomes
+     "the declared order fixes the sample order on disk: within a tile the
+     last-declared dimension varies fastest, and tile ordinals follow the
+     same order (§11.4)". Derived from §11.4's row-major rule (last-declared
+     dimension fastest, `[R-GEO-05]`) and its ordinal formulas
+     (`[R-GEO-06]`).
+  2. §3.1 *channel*: "the order is load-bearing (§11.4, §14)" becomes
+     "which fixes where the channel's value sits within each interleaved
+     sample (§14) and where its tiles fall in a planar layer's index
+     (§11.4)". Derived from `[R-SER-01]` (channel values adjacent in
+     declared channel order) and `[R-GEO-06]` (planar disk ordinal
+     c · N + s).
+  3. §3.1 *channel layout*: the clause "encoded in the layer record (§7.4),
+     byte-layout semantics in §14" cut; the definition ends at *planar*.
+  4. §12, opening paragraph: "the declared order is load-bearing (§3.1,
+     §11.4)" becomes "the declared order fixes each channel's index (§3.1,
+     §11.4)". The paragraph cites `[R-CNT-23]` but does not define it
+     (the ID closes §7.4's paragraph), so no ID paragraph changed.
+- **Removed restatements:** §3.1 *channel layout*'s two pointers → §7.4
+  (the `channel_layout` field) and §14; `86162e0`, Batch 3 (ADR-0029 to
+  ADR-0032). §12's "load-bearing" clause was a restatement of §3.1's, added
+  by `75af4ac`, Batch 5 (ADR-0036); it now points at §3.1's precise form.
+- **Reworded IDs:** none. None of the four sentences carries a keyword or
+  closes with an ID.
+- **Soft items:** `TERM_TEXT_CHANGED` for *dimension*, *channel* and
+  *channel layout* (edits 1–3, read side by side above); `HEADINGS`,
+  carried from the previous entry. Keyword counts identical.
+- **Questions raised:** none. "Load-bearing" still appears in §3.3's Note
+  (Part I's independence from Part II) and in §21 (line "load-bearing — the
+  same type as a layer sub-record"), both outside this edit.
+
 ### 2026-09-23 — §1–§3: introduction rewritten, front-matter Note folded in, §3 moved ahead of §2
 
-- **Commit:** `Readable: §1–§3 — introduction rewritten, front-matter note
-  folded in; terminology moved ahead of conformance` (the commit carrying
-  this entry; `git log --oneline --grep='Readable: §1–§3'`).
+- **Commit:** `c486508`, `Readable: §1–§3 — introduction rewritten,
+  front-matter note folded in; terminology moved ahead of conformance`.
 - **Sections:** the front matter (the Note before Part 0), §1, §2, §3.
   Nothing from §4 on changed.
 - **Edits.**
