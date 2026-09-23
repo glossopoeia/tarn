@@ -21,6 +21,39 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-23 — §3.1: *directory* and *generation* entries shortened
+
+- **Commit:** `Readable: §3.1 — directory and generation entries shortened`
+  (the commit carrying this entry).
+- **Sections:** §3.1 only.
+- **Edits.**
+  1. *directory*: "Each commit appends a *complete* directory — never a
+     delta (§9.2) — so a conforming commit adds one directory per
+     generation; unqualified, …" becomes "Each commit appends a *complete*
+     directory; unqualified, …".
+  2. *generation*: "No field numbers generations; successive generations of
+     one file are ordered by the strictly increasing committed file length
+     their trailers carry (§9.3)." becomes "No field numbers generations."
+     The negative is kept on purpose: ADR-0111 removed the generation
+     counter field, and this sentence is where the document says so.
+- **Removed restatements:**
+  - "never a delta (§9.2) — so a conforming commit adds one directory per
+    generation" → *complete* in the same sentence; §5.1 ("the directory
+    each commit appended"); §9.2 `[R-LIF-02]` step 3 ("append the new
+    complete directory"); Appendix D ("a complete directory per
+    generation"). Added by `140d491`, ADR-0065.
+  - "successive generations of one file are ordered by the strictly
+    increasing committed file length their trailers carry (§9.3)" → §9.3
+    ("F strictly increases per commit — by at least 128 (`[R-LIF-02]`) —
+    so it orders that file's generations and identifies each of them");
+    §9.2's step 5 gloss. Added by `115c890`, ADR-0111.
+- **Reworded IDs:** none. Neither sentence carries a keyword or closes with
+  an ID.
+- **Soft items:** `TERM_TEXT_CHANGED` for *directory* and *generation*
+  (edits 1 and 2), added to the three from the earlier rewording;
+  `HEADINGS`.
+- **Questions raised:** none.
+
 ### 2026-09-23 — §3.1: the list reordered, container terms first
 
 - **Commit:** `Readable: §3.1 — terms reordered, container structures before

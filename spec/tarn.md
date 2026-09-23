@@ -67,19 +67,15 @@ these meanings.
   specification's file-level requirements.
 - **front signature block** — the constant 16 bytes at offset 0 (§6).
 - **generation** — one committed state of a file (§9). No field
-  numbers generations; successive generations of one file are ordered
-  by the strictly increasing committed file length their trailers
-  carry (§9.3).
+  numbers generations.
 - **trailer** — the fixed-size 64-byte structure that commits a
   generation (§6); each commit appends one, and the *live* trailer
   occupies the final 64 bytes of the file.
 - **directory** — the consolidated metadata structure through which
   everything else in a generation is reached: a sequence of records
   (§7), including every layer record, followed by its checksum, located
-  from the trailer. Each commit appends a *complete* directory — never
-  a delta (§9.2) — so a conforming commit adds one directory per
-  generation; unqualified, *the directory* means the live
-  generation's.
+  from the trailer. Each commit appends a *complete* directory;
+  unqualified, *the directory* means the live generation's.
 - **layer** — a named N-dimensional array within a file. All layers of a
   file are equally first-class.
 - **dimension** — one axis of a layer's grid, having a name (§4.6), an
