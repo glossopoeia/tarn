@@ -21,6 +21,30 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-24 — §3.1: *tile* says what it means for a tile to carry a channel
+
+- **Commit:** `Readable: §3.1 — tile entry defines "carries"` (the commit
+  carrying this entry).
+- **Sections:** §3.1 only.
+- **Edits.** In the *tile* entry, "one cell of the grid for one channel"
+  becomes "one cell of the grid carrying one channel", and the sentence "A
+  tile *carries* a channel when its payload holds that channel's samples
+  at the cell's positions." is added. The maintainer asked for a
+  definition of *carry*, which the document uses 167 times: mostly as
+  ordinary English (a record carries a flag), a dozen times in this
+  technical sense (the tile carrying that channel, §3.1 *fill value*, §3.2,
+  §13, §14.5), and as "carried forward" in §20.4's updater sense. A §3.1
+  term would govern all three, so the technical sense is stated where the
+  document first uses it instead. The added sentence restates the entry's
+  own two clauses and §3.2's "the tile carrying that channel at that
+  coordinate"; no new term, no new content.
+- **Removed restatements:** none.
+- **Reworded IDs:** none. No keyword, no ID.
+- **Soft items:** `TERM_TEXT_CHANGED` for *tile*, added to the seven from
+  earlier entries; `HEADINGS`.
+- **Questions raised:** none; a *carry* term of its own was considered and
+  not asked for.
+
 ### 2026-09-24 — §3.1: *tile index* moved to follow *tile*
 
 - **Commit:** `Readable: §3.1 — tile index defined directly after tile` (the

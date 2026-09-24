@@ -99,8 +99,10 @@ these meanings.
   with extents (E₀, …, E_{d−1}).
 - **tile** — the unit a tile-index entry addresses: in an interleaved
   layer, one cell of the tiling grid carrying all channels; in a planar
-  layer, one cell of the grid for one channel. Every tile of a layer has
-  the same logical shape, a block of ∏ Tᵢ sample positions (§11.3).
+  layer, one cell of the grid carrying one channel. A tile *carries* a
+  channel when its payload holds that channel's samples at the cell's
+  positions. Every tile of a layer has the same logical shape, a block
+  of ∏ Tᵢ sample positions (§11.3).
 - **tile index** — the per-layer table with one entry per addressed
   tile, locating and checksumming the stored ones and marking the rest
   with the sentinel (§15).
