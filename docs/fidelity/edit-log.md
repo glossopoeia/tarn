@@ -32,6 +32,45 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1):
 
 ## Entries
 
+### 2026-09-24 — §2.3: the reach paragraph `[R-CNF-13]` cut to its rules; its Note removed
+
+- **Commit:** `Readable: §2.3 — reach paragraph cut to its rules, its Note
+  removed; R-CNF-13 listed` (the commit carrying this entry).
+- **Sections:** §2.3, the closing paragraph and its Note. §2.3 is now about
+  95 lines, from 144.
+- **Edits.** The paragraph falls from 29 lines to 24: two sentences cut
+  (below) and one pointer added at the end, "§21.2 lists the rows that
+  reach." The definitions of *condition* and *reaches*, the test
+  sentence, both MUSTs with the `[R-CNT-04]` exemption clause, the
+  verifier's verdict and the closing "every other condition" sentence are
+  verbatim. The Note (F14, F5 and F15 worked through the test) is
+  removed: the results stand in §21.2's lead-in and the test they follow
+  from stays in the paragraph.
+- **Removed restatements:**
+  - "A file whose version_major is 0 declares no major at all (§6.3): it
+    is not a file declaring a format major other than 1, no reach question
+    arises for it, and `[R-CNT-07]` rejects it (§21.2, F18)." → §21.2's
+    lead-in ("F18 is not an exception but a case outside the premise:
+    version_major = 0 declares no major at all, so `[R-CNF-13]`'s premise
+    is unmet and `[R-CNT-07]` governs"), §6.3, row F18; `b7ccaed`, the
+    pre-round-30 audit (ADR-0118's repairs).
+  - "Reach is per condition because a single requirement can state
+    several: `[R-CNT-06]` states nine, of which the trailer magic and the
+    trailer CRC assert invariants `[R-CNT-24]` fixes and the other seven
+    do not." → the definition's own first clause (per condition, not per
+    requirement) and §21.2's lead-in (F8, F14, F6 and F1's instances, and
+    no other row); `e19e03a`, ADR-0106.
+  - the Note → §21.2's lead-in for the results; the reasoning for F14, F5
+    and F15 now stands nowhere, being explanatory; `e999df7`, ADR-0105.
+    Notes 59 → 58.
+- **Reworded IDs:** `R-CNF-13`, listed.
+- **Soft items:** `ID_REWORDED_LISTED R-CNF-13` (new) and the six earlier;
+  `TERM_TEXT_CHANGED` ×8 and `HEADINGS` carried. Keyword counts
+  unchanged.
+- **Questions raised:** none. The maintainer's question whether
+  *condition* and *reaches* want §3.1 entries stays open; both
+  definitions now lead the paragraph.
+
 ### 2026-09-24 — §2.3 verifier and updater items; the cannot-establish grounds moved to §21.6
 
 - **Commit:** `Readable: §2.3 — verifier and updater items cut; the

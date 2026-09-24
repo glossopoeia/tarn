@@ -269,13 +269,7 @@ A **condition** this specification names — one malformed state, as
 §21.1 individuates them, and not the requirement that defines it —
 **reaches** a file declaring a format major other than 1 when, and
 only when, the invariant it violates is one `[R-CNT-24]` fixes in
-every format major version. A file whose version_major is 0 declares
-no major at all (§6.3): it is not a file declaring a format major
-other than 1, no reach question arises for it, and `[R-CNT-07]`
-rejects it (§21.2, F18). Reach is per condition because a single
-requirement can state several: `[R-CNT-06]` states nine, of which the
-trailer magic and the trailer CRC assert invariants `[R-CNT-24]` fixes
-and the other seven do not. The test is the invariant asserted, not
+every format major version. The test is the invariant asserted, not
 the bytes read: a check that consumes bytes a future major is free to
 redefine can still assert only a fixed invariant. A reader MUST apply
 every reaching condition to a file whatever major it declares — an
@@ -283,30 +277,18 @@ exemption the condition's governing requirement grants on a ground
 other than the declared major applies unchanged, `[R-CNT-04]`'s
 residency exemption among them — and MUST treat its failure as
 reject-file on the ground of the requirement stating it rather than on
-capability grounds; the distinct diagnostic
-`[R-CNT-07]` asks for is owed where every reaching condition is
-satisfied and the declared major is one the reader does not implement.
-A verifier that establishes such a failure reports *nonconforming*,
-whatever major the file declares and whether or not it implements that
-major: the invariant broken is one that major shares (`[R-CNT-24]`),
-so the finding is not relative to format major 1. Every other
-condition this specification names is one of a structure this text
-defines for format major 1 alone; it is not assessed against a file
-declaring another major, no violation of it is established there, and
-no §21 row restating it records such a file. `[R-CNF-13]`
-
-> **Note.** The test is the invariant a condition violates, not the
-> fields it reads, and three rows show why the distinction carries the
-> weight. §21.2's F14 reaches although the bytes it checksums include
-> fields a future major may redefine: it consumes them as CRC input
-> and asserts only `[R-CNT-24]`'s CRC-32C at F − 4 over
-> [F − 64, F − 4). F5 does not reach although its subject is the
-> physical file size, which no major can redefine: the 128-byte floor
-> it asserts is derived from a directory of at least 4 bytes at an
-> offset of at least 16 and a 64-aligned F (`[R-CNT-27]`), and those
-> are format major 1's. F15 does not reach although its Governing rule
-> cell cites `[R-CNT-24]`: the trailer bytes it requires be zero are
-> inside the 48 that rule lets a future major redefine.
+capability grounds; the distinct diagnostic `[R-CNT-07]` asks for is
+owed where every reaching condition is satisfied and the declared
+major is one the reader does not implement. A verifier that
+establishes such a failure reports *nonconforming*, whatever major the
+file declares and whether or not it implements that major: the
+invariant broken is one that major shares (`[R-CNT-24]`), so the
+finding is not relative to format major 1. Every other condition this
+specification names is one of a structure this text defines for format
+major 1 alone; it is not assessed against a file declaring another
+major, no violation of it is established there, and no §21 row
+restating it records such a file. §21.2 lists the rows that reach.
+`[R-CNF-13]`
 
 #### 2.4 Outcome classes and owning scope
 

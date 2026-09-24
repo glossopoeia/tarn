@@ -8,3 +8,4 @@ R-CNF-04: shares the reader item with R-CNF-03; its MUST, MAY and MUST NOT sente
 R-CNF-06: the dash gloss on §20.4 cut (§20.4 states it) and the tiers sentence joined to the definition; both MUSTs verbatim
 R-CNF-11: the as-when list of cannot-establish grounds moved verbatim to §21.6 with a pointer left; the experimental-encoding carve-out cut ([R-MTA-10] states it); the two report-versus-verdict sentences merged; every MUST, MUST NOT and MAY verbatim
 R-COD-11: its own §17 text is untouched; the inventory maps a cited-only ID to the first block citing it, and that block moved from §2.3's verifier item to §21.6's new paragraph
+R-CNF-13: the version_major = 0 sentence and the [R-CNT-06] nine-conditions gloss cut (§21.2's lead-in states both), a pointer to §21.2 added; the definitions, both MUSTs, the verifier sentence and the closing sentence verbatim
