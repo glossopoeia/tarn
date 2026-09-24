@@ -32,6 +32,56 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1):
 
 ## Entries
 
+### 2026-09-24 — §2.3: the rest of the reach paragraph in plain words
+
+- **Commit:** `Readable: §2.3 — reach paragraph's rules restated plainly`
+  (the commit carrying this entry).
+- **Sections:** §2.3, the closing paragraph (`[R-CNF-13]`), sentences three
+  to seven.
+- **Edits.** Each sentence keeps its decision and loses its dashes:
+  - "The test is the property asserted, not the bytes read: a check that
+    consumes bytes a future major is free to redefine can still assert
+    only a fixed property." → "What matters is the property a check
+    asserts, not the bytes it reads: a check can read bytes a future major
+    is free to redefine and still assert only a property fixed for every
+    major."
+  - "A reader MUST apply every reaching condition to a file whatever major
+    it declares — an exemption … applies unchanged, `[R-CNT-04]`'s
+    residency exemption among them — and MUST treat its failure as
+    reject-file on the ground of the requirement stating it rather than
+    on capability grounds" → "A reader MUST check every reaching
+    condition whatever major the file declares, and MUST treat a failure
+    as reject-file under the requirement that states the condition, not
+    as a capability refusal; an exemption that the condition's own
+    requirement grants for a reason other than the declared major still
+    holds, `[R-CNT-04]`'s residency exemption among them." Both MUSTs,
+    same subject, same objects; the exemption clause follows instead of
+    interrupting.
+  - "the distinct diagnostic `[R-CNT-07]` asks for is owed where …" →
+    "`[R-CNT-07]`'s distinct diagnostic is given where …".
+  - "A verifier that establishes such a failure … the property broken is
+    one that major shares (`[R-CNT-24]`), so the finding is not relative
+    to format major 1." → "A verifier that finds such a failure … the
+    property broken is one shared among all majors (`[R-CNT-24]`)." The
+    dropped clause is the consequence of the kept one. "Finds" is the
+    plain synonym here; the verifier item's verdict rules still use
+    "established" as their term.
+  - "Every other condition this specification names is one of a structure
+    this text defines for format major 1 alone; it is not assessed …, no
+    violation of it is established there, and no §21 row restating it
+    records such a file." → "Every other condition concerns a structure
+    this document defines for format major 1 alone: it is not checked …,
+    no violation of it is found there, and no §21 row records such a
+    file."
+  The maintainer read the result as much clearer overall, with two
+  sentences still hard to parse; they are left for a later pass.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-CNF-13`, its reason line rewritten to cover the
+  whole paragraph.
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×8, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-24 — §2.4: two explanatory passages cut
 
 - **Commit:** `Readable: §2.4 — preserve-verbatim gloss and the reject Note

@@ -270,24 +270,23 @@ requirement of this specification; §21.1 says where one condition ends
 and the next begins, one requirement can state several, and reach is
 decided for each. A condition **reaches** a file declaring a format
 major other than 1 when, and only when, the property it violates is one
-`[R-CNT-24]` fixes for every format major version. The test is the
-property asserted, not the bytes read: a check that consumes bytes a
-future major is free to redefine can still assert only a fixed property.
-A reader MUST apply every reaching condition to a file whatever major it
-declares — an exemption the condition's governing requirement grants on
-a ground other than the declared major applies unchanged, `[R-CNT-04]`'s
-residency exemption among them — and MUST treat its failure as
-reject-file on the ground of the requirement stating it rather than on
-capability grounds; the distinct diagnostic `[R-CNT-07]` asks for is
-owed where every reaching condition is satisfied and the declared major
-is one the reader does not implement. A verifier that establishes such a
-failure reports *nonconforming*, whatever major the file declares and
-whether or not it implements that major: the property broken is one that
-major shares (`[R-CNT-24]`), so the finding is not relative to format
-major 1. Every other condition this specification names is one of a
-structure this text defines for format major 1 alone; it is not assessed
-against a file declaring another major, no violation of it is
-established there, and no §21 row restating it records such a file.
+`[R-CNT-24]` fixes for every format major version. What matters is the
+property a check asserts, not the bytes it reads: a check can read bytes
+a future major is free to redefine and still assert only a property
+fixed for every major. A reader MUST check every reaching condition
+whatever major the file declares, and MUST treat a failure as
+reject-file under the requirement that states the condition, not as a
+capability refusal; an exemption that the condition's own requirement
+grants for a reason other than the declared major still holds,
+`[R-CNT-04]`'s residency exemption among them. `[R-CNT-07]`'s distinct
+diagnostic is given where every reaching condition is satisfied and the
+declared major is one the reader does not implement. A verifier that
+finds such a failure reports *nonconforming*, whatever major the file
+declares and whether or not it implements that major: the property
+broken is one shared among all majors (`[R-CNT-24]`). Every other
+condition concerns a structure this document defines for format major 1
+alone: it is not checked against a file declaring another major, no
+violation of it is found there, and no §21 row records such a file.
 §21.2 lists the rows that reach.
 `[R-CNF-13]`
 
