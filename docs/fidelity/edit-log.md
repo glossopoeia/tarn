@@ -32,6 +32,36 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1):
 
 ## Entries
 
+### 2026-09-24 — §2.3: the reach paragraph's definitions in plain words
+
+- **Commit:** `Readable: §2.3 — condition and reach defined in plain words;
+  invariant is property` (the commit carrying this entry).
+- **Sections:** §2.3, the closing paragraph (`[R-CNF-13]`).
+- **Edits.** The first sentence, "A **condition** this specification names —
+  one malformed state, as §21.1 individuates them, and not the requirement
+  that defines it — **reaches** a file …", becomes two: "A **condition** is
+  one specific way a file's bytes can fail a requirement of this
+  specification; §21.1 says where one condition ends and the next begins,
+  one requirement can state several, and reach is decided for each. A
+  condition **reaches** a file declaring a format major other than 1 when,
+  and only when, the property it violates is one `[R-CNT-24]` fixes for
+  every format major version." "Invariant" becomes "property" in the
+  paragraph's four uses; §15's and §16's slab and alignment invariants are
+  untouched. The test sentence, both MUSTs, the verifier's verdict and the
+  closing sentence are otherwise verbatim. "Reaches" stays: the maintainer
+  asked about *covers* and *applies to*, and both collide with words in
+  use (byte coverage, §5.2; "applies unchanged" in this paragraph).
+  "Rule" was asked for in place of "invariant" and declined: F14 reaches
+  although its rule, `[R-CNT-06]`, does not as a whole, because the
+  property it asserts is `[R-CNT-24]`'s; "rule" would restate the test
+  wrongly.
+- **Removed restatements:** none beyond the previous entry's.
+- **Reworded IDs:** `R-CNF-13`, its reason line in `reworded-ids.txt`
+  extended.
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×7, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-24 — §2.3: the reach paragraph `[R-CNF-13]` cut to its rules; its Note removed
 
 - **Commit:** `Readable: §2.3 — reach paragraph cut to its rules, its Note
