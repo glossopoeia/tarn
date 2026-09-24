@@ -204,29 +204,18 @@ prefixes are never reassigned.
 Conformance is defined for five classes.
 
 - **Conforming TARN file.** A byte sequence satisfying every file-level
-  requirement of this specification. File conformance is a pure predicate
-  on bytes: it does not depend on any reader, writer, or environment.
-  It is always conformance to a stated format major version. This
-  document defines format major 1, and a file declaring another major
-  is neither conforming nor nonconforming under it save as to the
-  conditions that reach it (`[R-CNF-13]`): a reader refuses such a
-  file on capability grounds (§6.3, `[R-CNT-07]`), and that refusal is
-  not a finding about its bytes, while the failure of a reaching
-  condition is.
-  A few obligations this specification places on writers govern their
-  *conduct* rather than their output — where a value is published,
-  which registry version a writer targets (§10.3, §18.3), or the
-  barriers a commit performs (§9.2) — and a file
-  is never nonconforming by virtue of one: conduct rules bind the
-  actor, the predicate binds the bytes. A writer obligation whose
-  violation this specification expressly declares not to be a
-  file-conformance violation binds the actor in the same way; §6.3's
-  flags rules against a set ignore-lane bit (a creator's flags = 0,
-  and an updater's copy-forward and set-no-other,
-  §20.3 step 6 and §20.5), §6.2's pre-trailer gap longer than `[R-LIF-02]` step 5's
-  pad, and §20.3 step 4's bar on the fixed declarations of a layer
-  that stores a tile are the cases this text states, and each is
-  declared where it arises rather than enumerated here. `[R-CNF-02]`
+  requirement of this specification, always at a stated format major
+  version. File conformance is a pure predicate on bytes: it does not
+  depend on any reader, writer, or environment. This document defines
+  format major 1; a file declaring another major is neither conforming
+  nor nonconforming under it save as to the conditions that reach it
+  (`[R-CNF-13]`), and a reader's refusal of such a file on capability
+  grounds (§6.3, `[R-CNT-07]`) is not a finding about its bytes, while
+  the failure of a reaching condition is. A writer obligation that
+  governs conduct rather than output, or whose violation this
+  specification expressly declares not to be a file-conformance
+  violation, binds the writer and never makes a file nonconforming.
+  `[R-CNF-02]`
 - **Conforming reader.** A reader MUST accept every conforming file of
   a format major version it implements, carrying no top-level record of
   a type it does not implement with MUST_UNDERSTAND = 1 — in a

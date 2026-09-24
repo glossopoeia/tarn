@@ -2,3 +2,4 @@
 # "R-XXX-NN: why the rewording decides the same thing". tarn_inventory.py --reworded reads it; an ID
 # listed here is reported as a soft item instead of failing the equivalence contract. A listed ID
 # whose paragraph is still verbatim is reported as stale. Empty until edition B is opened.
+R-CNF-02: the three conduct examples and the closed enumeration of expressly-declared cases cut, each stated at its site; the other-major and conduct rules kept in tighter words with the same subjects and quantifiers

@@ -32,6 +32,43 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1):
 
 ## Entries
 
+### 2026-09-24 — §2.3: the conforming-file class, `[R-CNF-02]` reworded
+
+- **Commit:** `Readable: §2.3 — conforming file item cut to its rules;
+  R-CNF-02 listed` (the commit carrying this entry).
+- **Sections:** §2.3, the first list item only.
+- **Edits.** The item falls from 24 lines to 13. "It is always conformance
+  to a stated format major version" folds into the first sentence
+  ("always at a stated format major version"); the other-major sentence
+  keeps every clause in one sentence; the two conduct sentences become
+  one: "A writer obligation that governs conduct rather than output, or
+  whose violation this specification expressly declares not to be a
+  file-conformance violation, binds the writer and never makes a file
+  nonconforming." "Conduct rules bind the actor, the predicate binds the
+  bytes" is dropped, the second half being the item's own second
+  sentence.
+- **Removed restatements:**
+  - the three examples of conduct rules (where a value is published, which
+    registry version a writer targets, §10.3 and §18.3, the barriers a
+    commit performs, §9.2) → each at its site; `ed3395e`, cleanroom
+    round 3.
+  - the enumeration of the expressly-declared cases (§6.3's flags rules
+    with §20.3 step 6 and §20.5, §6.2's pre-trailer gap against
+    `[R-LIF-02]` step 5, §20.3 step 4's bar) → each declared at its site,
+    as the cut sentence itself said; `df71fb8`, the pre-round-31 audit.
+    What is lost is the enumeration's closure ("these are the cases this
+    text states"), a fact about the text, not a rule.
+- **Reworded IDs:** `R-CNF-02`, listed in `conformance/tools/reworded-ids.txt`
+  with the reason above. The reworded paragraph decides the same things:
+  file conformance is a predicate on bytes at a stated major; another
+  major is judged only by reaching conditions; a capability refusal is
+  not a finding; conduct obligations and expressly-carved-out obligations
+  bind the writer and never the file's conformance.
+- **Soft items:** `ID_REWORDED_LISTED R-CNF-02` (new); `TERM_TEXT_CHANGED`
+  ×8 and `HEADINGS` carried. Keyword counts unchanged (the item carried no
+  keyword).
+- **Questions raised:** none.
+
 ### 2026-09-24 — §3.3 removed
 
 - **Commit:** `Readable: §3.3 — removed; its point stands in §2.3 and §20.1`
