@@ -295,11 +295,7 @@ established there, and no §21 row restating it records such a file.
 
 Every detectable file-conformance violation named by this
 specification is assigned exactly one **reader outcome**: reject-file, reject-layer, reject-tile,
-or ignore-record. `[R-CNF-07]` The same vocabulary is used for defined
-conditions that are not violations (an unknown ancillary record is
-*ignored*, not rejected). **preserve-verbatim** names an updater
-obligation, orthogonal to reader outcomes: a record a reader ignores can
-still be one an updater preserves.
+or ignore-record. `[R-CNF-07]`
 
 | Outcome | Meaning |
 |---|---|
@@ -333,9 +329,6 @@ certification. A verifier owes no search for one: §2.3's duty to
 check every file-level requirement runs to MUST-level conditions,
 and a SHOULD deviation is reported where the verifier observes it
 and not hunted for. `[R-CNF-12]`
-
-> **Note.** "Reject" prescribes the scope of unusability, not user
-> interface: how failure is reported is implementation technique.
 
 #### 2.5 Implementation limits
 

@@ -32,6 +32,37 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1):
 
 ## Entries
 
+### 2026-09-24 — §2.4: two explanatory passages cut
+
+- **Commit:** `Readable: §2.4 — preserve-verbatim gloss and the reject Note
+  cut; R-CNF-07 listed` (the commit carrying this entry).
+- **Sections:** §2.4, the first paragraph and the closing Note.
+- **Edits.**
+  1. After `[R-CNF-07]`, the sentences "The same vocabulary is used for
+     defined conditions that are not violations (an unknown ancillary
+     record is *ignored*, not rejected). **preserve-verbatim** names an
+     updater obligation, orthogonal to reader outcomes: a record a reader
+     ignores can still be one an updater preserves." are cut; the
+     paragraph ends at the ID. The rule sentence is verbatim.
+  2. The closing Note, "'Reject' prescribes the scope of unusability, not
+     user interface: how failure is reported is implementation
+     technique.", is removed. Notes 58 → 57.
+- **Removed restatements:**
+  - the vocabulary's use for conditions that are not violations → §21.6
+    (its table's Defined-behavior column) and §21.5; `0ce8fc4`, Batch 1
+    (ADR-0027).
+  - preserve-verbatim as an updater obligation orthogonal to reader
+    outcomes → the outcome table's own *preserve-verbatim* row ("Binds
+    updaters …") and §20.4's MU = 0 / PE = 1 row; same origin.
+  - the Note → §2.1's Note ("requirements constrain bytes and observable
+    behavior, never implementation technique"); same origin.
+- **Reworded IDs:** `R-CNF-07`, listed: only sentences after the ID
+  changed, the tool comparing the whole paragraph.
+- **Soft items:** `ID_REWORDED_LISTED R-CNF-07` (new) and the seven
+  earlier; `TERM_TEXT_CHANGED` ×8 and `HEADINGS` carried. Keyword counts
+  unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-24 — §2.3: the reach paragraph's definitions in plain words
 
 - **Commit:** `Readable: §2.3 — condition and reach defined in plain words;
