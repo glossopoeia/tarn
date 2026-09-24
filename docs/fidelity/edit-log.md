@@ -21,6 +21,37 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-24 — §3.3 removed
+
+- **Commit:** `Readable: §3.3 — removed; its point stands in §2.3 and §20.1`
+  (the commit carrying this entry).
+- **Sections:** §3.3 (heading and its one Note), gone; §3 now ends at §3.2.
+- **Edits.** The subsection was a heading over a single Note ("Part I
+  (container) is independent of Part II (array model) by construction: no
+  Part I structure requires decoding sample payloads, so appenders, and
+  rewriters that carry a layer forward, operate on files whose layers they
+  cannot decode — that independence is load-bearing for the updater rules
+  of §7 and §20."). Nothing in the specification, the tools or the vectors
+  cites §3.3; ADR-0129 and ADR-0131 mention the Note and quote edition A,
+  which is unchanged. The maintainer waived the standing rule that headings
+  stay, for an uncited leaf, with the renumbering step to follow; that step
+  maps 3.3 to nothing.
+- **Removed restatements:** the Note's operative point, that an updater
+  operates on layers it cannot decode → §2.3, the updater class ("without
+  necessarily understanding all of its content"), and §20.1 ("a writer that
+  extends an input file is an appender and an updater, whatever it
+  decodes"). Added by `d855308`, Batch 2 (ADR-0028); its actor list
+  repaired by ADR-0131. The "independent by construction" framing was
+  design commentary and now stands nowhere; the same is true of the
+  container-reader sentence cut from §1 on 2026-09-23, for which the §1
+  entry named this Note as the surviving location. Neither bound anything.
+- **Reworded IDs:** none.
+- **Soft items:** `HEADINGS` now also carries the removed `#### 3.3` (129
+  headings in B against 130 in A); the info line's Note count falls to 59.
+  `TERM_TEXT_CHANGED` ×8 unchanged.
+- **Questions raised:** none; the heading waiver was the maintainer's own
+  call, made in session.
+
 ### 2026-09-24 — §3.1: *tile* says what it means for a tile to carry a channel
 
 - **Commit:** `Readable: §3.1 — tile entry defines "carries"` (the commit

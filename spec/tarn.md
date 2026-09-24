@@ -142,14 +142,6 @@ the corresponding portion of the reference array, bit-for-bit — sample
 values are bit patterns, and decoding MUST NOT alter them (floating-
 point payloads included; type semantics are §12's subject). `[R-MDL-02]`
 
-#### 3.3 Container and array model
-
-> **Note.** Part I (container) is independent of Part II (array model)
-> by construction: no Part I structure requires decoding sample
-> payloads, so appenders, and rewriters that carry a layer forward,
-> operate on files whose layers they cannot decode — that
-> independence is load-bearing for the updater rules of §7 and §20.
-
 ### 2. Conformance
 
 #### 2.1 Normative language
