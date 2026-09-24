@@ -101,6 +101,9 @@ these meanings.
   layer, one cell of the tiling grid carrying all channels; in a planar
   layer, one cell of the grid for one channel. Every tile of a layer has
   the same logical shape, a block of ∏ Tᵢ sample positions (§11.3).
+- **tile index** — the per-layer table with one entry per addressed
+  tile, locating and checksumming the stored ones and marking the rest
+  with the sentinel (§15).
 - **fill value** — the value that a channel's samples take wherever the
   tile carrying that channel is not stored (§13).
 - **addressed tile / stored tile** — a tile is *addressed* in a
@@ -113,9 +116,6 @@ these meanings.
   fill (§13).
 - **slab** — a declared run of consecutive stored tiles kept physically
   contiguous as one I/O unit (§16).
-- **tile index** — the per-layer table with one entry per addressed
-  tile, locating and checksumming the stored ones and marking the rest
-  with the sentinel (§15).
 - **user metadata** — the structured document carrying non-structural,
   application-level information (§18).
 

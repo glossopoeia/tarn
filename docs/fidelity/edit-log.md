@@ -21,6 +21,24 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-24 — §3.1: *tile index* moved to follow *tile*
+
+- **Commit:** `Readable: §3.1 — tile index defined directly after tile` (the
+  commit carrying this entry).
+- **Sections:** §3.1 only.
+- **Edits.** The *tile index* entry (three lines, verbatim) moves from
+  after *slab* to directly after *tile*, so that the tile-index entry
+  *tile* names, and the sentinel *addressed tile / stored tile* names, are
+  defined before use. The list now runs: file, front signature block,
+  generation, trailer, directory, layer, dimension, rank, channel, channel
+  layout, sample, coordinate, tile, tile index, fill value, addressed tile
+  / stored tile, slab, user metadata.
+- **Removed restatements:** none.
+- **Reworded IDs:** none.
+- **Soft items:** unchanged (`TERM_TEXT_CHANGED` ×7, `HEADINGS`); the moved
+  text is byte-identical.
+- **Questions raised:** none.
+
 ### 2026-09-24 — §3.1: *fill value* moved ahead of *addressed tile / stored tile*
 
 - **Commit:** `Readable: §3.1 — fill value defined before the stored-tile
