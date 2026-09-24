@@ -1,0 +1,62 @@
+[
+ {
+  "id": "C1",
+  "kind": "prose",
+  "expected_catcher": "agents: content change, stated once",
+  "statement_count": 1,
+  "location": "§2.3, the conforming-file item [R-CNF-02] (reworded 2026-09-24)",
+  "change": "the conduct rule is flipped: a conduct obligation's violation now makes the file nonconforming",
+  "old": "violation, binds the writer and never makes a file nonconforming.",
+  "new": "violation, binds the writer, and a file that breaks one is nonconforming."
+ },
+ {
+  "id": "C2",
+  "kind": "prose",
+  "expected_catcher": "agents: content change, stated once",
+  "statement_count": 1,
+  "location": "§2.3, the conforming-reader item [R-CNF-03] (reworded 2026-09-24)",
+  "change": "the duty to handle both registered record types is dropped from the reader's MUST-handle list",
+  "old": "designates as core, every user-metadata encoding §18.2 assigns, and both record types §7.3 registers. There are no subset profiles:",
+  "new": "designates as core, and every user-metadata encoding §18.2 assigns. There are no subset profiles:"
+ },
+ {
+  "id": "C3",
+  "kind": "prose",
+  "expected_catcher": "agents: content change, stated once",
+  "statement_count": 1,
+  "location": "§2.3, the conforming-verifier item [R-CNF-11] (reworded 2026-09-24)",
+  "change": "updaters no longer inherit every reader obligation; only verifiers do",
+  "old": "exempted from, and certifies conformance. Verifiers and updaters are readers of the files they process and inherit every reader obligation.",
+  "new": "exempted from, and certifies conformance. Verifiers are readers of the files they process and inherit every reader obligation."
+ },
+ {
+  "id": "C4",
+  "kind": "prose",
+  "expected_catcher": "agents: content change, stated once",
+  "statement_count": 1,
+  "location": "§2.3, the reach paragraph [R-CNF-13] (reworded 2026-09-24)",
+  "change": "a reaching condition's failure becomes a capability refusal instead of reject-file under its own requirement",
+  "old": "whatever major the file declares, and MUST treat a failure as reject-file under the requirement that states the condition, not as a capability refusal;",
+  "new": "whatever major the file declares, and MUST treat a failure as a capability refusal, not as reject-file under the requirement that states the condition;"
+ },
+ {
+  "id": "C5",
+  "kind": "prose",
+  "expected_catcher": "agents: content change, stated once",
+  "statement_count": 1,
+  "location": "§2.3, the reach paragraph [R-CNF-13] (reworded 2026-09-24)",
+  "change": "an exemption the condition's own requirement grants on another ground now lapses for an other-major file instead of holding",
+  "old": "grants for a reason other than the declared major still holds,",
+  "new": "grants for a reason other than the declared major lapses,"
+ },
+ {
+  "id": "C6",
+  "kind": "prose",
+  "expected_catcher": "agents: content change, stated once",
+  "statement_count": 1,
+  "location": "§21.6, the closing paragraph moved there from §2.3 on 2026-09-24 (no ID closes it)",
+  "change": "a layer's or a tile's decode declined on resource grounds is no longer a cannot-establish ground",
+  "old": "it cannot execute a codec or filter (`[R-COD-11]`, §17.4), it declines a layer's or a tile's decode on resource grounds and so cannot check §14's decoded-content obligations (`[R-ERR-04]`, `[R-SER-05]`, `[R-SER-08]`), or it declines to decode a user-metadata document (`[R-MTA-09]`).",
+  "new": "it cannot execute a codec or filter (`[R-COD-11]`, §17.4), or it declines to decode a user-metadata document (`[R-MTA-09]`)."
+ }
+]

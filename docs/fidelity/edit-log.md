@@ -16,8 +16,13 @@ that had to go to the maintainer.
 
 ## Ready for calibration 2
 
-Stretches the maintainer has declared reworded, in which the next seed set is
-planted (`fidelity-seed.py`, every seed with `statement_count` 1):
+**Calibration 2 ran on 2026-09-24** over B at `f1feb3f` with six seeds in
+§2.3 and §21.6 (`wf_c16a4649-e70`; [1-calibration-2/findings.md](1-calibration-2/findings.md)).
+The reading instruments found every content change; the two seeds that were
+restatement removals were correctly overturned on refute. Correction to the
+entry for `2c00338` below: the resource-decline ground is not "tied to the
+verdict nowhere else"; §9.7 states it ("reports that check unmade and cannot
+certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 - **§1** (declared 2026-09-24 with §3): rewritten 2026-09-23 (`c486508`);
   non-normative under `[R-CNF-01]`, so it carries no rule to seed.

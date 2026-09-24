@@ -1,0 +1,63 @@
+--- edition B (spec/tarn.md on readable at f1feb3f)
++++ edition C (scratch/cleanroom/editions/c/tarn.md, the seeded copy)
+@@ -214,7 +214,7 @@
+   the failure of a reaching condition is. A writer obligation that
+   governs conduct rather than output, or whose violation this
+   specification expressly declares not to be a file-conformance
+-  violation, binds the writer and never makes a file nonconforming.
++  violation, binds the writer, and a file that breaks one is nonconforming.
+   `[R-CNF-02]`
+ - **Conforming reader.** A reader MUST accept every conforming file of
+   a format major version it implements, carrying no top-level record of
+@@ -222,8 +222,8 @@
+   whose values exceeds the minimum guarantees of §21's limits table
+   (§21.9), and MUST handle every codec and filter that §17 designates
+   as core, both channel layouts (§14), every sample type that §12
+-  designates as core, every user-metadata encoding §18.2 assigns, and
+-  both record types §7.3 registers. There are no subset profiles:
++  designates as core, and every user-metadata encoding §18.2 assigns.
++  There are no subset profiles:
+   software that declines any of those is not a conforming reader, even
+   if it reads all other conforming files correctly. `[R-CNF-03]` A
+   reader MUST detect every violation the error register (§21) assigns
+@@ -245,9 +245,8 @@
+   the preservation obligations of §20.4. `[R-CNF-06]`
+ - **Conforming verifier.** A reader that additionally checks every
+   file-level requirement, including those ordinary readers are
+-  exempted from, and certifies conformance. Verifiers and updaters are
+-  readers of the files they process and inherit every reader
+-  obligation. A verifier reports one of three verdicts: *conforming*,
++  exempted from, and certifies conformance. Verifiers are readers of
++  the files they process and inherit every reader obligation. A verifier reports one of three verdicts: *conforming*,
+   *nonconforming*, or *cannot establish*, the last where some
+   requirement is one it is unable to check on a capability or resource
+   ground (§21.6 names the grounds). *Cannot establish* is not a finding
+@@ -274,10 +273,10 @@
+ property a check asserts, not the bytes it reads: a check can read bytes
+ a future major is free to redefine and still assert only a property
+ fixed for every major. A reader MUST check every reaching condition
+-whatever major the file declares, and MUST treat a failure as
+-reject-file under the requirement that states the condition, not as a
+-capability refusal; an exemption that the condition's own requirement
+-grants for a reason other than the declared major still holds,
++whatever major the file declares, and MUST treat a failure as a
++capability refusal, not as reject-file under the requirement that
++states the condition; an exemption that the condition's own requirement
++grants for a reason other than the declared major lapses,
+ `[R-CNT-04]`'s residency exemption among them. `[R-CNT-07]`'s distinct
+ diagnostic is given where every reaching condition is satisfied and the
+ declared major is one the reader does not implement. A verifier that
+@@ -3977,11 +3976,8 @@
+ resource ground, and so reports *cannot establish* (`[R-CNF-11]`), as
+ when the file names a format major version it does not implement, a
+ record carries MUST_UNDERSTAND = 1 with a type it does not implement,
+-it cannot execute a codec or filter (`[R-COD-11]`, §17.4), it declines
+-a layer's or a tile's decode on resource grounds and so cannot check
+-§14's decoded-content obligations (`[R-ERR-04]`, `[R-SER-05]`,
+-`[R-SER-08]`), or it declines to decode a user-metadata document
+-(`[R-MTA-09]`).
++it cannot execute a codec or filter (`[R-COD-11]`, §17.4), or it
++declines to decode a user-metadata document (`[R-MTA-09]`).
+ 
+ #### 21.7 What no check detects
+ 
