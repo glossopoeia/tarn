@@ -17,7 +17,18 @@ that had to go to the maintainer.
 ## Ready for calibration 2
 
 Stretches the maintainer has declared reworded, in which the next seed set is
-planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
+planted (`fidelity-seed.py`, every seed with `statement_count` 1):
+
+- **§1** (declared 2026-09-24 with §3): rewritten 2026-09-23 (`c486508`);
+  non-normative under `[R-CNF-01]`, so it carries no rule to seed.
+- **§3** (declared done 2026-09-24): §3.1 reworded in eight entries
+  (dimension, channel, channel layout, directory, generation, fill value,
+  addressed tile / stored tile, tile) and reordered; §3.2 untouched; §3.3
+  removed. Candidate seeds, each a sentence A states once: "No field
+  numbers generations"; "unqualified *stored* means stored in the live
+  generation"; "Superseded payload bytes from earlier generations do not
+  make a tile stored"; the *directory* entry's "located from the trailer".
+- Not yet: §2, moved verbatim ahead of §3 and not reworded.
 
 ## Entries
 
