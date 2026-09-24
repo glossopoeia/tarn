@@ -32,6 +32,37 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1):
 
 ## Entries
 
+### 2026-09-24 — §2.3: the conforming-reader class, `[R-CNF-03]` and `[R-CNF-04]` listed
+
+- **Commit:** `Readable: §2.3 — conforming reader item, three glosses cut;
+  R-CNF-03 and R-CNF-04 listed` (the commit carrying this entry).
+- **Sections:** §2.3, the second list item only.
+- **Edits.** The item falls from 24 lines to 17. Every keyword sentence
+  (three MUSTs, one MAY, one MUST NOT) is verbatim; the limits clause
+  reads "the minimum guarantees of §21's limits table (§21.9)"; the
+  no-subset-profiles sentence reads "software that declines any of
+  those", in place of a repeat of the preceding six-item list.
+- **Removed restatements:**
+  - "in a conforming file such a type is necessarily from the
+    experimental range, since a reserved-range type carrying MU = 1 is
+    itself a violation" → `[R-CNT-15]` (register rows F35, F36, L24, L25),
+    and §21.6's closing paragraph, which draws the inference; `53d6006`,
+    the round 7 editorial tail.
+  - "(§21.9's `[R-ERR-04]` governs a refusal on that last ground; §21.6's
+    closing paragraph names the other two)" → §21.9 `[R-ERR-04]`; §21.6's
+    closing paragraph; same origin.
+  - the second listing of "a core codec, a core filter, either channel
+    layout, a core sample type, an assigned user-metadata encoding, or a
+    registered record type" → the item's own preceding sentence;
+    `0ce8fc4`, Batch 1 (ADR-0027).
+- **Reworded IDs:** `R-CNF-03` and `R-CNF-04`, both listed; `R-CNF-04` only
+  because the inventory maps both IDs to the one list item, its own
+  sentences being untouched.
+- **Soft items:** `ID_REWORDED_LISTED` for `R-CNF-03` and `R-CNF-04` (new),
+  `R-CNF-02` carried; `TERM_TEXT_CHANGED` ×8 and `HEADINGS` carried.
+  Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-24 — §2.3: the conforming-file class, `[R-CNF-02]` reworded
 
 - **Commit:** `Readable: §2.3 — conforming file item cut to its rules;

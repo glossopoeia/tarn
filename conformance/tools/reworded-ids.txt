@@ -3,3 +3,5 @@
 # listed here is reported as a soft item instead of failing the equivalence contract. A listed ID
 # whose paragraph is still verbatim is reported as stale. Empty until edition B is opened.
 R-CNF-02: the three conduct examples and the closed enumeration of expressly-declared cases cut, each stated at its site; the other-major and conduct rules kept in tighter words with the same subjects and quantifiers
+R-CNF-03: the experimental-range gloss, two pointers to §21.9 and §21.6, and the repeated six-item list cut; the three MUSTs and the no-subset-profiles rule verbatim
+R-CNF-04: shares the reader item with R-CNF-03; its MUST, MAY and MUST NOT sentences are verbatim

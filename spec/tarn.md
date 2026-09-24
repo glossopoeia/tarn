@@ -218,28 +218,21 @@ Conformance is defined for five classes.
   `[R-CNF-02]`
 - **Conforming reader.** A reader MUST accept every conforming file of
   a format major version it implements, carrying no top-level record of
-  a type it does not implement with MUST_UNDERSTAND = 1 — in a
-  conforming file such a type is necessarily from the experimental range, since
-  a reserved-range type carrying MU = 1 is itself a violation — and
-  none of whose values exceeds the minimum guarantees of §21's
-  limits table (§21.9's `[R-ERR-04]` governs a refusal on that last
-  ground; §21.6's closing paragraph names the other two),
-  and MUST handle every codec and filter that §17 designates as core,
-  both channel layouts (§14), every sample type that §12 designates
-  as core, every user-metadata encoding §18.2 assigns, and both
-  record types §7.3 registers.
-  There are no subset profiles: software that declines to support a core
-  codec, a core filter, either channel layout, a core sample type, an
-  assigned user-metadata encoding, or a registered record type is not
-  a conforming reader, even if it reads all other conforming files correctly.
-  `[R-CNF-03]` A reader MUST detect every violation the error
-  register (§21) assigns to the reader as its detector, and apply the
-  outcome class this specification assigns to each; a violation whose
-  assigned detector is the verifier imposes no reader obligation
-  (§19.2, `[R-RDR-02]`), though a reader detecting one MAY reject the
-  file (`[R-CNF-12]`). A reader MUST NOT heuristically repair a
-  violating structure or infer values this specification does not
-  define. `[R-CNF-04]`
+  a type it does not implement with MUST_UNDERSTAND = 1 and none of
+  whose values exceeds the minimum guarantees of §21's limits table
+  (§21.9), and MUST handle every codec and filter that §17 designates
+  as core, both channel layouts (§14), every sample type that §12
+  designates as core, every user-metadata encoding §18.2 assigns, and
+  both record types §7.3 registers. There are no subset profiles:
+  software that declines any of those is not a conforming reader, even
+  if it reads all other conforming files correctly. `[R-CNF-03]` A
+  reader MUST detect every violation the error register (§21) assigns
+  to the reader as its detector, and apply the outcome class this
+  specification assigns to each; a violation whose assigned detector is
+  the verifier imposes no reader obligation (§19.2, `[R-RDR-02]`),
+  though a reader detecting one MAY reject the file (`[R-CNF-12]`). A
+  reader MUST NOT heuristically repair a violating structure or infer
+  values this specification does not define. `[R-CNF-04]`
 - **Conforming writer.** A writer MUST emit only conforming files.
   `[R-CNF-05]` Writer conformance is semantic: this specification does not
   promise canonical bytes, and two conforming writers given identical
