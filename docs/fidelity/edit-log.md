@@ -28,7 +28,25 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1):
   numbers generations"; "unqualified *stored* means stored in the live
   generation"; "Superseded payload bytes from earlier generations do not
   make a tile stored"; the *directory* entry's "located from the trailer".
-- Not yet: §2, moved verbatim ahead of §3 and not reworded.
+- **§2** (declared done for this pass, 2026-09-24): §2.3 reworded in
+  every item but the writer's, seven of its IDs listed (`R-CNF-02`, `-03`,
+  `-04`, `-06`, `-11`, `-13`, and `R-COD-11` by the tool's citation
+  mapping), its Note removed and the cannot-establish grounds moved to
+  §21.6; §2.4 cut after `[R-CNF-07]` and its Note removed; §2.1, §2.2
+  and §2.5 untouched. This is the stretch that carries reworded rules, so
+  the seeds for calibration 2 belong here. Candidate seeds, each a
+  sentence inside reworded text that A and B state exactly once (counts
+  checked with whitespace normalised):
+  "binds the writer and never makes a file nonconforming" (`[R-CNF-02]`);
+  "both record types §7.3 registers" (`[R-CNF-03]`);
+  "available only to a traversal that established no violation" (`[R-CNF-11]`);
+  "MAY stop at the first violation it finds" (`[R-CNF-11]`);
+  "reject-file under the requirement that states the condition, not as a capability refusal" (`[R-CNF-13]`);
+  "an exemption that the condition's own requirement grants for a reason other than the declared major still holds" (`[R-CNF-13]`);
+  "reports *nonconforming*, whatever major the file declares" (`[R-CNF-13]`);
+  "assigned exactly one **reader outcome**" (`[R-CNF-07]`).
+  The moved paragraph in §21.6 closes with no ID and is a further
+  candidate, being invisible to the inventory tool by construction.
 
 ## Entries
 
