@@ -101,6 +101,8 @@ these meanings.
   layer, one cell of the tiling grid carrying all channels; in a planar
   layer, one cell of the grid for one channel. Every tile of a layer has
   the same logical shape, a block of ∏ Tᵢ sample positions (§11.3).
+- **fill value** — the value that a channel's samples take wherever the
+  tile carrying that channel is not stored (§13).
 - **addressed tile / stored tile** — a tile is *addressed* in a
   generation if that generation's tile index has an entry for it: the
   tiles of the layer's grid under the geometry that generation declares
@@ -109,8 +111,6 @@ these meanings.
   live generation. Superseded payload bytes from earlier generations do
   not make a tile stored. An addressed tile that is not stored reads as
   fill (§13).
-- **fill value** — the value that a channel's samples take wherever the
-  tile carrying that channel is not stored (§13).
 - **slab** — a declared run of consecutive stored tiles kept physically
   contiguous as one I/O unit (§16).
 - **tile index** — the per-layer table with one entry per addressed

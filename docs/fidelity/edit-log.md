@@ -21,6 +21,24 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-24 — §3.1: *fill value* moved ahead of *addressed tile / stored tile*
+
+- **Commit:** `Readable: §3.1 — fill value defined before the stored-tile
+  entry uses it` (the commit carrying this entry).
+- **Sections:** §3.1 only.
+- **Edits.** The *fill value* entry (two lines, verbatim) moves from after
+  *addressed tile / stored tile* to before it, so that "an addressed tile
+  that is not stored reads as fill" follows the definition of fill. The
+  list now runs: file, front signature block, generation, trailer,
+  directory, layer, dimension, rank, channel, channel layout, sample,
+  coordinate, tile, fill value, addressed tile / stored tile, slab, tile
+  index, user metadata.
+- **Removed restatements:** none.
+- **Reworded IDs:** none.
+- **Soft items:** unchanged (`TERM_TEXT_CHANGED` ×7, `HEADINGS`); the moved
+  text is byte-identical.
+- **Questions raised:** none.
+
 ### 2026-09-24 — §3.1: *addressed tile / stored tile* says what "addressed" means
 
 - **Commit:** `Readable: §3.1 — addressed tile defined by the index entry,
