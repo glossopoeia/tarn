@@ -101,12 +101,14 @@ these meanings.
   layer, one cell of the tiling grid carrying all channels; in a planar
   layer, one cell of the grid for one channel. Every tile of a layer has
   the same logical shape, a block of ∏ Tᵢ sample positions (§11.3).
-- **addressed tile / stored tile** — every tile of a layer is
-  *addressed*. A tile is *stored in a generation* if and only if that
-  generation's tile-index entry for it is not the sentinel (§15);
-  unqualified *stored* means stored in the live generation. Superseded
-  payload bytes from earlier generations do not make a tile stored. An
-  addressed tile that is not stored reads as fill (§13).
+- **addressed tile / stored tile** — a tile is *addressed* in a
+  generation if that generation's tile index has an entry for it: the
+  tiles of the layer's grid under the geometry that generation declares
+  (§11.2, §15). It is *stored in a generation* if and only if that entry
+  is not the sentinel (§15); unqualified *stored* means stored in the
+  live generation. Superseded payload bytes from earlier generations do
+  not make a tile stored. An addressed tile that is not stored reads as
+  fill (§13).
 - **fill value** — the value that a channel's samples take wherever the
   tile carrying that channel is not stored (§13).
 - **slab** — a declared run of consecutive stored tiles kept physically

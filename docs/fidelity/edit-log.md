@@ -21,6 +21,35 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1): none yet.
 
 ## Entries
 
+### 2026-09-24 — §3.1: *addressed tile / stored tile* says what "addressed" means
+
+- **Commit:** `Readable: §3.1 — addressed tile defined by the index entry,
+  not by "every tile"` (the commit carrying this entry).
+- **Sections:** §3.1 only.
+- **Edits.** The entry's first sentence, "every tile of a layer is
+  *addressed*. A tile is *stored in a generation* if and only if that
+  generation's tile-index entry for it is not the sentinel (§15)", becomes
+  "a tile is *addressed* in a generation if that generation's tile index
+  has an entry for it: the tiles of the layer's grid under the geometry
+  that generation declares (§11.2, §15). It is *stored in a generation* if
+  and only if that entry is not the sentinel (§15)". The rest of the entry
+  is unchanged. Derived from §11.2 `[R-GEO-03]` (the addressed-tile count
+  is the number of tile-index entries, N or C · N from the declared
+  geometry) and §15.2. The maintainer asked why the term exists if every
+  tile is addressed; the answer (a tile a later commit no longer
+  addresses, §20.3 step 4, is neither stored nor a sentinel, and the
+  counts and caps are quantified over addressed tiles) is why the
+  definition now names the index entry rather than "every tile". The
+  third state is left to §20.3 at the maintainer's choice. The term's name
+  stays: it is a hard item of the contract and appears in six register
+  rows.
+- **Removed restatements:** none.
+- **Reworded IDs:** none. No keyword, no ID.
+- **Soft items:** `TERM_TEXT_CHANGED` for *addressed tile / stored tile*,
+  added to the six from earlier entries; `HEADINGS`.
+- **Questions raised:** none; dropping the term would be an ADR against A,
+  and was not asked.
+
 ### 2026-09-23 — §3.1: *fill value* entry, "per-channel" dropped
 
 - **Commit:** `Readable: §3.1 — fill value entry, redundant per-channel
