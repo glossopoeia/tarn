@@ -5,3 +5,6 @@
 R-CNF-02: the three conduct examples and the closed enumeration of expressly-declared cases cut, each stated at its site; the other-major and conduct rules kept in tighter words with the same subjects and quantifiers
 R-CNF-03: the experimental-range gloss, two pointers to §21.9 and §21.6, and the repeated six-item list cut; the three MUSTs and the no-subset-profiles rule verbatim
 R-CNF-04: shares the reader item with R-CNF-03; its MUST, MAY and MUST NOT sentences are verbatim
+R-CNF-06: the dash gloss on §20.4 cut (§20.4 states it) and the tiers sentence joined to the definition; both MUSTs verbatim
+R-CNF-11: the as-when list of cannot-establish grounds moved verbatim to §21.6 with a pointer left; the experimental-encoding carve-out cut ([R-MTA-10] states it); the two report-versus-verdict sentences merged; every MUST, MUST NOT and MAY verbatim
+R-COD-11: its own §17 text is untouched; the inventory maps a cited-only ID to the first block citing it, and that block moved from §2.3's verifier item to §21.6's new paragraph

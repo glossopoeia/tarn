@@ -238,49 +238,32 @@ Conformance is defined for five classes.
   promise canonical bytes, and two conforming writers given identical
   input MAY produce different conforming files.
 - **Conforming updater.** A tool that modifies an existing file, or
-  as a rewriter writes a new one from it (§20.1), without
-  necessarily understanding all of its content. An updater MUST satisfy
-  every writer requirement for the bytes it produces, and additionally
-  MUST honor the preservation obligations of §20.4 — which govern every
-  record type, not only those it does not understand. Its tiers, the
-  appender and the rewriter, are §20.1's. `[R-CNF-06]`
+  as a rewriter writes a new one from it, without necessarily
+  understanding all of its content; its tiers, the appender and the
+  rewriter, are §20.1's. An updater MUST satisfy every writer
+  requirement for the bytes it produces, and additionally MUST honor
+  the preservation obligations of §20.4. `[R-CNF-06]`
 - **Conforming verifier.** A reader that additionally checks every
-  file-level requirement — including those ordinary readers are
-  exempted from — and certifies conformance. Verifiers and updaters are
+  file-level requirement, including those ordinary readers are
+  exempted from, and certifies conformance. Verifiers and updaters are
   readers of the files they process and inherit every reader
   obligation. A verifier reports one of three verdicts: *conforming*,
-  *nonconforming*, or *cannot establish* — the last where some
-  requirement is one it is unable to check on a capability or
-  resource ground, as when the file names a
-  format major version it does not implement, when a record carries
-  MUST_UNDERSTAND = 1 with a type it does not implement (§21.6), when
-  it cannot execute a codec or filter (`[R-COD-11]`), when it
-  declines a layer's or a tile's decode on resource grounds and so
-  cannot check §14's decoded-content obligations (`[R-ERR-04]`,
-  `[R-SER-05]`, `[R-SER-08]`), or when it declines to decode a
-  user-metadata document (`[R-MTA-09]`). A user-metadata document
-  under an experimental-range encoding — one this specification does
-  not assign and a conforming file can carry (§21.6) — is not such a
-  ground: no content rule attaches there, so nothing is left
-  unchecked, and certification is unaffected (`[R-MTA-10]`); encoding
-  0 and a reserved value are violations (§21.5, R1).
-  *Cannot establish* is not a finding that the file is nonconforming,
-  and a verifier MUST NOT certify a file it reports that way. An
-  established violation takes priority: a verifier that has
-  established any violation reports *nonconforming*, however many
-  requirements it was unable to check, and *cannot establish* is
-  available only to a traversal that established no violation. A
-  verifier MUST report each requirement it was unable to check on a
-  capability or resource ground, naming the requirement and the
-  ground, whichever of the three
-  verdicts it reports; that per-requirement report constrains the
-  report and not the verdict, as *unexamined* does below.
-  A verifier MAY stop at the first violation it finds; one that does
-  MUST report each scope it did not examine as *unexamined*, which is
-  not a finding that the scope is clean. *Unexamined* is neither a
-  verdict nor *cannot establish* — it constrains the report, not the
-  verdict.
-  `[R-CNF-11]`
+  *nonconforming*, or *cannot establish*, the last where some
+  requirement is one it is unable to check on a capability or resource
+  ground (§21.6 names the grounds). *Cannot establish* is not a finding
+  that the file is nonconforming, and a verifier MUST NOT certify a
+  file it reports that way. An established violation takes priority: a
+  verifier that has established any violation reports *nonconforming*,
+  however many requirements it was unable to check, and *cannot
+  establish* is available only to a traversal that established no
+  violation. A verifier MUST report each requirement it was unable to
+  check on a capability or resource ground, naming the requirement and
+  the ground, whichever of the three verdicts it reports. A verifier
+  MAY stop at the first violation it finds; one that does MUST report
+  each scope it did not examine as *unexamined*, which is not a finding
+  that the scope is clean. *Unexamined* is neither a verdict nor
+  *cannot establish*; it and the per-requirement report constrain the
+  report, not the verdict. `[R-CNF-11]`
 
 A **condition** this specification names — one malformed state, as
 §21.1 individuates them, and not the requirement that defines it —
@@ -4014,6 +3997,16 @@ that *is* a violation — version_major = 0, which declares no major at
 all (F18, `[R-CNT-07]`), and a *reserved*-range
 type, whose emission `[R-CNT-15]` does make a violation (F35, F36,
 L24, L25).
+
+A verifier is unable to check a requirement on a capability or
+resource ground, and so reports *cannot establish* (`[R-CNF-11]`), as
+when the file names a format major version it does not implement, a
+record carries MUST_UNDERSTAND = 1 with a type it does not implement,
+it cannot execute a codec or filter (`[R-COD-11]`, §17.4), it declines
+a layer's or a tile's decode on resource grounds and so cannot check
+§14's decoded-content obligations (`[R-ERR-04]`, `[R-SER-05]`,
+`[R-SER-08]`), or it declines to decode a user-metadata document
+(`[R-MTA-09]`).
 
 #### 21.7 What no check detects
 

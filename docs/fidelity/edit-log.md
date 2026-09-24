@@ -32,6 +32,54 @@ planted (`fidelity-seed.py`, every seed with `statement_count` 1):
 
 ## Entries
 
+### 2026-09-24 — §2.3 verifier and updater items; the cannot-establish grounds moved to §21.6
+
+- **Commit:** `Readable: §2.3 — verifier and updater items cut; the
+  cannot-establish grounds moved to §21.6; R-CNF-06, R-CNF-11, R-COD-11
+  listed` (the commit carrying this entry).
+- **Sections:** §2.3 (the updater and verifier list items); §21.6 (a new
+  closing paragraph).
+- **Edits.**
+  1. Verifier item, 37 lines to 21. The "as when" list of five grounds for
+     *cannot establish* moves, verbatim, to a new paragraph at the end of
+     §21.6, which already holds every condition the list names, with
+     `[R-CNF-11]` cited as its authority and "as when" kept so the list
+     stays illustrative; §2.3 keeps "(§21.6 names the grounds)". Two dash
+     pairs become commas. "That per-requirement report constrains the
+     report and not the verdict, as *unexamined* does below" and the
+     closing sentence merge into "*Unexamined* is neither a verdict nor
+     *cannot establish*; it and the per-requirement report constrain the
+     report, not the verdict." Every MUST, MUST NOT and MAY is verbatim.
+     The list was not cut because three of its grounds (an unimplemented
+     major, an MU = 1 record of an unimplemented type, a decode declined
+     on resource grounds) are tied to the verdict nowhere else; only the
+     codec ground (§17.4) and the user-metadata bound (§18) are.
+  2. Updater item, 7 lines to 6: the tiers sentence joins the definition;
+     one gloss cut (below).
+  3. §21.6 gains the moved paragraph after "(F35, F36, L24, L25)". It
+     closes with no ID of its own, so the inventory tool cannot see it.
+- **Removed restatements:**
+  - verifier item: "A user-metadata document under an experimental-range
+    encoding — one this specification does not assign and a conforming
+    file can carry (§21.6) — is not such a ground: no content rule
+    attaches there, so nothing is left unchecked, and certification is
+    unaffected (`[R-MTA-10]`); encoding 0 and a reserved value are
+    violations (§21.5, R1)." → `[R-MTA-10]` ("the record is not among
+    `[R-CNF-11]`'s cannot-establish grounds, and at an experimental-range
+    encoding certification is unaffected, encoding 0 and a reserved value
+    being R1's violations"); `45f9367`, ADR-0066.
+  - updater item: "which govern every record type, not only those it does
+    not understand" → §20.4 ("Persistence governs every record type");
+    `6bcc735`, ADR-0068.
+- **Reworded IDs:** `R-CNF-06`, `R-CNF-11`; and `R-COD-11`, whose §17 text
+  is untouched: the tool maps a cited-only ID to the first block citing
+  it, and that block is now §21.6's paragraph instead of the verifier
+  item.
+- **Soft items:** `ID_REWORDED_LISTED` for the three above (new) and
+  `R-CNF-02`, `R-CNF-03`, `R-CNF-04` carried; `TERM_TEXT_CHANGED` ×8 and
+  `HEADINGS` carried. Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-24 — §2.3: the conforming-reader class, `[R-CNF-03]` and `[R-CNF-04]` listed
 
 - **Commit:** `Readable: §2.3 — conforming reader item, three glosses cut;
