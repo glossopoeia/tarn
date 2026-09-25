@@ -193,3 +193,28 @@ seeds that record their single-statement grep. One refuter returned its
 result off-schema five times and was failed by the runtime; its verdict was
 recovered from its transcript, as ADR-0034's rule for a started agent with
 no result directs.
+
+## Erratum, 2026-09-25 — calibration 2
+
+The second calibration the erratum above owed ran on 2026-09-24 over the
+`readable` branch's edition B at `f1feb3f` (`docs/fidelity/1-calibration-2/`):
+six seeds planted inside text the rewrite had already reworded, four of
+§2.3's listed ID paragraphs and the paragraph moved to §21.6, where
+`tarn_inventory.py` reports nothing new and no diff against A isolates a
+seed; thirty-one Sonnet agents, 64 minutes. **The reading instruments
+read.** The four seeds that were content changes were found by two to six of
+the six two-edition lanes, graded byte-level LOSS by all three triage passes
+and upheld on refute; the two that turned out to be restatement removals
+were graded LOSS by triage and correctly overturned by their refuters with
+the surviving sentence quoted (§20.1 and §4.2; §9.7). The blind walks and
+the quiz caught none, no probe passing through §2.3. So the reading of the
+sweeps, comparators and adversary is measured, and a fidelity zero over
+reworded text is recorded without the caveat above, subject to the floor
+this run found: a one-word inversion inside a long reworded sentence reached
+triage through two lanes and had no group of its own. Two of the six seeds
+were restatement removals for the second run running, the planter having
+checked "stated once" by phrase; `fidelity-seed.py` now checks the rule (an
+alternation over its phrasings, distinct spans counted, a cut told from a
+flip), and the refute brief tells a refuter that a change outside its
+group's claim is a new finding and not a refutation, both paid on
+2026-09-25.
