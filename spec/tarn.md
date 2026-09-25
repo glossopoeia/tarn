@@ -354,9 +354,10 @@ adapted. `[R-ENC-02]`
 
 This specification uses the types `u8`, `u16`, `u32`, and `u64` for
 unsigned little-endian integers of 1, 2, 4, and 8 bytes. All file
-offsets, dimension extents, and tile extents are `u64`, as is every
-byte length this specification does not give another width where it
-defines the field. The valid range of every offset, length, extent, and count this
+offsets, dimension extents, tile extents and byte lengths are `u64`,
+with three exceptions: a record's inline_length is a `u32` (§7.2), and
+the length prefix of a name (§4.6) or of a fill value (§7.4) is a
+`u8`. The valid range of every offset, length, extent, and count this
 specification defines — entry counts and slab run lengths
 included — is 0 to 2⁶³ − 1 inclusive; a reader MUST treat a value
 above 2⁶³ − 1 in any such field as a validity error at the owning

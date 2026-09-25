@@ -55,6 +55,29 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-25 — §4.2: the width rule states its three exceptions
+
+- **Commit:** `Readable: §4.2 — u64 widths rule with its three exceptions
+  named` (the commit carrying this entry). Previous: `8f16983`.
+- **Sections:** §4.2, `[R-ENC-03]`'s paragraph.
+- **Edits.** "All file offsets, dimension extents, and tile extents are
+  `u64`, as is every byte length this specification does not give another
+  width where it defines the field." becomes "All file offsets, dimension
+  extents, tile extents and byte lengths are `u64`, with three exceptions:
+  a record's inline_length is a `u32` (§7.2), and the length prefix of a
+  name (§4.6) or of a fill value (§7.4) is a `u8`." The maintainer asked
+  whether the exceptions are enumerated elsewhere; they are not, and the
+  clause cut in `8f16983` as examples was in fact the whole list, so it
+  returns as a list. "Three" asserts a closure A implied and did not state;
+  the derivation is every layout table in A (inline_length is the only
+  byte-length row narrower than `u64`; the two prefixes are stated in §4.6
+  and §7.4's prose). A future width change touches this sentence.
+- **Removed restatements:** none (one restored, as the enumeration).
+- **Reworded IDs:** `R-ENC-03`, its reason line rewritten.
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×13, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-25 — §4.2–§4.7: six glosses and restatements cut
 
 - **Commit:** `Readable: §4 — width examples, actor gloss, bit-numbering
