@@ -55,6 +55,35 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-25 — §4.2: `[R-ENC-04]` in plain order
+
+- **Commit:** `Readable: §4.2 — designated quantities stated in plain order`
+  (the commit carrying this entry). Previous: `0a6e4c9`.
+- **Sections:** §4.2, the paragraph carrying `[R-ENC-04]` and `[R-ENC-05]`.
+- **Edits.** The one long sentence "A reader MUST treat any quantity this
+  specification **designates** a declaration-derived sum or product of
+  integers obtained from a file (offsets plus lengths, grid counts, tile
+  counts, sample-position counts, ordinals) whose mathematical value would
+  exceed 2⁶³ − 1 as a validity error at the owning scope, and MUST NOT act
+  on a wrapped or truncated value." becomes two: the class first ("Some
+  quantities are not stored but computed from stored integers: an offset
+  plus a length, a grid count, a tile count, a sample-position count, an
+  ordinal."), then the rule ("Where the section that defines such a
+  quantity **designates** it a declaration-derived sum or product, a reader
+  MUST treat a mathematical value above 2⁶³ − 1 as a validity error at the
+  owning scope, and MUST NOT act on a wrapped or truncated value."). "A
+  designation is express, made by the section that defines the quantity"
+  becomes "A quantity counts as designated only where its defining section
+  says so in words"; the comparison-only carve-out follows in the same
+  words. `[R-ENC-05]`'s sentence is verbatim. Both MUSTs and the MUST NOT
+  keep their subjects and objects.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-ENC-04` (reason line rewritten); `R-ENC-05` already
+  listed for sharing the paragraph.
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×13, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-25 — §4.2: the range rule's parenthetical cut
 
 - **Commit:** `Readable: §4.2 — range rule without its entry-count and

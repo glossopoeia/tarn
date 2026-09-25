@@ -366,18 +366,18 @@ scope. `[R-ENC-03]`
 > lets implementations in languages with signed 64-bit integers operate
 > without unsigned arithmetic gymnastics.
 
-A reader MUST treat any quantity this specification
-**designates** a declaration-derived sum or product of integers obtained
-from a file (offsets plus lengths, grid counts, tile counts,
-sample-position counts, ordinals) whose mathematical value would exceed
-2⁶³ − 1 as a validity error at the owning scope, and MUST NOT act on a
-wrapped or truncated value. A designation is express, made by the
-section that defines the quantity; an expression this specification
-writes only inside a comparison, and names nowhere, is not a designated
-quantity and no reader is obliged to form it.
-`[R-ENC-04]` A reader MUST NOT allocate, seek, or
-issue I/O based on any integer obtained from a file before the checksum
-covering it has been verified (§4.5, §8). `[R-ENC-05]`
+Some quantities are not stored but computed from stored integers: an
+offset plus a length, a grid count, a tile count, a sample-position
+count, an ordinal. Where the section that defines such a quantity
+**designates** it a declaration-derived sum or product, a reader MUST
+treat a mathematical value above 2⁶³ − 1 as a validity error at the
+owning scope, and MUST NOT act on a wrapped or truncated value. A
+quantity counts as designated only where its defining section says so in
+words; an expression that appears only inside a comparison, and is named
+nowhere, is not designated, and no reader is obliged to form it.
+`[R-ENC-04]` A reader MUST NOT allocate, seek, or issue I/O based on any
+integer obtained from a file before the checksum covering it has been
+verified (§4.5, §8). `[R-ENC-05]`
 
 No field's width is ever a writer choice: every field's width is fixed
 by this specification, and a structure whose fields appear at any other
