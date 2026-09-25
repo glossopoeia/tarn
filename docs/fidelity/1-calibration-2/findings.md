@@ -94,6 +94,19 @@ consequence words (*cannot certify* for *cannot establish*, *is a reader of*
 for *inherit every reader obligation*). The refuters found what the planter
 did not, which is the finding about the refuters worth having.
 
+*Added 2026-09-25, with the seed tool repaired.* Re-counting every seed by
+the rule rather than the phrase also shows why C1 was the easiest catch: the
+conduct rule it flipped is restated at §9.2 ("the file it produces is never
+nonconforming by virtue of it, as `[R-CNF-02]` says of every conduct rule")
+and §20.3 ("no file is nonconforming by virtue of its violation"), and
+every lane found C1 by that contradiction inside C. A flipped statement
+against a surviving restatement is a LOSS; a cut one is not. The seed tool
+now records each seed's `mode` (cut or flip), its `terms` as an alternation
+over the rule's phrasings, and the hits per phrasing; over this run's spec
+it labels C1 a flip against two restatements, C3 and C6 restatement
+removals, and C2, C4 and C5 stated once, which is exactly how the run graded
+them. [seed-manifest.json](seed-manifest.json) is the refreshed manifest.
+
 ## The instruments, one by one
 
 - **`tarn_inventory.py`**: PASS on A against C with exactly the soft items A
@@ -206,7 +219,8 @@ measured zero, subject to the floor below.
 reached triage through two lanes and had no group of its own. A zero does
 not exclude a change of that size that both of those lanes miss.
 
-**Mandated:**
+**Mandated** (items 1 and 2 paid on 2026-09-25; see the note above and
+`scratch/cleanroom/README.local.md`):
 
 1. **Seeds are checked for the rule, not the phrase.** `fidelity-seed.py`'s
    `terms` is written as an alternation over every phrasing of the rule and

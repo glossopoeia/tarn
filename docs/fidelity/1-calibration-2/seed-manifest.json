@@ -2,8 +2,16 @@
  {
   "id": "C1",
   "kind": "prose",
-  "expected_catcher": "agents: content change, stated once",
-  "statement_count": 1,
+  "expected_catcher": "agents: content change (flip; the rule is stated 2 times, so the seeded edition contradicts itself); the correct grade is LOSS",
+  "statement_count": 2,
+  "mode": "flip",
+  "terms": "never makes a file nonconforming|never nonconforming by virtue of|conduct rules bind the actor",
+  "term_hits": {
+   "never makes a file nonconforming": 1,
+   "never nonconforming by virtue of": 1,
+   "conduct rules bind the actor": 0
+  },
+  "single_phrasing_reason": null,
   "location": "§2.3, the conforming-file item [R-CNF-02] (reworded 2026-09-24)",
   "change": "the conduct rule is flipped: a conduct obligation's violation now makes the file nonconforming",
   "old": "violation, binds the writer and never makes a file nonconforming.",
@@ -12,8 +20,16 @@
  {
   "id": "C2",
   "kind": "prose",
-  "expected_catcher": "agents: content change, stated once",
+  "expected_catcher": "agents: content change (cut), stated once",
   "statement_count": 1,
+  "mode": "cut",
+  "terms": "both record types §7\\.3 registers|MUST handle .{0,120}record types|record types §7\\.3 registers",
+  "term_hits": {
+   "both record types §7\\.3 registers": 1,
+   "MUST handle .{0,120}record types": 0,
+   "record types §7\\.3 registers": 1
+  },
+  "single_phrasing_reason": null,
   "location": "§2.3, the conforming-reader item [R-CNF-03] (reworded 2026-09-24)",
   "change": "the duty to handle both registered record types is dropped from the reader's MUST-handle list",
   "old": "designates as core, every user-metadata encoding §18.2 assigns, and both record types §7.3 registers. There are no subset profiles:",
@@ -22,8 +38,16 @@
  {
   "id": "C3",
   "kind": "prose",
-  "expected_catcher": "agents: content change, stated once",
-  "statement_count": 1,
+  "expected_catcher": "agents: restatement removal (stated 3 times), tests restraint; the correct grade is EQUIVALENT",
+  "statement_count": 3,
+  "mode": "cut",
+  "terms": "Verifiers and updaters are readers|is a reader of every structure it processes|including any updater or verifier, which are readers",
+  "term_hits": {
+   "Verifiers and updaters are readers": 1,
+   "is a reader of every structure it processes": 1,
+   "including any updater or verifier, which are readers": 1
+  },
+  "single_phrasing_reason": null,
   "location": "§2.3, the conforming-verifier item [R-CNF-11] (reworded 2026-09-24)",
   "change": "updaters no longer inherit every reader obligation; only verifiers do",
   "old": "exempted from, and certifies conformance. Verifiers and updaters are readers of the files they process and inherit every reader obligation.",
@@ -32,8 +56,16 @@
  {
   "id": "C4",
   "kind": "prose",
-  "expected_catcher": "agents: content change, stated once",
+  "expected_catcher": "agents: content change (flip), stated once",
   "statement_count": 1,
+  "mode": "flip",
+  "terms": "reject-file under the requirement that states the condition, not as a capability refusal|reject-file on the ground of the requirement stating it|treat its failure as reject-file",
+  "term_hits": {
+   "reject-file under the requirement that states the condition, not as a capability refusal": 1,
+   "reject-file on the ground of the requirement stating it": 0,
+   "treat its failure as reject-file": 0
+  },
+  "single_phrasing_reason": null,
   "location": "§2.3, the reach paragraph [R-CNF-13] (reworded 2026-09-24)",
   "change": "a reaching condition's failure becomes a capability refusal instead of reject-file under its own requirement",
   "old": "whatever major the file declares, and MUST treat a failure as reject-file under the requirement that states the condition, not as a capability refusal;",
@@ -42,8 +74,16 @@
  {
   "id": "C5",
   "kind": "prose",
-  "expected_catcher": "agents: content change, stated once",
+  "expected_catcher": "agents: content change (flip), stated once",
   "statement_count": 1,
+  "mode": "flip",
+  "terms": "declared major still holds|applies unchanged, `\\[R-CNT-04\\]`|other than the declared major applies unchanged",
+  "term_hits": {
+   "declared major still holds": 1,
+   "applies unchanged, `\\[R-CNT-04\\]`": 0,
+   "other than the declared major applies unchanged": 0
+  },
+  "single_phrasing_reason": null,
   "location": "§2.3, the reach paragraph [R-CNF-13] (reworded 2026-09-24)",
   "change": "an exemption the condition's own requirement grants on another ground now lapses for an other-major file instead of holding",
   "old": "grants for a reason other than the declared major still holds,",
@@ -52,8 +92,16 @@
  {
   "id": "C6",
   "kind": "prose",
-  "expected_catcher": "agents: content change, stated once",
-  "statement_count": 1,
+  "expected_catcher": "agents: restatement removal (stated 3 times), tests restraint; the correct grade is EQUIVALENT",
+  "statement_count": 3,
+  "mode": "cut",
+  "terms": "declines a layer's or a tile's decode on resource grounds|declines a tile's decode on resource grounds|declines a layer on resource grounds",
+  "term_hits": {
+   "declines a layer's or a tile's decode on resource grounds": 1,
+   "declines a tile's decode on resource grounds": 1,
+   "declines a layer on resource grounds": 1
+  },
+  "single_phrasing_reason": null,
   "location": "§21.6, the closing paragraph moved there from §2.3 on 2026-09-24 (no ID closes it)",
   "change": "a layer's or a tile's decode declined on resource grounds is no longer a cannot-establish ground",
   "old": "it cannot execute a codec or filter (`[R-COD-11]`, §17.4), it declines a layer's or a tile's decode on resource grounds and so cannot check §14's decoded-content obligations (`[R-ERR-04]`, `[R-SER-05]`, `[R-SER-08]`), or it declines to decode a user-metadata document (`[R-MTA-09]`).",
