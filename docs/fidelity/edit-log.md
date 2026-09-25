@@ -55,6 +55,24 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-25 — §4.2: the range rule's parenthetical cut
+
+- **Commit:** `Readable: §4.2 — range rule without its entry-count and
+  slab-run-length aside` (the commit carrying this entry). Previous:
+  `7d2e987`.
+- **Sections:** §4.2, `[R-ENC-03]`'s paragraph.
+- **Edits.** "— entry counts and slab run lengths included —" cut from the
+  range sentence; the quantifier "every offset, length, extent, and count
+  this specification defines" and the MUST are verbatim.
+- **Removed restatements:** the aside → the sentence's own word *count*
+  (entry_count) and §7.4's layout table for the slab run length ("run
+  length in tiles, 1 ≤ S ≤ 2⁶³ − 1 (§16.2)"), restated in Appendix B and
+  covered by register row L1; `72ae3fa`, Batch 10 (ADR-0042).
+- **Reworded IDs:** `R-ENC-03`, reason line extended.
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×13, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-25 — §4.2: the width rule states its three exceptions
 
 - **Commit:** `Readable: §4.2 — u64 widths rule with its three exceptions

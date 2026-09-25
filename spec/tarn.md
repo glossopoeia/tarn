@@ -358,9 +358,8 @@ offsets, dimension extents, tile extents and byte lengths are `u64`,
 with three exceptions: a record's inline_length is a `u32` (§7.2), and
 the length prefix of a name (§4.6) or of a fill value (§7.4) is a
 `u8`. The valid range of every offset, length, extent, and count this
-specification defines — entry counts and slab run lengths
-included — is 0 to 2⁶³ − 1 inclusive; a reader MUST treat a value
-above 2⁶³ − 1 in any such field as a validity error at the owning
+specification defines is 0 to 2⁶³ − 1 inclusive; a reader MUST treat a
+value above 2⁶³ − 1 in any such field as a validity error at the owning
 scope. `[R-ENC-03]`
 
 > **Rationale.** The reduced range costs nothing at realistic scales and
