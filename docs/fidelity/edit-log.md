@@ -55,6 +55,70 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-25 — §4.2–§4.7: six glosses and restatements cut
+
+- **Commit:** `Readable: §4 — width examples, actor gloss, bit-numbering
+  Note, coverage-map restatement, three-ID gloss and the taxonomy Note's
+  tail cut; R-ENC-03, -04, -05, -10, -16 listed` (the commit carrying this
+  entry). Previous entry's commit: `da95a34`; the calibration commits
+  between are `572b5c5`, `60b6d30` and the merge `d8cc58a`.
+- **Sections:** §4.2, §4.4, §4.5, §4.7. §4 falls from 188 lines to 164.
+  §4.1, §4.3 and §4.6 untouched; the maintainer kept §4.3's four-vehicles
+  sentence because `[R-ENC-07]` lives in its paragraph and §10.1 cites it.
+- **Edits.** Every keyword sentence is verbatim.
+  1. §4.2, `[R-ENC-03]`: "— a record's inline_length is a `u32` (§7.2),
+     and a name's or fill's length prefix a `u8` (§4.6, §7.4)" cut; the
+     sentence ends at "where it defines the field."
+  2. §4.2, `[R-ENC-04]`: "A reader — including any updater or verifier,
+     which are readers of the files they process — MUST treat" becomes
+     "A reader MUST treat".
+  3. §4.4: the Note pointing at §14 for the bit mapping of boolean samples
+     removed. Notes 57 → 56.
+  4. §4.5, `[R-ENC-10]`: the twelve lines after the ID restating §8.1's
+     coverage map (the exactly-one-checksum rule, its three exceptions,
+     the interior checksum fields) cut; the paragraph keeps "Which bytes
+     each checksum covers, and each conformance class's verification
+     obligations, are defined with the structures that carry them (§8)."
+  5. §4.7, `[R-ENC-16]`: ", which is the sense `[R-CNT-07]`, `[R-MTA-02]`
+     and `[R-SEC-06]` already use" cut.
+  6. §4.7's Note: its last three sentences cut (a name is structural and its
+     prefix is framing; worked examples and paired vectors; constants in
+     Appendix B); the layout-table conventions stay.
+- **Removed restatements** (surviving location; origin):
+  - the width examples → §7.2's table (inline_length), §7.4's table and
+    §4.6's list (length prefixes); `73ad568`, cleanroom round 15.
+  - updaters and verifiers are readers → §2.3 (the verifier item) and §20.1
+    ("is a reader of every structure it processes"); `0ce8fc4`, Batch 1
+    (ADR-0027). The restatement calibration 2's C3 refuter found.
+  - §4.4's Note → §14.3 ("bit-packed LSB-first: value k occupies bit k mod
+    8"); `0ce8fc4`.
+  - the coverage-map restatement → §8.1 `[R-CNT-19]` ("Every field of every
+    structure is covered by exactly one checksum — excepting the
+    equality-checked front signature block and this map's terminal
+    checksum fields, per §4.5, and the extent of a record of a type this
+    specification has not assigned") and its table (the segment CRC array
+    "itself covered by the layer record's crc_of_crc_array"); `ffc6f0d`,
+    cleanroom gate 1, and `1297d0a`, round 2.
+  - the three-ID gloss → the three IDs at their own sites; `033ef41`,
+    ADR-0071.
+  - "A name is structural: a duplicate is a validity error at file or layer
+    scope (`[R-ENC-15]`, F4, L9), and its length prefix is §7.4's framing,
+    not its value." → §4.6 `[R-ENC-15]`, rows F4 and L9; `29e8b62`,
+    ADR-0128.
+  - "Every non-obvious encoding is followed by a worked numeric example,
+    and every sentinel or overloaded encoding additionally has a paired
+    conformance vector. All named constants appear once in Appendix B." →
+    §24 ("every sentinel, every boundary value, and every …") and Appendix
+    B's lead ("Every named constant this specification fixes, collected.");
+    `0ce8fc4`.
+- **Reworded IDs:** `R-ENC-03`, `R-ENC-04`, `R-ENC-10`, `R-ENC-16`; and
+  `R-ENC-05`, which shares `[R-ENC-04]`'s paragraph with its own sentence
+  untouched. Thirteen IDs listed in all.
+- **Soft items:** `ID_REWORDED_LISTED` ×13 (five new); `TERM_TEXT_CHANGED`
+  ×8 and `HEADINGS` carried. Keyword counts unchanged.
+- **Questions raised:** none. Held: §4.3's four-vehicles sentence, kept for
+  the reason above.
+
 ### 2026-09-24 — §2.3: the rest of the reach paragraph in plain words
 
 - **Commit:** `Readable: §2.3 — reach paragraph's rules restated plainly`

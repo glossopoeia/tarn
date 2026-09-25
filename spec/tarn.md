@@ -356,9 +356,7 @@ This specification uses the types `u8`, `u16`, `u32`, and `u64` for
 unsigned little-endian integers of 1, 2, 4, and 8 bytes. All file
 offsets, dimension extents, and tile extents are `u64`, as is every
 byte length this specification does not give another width where it
-defines the field — a record's inline_length is a `u32` (§7.2), and
-a name's or fill's length prefix a `u8` (§4.6, §7.4).
-The valid range of every offset, length, extent, and count this
+defines the field. The valid range of every offset, length, extent, and count this
 specification defines — entry counts and slab run lengths
 included — is 0 to 2⁶³ − 1 inclusive; a reader MUST treat a value
 above 2⁶³ − 1 in any such field as a validity error at the owning
@@ -368,8 +366,7 @@ scope. `[R-ENC-03]`
 > lets implementations in languages with signed 64-bit integers operate
 > without unsigned arithmetic gymnastics.
 
-A reader — including any updater or verifier, which are readers of the
-files they process — MUST treat any quantity this specification
+A reader MUST treat any quantity this specification
 **designates** a declaration-derived sum or product of integers obtained
 from a file (offsets plus lengths, grid counts, tile counts,
 sample-position counts, ordinals) whose mathematical value would exceed
@@ -404,9 +401,6 @@ standardized user-metadata keys (§18).
 Within a byte or a flags field, bit 0 is the least significant bit, and
 flag tests are bitwise. `[R-ENC-08]`
 
-> **Note.** This rule fixes bit numbering in flags and packed fields
-> generally; the mapping of boolean *samples* to bits is defined in §14.
-
 #### 4.5 Checksums
 
 The checksum used throughout this specification is CRC-32C: the 32-bit
@@ -424,21 +418,9 @@ A reader MUST verify the checksum covering a field before acting on
 that field — where *acting on* means using its value to allocate,
 seek, fetch, or select behavior; comparing a field against a constant
 for validation is not acting on it, and an explicit validation order
-(§6.2) governs where one is stated. `[R-ENC-10]` Every field of every
-structure is covered by exactly one checksum, excepting the front
-signature block (a constant whose check is equality, §6), the
-terminal checksum fields of §8.1's map — the trailer, directory-
-region, and user-metadata checksum fields — which are verified by
-comparison and covered by no further checksum, and the extent of a
-record of a type this specification has not assigned, which §8.1's
-map covers by no checksum at all. Interior checksum
-fields — each segment CRC array, each tile-index entry's crc field,
-and each layer record's crc_of_crc_array — are both
-comparison-verified and covered by
-exactly one further checksum, as §8.1 maps. Which bytes
-each checksum covers, and each
-conformance class's verification obligations, are defined with the
-structures that carry them (§8).
+(§6.2) governs where one is stated. `[R-ENC-10]` Which bytes each
+checksum covers, and each conformance class's verification obligations,
+are defined with the structures that carry them (§8).
 
 > **Note.** Checksums detect accidental corruption. They do not
 > authenticate: an adversary who can modify bytes can recompute
@@ -497,8 +479,7 @@ Every field this specification defines is classified by what its
 *value* determines. A field is **structural** if its value determines anything a
 conforming reader or verifier does with the bytes it reads — where a
 byte lies, how it decodes, what a decoded value is, or whether the
-file, layer or tile is accepted at all, which is the sense
-`[R-CNT-07]`, `[R-MTA-02]` and `[R-SEC-06]` already use. It is
+file, layer or tile is accepted at all. It is
 **descriptive** if it determines none of those, and a reader MUST NOT
 alter decoding based on it; each descriptive field's definition states
 what a reader does when the field contradicts the data it describes. In
@@ -517,12 +498,7 @@ every other field this specification defines is structural.
 > constant, where a Value column replaces type, name and range, and
 > §7.2 folds a field's range into its Field cell where it states one,
 > a field's remaining bounds being stated in the rules below the
-> table. A name is structural: a duplicate is a validity error at file
-> or layer scope (`[R-ENC-15]`, F4, L9), and its length prefix is §7.4's
-> framing, not its value. Every non-obvious encoding is followed by a worked numeric
-> example, and every sentinel or overloaded encoding additionally has a
-> paired conformance vector. All named constants appear once in
-> Appendix B.
+> table.
 
 ---
 
