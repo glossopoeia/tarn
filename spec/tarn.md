@@ -415,13 +415,13 @@ and final XOR 0xFFFFFFFF, stored as a little-endian `u32`. `[R-ENC-09]`
 implementation whose checksum function does not reproduce these values
 does not implement this specification's checksum.
 
-A reader MUST verify the checksum covering a field before acting on
-that field — where *acting on* means using its value to allocate,
-seek, fetch, or select behavior; comparing a field against a constant
-for validation is not acting on it, and an explicit validation order
-(§6.2) governs where one is stated. `[R-ENC-10]` Which bytes each
-checksum covers, and each conformance class's verification obligations,
-are defined with the structures that carry them (§8).
+A reader MUST verify the checksum covering a field before acting on that
+field. *Acting on* a field means using its value to allocate, seek,
+fetch, or select behavior; comparing it against a constant for
+validation is not acting on it. Where this specification states an
+explicit validation order (§6.2), that order governs. `[R-ENC-10]` Which
+bytes each checksum covers, and each conformance class's verification
+obligations, are defined with the structures that carry them (§8).
 
 > **Note.** Checksums detect accidental corruption. They do not
 > authenticate: an adversary who can modify bytes can recompute

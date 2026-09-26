@@ -55,6 +55,28 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-25 — §4.5: `[R-ENC-10]`'s sentence in three
+
+- **Commit:** `Readable: §4.5 — verify-before-acting rule in three sentences`
+  (the commit carrying this entry). Previous: `708bf7e`.
+- **Sections:** §4.5, `[R-ENC-10]`'s paragraph.
+- **Edits.** "A reader MUST verify the checksum covering a field before
+  acting on that field — where *acting on* means using its value to
+  allocate, seek, fetch, or select behavior; comparing a field against a
+  constant for validation is not acting on it, and an explicit validation
+  order (§6.2) governs where one is stated." becomes "A reader MUST verify
+  the checksum covering a field before acting on that field. *Acting on* a
+  field means using its value to allocate, seek, fetch, or select
+  behavior; comparing it against a constant for validation is not acting
+  on it. Where this specification states an explicit validation order
+  (§6.2), that order governs." The pointer sentence after the ID is
+  verbatim.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-ENC-10`, reason line extended.
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×13, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-25 — §1: the four growth vehicles named in the fifth goal
 
 - **Commit:** `Readable: §1 — the four ways the format grows, named in the
