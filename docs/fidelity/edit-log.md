@@ -55,6 +55,29 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-25 — §1: the four growth vehicles named in the fifth goal
+
+- **Commit:** `Readable: §1 — the four ways the format grows, named in the
+  closed-core goal` (the commit carrying this entry). Previous: `209f403`.
+- **Sections:** §1, the fifth design goal.
+- **Edits.** "; the format grows through a fixed set of extension vehicles
+  and a registry" becomes ". The format grows in exactly four ways: new
+  record types, new enum values in reserved ranges, new ignore-lane flag
+  bits, and new standardized user-metadata keys (§10)." The maintainer
+  wanted the closed set highlighted outside §4.3; §1 is non-normative
+  (`[R-CNF-01]`), so naming the four there adds no content, and the rule
+  stays where it is stated: §4.3 (with `[R-ENC-07]`, as the reason an
+  unexpected size is never evidence of a newer format version) and §10.1
+  ("This format grows through exactly four vehicles (`[R-ENC-07]`)").
+- **Removed restatements:** none (one restatement added, in the
+  non-normative introduction; §1 now cites §10 as well as §4.7).
+- **Reworded IDs:** none.
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×13, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged.
+- **Questions raised:** none. Considered and not done: moving §4.3's
+  sentence itself, which would leave `[R-ENC-07]`'s paragraph without the
+  rule §10.1 cites it for.
+
 ### 2026-09-25 — §4.2: `[R-ENC-04]` in plain order
 
 - **Commit:** `Readable: §4.2 — designated quantities stated in plain order`

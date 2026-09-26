@@ -40,8 +40,9 @@ Five goals shape the design:
   consequence.
 - **A closed core with an open edge.** The sample types, codecs and
   filters are closed lists, and there is no subset of the core a
-  conforming reader can decline; the format grows through a fixed set
-  of extension vehicles and a registry.
+  conforming reader can decline. The format grows in exactly four ways:
+  new record types, new enum values in reserved ranges, new ignore-lane
+  flag bits, and new standardized user-metadata keys (§10).
 
 TARN is not a database: it has no transactions, no queries, and one
 writer at a time. It is not an image format: it carries no colour model,
