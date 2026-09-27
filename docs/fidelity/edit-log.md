@@ -75,10 +75,17 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   → `[R-ENC-11]` (the paragraph above) and `[R-CNT-25]`; the clause's
   origin is `0ce8fc4`, Batch 1 (ADR-0027), the quarantine's ADR-0066.
 - **Reworded IDs:** `R-ENC-12`, listed (fourteen IDs in all).
-- **Soft items:** `ID_REWORDED_LISTED` ×14 (one new); `TERM_TEXT_CHANGED` ×8
-  and `HEADINGS` carried. Keyword counts unchanged.
-- **Questions raised:** none; cutting the exception outright was declined
-  as a content change.
+- **Soft items:** `REWORDED_LIST_STALE R-ENC-12` (corrected 2026-09-27: the
+  entry first said `ID_REWORDED_LISTED`). The tool reported the listing
+  stale because it takes as `[R-ENC-12]`'s governing text the first block
+  the ID *closes*, which is register row L5, not the names paragraph, where
+  the ID is followed by "A name is:" and closes nothing; the paragraph did
+  change and the listing is right. `ID_REWORDED_LISTED` ×13,
+  `TERM_TEXT_CHANGED` ×8 and `HEADINGS` carried. Keyword counts unchanged.
+- **Questions raised:** the tool's mapping leaves the defining paragraph of
+  every ID that is followed by more text unwatched; a fix is proposed to
+  the maintainer (below, next entry). Cutting the exception outright was
+  declined as a content change.
 
 ### 2026-09-25 — §4.5: `[R-ENC-10]`'s sentence in three
 
