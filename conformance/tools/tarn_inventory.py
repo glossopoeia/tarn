@@ -13,8 +13,9 @@ a human or a fidelity round to judge:
 
 HARD items (exit status 1 when any fails):
   * the requirement-ID inventory is identical (no ID missing, none added);
-  * every ID's governing text is verbatim, or the ID is listed in --reworded
-    with a justification (one line per ID: "R-CNT-08: why");
+  * every ID's governing text -- each paragraph in which the ID stands as a marker of
+    its own, after a sentence end and outside parentheses -- is verbatim, or the ID is
+    listed in --reworded with a justification (one line per ID: "R-CNT-08: why");
   * the error register (§21.2–§21.5) is row for row identical, keyed by label;
   * every defined term of §3.1 is still defined.
 SOFT items (reported, never fatal): table rows and fenced blocks present in
@@ -118,9 +119,16 @@ def blocks(text: str) -> list[dict]:
 
 
 def id_texts(bl: list[dict]) -> dict[str, str]:
-    """Each requirement ID's governing text: the block the ID closes. An ID that
-    closes no block (only cited) maps to the first block that contains it."""
-    defining: dict[str, str] = {}
+    """Each requirement ID's governing text: every paragraph in which the ID stands as a
+    marker of its own -- after a sentence end or at the block's start, followed by the block's
+    end or a new sentence, so neither a parenthetical citation nor a citation used as a subject
+    ("`[R-CNT-06]` states nine") counts -- taken together in document order. Seventeen of the document's
+    IDs are followed by more text in their paragraph ("`[R-ENC-12]` A name is:"), so the older
+    rule, "the block the ID closes", mapped them to a register row or a citation and left the
+    defining paragraph unwatched (found 2026-09-27). An ID with no standing paragraph maps to
+    the block it closes, and one that closes nothing to the first block that cites it."""
+    standing: dict[str, list[str]] = {}
+    closing: dict[str, str] = {}
     cited: dict[str, str] = {}
     for b in bl:
         if b["kind"] not in ("para", "row"):
@@ -129,15 +137,27 @@ def id_texts(bl: list[dict]) -> dict[str, str]:
         ids = ID_RE.findall(t)
         if not ids:
             continue
+        if b["kind"] == "para":
+            for i in dict.fromkeys(ids):
+                # standing: after a sentence end or the block's start, and followed by the block's end or a
+                # new sentence; "`[R-CNT-06]` states nine" is a citation used as a subject and is not one
+                if re.search(r"(?:^|[.:;!?])\s*`\[%s\]`(?=\s*$|\s+[A-Z*\"“(`])" % re.escape(i), t):
+                    standing.setdefault(i, []).append(t)
         tail = re.sub(r"[\s|]+$", "", t)
         m = ID_RE.search(tail[-24:])
         if m and tail.endswith("`[%s]`" % m.group(1)):
-            defining.setdefault(m.group(1), t)
+            closing.setdefault(m.group(1), t)
         for i in ids:
             cited.setdefault(i, t)
-    for i, t in cited.items():
-        defining.setdefault(i, t)
-    return defining
+    out: dict[str, str] = {}
+    for i in cited:
+        if i in standing:
+            out[i] = " ¶ ".join(standing[i])
+        elif i in closing:
+            out[i] = closing[i]
+        else:
+            out[i] = cited[i]
+    return out
 
 
 def register_rows(text: str) -> dict[str, str]:
@@ -366,6 +386,11 @@ def selftest() -> int:
     check(any(k == "KEYWORD_COUNT" and w == "MUST NOT" for k, w, _ in r["soft"]), "  and the dropped MUST NOT shows in the keyword counts")
     r2 = compare(a, b, {"R-CNT-08": "selftest"})
     check(not r2["hard"] and any(k == "ID_REWORDED_LISTED" for k, _, _ in r2["soft"]), "  listed in --reworded, it is soft")
+
+    b = edit(a, "satisfy three further constraints", "satisfy three more constraints")
+    r = compare(a, b, {})
+    check(any(k == "ID_TEXT_CHANGED" and w == "R-ENC-12" for k, w, _ in r["hard"]),
+          "a reworded paragraph whose ID is followed by more text is a hard item ([R-ENC-12])")
 
     b = edit(a, "`[R-CNT-03]`", "", a.count("`[R-CNT-03]`"))
     r = compare(a, b, {})
