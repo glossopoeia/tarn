@@ -488,18 +488,18 @@ format major 1 `version_minor` is the only descriptive field, and
 every other field this specification defines is structural.
 `[R-ENC-16]`
 
-> **Note.** Layout tables for fixed-layout structures give, per field:
-> byte offset within the structure, size, type, name, taxonomy class,
-> and valid range, each table giving the columns its structure needs.
-> A packed variable-length payload — the layer
-> record's inline payload (§7.4) — has no fixed offsets to give; its
-> table omits the offset, size and class columns, a field's size
-> following from its type or its length prefix and each field's
-> class from the definitions above. §6.1's block is a 16-byte
-> constant, where a Value column replaces type, name and range, and
-> §7.2 folds a field's range into its Field cell where it states one,
-> a field's remaining bounds being stated in the rules below the
-> table.
+> **Note.** A layout table describes one structure, one row per field.
+> For a fixed-layout structure the columns are the field's byte offset
+> within the structure, its size, type, name, taxonomy class and valid
+> range; a table carries the columns its structure needs. Some tables
+> depart from this. The layer record's inline payload (§7.4) is packed
+> and variable-length, so its table has no offset, size or class
+> columns: a field's size follows from its type or its length prefix,
+> and its class from the definitions above. §6.1's front signature block
+> is a 16-byte constant, so a Value column stands in for type, name and
+> range. §7.2's table folds a field's range into its Field cell where it
+> states one, and the field's remaining bounds are stated in the rules
+> below the table.
 
 ---
 

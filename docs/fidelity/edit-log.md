@@ -55,6 +55,23 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-27 — §4.7's Note in plain sentences
+
+- **Commit:** `Readable: §4.7 — layout-table Note in plain sentences` (the
+  commit carrying this entry). Previous: `c1621b7`.
+- **Sections:** §4.7, the Note.
+- **Edits.** The one-paragraph Note (a general rule and three exceptions in
+  participial chains) becomes six sentences: what a layout table is; the
+  columns of a fixed-layout structure's table; "Some tables depart from
+  this."; the inline payload's table (§7.4) without offset, size or class
+  columns and why; §6.1's Value column; §7.2's folded range and the bounds
+  below its table. Same facts, same three exceptions; nothing added.
+- **Removed restatements:** none.
+- **Reworded IDs:** none (a Note).
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×13, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-27 — the contract tool watches every defining paragraph; `R-COD-11` off the list
 
 - **Commit:** `Readable: reworded-ids — R-COD-11 removed, its paragraph
