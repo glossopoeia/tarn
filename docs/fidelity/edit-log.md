@@ -55,6 +55,33 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-27 — the contract tool watches every defining paragraph; `R-COD-11` off the list
+
+- **Commit:** `Readable: reworded-ids — R-COD-11 removed, its paragraph
+  untouched under the repaired mapping` (the commit carrying this entry).
+  Previous: `5541a0f`; the tool change is `main`'s commit merged just
+  before it.
+- **Sections:** none of the spec. `conformance/tools/tarn_inventory.py`
+  (on `main`, merged) and `conformance/tools/reworded-ids.txt`.
+- **Edits.** `tarn_inventory.py` now takes an ID's governing text to be the
+  paragraph in which the ID stands as a marker of its own (after a sentence
+  end, before the block's end or a new sentence), falling back to the block
+  it closes and then to its first citation. Under the old rule seventeen
+  IDs written with text after the ID mapped to a register row or a
+  citation, and their defining paragraphs were unwatched; `[R-ENC-12]`'s
+  listing came back stale for that reason in the entry below. Under the new
+  rule A against B reports every listed ID as `ID_REWORDED_LISTED` except
+  `R-COD-11`, whose §17 paragraph is untouched: it had been listed on
+  2026-09-24 only because the tool mapped it to §2.3's verifier item by
+  citation. It is removed from the list. Selftest PASS with a new case;
+  gate.sh PASS on `main`.
+- **Removed restatements:** none.
+- **Reworded IDs:** thirteen remain listed: `R-CNF-02`, `-03`, `-04`, `-06`,
+  `-07`, `-11`, `-13`, `R-ENC-03`, `-04`, `-05`, `-10`, `-12`, `-16`.
+- **Soft items:** `ID_REWORDED_LISTED` ×13; `TERM_TEXT_CHANGED` ×8;
+  `HEADINGS`. No stale listing. Keyword counts unchanged.
+- **Questions raised:** none; the tool change was the maintainer's go.
+
 ### 2026-09-27 — §4.6: `[R-ENC-12]`'s exception stated by reference
 
 - **Commit:** `Readable: §4.6 — name rule's quarantine exception by
