@@ -441,9 +441,9 @@ the outcome is ignore-record. `[R-ENC-11]`
 **Names** — the strings that identify layers, dimensions, channels, and
 user-metadata keys — satisfy three further constraints. Writers MUST NOT
 emit a name that violates any of them; a reader MUST treat such a name
-as a validity error at the owning scope — except for a key inside a
-user-metadata document, where `[R-CNT-25]`'s quarantine governs and
-the outcome is ignore-record. `[R-ENC-12]` A name is:
+as a validity error at the owning scope, with the same exception for a
+key inside a user-metadata document (`[R-CNT-25]`). `[R-ENC-12]` A name
+is:
 
 - non-empty;
 - at most 255 bytes of UTF-8 (so every name's length prefix is a single

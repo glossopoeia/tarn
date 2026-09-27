@@ -55,6 +55,31 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-27 — §4.6: `[R-ENC-12]`'s exception stated by reference
+
+- **Commit:** `Readable: §4.6 — name rule's quarantine exception by
+  reference to [R-ENC-11]'s` (the commit carrying this entry). Previous:
+  `afb2ba6`.
+- **Sections:** §4.6, the names paragraph.
+- **Edits.** "— except for a key inside a user-metadata document, where
+  `[R-CNT-25]`'s quarantine governs and the outcome is ignore-record."
+  becomes ", with the same exception for a key inside a user-metadata
+  document (`[R-CNT-25]`)." The exception itself is kept: the maintainer
+  read it as redundant, and it is not (a name includes a user-metadata
+  key, and without it a bad key would be a validity error at the record's
+  owning scope, reject-file or reject-layer, against `[R-CNT-25]`'s
+  ignore-record); what was repeated were the words of `[R-ENC-11]`'s
+  identical exception one paragraph above, which the shorter form now
+  points at.
+- **Removed restatements:** the exception's wording, restated by reference
+  → `[R-ENC-11]` (the paragraph above) and `[R-CNT-25]`; the clause's
+  origin is `0ce8fc4`, Batch 1 (ADR-0027), the quarantine's ADR-0066.
+- **Reworded IDs:** `R-ENC-12`, listed (fourteen IDs in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×14 (one new); `TERM_TEXT_CHANGED` ×8
+  and `HEADINGS` carried. Keyword counts unchanged.
+- **Questions raised:** none; cutting the exception outright was declined
+  as a content change.
+
 ### 2026-09-25 — §4.5: `[R-ENC-10]`'s sentence in three
 
 - **Commit:** `Readable: §4.5 — verify-before-acting rule in three sentences`
