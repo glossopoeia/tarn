@@ -52,6 +52,14 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   "assigned exactly one **reader outcome**" (`[R-CNF-07]`).
   The moved paragraph in §21.6 closes with no ID and is a further
   candidate, being invisible to the inventory tool by construction.
+- **§4** (declared done 2026-09-28): §4.2, §4.5, §4.6 and §4.7 reworded or
+  cut (`8f16983` through `eacb6cc`); `R-ENC-03`, `-04`, `-05`, `-10`,
+  `-12`, `-16` listed; §4.1 and §4.3 untouched. Candidate seeds, each
+  inside reworded text: the three width exceptions (`[R-ENC-03]`); "MUST
+  NOT act on a wrapped or truncated value" (`[R-ENC-04]`); "comparing it
+  against a constant for validation is not acting on it" (`[R-ENC-10]`);
+  "with the same exception for a key inside a user-metadata document"
+  (`[R-ENC-12]`). Not yet listed for a real round: none of these has run.
 
 ## Entries
 
