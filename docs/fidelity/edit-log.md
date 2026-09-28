@@ -63,6 +63,33 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-28 — §5.1: the anatomy sentence in three
+
+- **Commit:** `Readable: §5.1 — what lies between the front block and the
+  trailer, in three sentences` (the commit carrying this entry). Previous
+  spec commit: `eacb6cc`.
+- **Sections:** §5.1, `[R-CNT-01]`'s paragraph.
+- **Edits.** "Between them lie the regions the file's commits appended —
+  stored-tile payloads, tile-index regions, record extents (§5.2), the
+  directory each commit appended, and each prior generation's trailer —
+  with the superseded among them slack and no structure (§5.2), and slack
+  wherever a commit left a gap; a commit appends its own directory,
+  pre-trailer pad, and trailer last, in that order (§6.2, `[R-LIF-02]`
+  steps 3 and 5)." becomes "Between them lie the regions each commit
+  appended: stored-tile payloads, tile-index regions, record extents
+  (§5.2), each commit's directory, and each prior generation's trailer. A
+  region a later commit superseded is slack with no structure (§5.2), as
+  is any gap a commit left. Each commit appends its directory, its
+  pre-trailer pad and its trailer last, in that order (§6.2, `[R-LIF-02]`
+  steps 3 and 5)." The maintainer's wording for "each commit appended" and
+  "slack with no structure". The file-size sentence and its ID are
+  verbatim.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-CNT-01`, listed (fourteen in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×14 (one new); `TERM_TEXT_CHANGED` ×8
+  and `HEADINGS` carried. Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-27 — §4.7's Note in plain sentences
 
 - **Commit:** `Readable: §4.7 — layout-table Note in plain sentences` (the

@@ -512,13 +512,13 @@ every other field this specification defines is structural.
 A TARN file is written generation by generation (§9). Byte 0 begins the
 constant 16-byte **front signature block** (§6.1). The final 64 bytes of
 the file are the live **trailer** (§6.2). Between them lie the
-regions the file's commits appended — stored-tile payloads,
-tile-index regions, record extents (§5.2), the directory each commit
-appended, and each prior generation's trailer — with the superseded
-among them slack and no structure (§5.2), and slack wherever a
-commit left a gap; a commit appends its own directory,
-pre-trailer pad, and trailer last, in that order (§6.2,
-`[R-LIF-02]` steps 3 and 5). The file size of a conforming file
+regions each commit appended: stored-tile payloads, tile-index
+regions, record extents (§5.2), each commit's directory, and each
+prior generation's trailer. A region a later commit superseded is
+slack with no structure (§5.2), as is any gap a commit left. Each
+commit appends its directory, its pre-trailer pad and its trailer
+last, in that order (§6.2, `[R-LIF-02]` steps 3 and 5). The file size
+of a conforming file
 equals the live trailer's committed file length F, and F is a multiple
 of 64 (§6.2). `[R-CNT-01]`
 
