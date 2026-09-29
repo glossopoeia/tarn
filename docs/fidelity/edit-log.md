@@ -63,6 +63,60 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-28 — §5.2: the coverage definition without dashes; the slack paragraph in four
+
+- **Commit:** `Readable: §5.2 — coverage definition plain; slack paragraph
+  split in four, §9.7's restatements cut; R-CNT-02 and R-CNT-21 listed` (the
+  commit carrying this entry). Previous: `5296c8b`.
+- **Sections:** §5.2, the paragraphs of `[R-CNT-02]` and `[R-CNT-21]`. The
+  `[R-CNT-03]` paragraph, the Rationale and the two Notes are untouched.
+- **Edits.**
+  1. `[R-CNT-02]`: the two dash-set definitions become colon and
+     which-clauses; the live committed state's members and a structure's
+     four kinds are the same lists; the partition rule is verbatim.
+  2. `[R-CNT-21]`: one paragraph of 40 lines becomes four of 31 in all:
+     what slack is, that a reader MUST NOT interpret it and that only a
+     rewrite reclaims it; the verifier's total and the case in which none
+     is owed; when the total is partial and what leaves the walk complete;
+     what a partial total is and what the verifier says beside it. "Which
+     is not a partial total but the absence of one" becomes "which is the
+     absence of a total and not a partial one"; "a tile's or a document's
+     decode declined leaves the walk complete, that claimant being
+     enumerated from its index entry or extent slot" becomes "Declining to
+     decode a tile or a document leaves the walk complete: its extent is
+     still enumerated, from its index entry or its extent slot" (the
+     maintainer's complaint); "It is not the file's slack total but a
+     bound on it, tightening …" folds into the partial-total sentence. The
+     three MUSTs and the MUST NOT are verbatim.
+- **Removed restatements** (checked by rule against §9.7's full text, not
+  by phrase):
+  - the three cases in which the walk is incomplete (a scope-level
+    rejection, a layer declined on resource grounds under `[R-ERR-04]`,
+    stopping at the first violation under `[R-CNF-11]`) → §9.7
+    `[R-LIF-08]`: "Where the walk does not complete — a scope-level
+    rejection blocks enumeration, the verifier declines a layer on
+    resource grounds and so never enumerates its claimants
+    (`[R-ERR-04]`), or it stops at the first violation (`[R-CNF-11]`) —
+    the sum is reported as partial, and `[R-CNT-21]` governs what such a
+    total counts"; §5.2 keeps "§9.7 says when that is". Added by `af08428`,
+    the pre-round-32 audit, over `140d491` (ADR-0065).
+  - "An entry `[R-IDX-03]` classifies reject-tile on a structural ground
+    leaves it complete too …" → §9.7, stated at its opening ("contributes
+    no stored extent to the walk") and its close ("does not make the walk
+    incomplete: the walk passes over it, and the bytes of the file it
+    nominally addresses fall to slack where no other claimant claims
+    them (§15.3)"); `42e60b8`, the pre-round-33 audit of ADR-0125, over
+    `d29d9d7`.
+- **Reworded IDs:** `R-CNT-02` and `R-CNT-21`, listed (sixteen in all).
+- **Unwatched paragraphs.** `[R-CNT-21]` now stands in the fourth paragraph
+  only. The first three carry rules (one MUST NOT, two MUSTs) and no ID, so
+  `tarn_inventory.py` cannot see a change to them; any later edit to them
+  is a rule edit and goes through the maintainer, and the fidelity round
+  is their guard (calibration 2's C6 was such a paragraph).
+- **Soft items:** `ID_REWORDED_LISTED` ×16 (two new); `TERM_TEXT_CHANGED`
+  ×8 and `HEADINGS` carried. Keyword counts unchanged.
+- **Questions raised:** none.
+
 ### 2026-09-28 — §5.1: the three-commits Example's last two paragraphs
 
 - **Commit:** `Readable: §5.1 — three-commits Example, its last two

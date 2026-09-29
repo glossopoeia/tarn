@@ -574,55 +574,47 @@ scope. `[R-CNT-27]`
 
 #### 5.2 Byte coverage
 
-Coverage is a property of the **live committed state** — the front
-signature block, and every structure reachable from the live trailer
-through the live directory's records, extent slots, and tile-index
-entries, together with the live directory and the live trailer. Every
-byte of the live committed state belongs to exactly one of: the front signature block; or a **structure** — a
-stored-tile extent, a record extent (the bytes any record's extent
-slot references, whatever the record's type, §7.2), the directory, or
-the trailer. No two of them overlap, and a file whose live state does
-not partition this way is not a conforming file. `[R-CNT-02]`
+Coverage is a property of the **live committed state**: the front
+signature block, the live trailer, the live directory, and every
+structure reachable from the live trailer through the live directory's
+records, extent slots and tile-index entries. Every byte of the live
+committed state belongs to exactly one of these: the front signature
+block, or a **structure**, which is a stored-tile extent, a record
+extent (the bytes any record's extent slot references, whatever the
+record's type, §7.2), the directory, or the trailer. No two of them
+overlap, and a file whose live state does not partition this way is not
+a conforming file. `[R-CNT-02]`
 
 Every byte the live state does not claim is **slack**: alignment and
 slab gaps, the pre-trailer pad, and everything an earlier commit
-superseded. Slack has no internal structure this specification
-defines, its content is unconstrained, and no conformance requirement
-applies to it. A reader MUST NOT interpret it (§9.5); a verifier that
-reaches a live state MUST report the total number of slack bytes,
-since that number is what tells an operator to compact. Where §6.2's
-ordered validation rejects the file before a live trailer is
-established there is no F and no live state to walk, so the total is
-not owed at all: the verifier reports the trailer failure and
-nothing about slack, which is not a partial total but the absence of
-one. Where the walk of §9.7 does not
-enumerate every region's claimants, the verifier MUST report the
-total as partial. The walk is incomplete where a scope-level
-rejection ends that scope's enumeration, where the verifier declined
-a layer on resource grounds (`[R-ERR-04]`) and so never enumerated
-its claimants, or where the verifier elected under `[R-CNF-11]` to
-stop at the first violation; a tile's or a document's decode
-declined leaves the walk complete, that claimant being enumerated
-from its index entry or extent slot. An entry `[R-IDX-03]`
-classifies reject-tile on a structural ground leaves it complete
-too, and for the opposite reason: it contributes no claimant, the
-walk passes over it, and the bytes of the file it nominally addresses
-fall to slack where no other claimant claims them (§15.3, §9.7). A
-rejected
-layer's claimants
-are not enumerated, whether or not the rejection impeded reading
-them, and where the rejection is one the walk itself established,
-L18's overlap or L40 through L42's placement among them, the
-claimants it had already enumerated are discarded with the layer,
-since the total is a claim about a live state one of whose layers is
-not usable. A partial total is F less the bytes claimed by the
-claimants the walk did enumerate — an upper bound on the file's true
-slack, never an under-count — and a verifier reporting one MUST say
-which scope or violation stopped the walk. It is not the file's slack
-total but a bound on it, tightening to the exact total when the walk
-completes. Only a rewrite (§20.5) reclaims it, compaction being the
-rewrite an operator runs for that alone.
-`[R-CNT-21]` Slack that holds superseded data is a privacy
+superseded. Slack has no internal structure this specification defines,
+its content is unconstrained, and no conformance requirement applies to
+it. A reader MUST NOT interpret it (§9.5). Only a rewrite (§20.5)
+reclaims it, compaction being the rewrite an operator runs for that
+alone.
+
+A verifier that reaches a live state MUST report the total number of
+slack bytes, since that number is what tells an operator to compact.
+Where §6.2's ordered validation rejects the file before a live trailer
+is established there is no F and no live state to walk, so no total is
+owed: the verifier reports the trailer failure and nothing about slack,
+which is the absence of a total and not a partial one.
+
+Where the walk of §9.7 does not complete, the verifier MUST report the
+total as partial; §9.7 says when that is. Declining to decode a tile or
+a document leaves the walk complete: its extent is still enumerated,
+from its index entry or its extent slot. A rejected layer's claimants
+are not enumerated, whether or not the rejection impeded reading them;
+where the rejection is one the walk itself established, L18's overlap or
+L40 through L42's placement among them, the claimants it had already
+enumerated are discarded with the layer, since the total is a claim
+about a live state one of whose layers is not usable.
+
+A partial total is F less the bytes claimed by the claimants the walk
+did enumerate: an upper bound on the file's true slack, never an
+under-count, tightening to the exact total when the walk completes. A
+verifier reporting one MUST say which scope or violation stopped the
+walk. `[R-CNT-21]` Slack that holds superseded data is a privacy
 consideration (§23).
 
 Writers SHOULD zero the gaps they create — the run before an aligned
