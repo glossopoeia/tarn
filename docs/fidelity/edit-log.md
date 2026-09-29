@@ -82,12 +82,47 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §7.2: `[R-CNT-14]`, order and multiplicity, in five sentences
+
+- **Commit:** `Readable: §7.2 — order and multiplicity in five sentences;
+  R-CNT-14 listed` (the commit carrying this entry). Previous: `e3b6ded`.
+- **Sections:** §7.2, `[R-CNT-14]`'s paragraph.
+- **The maintainer's edit.** ", an empty directory included" removed from
+  the parenthesis on zero layer records. Reviewed: an empty directory is a
+  directory carrying no layer record, so the phrase named a special case
+  of its own clause.
+- **The driver's edit.** The one sentence (a dash, a parenthesis, two
+  semicolons) becomes five: the two MUST NOTs; "Multiplicity rules are per
+  type."; "In format major 1 a directory carries any number of layer
+  records, including none (§21.6)."; the file-scope user-metadata rule;
+  the sub-record rule. "Zero is valid: a directory carrying no layer
+  record is a conforming generation" said one thing twice; the pointer
+  version, chosen by the maintainer, leaves the consequence to §21.6.
+- **Removed restatements** (checked by rule):
+  - "a directory carrying no layer record is a conforming generation" →
+    §21.6's row "The file contains zero layers" ("A conforming file: a
+    directory carrying no layer record is a conforming generation whether
+    or not it carries other records"), and §24's minimal file ("It
+    contains no layers, which §21.6 records as valid").
+  - "an empty directory included" → the same row; §7.2's "zero or more
+    records"; §5.1's smallest-file Example.
+  Origins: "zero is valid …" `86162e0`, Batch 3 (ADR-0029 to ADR-0032);
+  "an empty directory included" `09cd44c`, ADR-0123.
+- **Reworded IDs:** `R-CNT-14`, listed (thirty-three in all).
+- **Correction.** The `[R-CNT-13]` entry below said "31 lines to 28"; the
+  result was 27. Corrected there.
+- **Soft items:** `ID_REWORDED_LISTED` ×33 (one new); the Appendix B row,
+  `KEYWORD_COUNT SHOULD` 46/47, `TERM_TEXT_CHANGED` ×8 and `HEADINGS`
+  carried.
+- **Outstanding from the §7 first pass:** `[R-CNT-22]`, `[R-CNT-18]`.
+- **Questions raised:** none.
+
 ### 2026-09-29 — §7.2: `[R-CNT-13]`, the extent slot, re-cut
 
 - **Commit:** `Readable: §7.2 — extent slot paragraph re-cut; its
   restatement of §5.2 made a pointer; R-CNT-13 listed` (the commit carrying
   this entry). Previous: `0af72b6`.
-- **Sections:** §7.2, `[R-CNT-13]`'s paragraph. 31 lines to 28.
+- **Sections:** §7.2, `[R-CNT-13]`'s paragraph. 31 lines to 27.
 - **Edits.** The five dash asides become sentences or clauses: the sum's
   designation under `[R-ENC-04]`; "A malformed slot on a layer record is
   therefore reject-layer"; "which is what lets a rewriter relocate an

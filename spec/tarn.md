@@ -899,15 +899,13 @@ neither of which belongs to a layer as reject-file. Readers are not
 obligated to detect overlap, which requires whole-directory knowledge.
 `[R-CNT-13]`
 
-Record semantics MUST NOT depend on record order: readers MUST NOT
-infer meaning from the position of a record within the sequence, and
-multiplicity rules are per type — in format major 1: any number of
-layer records (zero is valid: a directory carrying no layer record
-is a conforming generation, an empty directory included); at most
-one file-scope user-metadata record, a second
-being a validity error at the directory's scope (reject-file); and at
-most one user-metadata sub-record per layer record, a second being a
-validity error at layer scope. `[R-CNT-14]`
+Record semantics MUST NOT depend on record order: readers MUST NOT infer
+meaning from the position of a record within the sequence. Multiplicity
+rules are per type. In format major 1 a directory carries any number of
+layer records, including none (§21.6). It carries at most one file-scope
+user-metadata record, a second being a validity error at the directory's
+scope (reject-file). A layer record carries at most one user-metadata
+sub-record, a second being a validity error at layer scope. `[R-CNT-14]`
 
 An unknown record type at file scope: MU = 1 → reject-file; MU = 0 →
 ignore-record. This governs a reader's treatment, not the file's
