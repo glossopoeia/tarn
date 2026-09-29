@@ -907,16 +907,17 @@ user-metadata record, a second being a validity error at the directory's
 scope (reject-file). A layer record carries at most one user-metadata
 sub-record, a second being a validity error at layer scope. `[R-CNT-14]`
 
-An unknown record type at file scope: MU = 1 → reject-file; MU = 0 →
-ignore-record. This governs a reader's treatment, not the file's
-validity: a record type from the experimental range is conforming
-(§10.3's prohibition binds the writer's conduct, not the bytes,
-`[R-CNF-02]`), while one from the reserved range is a value this
-specification has not assigned — emitting it is a violation, and a
-verifier MUST treat a reserved-range record type as a validity error
-at the record's governing scope. Readers of both apply the MU rule
-above unchanged. Updater obligations for unknown records are §20's
-subject. `[R-CNT-15]`
+A record at file scope whose type the reader does not implement is
+governed by its stored MU bit: MU = 1 is reject-file, and MU = 0 is
+ignore-record. That rule is about what a reader does, not about whether
+the file is valid. A record type from the experimental range is
+conforming: §10.3's prohibition binds the writer's conduct, not the
+bytes (`[R-CNF-02]`). A type from the reserved range is a value this
+specification has not assigned. Emitting one is a violation, and a
+verifier MUST treat a reserved-range record type as a validity error at
+the record's governing scope. A reader applies the MU rule to both,
+unchanged. Updater obligations for unknown records are §20's subject.
+`[R-CNT-15]`
 
 #### 7.3 Record types of format major 1
 

@@ -82,6 +82,35 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §7.2: `[R-CNT-15]`, the unknown record type, in sentences
+
+- **Commit:** `Readable: §7.2 — unknown record type rule in sentences;
+  R-CNT-15 listed` (the commit carrying this entry). Previous: `40997f1`.
+- **Sections:** §7.2, `[R-CNT-15]`'s paragraph.
+- **The maintainer's edit.** "… has not assigned — emitting it is a
+  violation" → "… has not assigned. Emitting one from the reserved range
+  is a violation"; reviewed as the same statement, and trimmed at the
+  maintainer's word to "Emitting one is a violation", the sentence before
+  naming the range.
+- **The driver's edits, at the maintainer's request.** The opening
+  shorthand "An unknown record type at file scope: MU = 1 → reject-file;
+  MU = 0 → ignore-record." becomes "A record at file scope whose type the
+  reader does not implement is governed by its stored MU bit: MU = 1 is
+  reject-file, and MU = 0 is ignore-record." ("unknown" is A's word for a
+  type the reader does not implement, §2.3 and §7.3). "This governs a
+  reader's treatment, not the file's validity:" becomes "That rule is
+  about what a reader does, not about whether the file is valid."; the
+  experimental and reserved ranges each get a sentence; "Readers of both
+  apply the MU rule above unchanged" becomes "A reader applies the MU rule
+  to both, unchanged." The verifier's MUST is verbatim.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-CNT-15`, listed (thirty-four in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×34 (one new); the Appendix B row,
+  `KEYWORD_COUNT SHOULD` 46/47, `TERM_TEXT_CHANGED` ×8 and `HEADINGS`
+  carried.
+- **Outstanding from the §7 first pass:** `[R-CNT-22]`, `[R-CNT-18]`.
+- **Questions raised:** none.
+
 ### 2026-09-29 — §7.2: `[R-CNT-14]`, order and multiplicity, in five sentences
 
 - **Commit:** `Readable: §7.2 — order and multiplicity in five sentences;
