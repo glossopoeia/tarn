@@ -115,6 +115,14 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   is their guard (calibration 2's C6 was such a paragraph).
 - **Soft items:** `ID_REWORDED_LISTED` ×16 (two new); `TERM_TEXT_CHANGED`
   ×8 and `HEADINGS` carried. Keyword counts unchanged.
+- **`tarn_check` warnings: 11 → 10.** REG-08, the register-completeness
+  heuristic, no longer says "R-CNT-21 names a violation and no register row
+  cites it at all": it reads the paragraph the ID stands in, and the
+  rejection language that tripped it (§6.2's rejecting validation, the
+  rejected layer) is now in the second and third paragraphs. The warning
+  was the heuristic's, not a finding; `[R-CNT-21]` states a verifier's
+  reporting duty and names no violation. Recorded because a warning that
+  disappears is a change in what a gate says.
 - **Questions raised:** none.
 
 ### 2026-09-28 — §5.1: the three-commits Example's last two paragraphs
