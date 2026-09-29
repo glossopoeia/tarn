@@ -68,6 +68,17 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   NOT interpret it" and "no total is owed" (ID-less paragraphs); "its
   extent is still enumerated" (the decode sentence); "never an
   under-count" (`[R-CNT-21]`).
+- **§6** (declared done 2026-09-29): every subsection reworded (`2124a23`,
+  `f3a14cf`, `f60d1a9`, `083cc8d`), two of the commits being the
+  maintainer's own edits reviewed; residency defined in §6.1; `R-CNT-04`
+  through `-10`, `-24` and `-26` listed; the tables, the Rationale and
+  §6.2's first Note untouched. SHOULD is 46 in A and 47 in B
+  (`[R-CNT-26]`'s ellipsis written out). Candidate seeds: the residency
+  definition's "takes no further range request"; "though no conforming
+  commit produces one" (`[R-CNT-05]`); "MUST NOT set any other"
+  (`[R-CNT-08]`, stated also by `[R-WRT-06]`: a cut there tests restraint,
+  a flip tests reach); "never treats the body's prefix as the requested
+  range" (`[R-CNT-10]`).
 
 ## Entries
 
