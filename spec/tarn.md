@@ -828,13 +828,12 @@ trailer's committed_file_length for the transport size. `[R-CNT-10]`
 
 #### 7.1 Directory region
 
-The directory region is dir_length bytes at dir_offset. Its final 4
-bytes are a CRC-32C over the preceding dir_length − 4 bytes; those
-covered bytes are the record sequence itself — the directory is always
-raw, with no codec involvement on the open path. A reader MUST verify
-that CRC before any other use of the region (mismatch: reject-file),
-then parse records. `[R-CNT-11]` The owning scope of the directory is
-the file.
+The directory region is dir_length bytes at dir_offset. It holds the
+record sequence (§7.2) in its first dir_length − 4 bytes and, in its
+final 4, a CRC-32C over them. The directory is always raw, with no codec
+involvement on the open path. A reader MUST verify that CRC before any
+other use of the region (mismatch: reject-file), then parse records.
+`[R-CNT-11]` The owning scope of the directory is the file.
 
 #### 7.2 Record framing
 

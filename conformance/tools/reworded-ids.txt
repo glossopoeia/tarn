@@ -32,3 +32,4 @@ R-MTA-01: its citation of the user-metadata record's rules re-pointed from §7.1
 R-SEC-05: shares the paragraph with R-SEC-06; its own sentence is verbatim
 R-SEC-06: its citation re-pointed from §7.1 to §7.3; the MUST NOT verbatim
 R-PRV-03: its citation of the quarantine re-pointed from §7.1 to §7.3; nothing else
+R-CNT-11: the region's contents stated first (the record sequence in its first dir_length − 4 bytes, a CRC-32C over them in its final 4) where A gave the CRC first; 'always raw' its own sentence; the MUST and the owning scope verbatim

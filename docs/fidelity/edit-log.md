@@ -82,6 +82,27 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §7.1: the directory region says what it holds
+
+- **Commit:** `Readable: §7.1 — directory region's contents stated first;
+  R-CNT-11 listed` (the commit carrying this entry). Previous: `9a67884`.
+- **Sections:** §7.1, `[R-CNT-11]`'s paragraph.
+- **Edits.** "Its final 4 bytes are a CRC-32C over the preceding dir_length
+  − 4 bytes; those covered bytes are the record sequence itself — the
+  directory is always raw, with no codec involvement on the open path."
+  becomes "It holds the record sequence (§7.2) in its first dir_length − 4
+  bytes and, in its final 4, a CRC-32C over them. The directory is always
+  raw, with no codec involvement on the open path." The maintainer asked
+  whether the region's content is the record sequence; it is, and A said
+  so after the CRC. Same figures; the MUST sentence and the owning-scope
+  sentence are verbatim. Agrees with §3.1's *directory*.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-CNT-11`, listed (thirty-one in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×31 (one new); the Appendix B row,
+  `KEYWORD_COUNT SHOULD` 46/47, `TERM_TEXT_CHANGED` ×8 and `HEADINGS`
+  carried.
+- **Questions raised:** none.
+
 ### 2026-09-29 — §7.1 → §7.3: user metadata's rules moved after the things they use, and re-cut
 
 - **Commit:** `Readable: §7 — user-metadata rules moved to the end of §7.3
