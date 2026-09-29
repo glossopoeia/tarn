@@ -63,6 +63,31 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-28 — §5.2's Rationale cut to its argument
+
+- **Commit:** `Readable: §5.2 — Rationale cut to its argument` (the commit
+  carrying this entry). Previous: `fe73fa6`.
+- **Sections:** §5.2, the Rationale.
+- **Edits.** The Rationale keeps its argument (slack is a byproduct;
+  certifying it would mean deciding which slack bytes this commit wrote,
+  which the live state cannot tell; so the live state is certified and the
+  rest counted) and loses "— not a record anyone keeps: this format is not
+  a version store, and an operator paying for storage compacts rather than
+  retains". "Which is not decidable from the live state — the only thing a
+  reader ever walks" becomes "and the live state, the only thing a reader
+  ever walks, cannot tell".
+- **Removed restatements:** the version-store commentary → §9.7's Note ("a
+  history the format does not promise to keep and a rewrite is expected to
+  discard") and §1's third goal; `f738b29`, ADR-0048.
+- **Correction.** The §1 entry of 2026-09-23 gave "§7's Note" as the
+  surviving location of "this format is not a version store". It was this
+  Rationale, in §5.2. Corrected there, with the present cut noted.
+- **Reworded IDs:** none (a Rationale).
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×16, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged. `tarn_check`: 10 warnings.
+- **Questions raised:** none. The first Note of §5.2 was read by the
+  maintainer and left as it is.
+
 ### 2026-09-28 — §5.2: the coverage definition without dashes; the slack paragraph in four
 
 - **Commit:** `Readable: §5.2 — coverage definition plain; slack paragraph
@@ -998,8 +1023,11 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
     `c75a127`. Generalised in goal 3.
   - "Superseded bytes remain as slack until compaction reclaims them: this
     is a write-mostly artifact, not a version store, and bulk work followed
-    by compaction is the shape it is built for" → §5.1 (slack), §7's Note
-    ("this format is not a version store"); `f738b29`, ADR-0048.
+    by compaction is the shape it is built for" → §5.1 (slack), §5.2's
+    Rationale ("this format is not a version store"; this entry first
+    said §7's Note, wrongly; and since 2026-09-28 the Rationale no longer
+    carries the phrase, the thought standing in §9.7's Note); `f738b29`,
+    ADR-0048.
   - "A long series of small edits is supported and wasteful — each costs a
     full tile and its layer's whole index (§20.3)" → §20.3, §21's Note on
     index regions; `f738b29`, ADR-0048.

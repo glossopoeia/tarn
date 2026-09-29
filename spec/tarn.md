@@ -624,13 +624,10 @@ reproducibility (Appendix G); no conformance requirement rides on
 slack content either way. `[R-CNT-03]`
 
 > **Rationale.** Slack is the byproduct of committing without
-> rewriting and of aligning without packing — not a record anyone
-> keeps: this format is not a version store, and an operator paying
-> for storage compacts rather than retains. Certifying its content
-> would mean deciding which slack bytes *this* commit wrote, which is
-> not decidable from the live state — the only thing a reader ever
-> walks. So this specification certifies the live state exactly, and
-> counts the rest.
+> rewriting and of aligning without packing. Certifying its content
+> would mean deciding which slack bytes *this* commit wrote, and the
+> live state, the only thing a reader ever walks, cannot tell. So this
+> specification certifies the live state exactly, and counts the rest.
 
 > **Note.** Of this rule's two halves, only disjointness is testable.
 > The live committed state is *defined* as the front block plus what
