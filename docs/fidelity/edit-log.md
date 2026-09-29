@@ -60,6 +60,14 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   against a constant for validation is not acting on it" (`[R-ENC-10]`);
   "with the same exception for a key inside a user-metadata document"
   (`[R-ENC-12]`). Not yet listed for a real round: none of these has run.
+- **§5** (declared done 2026-09-28): §5.1's anatomy sentence and its second
+  Example reworded (`711a94f`, `5296c8b`); §5.2's `[R-CNT-02]` and
+  `[R-CNT-21]` paragraphs reworded, the latter split in four with three
+  ID-less rule paragraphs, and its Rationale cut (`d9f34ab`, `2bef8ff`);
+  `R-CNT-01`, `R-CNT-02`, `R-CNT-21` listed. Candidate seeds: "A reader MUST
+  NOT interpret it" and "no total is owed" (ID-less paragraphs); "its
+  extent is still enumerated" (the decode sentence); "never an
+  under-count" (`[R-CNT-21]`).
 
 ## Entries
 
