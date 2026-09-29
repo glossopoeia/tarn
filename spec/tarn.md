@@ -649,7 +649,7 @@ slack content either way. `[R-CNT-03]`
 
 #### 6.1 Front signature block
 
-Bytes [0, 16) of every file, constant in every format major version:
+Bytes [0, 16) of every file are constant in every format major version:
 
 | Offset | Size | Value | Class |
 |---|---|---|---|
@@ -664,11 +664,13 @@ case. A **remote reader** is one whose transport charges a round trip
 per range (§6.4). The distinction governs the request accounting of
 §6.4, `[R-CNT-10]`'s obligations over the transport size, and what the
 file size denotes in §6.2's gate (`[R-CNT-06]`). The obligation over the
-front block turns on residency instead.
+front block turns on **residency** instead: bytes are resident when the
+reader already holds them after its open, so that reading them takes no
+further range request.
 
-A reader whose open leaves bytes [0, 16) **resident** — a local file
+A reader whose open leaves bytes [0, 16) resident (e.g. a local file
 read whole, a memory mapping, a speculative suffix window that reached
-offset 0, or any transport already holding them — MUST verify the full
+offset 0, or any transport already holding them) MUST verify the full
 block by byte equality before other processing, and MUST treat any
 mismatch as reject-file. A reader that would have to issue a further
 range request to obtain those bytes MAY defer or omit the check: its
@@ -685,7 +687,7 @@ path without having to classify the network underneath it. `[R-CNT-04]`
 > **Note.** The intended media type for a TARN file is
 > `application/vnd.tarn`, registration pending; the customary
 > extension is `.tarn`. Content
-> sniffers match the 16-byte front block by equality — no other
+> sniffers match the 16-byte front block by equality — no further
 > prefix of a conforming file is constant.
 
 #### 6.2 Trailer
@@ -709,7 +711,7 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 Writers MUST place the directory so that no structure lies between its
 end and the trailer. The bytes between them are the **pre-trailer pad**,
 and they are slack (§5.2). A writer that ends its directory on a 64-byte
-boundary leaves none. This specification does not constrain the pad's
+boundary leaves no pad. This specification does not constrain the pad's
 content, and bounds its length only through step 5 of the commit
 protocol, which pads to the next 64-byte boundary (`[R-LIF-02]`); a
 longer gap is conforming, though no conforming commit produces one. A

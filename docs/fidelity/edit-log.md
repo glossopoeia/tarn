@@ -71,6 +71,48 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §6.1, §6.2: the maintainer's four edits, reviewed; residency defined
+
+- **Commit:** `Readable: §6.1, §6.2 — maintainer's edits, reviewed;
+  residency defined` (the commit carrying this entry). Previous: `2124a23`.
+  The first batch under the review workflow agreed the same day: the
+  maintainer edits `spec/tarn.md`, the driver reads the word diff, checks
+  each edit against A, and commits.
+- **Sections:** §6.1 (the line above the table, the definitions paragraph,
+  `[R-CNT-04]`, the media-type Note); §6.2 (`[R-CNT-05]`).
+- **The maintainer's edits.**
+  1. §6.1, above the table: "Bytes [0, 16) of every file, constant in
+     every format major version:" → "… of every file are constant in …". A
+     fragment made a sentence; the rule is `[R-CNT-24]`'s. Same statement.
+  2. §6.1, `[R-CNT-04]`: the dash pair around the list of resident cases →
+     "(e.g. a local file read whole, a memory mapping, a speculative suffix
+     window that reached offset 0, or any transport already holding
+     them)". The list becomes examples; see the driver's edit below.
+  3. §6.1, the Note: "no other prefix of a conforming file is constant" →
+     "no further prefix …". Explanatory; and more accurate, every shorter
+     prefix of the block being constant too.
+  4. §6.2, `[R-CNT-05]`: "leaves none" → "leaves no pad". Same meaning.
+- **The driver's edit, on the maintainer's observation that *residency* is
+  used and never defined.** The definitions paragraph's last sentence
+  becomes "The obligation over the front block turns on **residency**
+  instead: bytes are resident when the reader already holds them after its
+  open, so that reading them takes no further range request." The bold
+  moves there from `[R-CNT-04]`'s "resident". The definition is derived
+  from A's own text: `[R-CNT-04]` partitions readers into those whose open
+  "leaves bytes [0, 16) resident" and those that "would have to issue a
+  further range request to obtain those bytes", and register row F6 binds
+  "a reader holding those bytes resident". In A the dash list, ending in
+  the catch-all "any transport already holding them", did the work of a
+  definition; with "e.g." it no longer does, so the definition is stated.
+  This is B saying what A implies; the fidelity round grades it.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-CNT-04` and `R-CNT-05`, already listed; reason lines
+  extended.
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×21, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged.
+- **Questions raised:** none open. Offered and not taken: "no longer
+  prefix" for the Note.
+
 ### 2026-09-29 — §6, first pass: five dense paragraphs re-cut
 
 - **Commit:** `Readable: §6 — definitions, pre-trailer pad, validation
