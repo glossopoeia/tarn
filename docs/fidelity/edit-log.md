@@ -82,6 +82,66 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §7.1 → §7.3: user metadata's rules moved after the things they use, and re-cut
+
+- **Commit:** `Readable: §7 — user-metadata rules moved to the end of §7.3
+  and re-cut; four citations re-pointed; R-CNT-25, R-MTA-01, R-SEC-05,
+  R-SEC-06, R-PRV-03 listed` (the commit carrying this entry). Previous:
+  `083cc8d` (spec), `ffe5700` (log).
+- **Sections:** §7.1 (now `[R-CNT-11]` alone, ten lines), §7.3 (two
+  paragraphs added at its end), and one citation each in §18, §22 (two),
+  §23 and Appendix B.
+- **Edits.**
+  1. `[R-CNT-25]`'s paragraph leaves §7.1, where it used the extent slot
+     and the user-metadata record type before §7.2 and §7.3 introduce
+     them (the maintainer could not tell which of "(0, 0)" was which), and
+     goes to the end of §7.3, after `[R-CNT-22]`.
+  2. It is re-cut, in two paragraphs. First: what is compressed and what is
+     raw (the old last sentence joined to the old first); where the
+     document lives; "On a user-metadata record, an extent slot of (0, 0)
+     or an extent_length less than 5 is a validity error at its
+     containing scope: fewer than 5 bytes cannot hold both a document and
+     the terminal CRC-32C §8.1 places in the final 4"; the encoding rule,
+     "ignore-record, and SHOULD be reported" (the maintainer's "and").
+     Second: the quarantine, with "notwithstanding the owning-scope
+     mapping of `[R-CNF-08]`" restated as "The quarantine overrides the
+     owning-scope mapping of `[R-CNF-08]`: the outcome is ignore-record
+     whichever scope owns the record"; and the resource-decline sentence
+     restated as the quarantine's limit: "The quarantine does not reach a
+     resource decline: a reader that declines a document on resource
+     grounds MAY decline a scope containing it, which `[R-MTA-09]` and
+     `[R-ERR-04]` govern."
+  3. Four citations that said §7.1 and meant these rules now say §7.3:
+     `[R-MTA-01]` (§18), `[R-SEC-06]` (§22), `[R-PRV-03]` (§23) and
+     Appendix B's row "User-metadata extent minimum". The three citations
+     of §7.1 that mean the directory CRC are unchanged.
+- **Removed restatements:** none; the resource-decline sentence, which
+  restates `[R-ERR-04]` ("It MAY also decline at any scope that contains
+  the narrowest one"), is kept as the quarantine's stated limit.
+- **Reworded IDs:** newly listed `R-CNT-25`, `R-MTA-01`, `R-SEC-05` (shares
+  `[R-SEC-06]`'s paragraph), `R-SEC-06`, `R-PRV-03` (thirty in all).
+- **Unwatched paragraph.** `[R-CNT-25]` stands in the quarantine paragraph;
+  the paragraph before it carries two rules (the extent rule, the encoding
+  rule with its SHOULD) and no ID.
+- **ADR candidate, parked by the maintainer: split `[R-CNT-25]`.** The
+  first paragraph's rules want an ID of their own (`[R-CNT-28]` is the
+  next free number). The register already divides that way: F21, F22,
+  L10, L11 and R1 cite `[R-CNT-25]` for the first paragraph's conditions,
+  R2 through R10 for the quarantine. IDs are fixed while B is open
+  (ADR-0133 decision 3), so this is an ADR against A on `main`, ported to
+  B; the driver's suggestion is one ADR for every ID-less rule paragraph
+  the rewrite leaves (§5.2's three under `[R-CNT-21]`, §21.6's closing
+  paragraph, this one), re-pointing register rows and vectors once.
+- **Soft items:** `ID_REWORDED_LISTED` ×30 (five new); `TABLE_ROW_ONLY_IN_A`
+  and `_IN_B`, one each, Appendix B's row with its section cell changed;
+  `KEYWORD_COUNT SHOULD` 46/47 carried; `TERM_TEXT_CHANGED` ×8 and
+  `HEADINGS` carried.
+- **Outstanding from the §7 first pass**, proposed 2026-09-29 and parked by
+  the maintainer until this item was done: `[R-CNT-13]` (the extent
+  slot), `[R-CNT-14]` (order and multiplicity), `[R-CNT-22]` (the closing
+  analogy), `[R-CNT-18]` (parsing and sub-records).
+- **Questions raised:** none open.
+
 ### 2026-09-29 — §6.4: the Note's last sentence; `[R-CNT-10]` in five sentences
 
 - **Commit:** `Readable: §6.4 — accounting Note's close; transport rules in

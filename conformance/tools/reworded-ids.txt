@@ -27,3 +27,8 @@ R-CNT-07: the dash before the SHOULD's consequence made a full stop; 'files that
 R-CNT-24: 'permanently:' reads 'the following are permanently fixed:'; the facts, the MAY and the MUST NOT verbatim
 R-CNT-26: the dash aside set in parentheses ('for a file expressible under this text, version_minor is 0'); the appender's clause made a sentence with the SHOULD that governed it by ellipsis written out; the consequence a sentence of its own, covering both
 R-CNT-10: two sentences made five: what handling a 200 response is (abort, or accept the full body deliberately, never the body's prefix as the range) stated after a colon instead of in a parenthetical imperative; the HTTP note its own sentence; the three MUSTs, the SHOULD with its consequence and the MUST NOT verbatim
+R-CNT-25: moved from §7.1 to the end of §7.3, after the extent slot (§7.2) and the record types it uses; in two paragraphs, the ID standing in the second (the quarantine), the first (storage, the extent rule, the encoding rule) being an ID-less rule paragraph; the 'always raw' sentence joined to the opening one; 'notwithstanding the owning-scope mapping' restated as the quarantine overriding [R-CNF-08]'s mapping; the resource-decline sentence restated as the quarantine's limit; both SHOULDs and the MAY verbatim ('and SHOULD be reported' gains its 'and')
+R-MTA-01: its citation of the user-metadata record's rules re-pointed from §7.1 to §7.3, where they now are; nothing else
+R-SEC-05: shares the paragraph with R-SEC-06; its own sentence is verbatim
+R-SEC-06: its citation re-pointed from §7.1 to §7.3; the MUST NOT verbatim
+R-PRV-03: its citation of the quarantine re-pointed from §7.1 to §7.3; nothing else

@@ -836,34 +836,6 @@ that CRC before any other use of the region (mismatch: reject-file),
 then parse records. `[R-CNT-11]` The owning scope of the directory is
 the file.
 
-Metadata compression exists only at record granularity. Each
-user-metadata record carries its document in its extent — never
-inline — and declares the document's encoding in its own inline
-payload (u8: 0 invalid, 1 = none, 2 = zstd; §18). An extent of (0, 0)
-on a user-metadata record, or one whose extent_length is less than 5
-— too short to hold both a document and the terminal CRC-32C §8.1
-places in its final 4 bytes — is a validity error at its containing
-scope.
-An encoding value of 0, or one the reader does not implement, makes
-that record unreadable, with the same outcome as a failed CRC —
-ignore-record, SHOULD be reported. User metadata is quarantined:
-each way a user-metadata record's document can be unreadable once its
-framing has been read — a failed extent CRC, an unimplemented or
-invalid encoding, a decode failure, or content violating the
-document's own rules (ill-formed UTF-8 included, `[R-ENC-11]`) — is
-ignore-record with a SHOULD-report, notwithstanding the owning-scope
-mapping of `[R-CNF-08]`. Application metadata never obliges a reader
-to treat the structural data it annotates as unusable: where a rule
-outside this quarantine records a document's defect at the file or
-the layer (`[R-MTA-05]`, F27, L48), the verifier records it there and
-a reader owes nothing for it, `[R-CNF-12]`'s licence on the
-nonconforming file aside (§21.6). A reader that declines a document
-on resource grounds MAY decline a scope containing it, which is
-`[R-MTA-09]`'s and `[R-ERR-04]`'s subject and not this rule's. The
-directory and the tile-index
-region are always raw (the index so that it can be range-fetched,
-§15); tile payloads use the layer's codec field (§17). `[R-CNT-25]`
-
 #### 7.2 Record framing
 
 The record sequence is zero or more records, concatenated. Each record
@@ -977,6 +949,35 @@ conforming readers nevertheless process the record under the fixed
 semantics, exactly as they do for `[R-CNT-12]`'s reserved-flag and
 MU = 1 / PE = 0 violations, whose detection this specification
 likewise assigns to the verifier. `[R-CNT-22]`
+
+Metadata compression exists only at record granularity: the directory
+and the tile-index region are always raw (the index so that it can be
+range-fetched, §15), and tile payloads use the layer's codec field
+(§17). Each user-metadata record carries its document in its extent,
+never inline, and declares the document's encoding in its own inline
+payload (u8: 0 invalid, 1 = none, 2 = zstd; §18). On a user-metadata
+record, an extent slot of (0, 0) or an extent_length less than 5 is a
+validity error at its containing scope: fewer than 5 bytes cannot hold
+both a document and the terminal CRC-32C §8.1 places in the final 4. An
+encoding value of 0, or one the reader does not implement, makes that
+record unreadable, with the same outcome as a failed CRC: ignore-record,
+and SHOULD be reported.
+
+User metadata is quarantined. Once a user-metadata record's framing has
+been read, each way its document can be unreadable is ignore-record with
+a SHOULD-report: a failed extent CRC, an unimplemented or invalid
+encoding, a decode failure, or content violating the document's own
+rules (ill-formed UTF-8 included, `[R-ENC-11]`). The quarantine
+overrides the owning-scope mapping of `[R-CNF-08]`: the outcome is
+ignore-record whichever scope owns the record. Application metadata
+never obliges a reader to treat the structural data it annotates as
+unusable. Where a rule outside this quarantine records a document's
+defect at the file or the layer (`[R-MTA-05]`, F27, L48), the verifier
+records it there and a reader owes nothing for it, `[R-CNF-12]`'s
+licence on the nonconforming file aside (§21.6). The quarantine does not
+reach a resource decline: a reader that declines a document on resource
+grounds MAY decline a scope containing it, which `[R-MTA-09]` and
+`[R-ERR-04]` govern. `[R-CNT-25]`
 
 #### 7.4 The layer record
 
@@ -2496,7 +2497,7 @@ certification is unaffected (`[R-MTA-10]`, §18.2).
 
 A file MAY carry one user-metadata document at file scope, and each
 layer MAY carry one of its own, each held in a user-metadata
-record's extent (§7.1). Its content is application data: this
+record's extent (§7.3). Its content is application data: this
 specification defines its encoding, not its meaning. `[R-MTA-01]`
 
 The owning scope of a user-metadata record is the file when the
@@ -4202,7 +4203,7 @@ display surface MUST NOT assume a name is safe for its own syntax, and a reader 
 as a filesystem path — nothing in this format names a path, and
 treating one as such reintroduces traversal in the consumer.
 `[R-SEC-05]` User metadata is application data and is never
-structural (§7.1): a reader MUST NOT let it influence how any byte
+structural (§7.3): a reader MUST NOT let it influence how any byte
 is located or decoded. `[R-SEC-06]`
 
 #### 22.5 What this format does not provide
@@ -4269,7 +4270,7 @@ unstored by a later commit leaves its earlier payload in the file as
 slack (§23.1) — so the index
 publishes which regions were written without disclosing what is in
 them; the user-metadata document,
-which is quarantined from structural interpretation (§7.1) but not
+which is quarantined from structural interpretation (§7.3) but not
 hidden; and the shape of its own history — the size of each commit
 and the slack it left behind, recoverable by probing backward for
 the superseded trailers that committed-prefix immutability keeps in
@@ -4455,7 +4456,7 @@ normative where it is defined; this table is a finding aid.
 | Trailer size | 64 bytes, at a 64-aligned offset | §6.2 |
 | Smallest conforming file | 128 bytes | §5.1 |
 | Directory minimums | dir_offset ≥ 16, dir_length ≥ 4 | §6.2, §5.1 |
-| User-metadata extent minimum | extent_length ≥ 5 | §7.1 |
+| User-metadata extent minimum | extent_length ≥ 5 | §7.3 |
 | Boolean byte encoding | `0x00` = false, `0x01` = true | §13.2, §14.2 |
 | Media type (intended; registration pending) | `application/vnd.tarn` | §6.1 |
 | Record header size | 24 bytes | §7.2 |
