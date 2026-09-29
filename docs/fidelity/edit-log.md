@@ -71,6 +71,57 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §6, first pass: five dense paragraphs re-cut
+
+- **Commit:** `Readable: §6 — definitions, pre-trailer pad, validation
+  order, flags and baseline open re-cut; R-CNT-04, -05, -06, -08, -09
+  listed` (the commit carrying this entry). Previous: `2bef8ff` (spec),
+  `256e5f1` (log).
+- **Sections:** §6.1, §6.2, §6.3, §6.4. §6 falls from 185 lines to 178. The
+  maintainer took all five as a first pass and will return with specifics.
+- **Edits.** Every keyword sentence is verbatim.
+  1. §6.1, the local/remote definitions (no ID): two definitions and the
+     three things the distinction governs, as four sentences; its reason
+     for residency ("a transport can be classified either way at the
+     margin while residency is decidable at any reader's own open path")
+     moves into `[R-CNT-04]`'s closing sentence, which stated the same
+     reason in other words: "The test is residency, not transport: a
+     transport can be classified either way at the margin, while an
+     implementation decides residency at its own open path without having
+     to classify the network underneath it."
+  2. §6.2, `[R-CNT-05]`: the pre-trailer pad paragraph in six sentences,
+     no dashes; "their number" is "its length"; "a longer gap is
+     conforming, and no conforming commit produces one" reads "…, though
+     no conforming commit produces one".
+  3. §6.2, `[R-CNT-06]`: "— only these touch fields whose positions are
+     fixed across all majors (`[R-CNT-24]`) — and then, those gates
+     passed, MUST validate" becomes "Only these three touch fields whose
+     positions are fixed across all majors (`[R-CNT-24]`). Those gates
+     passed, the reader MUST validate"; the list is unchanged.
+  4. §6.3, `[R-CNT-08]`: one sentence cut (below).
+  5. §6.4, `[R-CNT-09]`: step 1's dash clause with its parenthesis becomes
+     three sentences; "(1) fetch" and "(2) fetch" are capitalised as
+     sentences.
+- **Removed restatements** (checked by rule):
+  - "A rewriter, though its output is a new file, carries the input's
+    unknown ignore-lane bits into its output trailer rather than writing
+    flags = 0, and sets no other (§20.5, `[R-WRT-06]`)." → §20.5
+    `[R-WRT-06]` ("The output trailer MUST copy the input's unknown
+    ignore-lane flag bits forward and set no other, in place of the flags
+    = 0 §6.3 requires of a file created under this text") and the next
+    sentence of `[R-CNT-08]` itself ("carried forward by every updater
+    under this text, appender and rewriter alike"). Origin not found by
+    `git log -S` on its opening words (the sentence was rewrapped); it
+    follows ADR-0121's text.
+  - the residency reason stated twice in §6.1 → once, in `[R-CNT-04]`;
+    both from `b027e12`, ADR-0058.
+- **Reworded IDs:** `R-CNT-04`, `R-CNT-05`, `R-CNT-06`, `R-CNT-08`,
+  `R-CNT-09`, listed (twenty-one in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×21 (five new); `TERM_TEXT_CHANGED`
+  ×8 and `HEADINGS` carried. Keyword counts unchanged.
+- **Questions raised:** none. Untouched in §6: both tables, `[R-CNT-07]`,
+  `[R-CNT-24]`, `[R-CNT-26]`, `[R-CNT-10]`, the Rationale and the Notes.
+
 ### 2026-09-28 — §5.2's Rationale cut to its argument
 
 - **Commit:** `Readable: §5.2 — Rationale cut to its argument` (the commit

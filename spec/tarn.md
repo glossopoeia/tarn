@@ -658,28 +658,25 @@ Bytes [0, 16) of every file, constant in every format major version:
 
 Writers MUST emit exactly these 16 bytes.
 
-A **local reader** is one whose transport serves any byte range at no
-per-range round trip — a local file or a memory mapping being the
-ordinary cases — and a **remote reader** one whose transport charges a
-round trip per range (§6.4). That distinction governs the request
-accounting of §6.4, `[R-CNT-10]`'s obligations over the transport size
-and what the file size denotes in §6.2's gate (`[R-CNT-06]`); the
-obligation over the front
-block turns on residency instead, because a transport can be classified
-either way at the margin while residency is decidable at any reader's
-own open path.
+A **local reader** is one whose transport serves any byte range without
+a round trip per range; a local file or a memory mapping is the ordinary
+case. A **remote reader** is one whose transport charges a round trip
+per range (§6.4). The distinction governs the request accounting of
+§6.4, `[R-CNT-10]`'s obligations over the transport size, and what the
+file size denotes in §6.2's gate (`[R-CNT-06]`). The obligation over the
+front block turns on residency instead.
 
-A reader whose open leaves bytes
-[0, 16) **resident** — a local file read whole, a memory mapping, a
-speculative suffix window that reached offset 0, or any transport
-already holding them — MUST verify the full block by byte
-equality before other processing, and MUST treat any mismatch as
-reject-file. A reader that would have to issue a further range request
-to obtain those bytes MAY defer or omit the check: its open path is
-anchored at the trailer (§6.2), and the two-request accounting of §6.4
-does not include the front block. The test is residency, not transport,
-so an implementation decides it at its own open path without having to
-classify the network underneath it. `[R-CNT-04]`
+A reader whose open leaves bytes [0, 16) **resident** — a local file
+read whole, a memory mapping, a speculative suffix window that reached
+offset 0, or any transport already holding them — MUST verify the full
+block by byte equality before other processing, and MUST treat any
+mismatch as reject-file. A reader that would have to issue a further
+range request to obtain those bytes MAY defer or omit the check: its
+open path is anchored at the trailer (§6.2), and the two-request
+accounting of §6.4 does not include the front block. The test is
+residency, not transport: a transport can be classified either way at
+the margin, while an implementation decides residency at its own open
+path without having to classify the network underneath it. `[R-CNT-04]`
 
 > **Rationale.** The signature is engineered against transport
 > corruption: the high-bit byte catches 7-bit stripping, CR LF catches
@@ -709,30 +706,31 @@ The trailer occupies the final 64 bytes of the file, beginning at a
 | 48 | 12 | bytes | reserved | structural | zero |
 | 60 | 4 | u32 | trailer CRC | structural | CRC-32C over trailer bytes [0, 60) |
 
-Writers MUST place the directory so that no structure lies between
-its end and the trailer. Those bytes — the **pre-trailer pad** — are
-slack (§5.2): a writer that ends its directory on a 64-byte boundary
-leaves none, this specification does not constrain their content, and
-bounds their number only through step 5 of the commit protocol, which
-pads to the next 64-byte boundary (`[R-LIF-02]`) — a longer gap is
-conforming, and no conforming commit produces one. A verifier MUST treat a structure in that gap as a
-validity error at file scope, and counts the rest as slack; writers
-zero it by the advice of `[R-CNT-03]` (readers check neither, their
-check being the dir-bounds rule of `[R-CNT-06]`). `[R-CNT-05]`
+Writers MUST place the directory so that no structure lies between its
+end and the trailer. The bytes between them are the **pre-trailer pad**,
+and they are slack (§5.2). A writer that ends its directory on a 64-byte
+boundary leaves none. This specification does not constrain the pad's
+content, and bounds its length only through step 5 of the commit
+protocol, which pads to the next 64-byte boundary (`[R-LIF-02]`); a
+longer gap is conforming, though no conforming commit produces one. A
+verifier MUST treat a structure in that gap as a validity error at file
+scope, and counts the rest as slack. Writers zero the pad by the advice
+of `[R-CNT-03]`; readers check neither, their check being the dir-bounds
+rule of `[R-CNT-06]`. `[R-CNT-05]`
 
 > **Note.** The trailer magic's first byte differs from the front
 > signature's, so a recovery scan (§9.6) never matches the front
 > block.
 
 A reader MUST validate, in order: the trailer magic; the trailer CRC;
-the version gate (§6.3) — only these touch fields whose positions are
-fixed across all majors (`[R-CNT-24]`) — and then, those gates passed,
-MUST validate all of the following before acting on the fields
-involved: the flag gates (§6.3); committed_file_length equals the
-file size (for a remote reader, the size reported by its transport)
-and is a multiple of 64; dir_offset ≥ 16; dir_length ≥ 4; dir_offset
-+ dir_length ≤ F − 64, that sum being a declaration-derived quantity
-under `[R-ENC-04]`; file_id ≠ 0; reserved bytes zero. Any failure is
+the version gate (§6.3). Only these three touch fields whose positions
+are fixed across all majors (`[R-CNT-24]`). Those gates passed, the
+reader MUST validate all of the following before acting on the fields
+involved: the flag gates (§6.3); committed_file_length equals the file
+size (for a remote reader, the size reported by its transport) and is a
+multiple of 64; dir_offset ≥ 16; dir_length ≥ 4; dir_offset + dir_length
+≤ F − 64, that sum being a declaration-derived quantity under
+`[R-ENC-04]`; file_id ≠ 0; reserved bytes zero. Any failure is
 reject-file. The owning scope of the front signature block and the
 trailer is the file. `[R-CNT-06]`
 
@@ -767,11 +765,8 @@ ignore lane (bits 16–31). In this specification's text no flag bits
 are defined: a writer creating a file under this text MUST write
 flags = 0, but a set ignore-lane bit is not a file-conformance
 violation — such bits are defined by later minor versions, and files
-carrying them are conforming files this text's readers ignore. A
-rewriter, though its output is a new file, carries the input's
-unknown ignore-lane bits into its output trailer rather than writing
-flags = 0, and sets no other (§20.5, `[R-WRT-06]`). An updater MUST
-copy forward unknown ignore-lane bits of its input file, MUST
+carrying them are conforming files this text's readers ignore. An
+updater MUST copy forward unknown ignore-lane bits of its input file, MUST
 NOT clear them, and MUST NOT set any other: no writer under this text
 originates an ignore-lane bit, this text defining none for it to mean
 anything by, so a bit is set only by a writer under the later minor
@@ -788,22 +783,20 @@ gate) but misstates the file's feature floor to tooling. `[R-CNT-26]`
 
 #### 6.4 Remote open accounting
 
-The baseline remote open is two requests, each with an exact target:
-(1) fetch the final 64 bytes — a suffix range, whose response also
-carries the transport-authoritative file size F where the transport
-discloses a range response's complete length (`[R-CNT-10]`, which
-governs where it does not: a reader that probes separately spends a
-third request, and one that cannot fails the open), so that §19.1's first two steps cost one
-request between them; validate per
-§6.2–§6.3; (2) fetch
+The baseline remote open is two requests, each with an exact target. (1)
+Fetch the final 64 bytes, a suffix range, and validate per §6.2–§6.3.
+Where the transport discloses a range response's complete length, that
+response also carries the transport-authoritative file size F, so
+§19.1's first two steps cost one request between them; where it does
+not, `[R-CNT-10]` governs: a reader that probes separately spends a
+third request, and one that cannot fails the open. (2) Fetch
 [dir_offset, dir_offset + dir_length); verify and decode per §7.1. A
 reader MAY instead speculatively fetch a suffix window in one request
 and use containment: if the fetched buffer contains the directory
 region, request 2 is unnecessary. Writers SHOULD keep dir_length plus
-the pre-trailer pad plus 64 within 65,536 bytes so that a 64 KiB
-suffix fetch captures trailer and directory together; a larger
-directory is conforming and merely costs the second request.
-`[R-CNT-09]`
+the pre-trailer pad plus 64 within 65,536 bytes so that a 64 KiB suffix
+fetch captures trailer and directory together; a larger directory is
+conforming and merely costs the second request. `[R-CNT-09]`
 
 > **Note.** This accounting is a theory of operation, not a budget: no
 > request count is a conformance property, and nothing here bounds what
