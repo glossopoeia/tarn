@@ -71,6 +71,62 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §6.2, §6.3: the maintainer's second batch, reviewed; the flags paragraph re-cut
+
+- **Commit:** `Readable: §6.2, §6.3 — maintainer's edits, reviewed; flags
+  paragraph re-cut; R-CNT-07, -24, -26 listed` (the commit carrying this
+  entry). Previous: `f3a14cf`.
+- **Sections:** §6.2 (`[R-CNT-06]`, the second Note); §6.3 (`[R-CNT-07]`,
+  `[R-CNT-24]`, `[R-CNT-08]`, `[R-CNT-26]`).
+- **The maintainer's edits, as committed.**
+  1. `[R-CNT-06]`: "Those gates passed," → "If those gates pass,";
+     "reserved bytes zero" → "reserved bytes all zero". Same rule.
+  2. §6.2's second Note: "at exact physical end of file" → "at the exact
+     physical end of the file"; "(§7.1) — detection is never silent" →
+     "(§7.1). Detection is never silent". Explanatory.
+  3. `[R-CNT-07]`: the dash before the consequence becomes a full stop;
+     "files that current software reads" → "files that other software can
+     read". The consequence of the SHOULD, in plainer words.
+  4. `[R-CNT-24]`: "permanently:" → "the following are permanently
+     required:", **changed on review** to "… permanently fixed:". "Required"
+     is one of the seven words kept out of added lines (`tarn_check` warned
+     on it), and A states facts that hold in every major, not an
+     obligation; "fixed" is the reach paragraph's own word for them.
+  5. `[R-CNT-08]`: "such bits are defined by later minor versions" → "such
+     bits might be defined …", **superseded on review** by the re-cut below:
+     A's sentence says what the ignore lane is for, and "might" put a
+     particular bit in doubt against the paragraph's own later sentence.
+  6. `[R-CNT-26]`: "— for a file expressible under this text, 0 — and an
+     appender the maximum …" → "(for a file expressible under this text,
+     version_minor is 0). An appender SHOULD emit the maximum …"; and, on
+     review, the consequence ("A higher minor than needed costs readers
+     nothing …") made a sentence of its own so that it covers both SHOULDs.
+     The second SHOULD is A's first, written out where A elided it.
+- **The driver's edit, at the maintainer's request.** `[R-CNT-08]` re-cut
+  into six sentences. "In this specification's text no flag bits are
+  defined: a writer … MUST write flags = 0, but a set ignore-lane bit is
+  not a file-conformance violation — such bits are defined by later minor
+  versions, and files carrying them are conforming files this text's
+  readers ignore." becomes "This specification's text defines no flag
+  bits, so a writer creating a file under this text MUST write flags = 0.
+  A set ignore-lane bit is nevertheless not a file-conformance violation:
+  the ignore lane is where later minor versions define bits, and a file
+  carrying one is a conforming file whose bit this text's readers ignore."
+  (A's clause could be read as readers ignoring the files.) The updater's
+  three duties stand alone; ADR-0121's sentence follows with its reason as
+  "since this text defines none"; "An updater encountering … is a reader
+  first, and therefore rejects" becomes "An updater that meets … is a
+  reader first, and rejects". All six keyword clauses verbatim.
+- **Removed restatements:** none.
+- **Reworded IDs:** newly listed `R-CNT-07`, `R-CNT-24`, `R-CNT-26`
+  (twenty-four in all); `R-CNT-06` and `R-CNT-08` extended.
+- **Soft items:** `ID_REWORDED_LISTED` ×24; **`KEYWORD_COUNT SHOULD`, 46 in
+  A and 47 in B**: the appender's SHOULD in `[R-CNT-26]`, which A carried
+  by ellipsis ("A writer SHOULD emit … and an appender the maximum …");
+  no rule added. `TERM_TEXT_CHANGED` ×8 and `HEADINGS` carried.
+  `tarn_check`: 10 warnings.
+- **Questions raised:** none open.
+
 ### 2026-09-29 — §6.1, §6.2: the maintainer's four edits, reviewed; residency defined
 
 - **Commit:** `Readable: §6.1, §6.2 — maintainer's edits, reviewed;

@@ -726,62 +726,63 @@ rule of `[R-CNT-06]`. `[R-CNT-05]`
 
 A reader MUST validate, in order: the trailer magic; the trailer CRC;
 the version gate (§6.3). Only these three touch fields whose positions
-are fixed across all majors (`[R-CNT-24]`). Those gates passed, the
+are fixed across all majors (`[R-CNT-24]`). If those gates pass, the
 reader MUST validate all of the following before acting on the fields
 involved: the flag gates (§6.3); committed_file_length equals the file
 size (for a remote reader, the size reported by its transport) and is a
 multiple of 64; dir_offset ≥ 16; dir_length ≥ 4; dir_offset + dir_length
 ≤ F − 64, that sum being a declaration-derived quantity under
-`[R-ENC-04]`; file_id ≠ 0; reserved bytes zero. Any failure is
+`[R-ENC-04]`; file_id ≠ 0; reserved bytes all zero. Any failure is
 reject-file. The owning scope of the front signature block and the
 trailer is the file. `[R-CNT-06]`
 
 > **Note.** A payload byte-string that mimics a trailer and happens to
-> sit at exact physical end of file can pass every check above; it is
-> caught at the directory CRC (§7.1) — detection is never silent, per
-> §9.2's barrier note.
+> sit at the exact physical end of the file can pass every check above;
+> it is caught at the directory CRC (§7.1). Detection is never silent,
+> per §9.2's barrier note.
 
 #### 6.3 Version and flag gates
 
 A reader MUST reject-file when version_major is 0 (invalid) or is a
 major it does not implement, and the diagnostic for an unimplemented
-major SHOULD be distinct from both "not a TARN file" and "corrupt"
-(e.g. "TARN format major N; this reader supports major 1") — a reader
-that reports an unimplemented major as corruption misleads users into
-discarding files that current software reads. A reader MUST NOT reject
-a file for its version_minor: minor releases are additive-only, and
-all feature gating is structural (records, enums, flags). `[R-CNT-07]`
+major SHOULD be distinct from both "not a TARN file" and "corrupt" (e.g.
+"TARN format major N; this reader supports major 1"). A reader that
+reports an unimplemented major as corruption misleads users into
+discarding files that other software can read. A reader MUST NOT reject
+a file for its version_minor: minor releases are additive-only, and all
+feature gating is structural (records, enums, flags). `[R-CNT-07]`
 
-In every format major version, permanently: the final 64 bytes of a
-file contain the trailer magic at F − 64, version_major and
-version_minor at F − 56, and a CRC-32C at F − 4 covering bytes
-[F − 64, F − 4); and the front signature block (§6.1) is constant. A
-future major MAY redefine only the remaining 48 trailer bytes and MUST
-NOT grow the trailer; additional space comes from structures placed
-before it. The format-major-1 trailer has zero slack: every byte is
-assigned. `[R-CNT-24]`
+In every format major version, the following are permanently fixed: the
+final 64 bytes of a file contain the trailer magic at F − 64,
+version_major and version_minor at F − 56, and a CRC-32C at F − 4
+covering bytes [F − 64, F − 4); and the front signature block (§6.1) is
+constant. A future major MAY redefine only the remaining 48 trailer
+bytes and MUST NOT grow the trailer; additional space comes from
+structures placed before it. The format-major-1 trailer has zero slack:
+every byte is assigned. `[R-CNT-24]`
 
-Flags: a reader MUST reject-file on any set bit it does not implement
-in the incompat lane (bits 0–15), and MUST ignore all bits in the
-ignore lane (bits 16–31). In this specification's text no flag bits
-are defined: a writer creating a file under this text MUST write
-flags = 0, but a set ignore-lane bit is not a file-conformance
-violation — such bits are defined by later minor versions, and files
-carrying them are conforming files this text's readers ignore. An
-updater MUST copy forward unknown ignore-lane bits of its input file, MUST
-NOT clear them, and MUST NOT set any other: no writer under this text
-originates an ignore-lane bit, this text defining none for it to mean
-anything by, so a bit is set only by a writer under the later minor
-version that defines it and carried forward by every updater under
-this text, appender and rewriter alike. An updater encountering an unknown
-incompat-lane bit is a reader first, and therefore rejects the file
-before modifying anything. `[R-CNT-08]`
+Flags: a reader MUST reject-file on any set bit it does not implement in
+the incompat lane (bits 0–15), and MUST ignore all bits in the ignore
+lane (bits 16–31). This specification's text defines no flag bits, so a
+writer creating a file under this text MUST write flags = 0. A set
+ignore-lane bit is nevertheless not a file-conformance violation: the
+ignore lane is where later minor versions define bits, and a file
+carrying one is a conforming file whose bit this text's readers ignore.
+An updater MUST copy forward unknown ignore-lane bits of its input file,
+MUST NOT clear them, and MUST NOT set any other. No writer under this
+text originates an ignore-lane bit, since this text defines none: a bit
+is set only by a writer under the later minor version that defines it,
+and is carried forward by every updater under this text, appender and
+rewriter alike. An updater that meets an unknown incompat-lane bit is a
+reader first, and rejects the file before modifying anything.
+`[R-CNT-08]`
 
-A writer SHOULD emit the lowest version_minor that defines every
-feature present in the file — for a file expressible under this text,
-0 — and an appender the maximum of that floor and the prior trailer's
-minor; a higher minor than needed costs readers nothing (minors never
-gate) but misstates the file's feature floor to tooling. `[R-CNT-26]`
+A writer SHOULD emit the lowest version_minor that defines every feature
+present in the file (for a file expressible under this text,
+version_minor is 0). An appender SHOULD emit the maximum of that floor
+and the prior trailer's minor. A higher minor than needed costs readers
+nothing (minors never gate) but misstates the file's feature floor to
+tooling. `[R-CNT-26]`
 
 #### 6.4 Remote open accounting
 
