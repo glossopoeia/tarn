@@ -63,6 +63,31 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-28 — §5.1: the three-commits Example's last two paragraphs
+
+- **Commit:** `Readable: §5.1 — three-commits Example, its last two
+  paragraphs in plain sentences` (the commit carrying this entry).
+  Previous: `711a94f`.
+- **Sections:** §5.1, the second Example.
+- **Edits.** The paragraph beginning "The ▓ runs are" is re-cut into five
+  sentences: the dash-set aside "a user-metadata document lives in one,
+  `[R-CNT-25]`", which the maintainer could not parse, becomes "such as the
+  extent that holds a user-metadata document (`[R-CNT-25]`)"; "re-emits the
+  directory, the pad and the trailer alone" becomes "re-emits only …"; the
+  two sentences about layer B join the index-region sentence after a
+  colon; "A commit never relocates a live index region otherwise; that is
+  a rewrite's operation" becomes "… for any other reason; relocation is a
+  rewrite's operation". The closing paragraph drops "Because … must change"
+  for "The structures that change on every commit are the last ones in the
+  file, so …", which also removes a lowercase keyword from the Example.
+  Every citation is kept.
+- **Removed restatements:** none.
+- **Reworded IDs:** none (an Example).
+- **Soft items:** unchanged (`ID_REWORDED_LISTED` ×14, `TERM_TEXT_CHANGED`
+  ×8, `HEADINGS`). Keyword counts unchanged; no number in the Example
+  changed.
+- **Questions raised:** none.
+
 ### 2026-09-28 — §5.1: the anatomy sentence in three
 
 - **Commit:** `Readable: §5.1 — what lies between the front block and the

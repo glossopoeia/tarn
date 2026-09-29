@@ -554,21 +554,23 @@ scope. `[R-CNT-27]`
 >
 > The ▓ runs are the directories, pads and trailers of commits 1 and 2,
 > superseded when commit 3 wrote its own. Layer A's tiles and index have
-> never moved: a layer the commit does not touch keeps its extent slot
-> pointing where it always pointed (§20.3, `[R-WRT-05]`), so a commit
-> that touches no layer and appends no record extent — a user-metadata
-> document lives in one, `[R-CNT-25]` — re-emits the directory, the
-> pad and the trailer alone. A commit that changes a layer's stored-tile set or index
-> content re-emits that layer's whole tile-index region as well, at a
-> new placement (§20.3, `[R-WRT-04]`). The commit that added layer B
-> emitted B's index region for the first time; a later commit changing
-> B's stored-tile set would re-emit it at a new placement. A commit never relocates a live index region
-> otherwise; that is a rewrite's operation (§20.5, `[R-WRT-07]`).
+> never moved: a layer a commit does not touch keeps its extent slot
+> pointing where it always pointed (§20.3, `[R-WRT-05]`). So a commit
+> that touches no layer and appends no record extent, such as the extent
+> that holds a user-metadata document (`[R-CNT-25]`), re-emits only the
+> directory, the pad and the trailer. A commit that changes a layer's
+> stored-tile set or index content also re-emits that layer's whole
+> tile-index region, at a new placement (§20.3, `[R-WRT-04]`): the
+> commit that added layer B emitted B's index region for the first time,
+> and a later commit changing B's stored-tile set would re-emit it at a
+> new placement. A commit never relocates a live index region for any
+> other reason; relocation is a rewrite's operation (§20.5,
+> `[R-WRT-07]`).
 >
-> This is what tail-anchored discovery buys. Because the structures that
-> must change on every commit are the last ones in the file, a commit
-> appends and never rewrites a committed byte (§9.1) — the property
-> §9.6's recovery and §9.3's caching both rest on.
+> This is what tail-anchored discovery buys. The structures that change
+> on every commit are the last ones in the file, so a commit appends and
+> never rewrites a committed byte (§9.1), the property §9.6's recovery
+> and §9.3's caching both rest on.
 
 #### 5.2 Byte coverage
 
