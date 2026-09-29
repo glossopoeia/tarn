@@ -809,22 +809,20 @@ conforming and merely costs the second request. `[R-CNT-09]`
 > fewer, larger requests and metered ones reward the opposite. What the
 > open does bind is its *working set*: the trailer and the directory,
 > and nothing else, at any file size and layer count (`[R-RDR-01]`).
-> That is the invariant this section exists to make legible, and the
-> request counts are what it costs a reader that fetches exactly what it
-> needs.
+> That working set is what this section describes; the request counts
+> are only what fetching exactly that costs.
 
-A remote reader MUST handle a 200 response to a range request (HTTP's
-terms, RFC 9110, where the transport is HTTP; abort or accept the full
-body deliberately — never treat the body prefix as the requested
-range) and SHOULD fall back to a size probe plus an
-absolute range on transports without suffix-range support — without
-the fallback, remote open fails outright on such transports. The size
-a remote reader compares against committed_file_length MUST be
-transport-authoritative (a full-response content length, the complete
-length of a range response, or a size probe); a reader that cannot
-obtain one MUST probe separately or fail the open, and MUST NOT
-substitute the trailer's committed_file_length for the transport size.
-`[R-CNT-10]`
+A remote reader MUST handle a 200 response to a range request: it
+aborts, or accepts the full body deliberately, and never treats the
+body's prefix as the requested range. The terms are HTTP's (RFC 9110),
+where the transport is HTTP. A remote reader SHOULD fall back to a size
+probe plus an absolute range on transports without suffix-range support;
+without the fallback, remote open fails outright on such transports. The
+size a remote reader compares against committed_file_length MUST be
+transport-authoritative: a full-response content length, the complete
+length of a range response, or a size probe. A reader that cannot obtain
+one MUST probe separately or fail the open, and MUST NOT substitute the
+trailer's committed_file_length for the transport size. `[R-CNT-10]`
 
 ### 7. Metadata Directory and Records
 

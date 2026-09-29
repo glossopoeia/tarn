@@ -71,6 +71,35 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §6.4: the Note's last sentence; `[R-CNT-10]` in five sentences
+
+- **Commit:** `Readable: §6.4 — accounting Note's close; transport rules in
+  five sentences; R-CNT-10 listed` (the commit carrying this entry).
+  Previous: `f60d1a9`.
+- **Sections:** §6.4, the Note and the closing paragraph.
+- **Edits.**
+  1. The Note's last sentence, "That is the invariant this section exists
+     to make legible, and the request counts are what it costs a reader
+     that fetches exactly what it needs.", becomes "That working set is
+     what this section describes; the request counts are only what
+     fetching exactly that costs."
+  2. `[R-CNT-10]`: "MUST handle a 200 response to a range request (HTTP's
+     terms, RFC 9110, where the transport is HTTP; abort or accept the
+     full body deliberately — never treat the body prefix as the requested
+     range) and SHOULD fall back …" becomes three sentences: the MUST with
+     what handling is after a colon ("it aborts, or accepts the full body
+     deliberately, and never treats the body's prefix as the requested
+     range"); "The terms are HTTP's (RFC 9110), where the transport is
+     HTTP."; the SHOULD with its consequence after a semicolon. The
+     transport-authoritative sentence's parenthesis becomes a colon list,
+     and its second half a sentence of its own. Five keyword clauses
+     verbatim.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-CNT-10`, listed (twenty-five in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×25 (one new); `KEYWORD_COUNT SHOULD`
+  46/47, `TERM_TEXT_CHANGED` ×8 and `HEADINGS` carried.
+- **Questions raised:** none.
+
 ### 2026-09-29 — §6.2, §6.3: the maintainer's second batch, reviewed; the flags paragraph re-cut
 
 - **Commit:** `Readable: §6.2, §6.3 — maintainer's edits, reviewed; flags
