@@ -82,6 +82,34 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §7.3: `[R-CNT-22]`, registry-fixed flags
+
+- **Commit:** `Readable: §7.3 — fixed-flags rule without its analogy or its
+  dash aside; R-CNT-22 listed` (the commit carrying this entry). Previous:
+  `7f89555`.
+- **Sections:** §7.3, `[R-CNT-22]`'s paragraph. 14 lines to 11.
+- **Edits.** "A reader MUST apply a known type's specified semantics
+  regardless of its stored MU and PE bits — a flipped stored bit never
+  changes conforming behavior — and a verifier MUST treat the mismatch …"
+  becomes two sentences: the reader's MUST with the aside after a colon,
+  and "A verifier MUST treat the mismatch as a validity error at the
+  record's governing scope; unreported, …". The three MUSTs are verbatim.
+- **Removed restatements** (checked by rule): the closing clause ",
+  exactly as they do for `[R-CNT-12]`'s reserved-flag and MU = 1 / PE = 0
+  violations, whose detection this specification likewise assigns to the
+  verifier" → `[R-CNT-12]` ("Both writer violations make the file
+  nonconforming (`[R-CNF-05]`) while leaving conforming behavior
+  unchanged, so their detection is a verifier's: a verifier MUST treat a
+  nonzero reserved flag bit or the MU = 1 with PE = 0 combination as a
+  validity error at the record's governing scope").
+- **Reworded IDs:** `R-CNT-22`, listed (thirty-five in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×35 (one new); the Appendix B row,
+  `KEYWORD_COUNT SHOULD` 46/47, `TERM_TEXT_CHANGED` ×8 and `HEADINGS`
+  carried.
+- **Outstanding from the §7 first pass:** `[R-CNT-18]`.
+- **Questions raised:** none. `[R-CNT-12]` and its Note were read by the
+  maintainer and left as they are.
+
 ### 2026-09-29 — §7.2: `[R-CNT-15]`, the unknown record type, in sentences
 
 - **Commit:** `Readable: §7.2 — unknown record type rule in sentences;

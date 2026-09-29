@@ -930,19 +930,16 @@ All other type values are unassigned (registry and experimental
 ranges: §10).
 
 For the record types this specification registers, writers MUST emit
-exactly the flag values fixed in the table above. A reader MUST apply
-a known type's specified semantics regardless of its stored MU and PE
-bits — a flipped stored bit never changes conforming behavior — and a
-verifier MUST treat the mismatch as a validity error at the record's
-governing scope; unreported, a writer defect propagates silently to
-consumers that do not know the type. Stored
-flag bits are authoritative only for record types the consuming tool
-does not implement (`[R-CNT-15]`). A stored-flag mismatch on a
-registered type makes the file nonconforming (`[R-CNF-05]`);
-conforming readers nevertheless process the record under the fixed
-semantics, exactly as they do for `[R-CNT-12]`'s reserved-flag and
-MU = 1 / PE = 0 violations, whose detection this specification
-likewise assigns to the verifier. `[R-CNT-22]`
+exactly the flag values fixed in the table above. A reader MUST apply a
+known type's specified semantics regardless of its stored MU and PE
+bits: a flipped stored bit never changes conforming behavior. A verifier
+MUST treat the mismatch as a validity error at the record's governing
+scope; unreported, a writer defect propagates silently to consumers that
+do not know the type. Stored flag bits are authoritative only for record
+types the consuming tool does not implement (`[R-CNT-15]`). A
+stored-flag mismatch on a registered type makes the file nonconforming
+(`[R-CNF-05]`); conforming readers nevertheless process the record under
+the fixed semantics. `[R-CNT-22]`
 
 Metadata compression exists only at record granularity: the directory
 and the tile-index region are always raw (the index so that it can be
