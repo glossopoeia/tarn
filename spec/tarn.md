@@ -871,37 +871,33 @@ record's governing scope. `[R-CNT-12]`
 > updater that does not implement an MU = 1 record's type never drops
 > the record, alone or with the scope it governs (§20.4).
 
-The **extent slot** (extent_offset, extent_length): (0, 0) means no
-extent. Any other combination with either half zero, an
-extent_offset < 16, an extent extending past F − 64, or an
-overflowing sum — extent_offset + extent_length is a
-declaration-derived quantity under `[R-ENC-04]` — is a validity error
-at the scope the record governs
-(§7.3): the layer for a layer record and for sub-records, the file for
-other top-level records — a malformed slot on a layer record is
-therefore reject-layer, consistent with `[R-CNT-17]`. For a record
-with MU = 0, the extent slot is its only sanctioned reference to bytes
-outside the record sequence: neither its inline payload nor its extent
-contents encode offsets or lengths of other file bytes — this is what
-lets a rewriter relocate an unknown ancillary's extent without
-parsing it (§20). The layer record is the one exception, and this
-specification's own: its tile index (§15), whose entries reference
-stored-tile extents, is defined here, and every conforming reader and
-updater implements the type (`[R-CNF-03]`, `[R-CNF-11]`), so none meets it as an
-unknown ancillary. Records with MU = 1 carry further references only
-where this specification or registry review (§10) defines them.
-Extents are owned exactly once: within the
-live committed state — all structures reachable from the live trailer,
-whichever generation's commit appended them — no two extent slots and
-no two structures overlap; a verifier MUST treat an intra-layer
-overlap — including a stored extent overlapping its own layer's index
-region or sub-record extents — as reject-layer, any overlap
-across layers or touching another scope's structures as reject-file,
-and any overlap between two structures neither of which belongs to a
-layer as reject-file
-(readers are not
-obligated to detect overlap, which requires whole-directory
-knowledge). `[R-CNT-13]`
+The **extent slot** is the pair (extent_offset, extent_length); (0, 0)
+means no extent. Any other combination with either half zero, an
+extent_offset < 16, an extent extending past F − 64, or an overflowing
+sum is a validity error at the scope the record governs (§7.3): the
+layer for a layer record and for sub-records, the file for other
+top-level records. The sum extent_offset + extent_length is a
+declaration-derived quantity under `[R-ENC-04]`. A malformed slot on a
+layer record is therefore reject-layer, consistent with `[R-CNT-17]`.
+For a record with MU = 0, the extent slot is its only sanctioned
+reference to bytes outside the record sequence: neither its inline
+payload nor its extent contents encode offsets or lengths of other file
+bytes, which is what lets a rewriter relocate an unknown ancillary's
+extent without parsing it (§20). The layer record is the one exception,
+and this specification's own: its tile index (§15), whose entries
+reference stored-tile extents, is defined here, and every conforming
+reader and updater implements the type (`[R-CNF-03]`, `[R-CNF-11]`), so
+none meets it as an unknown ancillary. Records with MU = 1 carry further
+references only where this specification or registry review (§10)
+defines them. Extents are owned exactly once: no two extent slots and no
+two structures of the live committed state overlap (§5.2, `[R-CNT-02]`).
+A verifier MUST treat an intra-layer overlap as reject-layer, a stored
+extent overlapping its own layer's index region or sub-record extents
+included; any overlap across layers or touching another scope's
+structures as reject-file; and any overlap between two structures
+neither of which belongs to a layer as reject-file. Readers are not
+obligated to detect overlap, which requires whole-directory knowledge.
+`[R-CNT-13]`
 
 Record semantics MUST NOT depend on record order: readers MUST NOT
 infer meaning from the position of a record within the sequence, and

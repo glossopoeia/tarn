@@ -33,3 +33,4 @@ R-SEC-05: shares the paragraph with R-SEC-06; its own sentence is verbatim
 R-SEC-06: its citation re-pointed from §7.1 to §7.3; the MUST NOT verbatim
 R-PRV-03: its citation of the quarantine re-pointed from §7.1 to §7.3; nothing else
 R-CNT-11: the region's contents stated first (the record sequence in its first dir_length − 4 bytes, a CRC-32C over them in its final 4) where A gave the CRC first; 'always raw' its own sentence; the MUST and the owning scope verbatim
+R-CNT-13: the extent-slot paragraph re-cut without dashes; the inline definition of the live committed state and the no-overlap statement reduced to a pointer at §5.2 [R-CNT-02], which defines both; the verifier's MUST with its three outcomes verbatim, its 'including …' clause following the outcome; the reader sentence out of its parenthesis

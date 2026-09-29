@@ -82,6 +82,39 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-09-29 — §7.2: `[R-CNT-13]`, the extent slot, re-cut
+
+- **Commit:** `Readable: §7.2 — extent slot paragraph re-cut; its
+  restatement of §5.2 made a pointer; R-CNT-13 listed` (the commit carrying
+  this entry). Previous: `0af72b6`.
+- **Sections:** §7.2, `[R-CNT-13]`'s paragraph. 31 lines to 28.
+- **Edits.** The five dash asides become sentences or clauses: the sum's
+  designation under `[R-ENC-04]`; "A malformed slot on a layer record is
+  therefore reject-layer"; "which is what lets a rewriter relocate an
+  unknown ancillary's extent without parsing it". The verifier's MUST keeps
+  its three outcomes and their order, with "including a stored extent
+  overlapping its own layer's index region or sub-record extents" placed
+  after "as reject-layer" and ending "included". "(readers are not
+  obligated to detect overlap, …)" becomes a sentence.
+- **Removed restatements** (checked by rule; the maintainer asked whether
+  the paragraph's end was the defining statement or a copy):
+  - "within the live committed state — all structures reachable from the
+    live trailer, whichever generation's commit appended them — no two
+    extent slots and no two structures overlap" → §5.2 `[R-CNT-02]`, which
+    defines the live committed state and states "No two of them overlap";
+    `[R-CNT-13]` now reads "no two extent slots and no two structures of
+    the live committed state overlap (§5.2, `[R-CNT-02]`)". `86162e0`,
+    Batch 3 (ADR-0029 to ADR-0032). What `[R-CNT-13]` alone defines is the
+    outcome an overlap draws, and register rows F33 and L18 name it as
+    their governing rule; that sentence is verbatim.
+- **Reworded IDs:** `R-CNT-13`, listed (thirty-two in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×32 (one new); the Appendix B row,
+  `KEYWORD_COUNT SHOULD` 46/47, `TERM_TEXT_CHANGED` ×8 and `HEADINGS`
+  carried.
+- **Outstanding from the §7 first pass:** `[R-CNT-14]`, `[R-CNT-22]`,
+  `[R-CNT-18]`.
+- **Questions raised:** none.
+
 ### 2026-09-29 — §7.1: the directory region says what it holds
 
 - **Commit:** `Readable: §7.1 — directory region's contents stated first;
