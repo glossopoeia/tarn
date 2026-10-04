@@ -996,15 +996,15 @@ payload is, in order:
 | sub-records | zero or more records (§7.2 framing) to the end of the inline payload | layer scope by containment |
 
 The owning scope of a layer record's inline payload is the layer.
-Writers MUST NOT emit a field violating a constraint in the table
-above; a reader MUST treat any such violation — including a reserved
-or unassigned layout, codec, filter, index_encoding, or channel-type
-value (the value sets are §14, §17, §15, and §12's subjects), a
-nonzero A_slab with S = 0, a fill whose byte length differs from its
-type's element size, or a nonzero crc_of_crc_array with
-entry_count = 0 — as a validity error at layer scope, except where
-another rule assigns a different scope (a duplicate layer name is file
-scope, `[R-ENC-15]`). `[R-CNT-23]`
+Writers MUST NOT emit a field violating a constraint in the table above.
+A reader MUST treat any such violation as a validity error at layer
+scope, except where another rule assigns a different scope (a duplicate
+layer name is file scope, `[R-ENC-15]`). Such violations include a
+reserved or unassigned layout, codec, filter, index_encoding, or
+channel-type value (the value sets are §14, §17, §15, and §12's
+subjects), a nonzero A_slab with S = 0, a fill whose byte length differs
+from its type's element size, and a nonzero crc_of_crc_array with
+entry_count = 0. `[R-CNT-23]`
 
 Declaring both A ≠ 0 and S ≠ 0 is a validity error at layer scope: the
 per-tile alignment and slab declarations are mutually exclusive

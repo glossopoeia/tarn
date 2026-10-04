@@ -82,6 +82,32 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-10-04 — §7.4: `[R-CNT-23]`, the table's constraints, in sentences
+
+- **Commit:** `Readable: §7.4 — table-constraint rule in three sentences;
+  R-CNT-23 listed` (the commit carrying this entry). Previous: `d75a28b`.
+- **Sections:** §7.4, `[R-CNT-23]`'s paragraph.
+- **Edits.** "Writers MUST NOT emit a field violating a constraint in the
+  table above; a reader MUST treat any such violation — including [four
+  cases] — as a validity error at layer scope, except where another rule
+  assigns a different scope (a duplicate layer name is file scope,
+  `[R-ENC-15]`)." becomes three sentences: the MUST NOT; the MUST with
+  its exception; "Such violations include a reserved or unassigned
+  layout, codec, filter, index_encoding, or channel-type value (…), a
+  nonzero A_slab with S = 0, a fill whose byte length differs from its
+  type's element size, and a nonzero crc_of_crc_array with entry_count =
+  0." The four cases, their order and their status as inclusions are
+  unchanged ("or" before the last becomes "and" under "include"). The
+  maintainer named the paragraph as R-CNT-32; no such ID exists, and the
+  one-sentence paragraph under the layer record's table is this one.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-CNT-23`, listed (thirty-six in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×36 (one new); the Appendix B row,
+  `KEYWORD_COUNT SHOULD` 46/47, `TERM_TEXT_CHANGED` ×8 and `HEADINGS`
+  carried.
+- **Outstanding from the §7 first pass:** `[R-CNT-18]`.
+- **Questions raised:** none.
+
 ### 2026-09-29 — §7.3: `[R-CNT-22]`, registry-fixed flags
 
 - **Commit:** `Readable: §7.3 — fixed-flags rule without its analogy or its
