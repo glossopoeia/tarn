@@ -79,6 +79,20 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   (`[R-CNT-08]`, stated also by `[R-WRT-06]`: a cut there tests restraint,
   a flip tests reach); "never treats the body's prefix as the requested
   range" (`[R-CNT-10]`).
+- **§7** (declared done 2026-10-05): every rule paragraph but `[R-CNT-12]`
+  and `[R-CNT-16]`/`[R-CNT-17]` reworded (`9a67884` through `4b0d01f`);
+  `[R-CNT-25]` moved from §7.1 to the end of §7.3 in two paragraphs, the
+  first without an ID; four citations re-pointed; `R-CNT-11`, `-13`,
+  `-14`, `-15`, `-18`, `-22`, `-23`, `-25`, `R-MTA-01`, `R-SEC-05`,
+  `R-SEC-06`, `R-PRV-03` listed; the tables, the Example and both Notes
+  untouched. Candidate seeds: "an extent slot of (0, 0) or an
+  extent_length less than 5" (the ID-less paragraph; rows F21, F22, L10,
+  L11 restate it, so a flip there tests reach against the register); "The
+  quarantine overrides the owning-scope mapping" (`[R-CNT-25]`);
+  "including none (§21.6)" (`[R-CNT-14]`, a pointer whose target states
+  the rule); "MU = 1 is reject-file, and MU = 0 is ignore-record"
+  (`[R-CNT-15]`); "With MU = 0 an unknown sub-record type is
+  ignore-record" (`[R-CNT-18]`).
 
 ## Entries
 
