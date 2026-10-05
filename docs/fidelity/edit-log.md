@@ -82,6 +82,37 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-10-05 — §7.4: `[R-CNT-18]`, parsing and sub-records, in nine sentences
+
+- **Commit:** `Readable: §7.4 — inline-payload parsing and sub-record rules
+  in nine sentences; R-CNT-18 listed` (the commit carrying this entry).
+  Previous: `566330d`.
+- **Sections:** §7.4, `[R-CNT-18]`'s paragraph.
+- **Edits.** The first sentence (a colon and two semicolons) becomes four:
+  "The inline payload MUST parse exactly."; the packing sentence; the two
+  MUST clauses on what lies within the payload and how the rest parses;
+  "Any overrun, truncation, or residue is a validity error at layer
+  scope." The second (a semicolon, a parenthesis, two "and"s, a dash and
+  another semicolon) becomes four: "Sub-records are layer-scope records.";
+  the nesting MUST NOT with its parenthesis; the MU = 1 case with "a
+  reader MUST NOT reject the file for it" and the `[R-CNF-12]` reservation
+  after a semicolon in place of the dash; "With MU = 0 an unknown
+  sub-record type is ignore-record." for "with MU = 0 it is
+  ignore-record". The known-type sentence's dash pair becomes
+  parentheses. Three MUSTs and two MUST NOTs verbatim. "Unknown sub-record
+  type" is kept at the maintainer's word, `[R-CNT-15]`'s spelling-out not
+  being repeated here.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-CNT-18`, listed (thirty-seven in all).
+- **Soft items:** `ID_REWORDED_LISTED` ×37 (one new); the Appendix B row,
+  `KEYWORD_COUNT SHOULD` 46/47, `TERM_TEXT_CHANGED` ×8 and `HEADINGS`
+  carried.
+- **The §7 first pass is complete**: `[R-CNT-25]`, `-13`, `-14`, `-22`,
+  `-18`, with `[R-CNT-11]`, `-15` and `-23` added along the way.
+  `[R-CNT-12]` with its Note and the `[R-CNT-16]`/`[R-CNT-17]` paragraph
+  were read by the maintainer and left as they are.
+- **Questions raised:** none.
+
 ### 2026-10-04 — §7.4: `[R-CNT-23]`, the table's constraints, in sentences
 
 - **Commit:** `Readable: §7.4 — table-constraint rule in three sentences;

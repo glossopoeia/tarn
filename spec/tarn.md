@@ -1015,21 +1015,21 @@ entry_count × 20 + ⌈entry_count / 2¹⁶⌉ × 4 (and 0 when entry_count is
 geometry-derived addressed-tile count, is a validity error at layer
 scope. `[R-CNT-17]`
 
-The inline payload MUST parse exactly: fields are packed in table
-order with no alignment or padding between them; the fixed fields,
-the d dimension entries, the C channel entries, and the trailing
-fixed fields MUST lie entirely within the inline payload, and the
-remaining bytes MUST parse as zero or more complete sub-records under
-§7.2's framing with no residue; any overrun, truncation, or residue
-is a validity error at layer scope. Sub-records are layer-scope records; a
-sub-record MUST NOT itself contain records (nesting depth beyond two
-is a validity error at layer scope), and an unknown sub-record type
-with MU = 1 is reject-layer, and where the file is otherwise
-conforming a reader MUST NOT reject the file for it — on a
-nonconforming file `[R-CNF-12]`'s licence to reject on any detected
-violation is untouched; with MU = 0 it is ignore-record. A *known* type appearing where §7.3's table does not
-scope it — a layer record nested as a sub-record, say — is a
-validity error at layer scope, not an unknown type. `[R-CNT-18]`
+The inline payload MUST parse exactly. Fields are packed in table order
+with no alignment or padding between them. The fixed fields, the d
+dimension entries, the C channel entries, and the trailing fixed fields
+MUST lie entirely within the inline payload, and the remaining bytes
+MUST parse as zero or more complete sub-records under §7.2's framing
+with no residue. Any overrun, truncation, or residue is a validity error
+at layer scope. Sub-records are layer-scope records. A sub-record MUST
+NOT itself contain records (nesting depth beyond two is a validity error
+at layer scope). An unknown sub-record type with MU = 1 is reject-layer,
+and where the file is otherwise conforming a reader MUST NOT reject the
+file for it; on a nonconforming file `[R-CNF-12]`'s licence to reject on
+any detected violation is untouched. With MU = 0 an unknown sub-record
+type is ignore-record. A *known* type appearing where §7.3's table does
+not scope it (a layer record nested as a sub-record, say) is a validity
+error at layer scope, not an unknown type. `[R-CNT-18]`
 
 > **Example — a complete layer record payload.** A rank-1 layer named
 > `sst`: dimension `x` with extent 100 and tile extent 32; one
