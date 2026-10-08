@@ -137,6 +137,81 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-08 — §9, first pass: five dense paragraphs re-cut
+
+- **Commit:** `Readable: §9 — first pass: five dense paragraphs re-cut;
+  R-LIF-02, -03, -04, -06, -08 listed` (the commit carrying this entry).
+  Previous: `5220d1a` (spec), `8fa607d` (log: round 1's rulings).
+- **Sections:** §9.2 (`[R-LIF-02]`), §9.3 (`[R-LIF-03]`), §9.4
+  (`[R-LIF-04]`), §9.6 (`[R-LIF-06]`), §9.7 (`[R-LIF-08]`). §9 was
+  byte-identical to A before this commit. Proposed with before, after and
+  inventory per paragraph (`scratch/cleanroom/proposals/s9-first-pass.md`),
+  approved whole by the maintainer, list form and splits included.
+- **Edits.**
+  1. §9.2's commit protocol: the six steps set as a numbered list, each
+     step's words and number kept; the three dash asides made clauses or a
+     parenthesis ("zeroed by advice (`[R-CNT-03]`)"); "(file-scope or
+     layer-scope)" reads "at file scope or layer scope". "MUST, in order"
+     and the strict-increase sentence verbatim. The ID now governs the
+     closing sentence; the steps are list items the inventory tool does
+     not watch, the shape of `[R-CNT-21]`'s split.
+  2. §9.3's first paragraph: one sentence made five. The two trailer
+     values first; the file_id's SHOULD and its collision reason a
+     sentence of their own; the strict increase; the immutability
+     consequence; the three revalidation outcomes as a colon list ("the
+     same F, and everything cached remains valid; a higher F, and the
+     directory is refetched; a different file_id or a lower F, and the
+     file is treated as a different file"). The SHOULD verbatim.
+  3. §9.4: the torn sentence split at its colon; "(directly, or by
+     recovery whose output has been re-verified)" a clause; "— so that …"
+     reads "Either way, …". The three MUST clauses verbatim.
+  4. §9.6's first paragraph, 411 words and eight dashes, made four
+     paragraphs: the probe and the candidate (the reader aside its own
+     sentence with a pointer to §9.5); enumeration against coverage
+     verification and "no verdict turns on the probe"; the two cautions,
+     numbered First and Second, with the expected-length argument; the
+     start offset and the report. Both MUSTs, "Two cautions are normative
+     for tools" and the candidate definition verbatim; the sentence order
+     is A's. The ID governs the fourth paragraph; the two MUST clauses
+     stand in the third, an ID-less normative paragraph.
+  5. §9.7's walk paragraph, 435 words, made four paragraphs: the
+     claimants; the checks and slack; decoding and certification; the
+     incomplete walk. The parenthesis on the structural entry became two
+     sentences; "It checks" reads "The verifier checks … these claimants";
+     the "Where the walk does not complete — … —" aside became two
+     sentences, the cases first ("The walk does not complete where …, where
+     …, or where …") and the partial total second. The MUST NOT, "reports
+     that check unmade and cannot certify (`[R-CNF-11]`, `[R-ERR-04]`)" and
+     both `[R-IDX-03]` sentences verbatim. The ID governs the fourth
+     paragraph; the MUST NOT stands in the third.
+- **Removed restatements:** none. One duplicate pointer dropped: §9.7's
+  "(§8.1)" closing the sentence that already says "where §8.1's map states
+  one"; `0d7ab60`-era text, no ADR needed for a repeated pointer. §9.7 is
+  the surviving statement of three §5.2 cuts (the entry for 2026-09-28):
+  "contributes no stored extent to the walk", "does not make the walk
+  incomplete …" and the incomplete-walk cases; the first two stand
+  verbatim, the third in two sentences with the same three cases and the
+  same consequence. Every cross-reference into §9 (§9.3 ×11, §9.7 ×10, §9.6
+  ×9, §9.1, §9.2, §9.5) points at a subsection, and every subsection and
+  heading stands.
+- **Reworded IDs:** `R-LIF-02`, `R-LIF-03`, `R-LIF-04`, `R-LIF-06`,
+  `R-LIF-08`, listed with the reasons above. Each paragraph decides what
+  it decided: the ordered protocol and its strict increase; the file_id's
+  source, the ordering and the cache contract; establishing F and the
+  truncate-or-overwrite duty; the probe, the candidate, the two cautions
+  and the report; the walk's claimants, checks, slack, certification bar
+  and partial total.
+- **Soft items:** `ID_REWORDED_LISTED` ×44 (the five new); `TERM_TEXT_CHANGED`
+  ×8, `TABLE_ROW_ONLY_IN_A`/`_B` 1 each (Appendix B's user-metadata row's
+  section cell), `HEADINGS` 130 in A against 129 in B (§3.3), SHOULD 46
+  against 47 (`[R-CNT-26]`), all carried. Keyword counts otherwise
+  unchanged. B is 4,854 lines and 48,624 words against A's 4,981 and
+  49,821; the first pass adds 7 lines and 18 words to §9 and removes its
+  22 em-dashes in these paragraphs.
+- **Questions raised:** none. Held for the maintainer's specifics: §9.2's
+  second Note and §9.3's first Note both argue the strict increase; §9.3's
+  three Notes; the Example; §9.1 and §9.5 untouched.
+
 ### 2026-10-08 — §8: the coverage map stands on its own; the chain's outcomes without arrows
 
 - **Commit:** `Readable: §8 — coverage map's exceptions stated in full,

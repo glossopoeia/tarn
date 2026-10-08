@@ -1143,20 +1143,23 @@ of the structures this section defines is the file.
 
 #### 9.2 The commit protocol
 
-A writer performing a commit MUST, in order: (1) begin writing at
-exactly F (§9.4); (2) append new stored-tile payloads and tile-index
-regions for the layers it changes, and any new record extents
-(file-scope or layer-scope), in any order satisfying §5.2's coverage
-classes; (3) append the new complete directory — re-emitting every
-retained record per §20's preservation rules — followed by its CRC;
-(4) make steps 1–3 durable (a storage barrier such as fdatasync, or
-the platform equivalent needed to order writes against power loss);
-(5) append the pad to the next 64-byte boundary — zeroed by advice,
-`[R-CNT-03]` — and the new trailer, with committed_file_length equal
-to the new end; (6) make the trailer durable. A commit's
-committed_file_length is strictly greater than the prior trailer's,
-by at least 128, so the committed file length orders a file's
-generations (§9.3). `[R-LIF-02]`
+A writer performing a commit MUST, in order:
+
+1. begin writing at exactly F (§9.4); 2. append the new stored-tile
+   payloads and tile-index regions of the layers it changes, and any
+   new record extents at file scope or layer scope, in any order
+   satisfying §5.2's coverage classes; 3. append the new complete
+   directory, re-emitting every retained record per §20's preservation
+   rules, followed by its CRC; 4. make steps 1 to 3 durable, with a
+   storage barrier such as fdatasync or the platform equivalent needed
+   to order writes against power loss; 5. append the pad to the next
+   64-byte boundary, zeroed by advice (`[R-CNT-03]`), and the new
+   trailer, with committed_file_length equal to the new end; 6. make
+   the trailer durable.
+
+A commit's committed_file_length is strictly greater than the prior
+trailer's, by at least 128, so the committed file length orders a
+file's generations (§9.3). `[R-LIF-02]`
 
 Steps 4 and 6 bind a writer's **conduct** rather than its output, and
 are declared so here on the model `[R-CNF-02]` states: a barrier
@@ -1222,21 +1225,22 @@ the strict increase above binds from the second commit onward.
 
 #### 9.3 Generations, file_id, caching
 
-Each commit's trailer carries the committed file length F of the
-generation it commits and the file_id chosen at creation (nonzero;
-the creating writer SHOULD draw it from a cryptographically random
-source — a predictable or reused file_id lets two distinct files
-collide in the (file_id, range)-keyed caches this rule licenses,
-serving bytes from the wrong file). Within one file_id, F strictly
-increases per commit — by at least 128 (`[R-LIF-02]`) — so it orders
-that file's generations and identifies each of them. Because
+Each commit's trailer carries two values: the committed file length F
+of the generation it commits, and the file_id chosen at creation. The
+file_id is nonzero, and the creating writer SHOULD draw it from a
+cryptographically random source: a predictable or reused file_id lets
+two distinct files collide in the (file_id, range)-keyed caches this
+rule licenses, serving bytes from the wrong file. Within one file_id,
+F strictly increases per commit, by at least 128 (`[R-LIF-02]`), so it
+orders that file's generations and identifies each of them. Because
 committed bytes are immutable, any byte range fetched under the
-generation whose committed file length is F remains byte-correct
-under every later generation of the same file_id: caches keyed
-(file_id, range) never invalidate, and revalidation is one 64-byte
-trailer read — same F, everything cached remains valid; higher F,
-refetch the directory; different file_id or lower F, treat as a
-different file. `[R-LIF-03]`
+generation whose committed file length is F remains byte-correct under
+every later generation of the same file_id. Caches keyed (file_id,
+range) therefore never invalidate, and revalidation is one 64-byte
+trailer read with three outcomes: the same F, and everything cached
+remains valid; a higher F, and the directory is refetched; a different
+file_id or a lower F, and the file is treated as a different file.
+`[R-LIF-03]`
 
 > **Note.** The strict increase is what makes that revalidation
 > sound, and §9.2's second Note is what makes it checkable: no two
@@ -1274,16 +1278,15 @@ different file. `[R-LIF-03]`
 A writer beginning a commit against an existing file MUST establish F
 by validating the trailer in the final 64 bytes of the physical file
 (§6.2). If that validation fails, the file is torn: the writer MUST
-NOT append, and locating the last committed state is the deliberate
-recovery operation of §9.6 — never an implicit step of opening for
-append. Once F is established (directly, or by recovery whose output
-has been re-verified), a writer whose physical file is longer than F
+NOT append. Locating the last committed state is then the deliberate
+recovery operation of §9.6, never an implicit step of opening for
+append. Once F is established, directly or by a recovery whose output
+has been re-verified, a writer whose physical file is longer than F
 MUST either truncate to F before step 1 of `[R-LIF-02]`, or overwrite
-from F and truncate the physical file to the new
-committed_file_length no later than step 6 — so that after any commit
-completes, the physical file length equals committed_file_length, and
-bytes beyond a committed length never survive into any committed
-state. `[R-LIF-04]`
+from F and truncate the physical file to the new committed_file_length
+no later than step 6. Either way, after any commit completes the
+physical file length equals committed_file_length, and bytes beyond a
+committed length never survive into any committed state. `[R-LIF-04]`
 
 #### 9.5 Concurrency and the default read path
 
@@ -1315,44 +1318,48 @@ backward. `[R-LIF-05]`
 
 #### 9.6 Recovery scan (not a reader behavior)
 
-Recovery tools and verifiers — never conforming readers on the default
-path — locate commit states as follows: probe backward at 64-aligned
-offsets o for the trailer magic; on a match, require the trailer CRC
-to verify and committed_file_length = o + 64 — a match satisfying
-both is a **candidate**, and one failing either is not. The
-nearest-to-end candidate that survives the whole-file re-verification
-below is the last committed state; truncating to it recovers the
-file. A recovery tool enumerating a file's commit states continues
-the same probe to offset 0; coverage verification does not (§9.7,
+Recovery tools and verifiers locate commit states as follows. A
+conforming reader on the default path never does (§9.5). Probe
+backward at 64-aligned offsets o for the trailer magic. On a match,
+require the trailer CRC to verify and committed_file_length = o + 64:
+a match satisfying both is a **candidate**, and one failing either is
+not. The nearest-to-end candidate that survives the whole-file
+re-verification below is the last committed state, and truncating to
+it recovers the file.
+
+A recovery tool enumerating a file's commit states continues the same
+probe to offset 0. Coverage verification does not (§9.7,
 `[R-LIF-08]`), and no verdict turns on the probe: a file whose final
 64 bytes are not a valid trailer fails `[R-CNT-06]`'s gates on the
-bytes handed over (§21.2 rows F8, F14 and F17 — the magic, the
-trailer CRC and the length cross-check), and the earlier state the
-probe finds is a different artifact, reached only through the
-whole-file re-verification below. For a verifier the probe is
-diagnosis — which commit state is recoverable — not a finding about
-the file it was given. Two cautions are normative for
-tools: a tile payload can deliberately contain a byte string that
-mimics a valid trailer, so recovery output MUST be re-verified as a
-whole file (§8) before being trusted; and truncation of a file to an
-earlier commit boundary is indistinguishable in-format from that
-earlier version — rollback detection requires out-of-band state, and
-no field of this format supplies it. An expected committed file
-length is not a substitute: placement within a commit is free
-(`[R-SLB-05]`) and slack is unconstrained (`[R-CNT-21]`), so a party
-that truncates to an earlier commit and re-appends can bring the file
-back to any committed file length at or above the expected one while
-serving the rolled-back content. What still works is state the file
-cannot manufacture: a detached hash over the committed prefix, or an
-append-only transport that refuses a shortened object. A signed
-committed file length is not among them — the value is exactly what
-the re-append reproduces. The probe begins at the
-largest 64-aligned offset o with o + 64 ≤ the physical file length; a
-candidate whose whole-file re-verification fails was not a commit
-state, so the tool continues the probe past it, and MUST report the
-candidate it settled on and how many candidates it rejected on that
-re-verification, or, where no candidate survived it, that none did
-and how many it rejected. `[R-LIF-06]`
+bytes handed over (§21.2 rows F8, F14 and F17, the magic, the trailer
+CRC and the length cross-check), and the earlier state the probe finds
+is a different artifact, reached only through the whole-file
+re-verification below. For a verifier the probe is diagnosis, saying
+which commit state is recoverable, and not a finding about the file it
+was given.
+
+Two cautions are normative for tools. First, a tile payload can
+deliberately contain a byte string that mimics a valid trailer, so
+recovery output MUST be re-verified as a whole file (§8) before being
+trusted. Second, truncation of a file to an earlier commit boundary is
+indistinguishable in-format from that earlier version: rollback
+detection requires out-of-band state, and no field of this format
+supplies it. An expected committed file length is not a substitute.
+Placement within a commit is free (`[R-SLB-05]`) and slack is
+unconstrained (`[R-CNT-21]`), so a party that truncates to an earlier
+commit and re-appends can bring the file back to any committed file
+length at or above the expected one while serving the rolled-back
+content. What still works is state the file cannot manufacture: a
+detached hash over the committed prefix, or an append-only transport
+that refuses a shortened object. A signed committed file length is not
+among them, since the value is exactly what the re-append reproduces.
+
+The probe begins at the largest 64-aligned offset o with o + 64 ≤ the
+physical file length. A candidate whose whole-file re-verification
+fails was not a commit state, so the tool continues the probe past it,
+and MUST report the candidate it settled on and how many candidates it
+rejected on that re-verification, or, where no candidate survived it,
+that none did and how many it rejected. `[R-LIF-06]`
 
 Writers performing very large single commits SHOULD emit intermediate
 checkpoint commits (a directory and trailer mid-stream, ~a few KiB
@@ -1363,51 +1370,51 @@ append is recoverable only by scanning back across its entire length.
 #### 9.7 Coverage verification
 
 A verifier checking `[R-CNT-02]`'s partition walks the live state
-only. From the live trailer it reads the live directory
-and, through its records and their sub-records, reaches the claimants
-`[R-CNT-02]` names: the directory itself, each record's extent, and
-the stored extent of each non-sentinel tile-index entry (an entry
-`[R-IDX-03]` classifies reject-tile on a *structural* ground
-contributes no stored extent to the walk; one whose stored bytes
-alone fail its crc keeps its extent). A record is not a claimant of
-its own — its header and inline payload lie inside the directory
-region, which is the claimant covering them — so reaching a record
-through the directory is traversal, not a second claim on those
-bytes. A layer
-record's extent slot addresses that layer's tile-index region (§7.4),
-so the region enters the walk once, as that record's extent, and is
-not a second claimant beside it. It checks that these occupy disjoint
-byte ranges, that
-each lies within
-[16, F − 64), and that each verifies against the checksum covering
-it, where §8.1's map states one (§8.1). The front signature block at
-[0, 16) and the live trailer at [F − 64, F) are claimed by the walk as
-well, being members of the live committed state (`[R-CNT-02]`); the
-[16, F − 64) bound above already
-keeps every other claimant disjoint from them. Bytes the walk does not
-reach are slack: the verifier sums them and reports the total, and
-their content is not its concern. A verifier that certifies decodes
-every stored tile, whatever content obligations §14 places on the
-layer: §21.4's codec rows are file-conformance violations, and a
-verifier MUST NOT certify past a violation it has not looked for;
-one that declines a tile's decode on resource grounds reports that
-check unmade and cannot certify (`[R-CNF-11]`, `[R-ERR-04]`). A user-metadata
-document under an experimental-range encoding asks nothing of this
-walk: no
-rule attaches to its content (`[R-MTA-10]`), so there is no
-violation there to look for, and what the verifier reports instead
-is that rule's subject. Where the walk does not complete —
-a scope-level rejection blocks enumeration, the verifier declines a
-layer on resource grounds and so never enumerates its claimants
-(`[R-ERR-04]`), or it stops at the first violation (`[R-CNF-11]`) —
-the sum is reported as partial, and
-`[R-CNT-21]` governs what such a total counts and what the verifier
-reports beside it. An entry `[R-IDX-03]` classifies
+only. From the live trailer it reads the live directory and, through
+its records and their sub-records, reaches the claimants `[R-CNT-02]`
+names: the directory itself, each record's extent, and the stored
+extent of each non-sentinel tile-index entry. An entry `[R-IDX-03]`
+classifies reject-tile on a *structural* ground contributes no stored
+extent to the walk; one whose stored bytes alone fail its crc keeps
+its extent. A record is not a claimant of its own: its header and
+inline payload lie inside the directory region, which is the claimant
+covering them, so reaching a record through the directory is
+traversal, not a second claim on those bytes. A layer record's extent
+slot addresses that layer's tile-index region (§7.4), so the region
+enters the walk once, as that record's extent, and is not a second
+claimant beside it.
+
+The verifier checks that these claimants occupy disjoint byte ranges,
+that each lies within [16, F − 64), and that each verifies against the
+checksum covering it, where §8.1's map states one. The front signature
+block at [0, 16) and the live trailer at [F − 64, F) are claimed by
+the walk as well, being members of the live committed state
+(`[R-CNT-02]`); the [16, F − 64) bound already keeps every other
+claimant disjoint from them. Bytes the walk does not reach are slack:
+the verifier sums them and reports the total, and their content is not
+its concern.
+
+A verifier that certifies decodes every stored tile, whatever content
+obligations §14 places on the layer: §21.4's codec rows are
+file-conformance violations, and a verifier MUST NOT certify past a
+violation it has not looked for. One that declines a tile's decode on
+resource grounds reports that check unmade and cannot certify
+(`[R-CNF-11]`, `[R-ERR-04]`). A user-metadata document under an
+experimental-range encoding asks nothing of this walk: no rule
+attaches to its content (`[R-MTA-10]`), so there is no violation there
+to look for, and what the verifier reports instead is that rule's
+subject.
+
+The walk does not complete where a scope-level rejection blocks
+enumeration, where the verifier declines a layer on resource grounds
+and so never enumerates its claimants (`[R-ERR-04]`), or where it
+stops at the first violation (`[R-CNF-11]`). The sum is then reported
+as partial, and `[R-CNT-21]` governs what such a total counts and what
+the verifier reports beside it. An entry `[R-IDX-03]` classifies
 reject-tile on a *structural* ground does not make the walk
-incomplete: the walk passes over
-it, and the bytes of the file it nominally addresses fall to slack
-where no other claimant claims them (§15.3).
-`[R-LIF-08]`
+incomplete: the walk passes over it, and the bytes of the file it
+nominally addresses fall to slack where no other claimant claims them
+(§15.3). `[R-LIF-08]`
 
 > **Note.** Nothing here enumerates prior commits. A verifier
 > certifies what a reader can reach and counts what it cannot, which
