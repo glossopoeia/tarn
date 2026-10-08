@@ -57,6 +57,11 @@ instruction send every LOSS on an approved cut to the maintainer with both
 texts quoted, so all six are listed in full. Triage grouped them exactly so, unanimously, and the
 six loss-refuters stood on all six.
 
+*Ruled 2026-10-08.* The maintainer read all six with both texts and kept
+every cut; the rulings stand in the edit log's round-1 paragraph, one
+sentence per item, and `[R-CNF-02]`'s standing question from calibration 2
+closes with them. B is unchanged.
+
 1. **`[R-CNF-03]`'s experimental-range gloss** (`cmp-verifier-01`, LOSS,
    byte-level; `swab-04`, OBSERVATION). A's conforming-reader item carries a
    dash aside: *"carrying no top-level record of a type it does not implement

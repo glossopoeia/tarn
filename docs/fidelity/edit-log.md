@@ -122,6 +122,19 @@ changed in B by this round. The round found the §4.5 cut of 2026-09-25 and
 its §8.1 restoration lossless, the §7.1 → §7.3 move lossless, and every
 other restatement removal in this log standing where the log says it does.
 
+**The maintainer's rulings, 2026-10-08: all six kept cut** ("Keep all six
+cut; record the rulings in the edit log"). `[R-CNF-03]`'s experimental-range
+aside stays cut: the rule stands at §7.2 `[R-CNT-15]`, rows F35 and F36 and
+§21.6's closing paragraph. `[R-CNF-02]`'s closed enumeration stays cut, and
+the standing question from calibration 2 closes with it: each case is
+declared at its site, §6.3, §6.2 and §20.3 step 4. §3.3's Note and §1's
+roadmap sentence stay cut: the permission stands at §20.1 and §20.4, the
+point at §2.3's updater definition. §2.4's preserve-verbatim bridge stays
+cut: the rules stand at §20.4 `[R-WRT-05]`, the outcome table's own row and
+§21.5. §2.4's reject Note stays cut: §2.1's Note states the principle for
+every requirement. §2.3's three-row reach Note stays cut: the results stand
+in §21.2's lead-in. No edit to B follows from the round.
+
 ## Entries
 
 ### 2026-10-08 — §8: the coverage map stands on its own; the chain's outcomes without arrows
