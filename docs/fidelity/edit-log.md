@@ -93,6 +93,17 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   the rule); "MU = 1 is reject-file, and MU = 0 is ignore-record"
   (`[R-CNT-15]`); "With MU = 0 an unknown sub-record type is
   ignore-record" (`[R-CNT-18]`).
+- **§8** (declared done 2026-10-08): `[R-CNT-19]` and `[R-CNT-20]` reworded
+  (`fe9c082`), the former restoring the terminal- and interior-checksum
+  statements the §4.5 cut had lost; the table, "Verification is not
+  optional" and the Note untouched. Candidate seeds: "covered by no further
+  checksum" and "covered by exactly one further checksum" (`[R-CNT-19]`,
+  each stated once now that §4.5's copy is gone); "a user-metadata extent's
+  CRC, ignore-record" (`[R-CNT-20]`, restated by R2).
+
+Stretches done through §8 on 2026-10-08. The next fidelity run over B is a
+real round, not a calibration: no seeds, `edition_b` the repository's
+`spec/tarn.md` on `readable`, findings under `docs/fidelity/2-round-1/`.
 
 ## Entries
 
