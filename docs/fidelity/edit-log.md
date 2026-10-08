@@ -101,9 +101,26 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   each stated once now that §4.5's copy is gone); "a user-metadata extent's
   CRC, ignore-record" (`[R-CNT-20]`, restated by R2).
 
-Stretches done through §8 on 2026-10-08. The next fidelity run over B is a
-real round, not a calibration: no seeds, `edition_b` the repository's
-`spec/tarn.md` on `readable`, findings under `docs/fidelity/2-round-1/`.
+Stretches done through §8 on 2026-10-08.
+
+**Fidelity round 1 ran on 2026-10-08** over B at `5220d1a`, the head of
+`readable` with §1 through §8 done (`wf_e2a8d709-b50`;
+[2-round-1/findings.md](2-round-1/findings.md)): no seeds, the repository's
+`spec/tarn.md` as edition B, 29 agents on `claude-sonnet-5`, 74 minutes.
+**No byte-level divergence and no addition.** Every blind walk and quiz
+taker read the same rules from both editions; the sweeps and the adversary
+found nothing B decides that A does not. Six findings were graded LOSS,
+unanimously, and upheld on refute: every one a cut this log records and the
+maintainer approved, every one explanatory prose, and for every one the
+hand-check finds the rule standing in B in text identical to A. They are
+`[R-CNF-03]`'s experimental-range aside (the entry for 2026-09-24 below),
+`[R-CNF-02]`'s closed enumeration (the standing question), the Part I /
+Part II Note of §3.3 with §1's roadmap sentence, §2.4's preserve-verbatim
+bridge and its reject Note, and §2.3's three-row reach Note. All six go to
+the maintainer with both texts quoted, as ADR-0133 decision 4 says; none is
+changed in B by this round. The round found the §4.5 cut of 2026-09-25 and
+its §8.1 restoration lossless, the §7.1 → §7.3 move lossless, and every
+other restatement removal in this log standing where the log says it does.
 
 ## Entries
 
