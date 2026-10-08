@@ -1086,13 +1086,18 @@ error at layer scope, not an unknown type. `[R-CNT-18]`
 
 #### 8.1 Coverage map
 
-Every field of every structure is covered by exactly one checksum —
-excepting the equality-checked front signature block and this map's
-terminal checksum fields, per §4.5, and the extent of a record of a
-type this specification has not assigned, in which this specification
-defines no fields (§4.7) and whose bytes it leaves opaque (§7.2) — as
-this map states. All checksums are CRC-32C over bytes exactly as
-stored. `[R-CNT-19]`
+Every field of every structure is covered by exactly one checksum, as
+this map states, with three exceptions. The front signature block is
+checked by byte equality (§6.1). This map's terminal checksum fields,
+which are the trailer's, the directory region's and the user-metadata
+extent's, are verified by comparison and covered by no further checksum.
+The extent of a record of a type this specification has not assigned is
+covered by no checksum at all: this specification defines no fields in
+it (§4.7) and leaves its bytes opaque (§7.2). Interior checksum fields
+(each segment CRC array, each tile-index entry's crc field, and each
+layer record's crc_of_crc_array) are both verified by comparison and
+covered by exactly one further checksum. All checksums are CRC-32C over
+bytes exactly as stored. `[R-CNT-19]`
 
 | Structure | Checksum location | Covers |
 |---|---|---|
@@ -1108,14 +1113,13 @@ stored. `[R-CNT-19]`
 
 The chain of trust is strictly ordered: trailer → directory → (per
 layer) crc_of_crc_array → segment CRC array → index segment → index
-entry → stored tile. A reader MUST verify each link before acting on
-any field the link covers (`[R-ENC-05]`, `[R-ENC-10]`); failed
-verification takes these outcomes: trailer or directory →
-reject-file; any of a layer's index cross-checks (`[R-CNT-17]`), CRC
-array, or segments → reject-layer; a stored tile's CRC → reject-tile;
-a user-metadata extent's CRC → ignore-record, and readers SHOULD
-report the loss (silent metadata loss defeats the record's purpose).
-`[R-CNT-20]`
+entry → stored tile. A reader MUST verify each link before acting on any
+field the link covers (`[R-ENC-05]`, `[R-ENC-10]`). Failed verification
+takes these outcomes: the trailer or the directory, reject-file; any of
+a layer's index cross-checks (`[R-CNT-17]`), its CRC array or its
+segments, reject-layer; a stored tile's CRC, reject-tile; a
+user-metadata extent's CRC, ignore-record, and readers SHOULD report the
+loss (silent metadata loss defeats the record's purpose). `[R-CNT-20]`
 
 Verification is not optional: no in-file flag disables it, and a
 reader that skips it is not a conforming reader.

@@ -96,6 +96,51 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
 
 ## Entries
 
+### 2026-10-08 — §8: the coverage map stands on its own; the chain's outcomes without arrows
+
+- **Commit:** `Readable: §8 — coverage map's exceptions stated in full,
+  restoring what the §4.5 cut lost; chain-of-trust outcomes without arrows;
+  R-CNT-19 and R-CNT-20 listed` (the commit carrying this entry).
+  Previous: `4b0d01f` (spec), `7693731` (log).
+- **Sections:** §8.1 (`[R-CNT-19]`), §8.2 (`[R-CNT-20]`).
+- **A defect of the rewrite, found and repaired.** The entry for `8f16983`
+  (2026-09-25) cut twelve lines from §4.5 as a restatement of §8.1's map.
+  §8.1's own sentence named its second exception only by pointing at
+  §4.5 ("this map's terminal checksum fields, per §4.5"); the cut text was
+  where those fields were named ("the trailer, directory-region, and
+  user-metadata checksum fields — which are verified by comparison and
+  covered by no further checksum") and the only statement that interior
+  checksum fields "are both comparison-verified and covered by exactly one
+  further checksum". B had neither statement and a dangling pointer. The
+  check that would have caught it is the one the memory note
+  tarn-stated-once-is-a-rule-check describes: read what each clause of
+  the surviving statement rests on, not its first sentence.
+- **Edits.**
+  1. `[R-CNT-19]`: "Every field of every structure is covered by exactly one
+     checksum — excepting [three exceptions in a dash aside] — as this map
+     states." becomes five sentences: the rule "with three exceptions";
+     the front block by equality; the terminal checksum fields, now named
+     here and said to be verified by comparison and covered by no further
+     checksum; the unassigned record extent, with its reasons; the
+     interior checksum fields, restored here. The CRC-32C sentence is
+     verbatim. Every clause is A's, from §8.1 or from the §4.5 text cut
+     on 2026-09-25, which now stands here.
+  2. `[R-CNT-20]`: the outcomes read "the trailer or the directory,
+     reject-file; any of a layer's index cross-checks (`[R-CNT-17]`), its
+     CRC array or its segments, reject-layer; a stored tile's CRC,
+     reject-tile; a user-metadata extent's CRC, ignore-record, and readers
+     SHOULD report the loss …"; the chain of trust keeps its arrows, at
+     the maintainer's word; the MUST and the SHOULD are verbatim.
+- **Removed restatements:** none. Two statements moved into §8.1 from where
+  §4.5 had them; the `8f16983` entry is corrected below.
+- **Reworded IDs:** `R-CNT-19`, `R-CNT-20`, listed (thirty-nine in all);
+  `R-ENC-10`'s reason line corrected.
+- **Soft items:** `ID_REWORDED_LISTED` ×39 (two new); the Appendix B row,
+  `KEYWORD_COUNT SHOULD` 46/47, `TERM_TEXT_CHANGED` ×8 and `HEADINGS`
+  carried.
+- **Questions raised:** none. Untouched: §8.1's table, "Verification is not
+  optional …" and §8.2's Note.
+
 ### 2026-10-05 — §7.4: `[R-CNT-18]`, parsing and sub-records, in nine sentences
 
 - **Commit:** `Readable: §7.4 — inline-payload parsing and sub-record rules
@@ -911,6 +956,12 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
     specification has not assigned") and its table (the segment CRC array
     "itself covered by the layer record's crc_of_crc_array"); `ffc6f0d`,
     cleanroom gate 1, and `1297d0a`, round 2.
+    **Corrected 2026-10-08:** wrong in part. §8.1 named its second
+    exception only as "this map's terminal checksum fields, per §4.5", and
+    the words naming those fields, and the interior-checksum sentence,
+    were in the text cut here and nowhere else. Both are restored into
+    §8.1 by the entry of 2026-10-08 ("§8: the coverage map stands on its
+    own").
   - the three-ID gloss → the three IDs at their own sites; `033ef41`,
     ADR-0071.
   - "A name is structural: a duplicate is a validity error at file or layer
