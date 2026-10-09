@@ -60,3 +60,9 @@ R-TYP-04: the NaN consequences a comma clause; the no-exception sentence split a
 R-TYP-05: the inclusions a colon clause; every clause verbatim
 R-TYP-06: "always present" given its reason as a "since" clause in place of the dash aside; the reader's MUST, MUST NOT and MUST verbatim
 R-TYP-08: the sentinel definition a "which is" clause and the declared-order aside a comma clause; the interleaved and planar cases two sentences; the MUST verbatim
+R-SER-01: the mode labels take colons; the adjacency aside a "with" clause; every formula and term verbatim; the list tight
+R-SER-02: the lead paragraph's two asides comma clauses (the interleaved-only bool byte and its reason; the decoded size); the symbols paragraph's dash a colon; every formula verbatim
+R-SER-03: two dash asides made colons (packing exclusive to planar bool; every bit pattern decodes); every formula and clause verbatim
+R-SER-05: the three fill forms after a "which is" clause; all three keyword clauses verbatim
+R-SER-07: the declarations aside a parenthesis; the MUST verbatim
+R-SER-08: "whether or not it detected the violation" a comma clause and the returned value a colon clause; both keyword clauses verbatim

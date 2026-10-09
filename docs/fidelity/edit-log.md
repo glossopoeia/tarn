@@ -137,6 +137,47 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §14: spruce-up pass, twenty-seven dash asides out
+
+- **Commit:** `Readable: §14 — spruce-up pass: six paragraphs and seven
+  blocks without asides; R-SER-01, -02, -03, -05, -07, -08 listed` (the
+  commit carrying this entry). Previous: `db2b575` (§13's pass).
+- **Sections:** §14.1 (`[R-SER-01]`), §14.2 (`[R-SER-02]`, `[R-SER-08]`, a
+  Note, an Example), §14.3 (`[R-SER-03]`, `[R-SER-07]`, a Note), §14.4 (a
+  Note, the Rationale), §14.5 (`[R-SER-05]`, the Example, the Rationale).
+  A spruce-up pass, not the maintainer's read-through; proposed with
+  before and after (`scratch/cleanroom/proposals/s14-pass.md`), approved
+  ("Go").
+- **Edits.**
+  1. §14.1: the lead-in's dash a colon; the mode labels take colons; the
+     adjacency aside "with each sample's channel values adjacent in
+     declared channel order"; the list tight.
+  2. §14.2 lead paragraph and `[R-SER-02]`: "in interleaved layers only
+     since §14.3 governs planar bool planes" and "the decoded size" comma
+     clauses; "a planar layer has no P · Q to form" after a colon.
+  3. §14.2 `[R-SER-08]`: "whether or not it detected the violation" a comma
+     clause; the returned value ("the value, encoded 0x00 or 0x01 as
+     above, and not the stored byte") after a colon; both keyword clauses
+     verbatim.
+  4. §14.3 `[R-SER-03]`: two asides made colons; `[R-SER-07]`: the
+     declarations aside a parenthesis.
+  5. §14.5 `[R-SER-05]`: the three fill forms after "which is"; all three
+     keyword clauses verbatim.
+  6. Seven blocks (the bool-fill Note, the offsets Example, the pad-bits
+     Note, the single-channel Note, §14.4's Rationale, §14.5's Example and
+     Rationale): asides made commas, colons, parentheses or clauses; every
+     figure kept. In the bool-fill Note A's lowercase "must" ("a fill byte
+     it must interpret") is rewritten around as "a fill byte that it has
+     to interpret", the line being re-wrapped.
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-SER-01`, `R-SER-02`, `R-SER-03`, `R-SER-05`,
+  `R-SER-07`, `R-SER-08`, listed; nine keyword clauses and figures
+  checked verbatim.
+- **Soft items:** `ID_REWORDED_LISTED` ×64 (the six new); the carried items
+  as before; the Example numbers unchanged. Keyword counts unchanged. B
+  is 4,847 lines and 48,583 words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §13: spruce-up pass, thirteen dash asides out
 
 - **Commit:** `Readable: §13 — spruce-up pass: four paragraphs and three
