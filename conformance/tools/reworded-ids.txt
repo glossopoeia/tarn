@@ -75,3 +75,13 @@ R-SLB-02: the dash a semicolon, "and" joining the two block cases; the MAY and e
 R-SLB-03: the packing relation an appositive clause; the crc-entry aside a colon clause ending in its "so" consequence; the ragged lines re-wrapped; the SHOULD, the MUST and the MAY verbatim
 R-SLB-04: the dash before "or clear" a comma; the detector a sentence of its own ("detected by a verifier as the invariant failures of [R-SLB-03] are"); the ragged lines re-wrapped; the MUST and both options verbatim
 R-SLB-05: the streaming-writer aside a "so" clause; the ID joined to the paragraph's last line; the MAY verbatim
+R-COD-01: the codec's-input aside a participial clause; every clause verbatim
+R-COD-02: the dictionaries aside a comma; every clause verbatim
+R-COD-03: the core aside a colon clause before the reader's MUST; the reader's three included cases after the citation; all three keyword clauses verbatim
+R-COD-04: the checkability aside a comma; the label's dash kept; both keyword clauses verbatim
+R-COD-05: the raw-stream aside a colon; the label's dash kept; the RFC numbers verbatim
+R-COD-06: three dash asides a comma clause (the dictionary), a "since" clause (the content-checksum reason) and a colon clause (the decoded size); the ragged lines re-wrapped; all thirteen keyword clauses, the magic and the figures verbatim
+R-COD-07: the cap's reason a comma clause after the MUST NOT; the planar rule a sentence of its own after the reader's MUST; the ragged lines re-wrapped; both keyword clauses and the cap verbatim
+R-COD-08: the no-more-no-fewer aside a comma clause; all three keyword clauses verbatim
+R-COD-09: "the filtered image is the decoded image" an "under which" clause; the core aside a colon clause; all three keyword clauses verbatim
+R-COD-10: the mapping gloss after a colon and the inverse a sentence of its own; the final dash a comma; every formula verbatim

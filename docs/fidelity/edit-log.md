@@ -137,6 +137,49 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §17: spruce-up pass, twenty-eight dash asides out
+
+- **Commit:** `Readable: §17 — spruce-up pass: ten paragraphs and eight
+  blocks without asides; R-COD-01 through -10 listed` (the commit carrying
+  this entry). Previous: `eea3fa8` (§16's pass).
+- **Sections:** §17.1 (`[R-COD-01]`, `[R-COD-02]`), §17.2 (`[R-COD-03]`
+  through `[R-COD-08]`, six Notes), §17.3 (`[R-COD-09]`, `[R-COD-10]`, the
+  Example, the Rationale). §17.4 (`[R-COD-11]`) untouched. A spruce-up
+  pass, not the maintainer's read-through; proposed with before and after
+  (`scratch/cleanroom/proposals/s17-pass.md`), approved ("Go").
+- **Edits.**
+  1. `[R-COD-01]`, `[R-COD-02]`: the codec's-input and dictionaries asides
+     a participial clause and a comma.
+  2. `[R-COD-03]`, `[R-COD-09]`: "all four are core" and "both are core"
+     take colons before their MUSTs; the codec reader's three included
+     cases follow the citation, as §12.2's do; "the filtered image is the
+     decoded image" an "under which" clause.
+  3. Codecs 1 and 2 (`[R-COD-04]`, `[R-COD-05]`): the checkability aside a
+     comma, the raw-stream aside a colon; the run-in labels keep their
+     dashes ("Codec 1 — none").
+  4. Codec 3 (`[R-COD-06]`): three asides a comma clause (the dictionary),
+     a "since" clause (the content-checksum reason) and a colon clause
+     (the decoded size); re-wrapped; all thirteen keyword clauses, the
+     magic and the figures verbatim.
+  5. Codec 4 (`[R-COD-07]`): the cap's reason a comma clause after the
+     MUST NOT; the planar rule ("each channel's plane carries its own
+     decoded size, and the largest governs") a sentence of its own after
+     the reader's MUST; re-wrapped.
+  6. `[R-COD-08]`: "no more and no fewer" a comma clause. `[R-COD-10]`: the
+     mapping gloss after a colon, the inverse a sentence of its own, the
+     final dash a comma.
+  7. Six Notes, the Example and the Rationale: sixteen asides made
+     clauses, parentheses, semicolons or colons; every figure kept. A's
+     lowercase "must support" and "may expand" in two re-wrapped Notes
+     read "has to support" and "can expand".
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-COD-01` through `R-COD-10`, listed; eighteen keyword
+  clauses, magics and figures checked verbatim.
+- **Soft items:** `ID_REWORDED_LISTED` ×83 (the ten new); the carried items
+  as before; the Example numbers unchanged. Keyword counts unchanged. B
+  is 4,834 lines and 48,534 words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §16: spruce-up pass, fifteen dash asides out
 
 - **Commit:** `Readable: §16 — spruce-up pass: five paragraphs, two Notes
