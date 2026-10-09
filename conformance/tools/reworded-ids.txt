@@ -98,3 +98,5 @@ R-RDR-03: the definition of first access a "which is" clause with a parenthesis;
 R-RDR-04: ten dash asides in the eight steps made colons, commas, parentheses, a semicolon and a "which" clause; the fill-per-layout aside placed after "bit-exactly and with no payload I/O"; the ID joined to the last line; all four keyword clauses verbatim
 R-WRT-01: the latent-violation aside after a semicolon; every clause in A's order verbatim
 R-WRT-02: "placement is otherwise free" a participial clause and "both barriers, not one" a comma clause; the MUST and every stage verbatim
+R-WRT-03: the re-emission aside a "since" clause; every clause verbatim
+R-WRT-04: twenty-three dash asides across the six steps and step 4's three continuation paragraphs made colons, commas, parentheses, semicolons and "since" clauses; the long paragraphs re-wrapped; all fifteen keyword clauses, every row number and every sentence in A's order verbatim; the ID's block keeps A's shape (the bounds paragraph running into steps 5 and 6)

@@ -137,6 +137,47 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §20.3: spruce-up pass, twenty-five dash asides out of the append procedure
+
+- **Commit:** `Readable: §20.3 — spruce-up pass: the append procedure's
+  steps, continuation paragraphs, Note and Examples without asides;
+  R-WRT-03, -04 listed` (the commit carrying this entry). Previous:
+  `890ae06` (§20's first pass).
+- **Sections:** §20.3 (`[R-WRT-03]`, the six steps and step 4's three
+  continuation paragraphs under `[R-WRT-04]`, the cost Note, the 644-byte
+  Example, the three-shapes Example's prose). The second of four passes
+  over §20, not the maintainer's read-through; proposed with before and
+  after (`scratch/cleanroom/proposals/s20b-pass.md`), approved ("Go").
+- **Edits.**
+  1. `[R-WRT-03]`: the re-emission aside a "since" clause.
+  2. Steps 1 to 3: the recovery-output aside a comma clause; "the
+     appender is a reader here" after a colon; the open's two reasons
+     "since" clauses; the entry-as-record parallel after a semicolon; the
+     three keyword clauses verbatim.
+  3. Step 4: the region's contents a comma clause; in the
+     fixed-declarations paragraph the both-sides fields a parenthesis
+     (all ten keyword clauses verbatim; it remains the surviving
+     statement of the rules §11.1's Rationale restates); in the
+     line-is-drawn paragraph the §14 reading a parenthesis; in the bounds
+     paragraph nothing but wrapping; step 6's at-least-128 aside a
+     parenthesis. The three continuation paragraphs re-wrapped, and the
+     ID's governing block keeps A's shape, the bounds paragraph running
+     tight into steps 5 and 6.
+  4. The Note: the verifier clause after a semicolon. The 644-byte
+     Example: the entry aside a colon. The three-shapes Example: shape
+     (a)'s and (b)'s asides commas; shape (c)'s label dash a colon, its
+     fill-type-extent aside a parenthesis and its empties clause after a
+     semicolon; the figures untouched.
+- **Removed restatements:** none. Nothing dropped: a word-level diff per
+  item shows no word lost or gained in nine of the eleven, "since" gained
+  in `[R-WRT-03]`, and "which" for "that" with two "since" in steps 1 to 3.
+- **Reworded IDs:** `R-WRT-03`, `R-WRT-04`, listed; eighteen keyword
+  clauses and figures checked.
+- **Soft items:** `ID_REWORDED_LISTED` ×98 (the two new); the carried items
+  as before; the Example numbers unchanged. Keyword counts unchanged. B
+  is 4,793 lines and 48,454 words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §20, first pass (opening, §20.1, §20.2): six dash asides out
 
 - **Commit:** `Readable: §20.1–§20.2 — spruce-up pass: the opening, the tier
