@@ -85,3 +85,10 @@ R-COD-07: the cap's reason a comma clause after the MUST NOT; the planar rule a 
 R-COD-08: the no-more-no-fewer aside a comma clause; all three keyword clauses verbatim
 R-COD-09: "the filtered image is the decoded image" an "under which" clause; the core aside a colon clause; all three keyword clauses verbatim
 R-COD-10: the mapping gloss after a colon and the inverse a sentence of its own; the final dash a comma; every formula verbatim
+R-MTA-02: the "— but" aside a sentence with "nevertheless"; the MUST NOT and every clause verbatim
+R-MTA-03: the fixed-structure aside a colon clause; the MUST and every value verbatim
+R-MTA-05: the content-addressing aside after a semicolon; all three keyword clauses verbatim
+R-MTA-06: the minor-versions aside a colon clause; the ID joined to the last line; all three keyword clauses verbatim
+R-MTA-07: the dash before "and enforcing them" a full stop; the SHOULD and the MUST verbatim
+R-MTA-09: one paragraph of 743 words made five (the reader's bound; encoding 2's frame and constraints; the decoded-size and Window_Size treatment; the content-size field; the verifier's decline); six dash asides made clauses and a semicolon; one sentence split at "and no violation"; the ragged lines re-wrapped; all seven keyword clauses and every sentence in A's order verbatim; the ID now governs the closing paragraph
+R-MTA-10: six dash asides made a "which are" clause, a parenthesis, a colon and two sentence splits ("File conformance … is then decided"; "It MUST report each record"); the MUST verbatim

@@ -137,6 +137,55 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §18: spruce-up pass, twenty-nine dash asides out; `[R-MTA-09]` in five paragraphs
+
+- **Commit:** `Readable: §18 — spruce-up pass: seven paragraphs, the
+  restriction list, three lead-ins and two Notes without asides; R-MTA-09
+  in five paragraphs; R-MTA-02, -03, -05, -06, -07, -09, -10 listed` (the
+  commit carrying this entry). Previous: `fdd0d93` (§17's pass).
+- **Sections:** §18.1 (`[R-MTA-02]`), §18.2 (`[R-MTA-03]`, `[R-MTA-09]`,
+  the JSON lead-in and `[R-MTA-04]`'s list, `[R-MTA-05]`, `[R-MTA-10]`, the
+  JSON Note), §18.3 (`[R-MTA-06]`), §18.4 (the lead-in, `[R-MTA-07]`,
+  `tarn.axes`, the Note). A spruce-up pass, not the maintainer's
+  read-through; proposed with before and after
+  (`scratch/cleanroom/proposals/s18-pass.md`), approved ("Go").
+- **Edits.**
+  1. `[R-MTA-02]`: the "— but" aside a sentence with "nevertheless".
+     `[R-MTA-03]`: the fixed-structure aside a colon clause.
+  2. `[R-MTA-09]`, 743 words in 73 ragged lines, made five paragraphs by
+     topic: the reader's own bound (encoding 1); encoding 2's frame and
+     its carried-over constraints; the decoded-size and `Window_Size`
+     treatment; the content-size field; the verifier's decline. Six
+     asides made clauses and a semicolon; one sentence split at "and no
+     violation"; every sentence in A's order; all seven keyword clauses
+     verbatim. The ID governs the fifth paragraph; the MAY decline, the
+     SHOULD on the window and the content-size field's MAY and MUST stand
+     in ID-less paragraphs, as `[R-LIF-06]`'s and `[R-LIF-08]`'s splits
+     left theirs.
+  3. The JSON lead-in: the dash a comma. `[R-MTA-04]`'s four restrictions:
+     the overflow case a parenthesis, the escape-resolution aside a comma
+     clause, and the key rules a sentence of their own ("Every key
+     satisfies §4.6's name rules: non-empty, at most 255 bytes, free of
+     U+0000 through U+001F"); the list's shape kept. The ID stands alone
+     on the line after the list, which is what the inventory tool
+     watches, so `[R-MTA-04]` is not listed.
+  4. `[R-MTA-05]`: the content-addressing aside after a semicolon.
+     `[R-MTA-10]`: six asides made a "which are" clause, a parenthesis, a
+     colon and two sentence splits; the verifier's MUST now opens its own
+     sentence ("It MUST report each record it ignored on this ground").
+  5. `[R-MTA-06]`: the minor-versions aside a colon clause. The §18.4
+     lead-in: "since being metadata none can affect decoding".
+     `[R-MTA-07]`: the dash before "and enforcing them" a full stop.
+     `tarn.axes`: the dash a colon. Two Notes: a parenthesis and a comma.
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-MTA-02`, `R-MTA-03`, `R-MTA-05`, `R-MTA-06`,
+  `R-MTA-07`, `R-MTA-09`, `R-MTA-10`, listed; twenty-three keyword
+  clauses and figures checked.
+- **Soft items:** `ID_REWORDED_LISTED` ×90 (the seven new); the carried
+  items as before. Keyword counts unchanged. B is 4,829 lines and 48,510
+  words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §17: spruce-up pass, twenty-eight dash asides out
 
 - **Commit:** `Readable: §17 — spruce-up pass: ten paragraphs and eight

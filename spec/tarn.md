@@ -2482,18 +2482,18 @@ layer MAY carry one of its own, each held in a user-metadata
 record's extent (§7.3). Its content is application data: this
 specification defines its encoding, not its meaning. `[R-MTA-01]`
 
-The owning scope of a user-metadata record is the file when the
-record is top-level and the layer when it is a sub-record — but the
-outcome of every failure to read its **document** is ignore-record
+The owning scope of a user-metadata record is the file when the record
+is top-level and the layer when it is a sub-record. The outcome of
+every failure to read its **document** is nevertheless ignore-record
 whatever the scope, because the document is **quarantined**
-(`[R-CNT-25]`). The quarantine covers the document only: a
-malformed extent slot on such a record, (0, 0) included, is a
-validity error at the record's containing scope (`[R-CNT-13]`,
-`[R-CNT-25]`), because that failure precedes the document. A
-reader MUST NOT let any part of a user-metadata document affect how
-a byte is located, decoded, or returned; structural facts live in
-structural fields, and a reader that consults metadata to decode has
-built a second parser out of untrusted input (§22.4). `[R-MTA-02]`
+(`[R-CNT-25]`). The quarantine covers the document only: a malformed
+extent slot on such a record, (0, 0) included, is a validity error at
+the record's containing scope (`[R-CNT-13]`, `[R-CNT-25]`), because
+that failure precedes the document. A reader MUST NOT let any part of
+a user-metadata document affect how a byte is located, decoded, or
+returned; structural facts live in structural fields, and a reader
+that consults metadata to decode has built a second parser out of
+untrusted input (§22.4). `[R-MTA-02]`
 
 #### 18.2 Encoding
 
@@ -2504,89 +2504,90 @@ A user-metadata record's inline payload is exactly one byte:
 | 0 | 1 | u8 | encoding | structural | 1 or 2 assigned; 0 invalid, 3–0x7F reserved, ≥ 0x80 experimental (§10); see below |
 
 A record whose inline_length is not 1 is a validity error at the
-record's containing scope — the payload is a fixed structure
-(`[R-ENC-07]`), not a growable one. Field values: 0 is invalid;
-1 = none and 2 = zstd are assigned; 3 through 0x7F are reserved;
-values ≥ 0x80 are the experimental range (§10). Both assigned
-encodings are core: a conforming reader MUST be able to decode
-encoding 2, whose decoder `[R-COD-11]` already requires of it for
-codec 3 (`[R-CNF-03]`). An encoding a reader does not implement is
-therefore one this specification does not assign, and is
-ignore-record (`[R-CNT-25]`). `[R-MTA-03]`
+record's containing scope: the payload is a fixed structure
+(`[R-ENC-07]`), not a growable one. Field values: 0 is invalid; 1 =
+none and 2 = zstd are assigned; 3 through 0x7F are reserved; values ≥
+0x80 are the experimental range (§10). Both assigned encodings are
+core: a conforming reader MUST be able to decode encoding 2, whose
+decoder `[R-COD-11]` already requires of it for codec 3
+(`[R-CNF-03]`). An encoding a reader does not implement is therefore
+one this specification does not assign, and is ignore-record
+(`[R-CNT-25]`). `[R-MTA-03]`
 
 Encoding 1 stores the document verbatim. Under either encoding a
 reader decodes with a bound of its own choosing, no smaller than
-§21.9's user-metadata guarantee, and a document exceeding that
-bound is ignore-record like any other it cannot read; §21.9's row
-is stated over a document's decoded size, which a verbatim
-document has as surely as a compressed one. Encoding 2 stores it as
-exactly one RFC 8878 compressed frame occupying the extent's bytes
-before its terminal CRC, under every frame constraint `[R-COD-06]`
-places on a frame, named here or not, save two: what it states
-against a tile's declared decoded size, and what it states about
-the frame's declared `Window_Size`. This section replaces both,
-below. Carried over — named for convenience, not as a closed list —
-are the frame magic; no skippable frame and no second frame; no
-dictionary use, disclosed or not, and no nonzero dictionary ID; no
-content-checksum flag; and the bar on sizing any buffer from a
+§21.9's user-metadata guarantee, and a document exceeding that bound
+is ignore-record like any other it cannot read; §21.9's row is stated
+over a document's decoded size, which a verbatim document has as
+surely as a compressed one.
+
+Encoding 2 stores it as exactly one RFC 8878 compressed frame
+occupying the extent's bytes before its terminal CRC, under every
+frame constraint `[R-COD-06]` places on a frame, named here or not,
+save two: what it states against a tile's declared decoded size, and
+what it states about the frame's declared `Window_Size`. This section
+replaces both, below. Carried over, named for convenience and not as a
+closed list, are the frame magic; no skippable frame and no second
+frame; no dictionary use, disclosed or not, and no nonzero dictionary
+ID; no content-checksum flag; and the bar on sizing any buffer from a
 length the frame itself declares. Two of those fall outside the
 register, on the two distinct grounds §21.7 separates, and R4
 registers neither: dictionary use the header does not disclose is a
-writer violation nothing in the extent shows — an unwitnessed
-condition, exactly as `[R-COD-06]` has it for a tile (§21.7) — while
-the bar on sizing a buffer binds a reader rather than the document,
-and so states no condition a file can exhibit at all.
+writer violation nothing in the extent shows, an unwitnessed condition
+exactly as `[R-COD-06]` has it for a tile (§21.7), while the bar on
+sizing a buffer binds a reader rather than the document, and so states
+no condition a file can exhibit at all.
+
 The decoded-size exception holds because a document has no declared
-size,
-which is why the bound above is the reader's own and not the
-file's. The frame's declared `Window_Size` is unconstrained here
-for the same reason, and takes the same
-treatment: a reader's window bound is its own, no smaller than
-§21.9's guarantee for that quantity, and a frame declaring more
-than the reader admits is ignore-record on that ground — the
-reader's capability, not a failure to decode within the meaning of
-R3, and no violation: the file exceeds a §21.9 guarantee and so
-remains conforming while the reader MAY decline it (`[R-ERR-04]`).
-Writers SHOULD keep the declared window within §21.9's 8 MiB
-`Window_Size` guarantee even for a larger document, as
-`[R-COD-06]` asks for a tile. Where the frame sets
-Single_Segment_Flag there is no Window_Descriptor and RFC 8878
-makes the frame's `Window_Size` its content-size field, which this
-section pins below to the decoded document's byte length: a
-document larger than that guarantee, framed that way, exceeds a
-§21.9 row and so falls outside `[R-CNF-03]`'s acceptance duty,
-and a writer that needs one frames it with a Window_Descriptor
-instead. §21.9's user-metadata row bounds a document's decoded
-size; it does not relieve the frame carrying it of the
-`Window_Size` row. The frame's content-size field, unlike the
-decoded size and the window, is *not* left to the reader: it MAY
-be present, and when
-present it MUST equal the byte length of
-the decoded document. A mismatch is one of the frame
-constraints R4 registers, not a failure to decode under R3: the bytes
-decode, and what is wrong is what the header said about them. Routing
-it to R4 keeps the condition checkable from the bytes alone rather
-than turning on a decoder's tolerance (`[R-CNF-02]`) — the tile rule
-of `[R-COD-06]` transposed to the quantity a document does have, its
-decoded length, in place of the declared size it does not. A **verifier** that declines to decode a document on
-either bound above cannot establish that document's conformance and MUST NOT certify
-the file, exactly as `[R-COD-11]` requires of a codec it cannot
-execute; the bound is that verifier's capability and not a limit on
-validity (`[R-CNF-10]`), so the decline is not a finding that the
-file is nonconforming and a verifier MUST NOT report it as one. The
-decline is one of the unchecked requirements `[R-CNF-11]` obliges
+size, which is why the bound above is the reader's own and not the
+file's. The frame's declared `Window_Size` is unconstrained here for
+the same reason, and takes the same treatment: a reader's window bound
+is its own, no smaller than §21.9's guarantee for that quantity, and a
+frame declaring more than the reader admits is ignore-record on that
+ground, which is the reader's capability, not a failure to decode
+within the meaning of R3, and no violation. The file exceeds a §21.9
+guarantee and so remains conforming while the reader MAY decline it
+(`[R-ERR-04]`). Writers SHOULD keep the declared window within §21.9's
+8 MiB `Window_Size` guarantee even for a larger document, as
+`[R-COD-06]` asks for a tile. Where the frame sets Single_Segment_Flag
+there is no Window_Descriptor and RFC 8878 makes the frame's
+`Window_Size` its content-size field, which this section pins below to
+the decoded document's byte length: a document larger than that
+guarantee, framed that way, exceeds a §21.9 row and so falls outside
+`[R-CNF-03]`'s acceptance duty, and a writer that needs one frames it
+with a Window_Descriptor instead. §21.9's user-metadata row bounds a
+document's decoded size; it does not relieve the frame carrying it of
+the `Window_Size` row.
+
+The frame's content-size field, unlike the decoded size and the
+window, is *not* left to the reader: it MAY be present, and when
+present it MUST equal the byte length of the decoded document. A
+mismatch is one of the frame constraints R4 registers, not a failure
+to decode under R3: the bytes decode, and what is wrong is what the
+header said about them. Routing it to R4 keeps the condition checkable
+from the bytes alone rather than turning on a decoder's tolerance
+(`[R-CNF-02]`); it is the tile rule of `[R-COD-06]` transposed to the
+quantity a document does have, its decoded length, in place of the
+declared size it does not.
+
+A **verifier** that declines to decode a document on either bound
+above cannot establish that document's conformance and MUST NOT
+certify the file, exactly as `[R-COD-11]` requires of a codec it
+cannot execute; the bound is that verifier's capability and not a
+limit on validity (`[R-CNF-10]`), so the decline is not a finding that
+the file is nonconforming and a verifier MUST NOT report it as one.
+The decline is one of the unchecked requirements `[R-CNF-11]` obliges
 the verifier to report, and it fixes the file's verdict as *cannot
-establish* only where the verifier established no violation
-elsewhere; the verifier SHOULD report the bound it applied and the
-stored length of the extent it declined, since the report
-`[R-CNF-11]` requires names the requirement and the ground but not
-the quantities an operator needs to raise the bound and re-run the
-check. The
-decline presupposes an
-encoding this specification assigns, whose document it defines; an
-encoding it does not assign leaves no document rule attached and is
-`[R-MTA-10]`'s subject, not a decline. Any violation here is
-ignore-record, never the tile-scope outcome §17.2 assigns. `[R-MTA-09]`
+establish* only where the verifier established no violation elsewhere;
+the verifier SHOULD report the bound it applied and the stored length
+of the extent it declined, since the report `[R-CNF-11]` requires
+names the requirement and the ground but not the quantities an
+operator needs to raise the bound and re-run the check. The decline
+presupposes an encoding this specification assigns, whose document it
+defines; an encoding it does not assign leaves no document rule
+attached and is `[R-MTA-10]`'s subject, not a decline. Any violation
+here is ignore-record, never the tile-scope outcome §17.2 assigns.
+`[R-MTA-09]`
 
 > **Note.** The 16 MiB figure is a §21.9 minimum guarantee, so the
 > two rules compose here as they do elsewhere. A file whose document
@@ -2599,41 +2600,38 @@ ignore-record, never the tile-scope outcome §17.2 assigns. `[R-MTA-09]`
 > any scope containing the record, the whole file included. Either
 > refusal is reported as a resource limit, not as corruption.
 
-The decoded document is a JSON text as defined by RFC 8259, encoded
-in UTF-8. Four restrictions apply, and a document violating any of
-them is unreadable — ignore-record, with the report `[R-CNT-25]`
-asks for:
+The decoded document is a JSON text as defined by RFC 8259, encoded in
+UTF-8. Four restrictions apply, and a document violating any of them
+is unreadable, ignore-record with the report `[R-CNT-25]` asks for:
 
-- **A JSON object, unmarked.** The top-level value is an object,
-  and the encoding carries no byte-order mark: a leading U+FEFF
-  makes the document unreadable.
+- **A JSON object, unmarked.** The top-level value is an object, and
+  the encoding carries no byte-order mark: a leading U+FEFF makes the
+  document unreadable.
 
 - **Finite numbers only.** A reader interprets every JSON number as
-  the IEEE 754 binary64 value its decimal text converts to under
-  IEEE 754's default rounding-direction attribute, roundTiesToEven,
-  and MAY hold the value so obtained in a wider representation. A
-  document is unreadable if it contains a number whose binary64
-  interpretation is not finite — which covers a magnitude that
-  overflows on that conversion, `1e400` being the ordinary case — or any
-  of the bare tokens `NaN`, `Infinity`, or `-Infinity`, which RFC
-  8259 does not admit and some parsers accept regardless. Writers
-  SHOULD NOT emit a number binary64 cannot represent exactly; a
-  value needing bit-exact representation belongs in a structural
-  field (§13.1), not here.
-- **No duplicate keys.** Key identity is the *decoded* string, not
-  its JSON source bytes: `"a"` and `"\u0061"` are the same key, and
-  a document in which any one object carries that key twice is
+  the IEEE 754 binary64 value its decimal text converts to under IEEE
+  754's default rounding-direction attribute, roundTiesToEven, and MAY
+  hold the value so obtained in a wider representation. A document is
+  unreadable if it contains a number whose binary64 interpretation is
+  not finite, which covers a magnitude that overflows on that
+  conversion (`1e400` being the ordinary case), or any of the bare
+  tokens `NaN`, `Infinity`, or `-Infinity`, which RFC 8259 does not
+  admit and some parsers accept regardless. Writers SHOULD NOT emit a
+  number binary64 cannot represent exactly; a value needing bit-exact
+  representation belongs in a structural field (§13.1), not here.
+- **No duplicate keys.** Key identity is the *decoded* string, not its
+  JSON source bytes: `"a"` and `"\u0061"` are the same key, and a
+  document in which any one object carries that key twice is
   unreadable, since which member wins would otherwise be a parser's
   choice. `[R-MTA-05]`'s sort order is likewise over decoded keys'
   UTF-8 bytes.
-- **Well-formed UTF-8 throughout** (`[R-ENC-11]`) — including after
-  escape resolution: a `\uXXXX` escape denoting an unpaired
-  surrogate has no UTF-8 encoding and makes the document unreadable,
-  as does an ill-formed byte sequence in the source — and every key
-  satisfying §4.6's name rules — non-empty, at most 255 bytes, free
-  of U+0000 through U+001F. Key comparison is raw bytes
-  (`[R-ENC-13]`), so two keys differing only in Unicode
-  normalization are distinct keys.
+- **Well-formed UTF-8 throughout** (`[R-ENC-11]`), including after
+  escape resolution: a `\uXXXX` escape denoting an unpaired surrogate
+  has no UTF-8 encoding and makes the document unreadable, as does an
+  ill-formed byte sequence in the source. Every key satisfies §4.6's
+  name rules: non-empty, at most 255 bytes, free of U+0000 through
+  U+001F. Key comparison is raw bytes (`[R-ENC-13]`), so two keys
+  differing only in Unicode normalization are distinct keys.
 
 `[R-MTA-04]`
 
@@ -2642,43 +2640,41 @@ ascending order of their keys' UTF-8 bytes, compared lexicographically
 as unsigned bytes with a proper prefix ordering first. This makes one
 writer's output reproducible for identical content; it does not make
 two writers' output identical, and this specification promises no
-byte-identity here or anywhere else (`[R-CNF-05]`) — an application
+byte-identity here or anywhere else (`[R-CNF-05]`); an application
 needing content-addressed metadata canonicalizes the decoded document
 itself. Readers MUST NOT depend on member order for meaning, and
 unsorted members do not make a document unreadable: the file is
 nonconforming, a verifier MUST report it, and readers process the
 document unchanged. `[R-MTA-05]`
 
-The document rules of this section — the frame constraints of
+The document rules of this section, which are the frame constraints of
 encoding 2, the decoded-document restrictions above, and
-`[R-MTA-05]`'s member ordering — attach to a document only under an
-encoding this specification assigns. Under an unassigned encoding
-this specification defines no decoding, and for an experimental
-value §10.3 lets two unrelated experiments claim the same value with
-different meanings, so *the decoded document* names nothing this
-specification can test: no content rule attaches to the extent's
-bytes, and file conformance — a pure predicate on bytes
-(`[R-CNF-02]`) — is decided by the structural checks that precede
-the document alone: the record's framing and extent slot
-(`[R-CNT-13]`), the encoding byte's own value set (`[R-MTA-03]`),
-and the extent's terminal CRC (`[R-CNT-20]`). A verifier meeting
-such a record in an otherwise conforming file has no requirement it
-is unable to check — the record is not among `[R-CNF-11]`'s
-cannot-establish grounds, and at an experimental-range encoding
-certification is unaffected, encoding 0 and a reserved value being
-R1's violations — and it MUST report each record it ignored on this
-ground, naming the
-owning scope, the encoding value, and the stored extent length, as
-it reports the slack total (`[R-CNT-21]`): bytes a certificate
-covers without inspecting are counted and named, never silent.
-`[R-MTA-10]`
+`[R-MTA-05]`'s member ordering, attach to a document only under an
+encoding this specification assigns. Under an unassigned encoding this
+specification defines no decoding, and for an experimental value §10.3
+lets two unrelated experiments claim the same value with different
+meanings, so *the decoded document* names nothing this specification
+can test: no content rule attaches to the extent's bytes. File
+conformance, a pure predicate on bytes (`[R-CNF-02]`), is then decided
+by the structural checks that precede the document alone: the record's
+framing and extent slot (`[R-CNT-13]`), the encoding byte's own value
+set (`[R-MTA-03]`), and the extent's terminal CRC (`[R-CNT-20]`). A
+verifier meeting such a record in an otherwise conforming file has no
+requirement it is unable to check: the record is not among
+`[R-CNF-11]`'s cannot-establish grounds, and at an experimental-range
+encoding certification is unaffected, encoding 0 and a reserved value
+being R1's violations. It MUST report each record it ignored on this
+ground, naming the owning scope, the encoding value, and the stored
+extent length, as it reports the slack total (`[R-CNT-21]`): bytes a
+certificate covers without inspecting are counted and named, never
+silent. `[R-MTA-10]`
 
 > **Note.** JSON was chosen over a binary encoding because every
 > target language parses it without a dependency, and because a
 > document a human can read in a hex dump's tail is one a human can
-> debug. The costs are real and priced: no binary values — base64 in
-> a string is the escape — and no cross-writer byte-identity, since
-> JSON number formatting varies by runtime.
+> debug. The costs are real and priced: no binary values (base64 in a
+> string is the escape) and no cross-writer byte-identity, since JSON
+> number formatting varies by runtime.
 
 #### 18.3 Keys and namespaces
 
@@ -2687,20 +2683,19 @@ registers (§10.4); writers MUST NOT emit a `tarn.`-prefixed key this
 specification's registry does not define at the version they target,
 and a reader MUST ignore a `tarn.` key it does not recognize rather
 than guessing. A file carrying an unrecognized `tarn.` key is
-**conforming** — later minor versions register keys, exactly as
-they define ignore-lane flag bits (§6.3), and this text's readers
-skip both harmlessly. Every other key is application
-space: applications SHOULD prefix theirs with a domain they control
-in reverse-DNS form, and an application using an unprefixed key
-accepts that another application can mean something else by it.
-`[R-MTA-06]`
+**conforming**: later minor versions register keys, exactly as they
+define ignore-lane flag bits (§6.3), and this text's readers skip both
+harmlessly. Every other key is application space: applications SHOULD
+prefix theirs with a domain they control in reverse-DNS form, and an
+application using an unprefixed key accepts that another application
+can mean something else by it. `[R-MTA-06]`
 
 #### 18.4 Standardized keys
 
 This specification registers the following. Each is OPTIONAL and
-advisory — being metadata, none can affect decoding
-(`[R-MTA-02]`) — and a reader that finds one malformed MUST ignore
-that key rather than the document.
+advisory, since being metadata none can affect decoding
+(`[R-MTA-02]`), and a reader that finds one malformed MUST ignore that
+key rather than the document.
 
 | Key | Scope | Value |
 |---|---|---|
@@ -2718,16 +2713,16 @@ value does not match the shape its row gives, rather than rejecting
 the document. Neither placement nor value shape bears on validity: the
 file stays conforming, exactly as it does for an unrecognized
 `tarn.`-prefixed key (§21.6). No reader's behavior turns on either,
-since a reader ignores such a key and reads the rest of the document —
-and enforcing them would put a verifier to work on the content of
-metadata, which §21.6 declares a non-violation rather than a check
-any actor owes. `[R-MTA-07]`
+since a reader ignores such a key and reads the rest of the document.
+Enforcing them would put a verifier to work on the content of
+metadata, which §21.6 declares a non-violation rather than a check any
+actor owes. `[R-MTA-07]`
 
 `tarn.axes` gives the affine mapping from a dimension's integer
 coordinate i to a physical position, `origin + i × step`, in the
-stated unit — the convention scientific consumers need, kept out of
-the core so that no reader is obliged to parse it and no future
-domain convention needs a format revision to exist (§10.1).
+stated unit: the convention scientific consumers need, kept out of the
+core so that no reader is obliged to parse it and no future domain
+convention needs a format revision to exist (§10.1).
 
 `tarn.stats` reports the minimum and maximum finite value observed
 per channel, NaN excluded from both. It is a hint for range scaling
@@ -2738,10 +2733,10 @@ correctness. `[R-MTA-08]`
 
 > **Note.** Advisory needs no enforcement machinery here. Because
 > metadata cannot affect decoding by construction, a stale
-> `tarn.stats` misleads a colour ramp and nothing else — which is
-> why statistics live here rather than as a structural record whose
-> staleness would need rules, verifier obligations, and an
-> updater's attention.
+> `tarn.stats` misleads a colour ramp and nothing else, which is why
+> statistics live here rather than as a structural record whose
+> staleness would need rules, verifier obligations, and an updater's
+> attention.
 
 ---
 
