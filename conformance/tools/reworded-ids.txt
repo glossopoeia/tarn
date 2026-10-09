@@ -102,3 +102,6 @@ R-WRT-03: the re-emission aside a "since" clause; every clause verbatim
 R-WRT-04: twenty-three dash asides across the six steps and step 4's three continuation paragraphs made colons, commas, parentheses, semicolons and "since" clauses; the long paragraphs re-wrapped; all fifteen keyword clauses, every row number and every sentence in A's order verbatim; the ID's block keeps A's shape (the bounds paragraph running into steps 5 and 6)
 R-WRT-05: "header, inline payload, and extent slot" a parenthesis after the MUST; every clause verbatim
 R-WRT-08: the no-embedded-offsets aside a comma; the ID joined to the last line; both MUST NOTs verbatim
+R-WRT-06: the vehicles aside, which split the SHOULD from its subject, moved to a sentence of its own after the SHOULD's reason ("On a conforming input such a feature is …"), its inner list after a comma; all three keyword clauses and the nine row numbers verbatim
+R-WRT-07: the §7.2 aside a participial clause; re-wrapped; the MUST verbatim
+R-WRT-09: the links of the chain moved after "before emitting that structure's bytes" as a colon list; the ID joined to the last line; the MUST verbatim

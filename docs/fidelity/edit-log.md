@@ -137,6 +137,49 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §20.5: spruce-up pass, twenty-four dash asides out; the opening in four paragraphs
+
+- **Commit:** `Readable: §20.5 — spruce-up pass: the opening in four
+  paragraphs, R-WRT-06, -07, -09, the Example's prose and the Note without
+  asides; R-WRT-06, -07, -09 listed` (the commit carrying this entry).
+  Previous: `582b87e` (§20.4's pass).
+- **Sections:** §20.5 whole but the compaction figure. The last of four
+  passes over §20, not the maintainer's read-through; proposed with
+  before and after (`scratch/cleanroom/proposals/s20d-pass.md`), approved
+  ("Go").
+- **Edits.**
+  1. The ID-less opening paragraph (591 words, ten asides) made four by
+     topic: the three rewrites; refusal and dropping; the fresh file_id;
+     the creation path. Ten asides made parentheses, semicolons, commas
+     and clauses ("both and not one"); all seven keyword clauses and
+     every sentence in A's order verbatim.
+  2. `[R-WRT-06]`: the vehicles aside, which stood between the SHOULD's
+     subject and the SHOULD, moved after the SHOULD's reason as a
+     sentence of its own, "On a conforming input such a feature is a
+     carried ignore-lane bit (§6.3) or an unrecognized `tarn.` key …",
+     its inner colon list after a comma, the nine row numbers kept; the
+     three keyword clauses verbatim.
+  3. `[R-WRT-07]`'s lead paragraphs: the placement freedom a "since"
+     clause, the preserved content opening "The content preserved is",
+     the crc aside participial; the `[R-IDX-03]` aside in the
+     regeneration paragraph a "since" clause (the passage quiz item
+     quizb-14 turned on, its SHOULD verbatim); `[R-WRT-07]`: the §7.2
+     aside participial.
+  4. The compaction Example's prose: two dashes a comma and a semicolon;
+     the figure untouched. `[R-WRT-09]`: the links of the chain after
+     "before emitting that structure's bytes" as a colon list; the ID
+     joined to the last line. The Note: the dash a comma.
+- **Removed restatements:** none. Nothing dropped: the word-level diff
+  shows only connectives gained ("and", "since", "The content preserved
+  is", "such a feature is") and two inflections ("carrying", "reach").
+- **Reworded IDs:** `R-WRT-06`, `R-WRT-07`, `R-WRT-09`, listed; fourteen
+  keyword clauses and row lists checked.
+- **Soft items:** `ID_REWORDED_LISTED` ×103 (the three new); the carried
+  items as before. Keyword counts unchanged. B is 4,788 lines and 48,433
+  words. §20 is done for this pass: 70 dashes to 5, those five the
+  preservation table's.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §20.4: spruce-up pass, seven dash asides out
 
 - **Commit:** `Readable: §20.4 — spruce-up pass: four paragraphs and the

@@ -3351,120 +3351,119 @@ no-embedded-offsets rule (§7.2) makes safe for MU = 0 records.
 #### 20.5 Rewriting
 
 A rewriter's output is a new file under a fresh file_id, built from
-the structures reachable from the input's live trailer — the live
-committed state (§7.2) — and carrying no slack. Each structure of the
+the structures reachable from the input's live trailer (the live
+committed state, §7.2) and carrying no slack. Each structure of the
 input is carried forward verbatim, re-created as new output, or
-dropped, under the rule for what is done to it, and the output MAY
-add what a creator could. This text names three rewrites:
-**compaction**, which carries every structure forward and changes
-nothing but placement, and is the rewrite that reclaims slack;
-**dropping** a layer or another record §20.4's table licenses
-dropping, which a commit does by omitting the record and stranding
-what it addressed (§20.4) and a rewrite does reclaiming it;
-and **re-declaring** a layer that stores a tile in the input, the
-rewrite §20.3 step 4 reserves for a change to a fixed declaration. A
-rewrite MAY do several of these at once, dropping one layer,
-re-declaring another and carrying the rest forward, and is compaction
-only where it does nothing but carry. A rewriter satisfies every
-writer requirement for the bytes it produces (`[R-CNF-06]`), and a
-violation latent in a structure it carries forward verbatim travels
-into its output (`[R-WRT-01]`) — its verification depth over what it
-carries is `[R-WRT-09]`'s and reaches no decoded content, and what it
-re-creates it decodes as a reader (`[R-CNF-11]`) and writes as a
-creator (§20.2). Given a conforming input, an output that carries
-forward, re-creates and drops as this section provides is a
-conforming file. A rewriter MUST refuse to rewrite when any check
-`[R-WRT-09]` obliges fails, and MUST NOT emit a file carrying a
-violation it has detected: it can neither re-emit the structure
-corrected (`[R-WRT-05]`), nor keep it and call the output clean.
-Dropping is the one disposal that answers, and only where §20.4's
-table licenses it: a record dropped, a layer with its sub-records,
-its index region and stored tiles among them, is not in the output, so the output
-carries no violation and the prohibition — which bites on what the
-output carries — is satisfied. Where the table does not license a
-drop the rewriter MUST refuse. It MUST mint a fresh file_id for the
-output — a new draw under §9.3's randomness advice, not merely a value
-compared against the input's: a rewritten file is a whole-file
-rewrite under a new file_id by definition (`[R-LIF-01]`), and
-reusing the input's would break the (file_id, range) cache contract
-of `[R-LIF-03]`, since relocation puts different bytes at the same
-ranges. The fresh file_id is the whole of that mechanism: it is
-what makes the output a different file rather than a later state of
-its input, and `[R-LIF-03]` reaches that verdict on file_id alone,
-before any comparison of committed_file_length. What is lost is
-smaller and worth naming: nothing in the output's trailer records
-that it is a first committed state — no field counts commits — so a
-rewritten file and a file appended to a hundred times are
-indistinguishable by their live trailers alone. A rewriter MUST follow
-`[R-LIF-02]`'s **creation path**, as §20.2 obliges a creator: the
-output has no prior trailer, which is the case that path states,
-and `[R-WRT-01]` already has a rewriter satisfying every writer
-requirement for the bytes it produces. The pad of step 5 and the
-barriers of steps 4 and 6 — both, not one — are owed here as they
-are of a creator. That a rewrite is not a commit (`[R-LIF-01]`)
-fixes what the output *is*, not which rules govern the writing of
-it.
+dropped, under the rule for what is done to it, and the output MAY add
+what a creator could. This text names three rewrites: **compaction**,
+which carries every structure forward and changes nothing but
+placement, and is the rewrite that reclaims slack; **dropping** a
+layer or another record §20.4's table licenses dropping, which a
+commit does by omitting the record and stranding what it addressed
+(§20.4) and a rewrite does reclaiming it; and **re-declaring** a layer
+that stores a tile in the input, the rewrite §20.3 step 4 reserves for
+a change to a fixed declaration. A rewrite MAY do several of these at
+once, dropping one layer, re-declaring another and carrying the rest
+forward, and is compaction only where it does nothing but carry. A
+rewriter satisfies every writer requirement for the bytes it produces
+(`[R-CNF-06]`), and a violation latent in a structure it carries
+forward verbatim travels into its output (`[R-WRT-01]`); its
+verification depth over what it carries is `[R-WRT-09]`'s and reaches
+no decoded content, and what it re-creates it decodes as a reader
+(`[R-CNF-11]`) and writes as a creator (§20.2). Given a conforming
+input, an output that carries forward, re-creates and drops as this
+section provides is a conforming file.
 
-The output
-trailer MUST copy the input's unknown ignore-lane flag bits forward
-and set no other, in place of the flags = 0 §6.3 requires of a file
-created under this text (`[R-CNT-08]`). Where the output carries a feature a later minor
-defines and this rewriter does not — on a conforming input a carried
-ignore-lane bit (§6.3) or an unrecognized `tarn.` key in a record it
-never decoded (§18.3), the two of §10.1's four vehicles §21.6 makes
-conforming, the other two reaching such a file only as values this
-text still registers as reserved-range violations: F36 and L25 for a
-record type, and one row for each of the other seven spaces §10.2
-tabulates (L31, L33, L34, L36, L43, L45, R1) —
-the output's version_minor SHOULD be at least the input's: a rewriter cannot know which minor version defined a
-feature it does not implement, and a lower minor understates the
-file's feature floor to tooling, the mirror of the overstatement
-`[R-CNT-26]` names. Otherwise version_minor follows `[R-CNT-26]`'s
+A rewriter MUST refuse to rewrite when any check `[R-WRT-09]` obliges
+fails, and MUST NOT emit a file carrying a violation it has detected:
+it can neither re-emit the structure corrected (`[R-WRT-05]`), nor
+keep it and call the output clean. Dropping is the one disposal that
+answers, and only where §20.4's table licenses it: a record dropped, a
+layer with its sub-records, its index region and stored tiles among
+them, is not in the output, so the output carries no violation and the
+prohibition, which bites on what the output carries, is satisfied.
+Where the table does not license a drop the rewriter MUST refuse.
+
+It MUST mint a fresh file_id for the output, a new draw under §9.3's
+randomness advice and not merely a value compared against the input's:
+a rewritten file is a whole-file rewrite under a new file_id by
+definition (`[R-LIF-01]`), and reusing the input's would break the
+(file_id, range) cache contract of `[R-LIF-03]`, since relocation puts
+different bytes at the same ranges. The fresh file_id is the whole of
+that mechanism: it is what makes the output a different file rather
+than a later state of its input, and `[R-LIF-03]` reaches that verdict
+on file_id alone, before any comparison of committed_file_length. What
+is lost is smaller and worth naming: nothing in the output's trailer
+records that it is a first committed state (no field counts commits),
+so a rewritten file and a file appended to a hundred times are
+indistinguishable by their live trailers alone.
+
+A rewriter MUST follow `[R-LIF-02]`'s **creation path**, as §20.2
+obliges a creator: the output has no prior trailer, which is the case
+that path states, and `[R-WRT-01]` already has a rewriter satisfying
+every writer requirement for the bytes it produces. The pad of step 5
+and the barriers of steps 4 and 6, both and not one, are owed here as
+they are of a creator. That a rewrite is not a commit (`[R-LIF-01]`)
+fixes what the output *is*, not which rules govern the writing of it.
+
+The output trailer MUST copy the input's unknown ignore-lane flag bits
+forward and set no other, in place of the flags = 0 §6.3 requires of a
+file created under this text (`[R-CNT-08]`). Where the output carries
+a feature a later minor defines and this rewriter does not, the
+output's version_minor SHOULD be at least the input's: a rewriter
+cannot know which minor version defined a feature it does not
+implement, and a lower minor understates the file's feature floor to
+tooling, the mirror of the overstatement `[R-CNT-26]` names. On a
+conforming input such a feature is a carried ignore-lane bit (§6.3) or
+an unrecognized `tarn.` key in a record it never decoded (§18.3), the
+two of §10.1's four vehicles §21.6 makes conforming; the other two
+reach such a file only as values this text still registers as
+reserved-range violations, F36 and L25 for a record type, and one row
+for each of the other seven spaces §10.2 tabulates (L31, L33, L34,
+L36, L43, L45, R1). Otherwise version_minor follows `[R-CNT-26]`'s
 floor. A rewriter MUST refuse to rewrite a file carrying any record
-whose type it does not implement with MU = 1: such a type can
-define references this specification does not (§7.2), so its
-bytes cannot be safely relocated. `[R-WRT-06]`
+whose type it does not implement with MU = 1: such a type can define
+references this specification does not (§7.2), so its bytes cannot be
+safely relocated. `[R-WRT-06]`
 
 A rewriter MUST preserve the content of every structure it carries
-forward, and preserves no placement — placement is not among the
-things it carries forward, and it is free to place structures
-anywhere §5.2 admits and every declared layout invariant permits
-(`[R-SLB-01]`, `[R-SLB-03]`): every carried stored tile's bytes
-verbatim — each index entry's crc is unchanged — and every retained
-record per §20.4, except that relocation re-points
-extent slots, regenerates each tile-index region any of whose stored
-extents the output relocates (entry
-offsets new; entry lengths, entry crcs, and sentinel entries
-unchanged; segment CRCs recomputed over the entries as
-re-emitted), and updates the layer-record fields covering a
-regenerated region (crc_of_crc_array). A layer the rewrite
-re-creates is new output: its record, its tile-index region and its
-stored tiles are written under §20.2's rules from content the
-rewriter decoded (§19.3, §19.4), and nothing of the input's copy of
-that layer is carried forward.
+forward, and preserves no placement, since placement is not among the
+things it carries forward and it is free to place structures anywhere
+§5.2 admits and every declared layout invariant permits (`[R-SLB-01]`,
+`[R-SLB-03]`). The content preserved is every carried stored tile's
+bytes verbatim, each index entry's crc being unchanged, and every
+retained record per §20.4, except that relocation re-points extent
+slots, regenerates each tile-index region any of whose stored extents
+the output relocates (entry offsets new; entry lengths, entry crcs,
+and sentinel entries unchanged; segment CRCs recomputed over the
+entries as re-emitted), and updates the layer-record fields covering a
+regenerated region (crc_of_crc_array). A layer the rewrite re-creates
+is new output: its record, its tile-index region and its stored tiles
+are written under §20.2's rules from content the rewriter decoded
+(§19.3, §19.4), and nothing of the input's copy of that layer is
+carried forward.
 
 Regenerating a region means classifying every entry in it: a sentinel
 is re-emitted unchanged, and every other entry is re-pointed to where
 its stored extent now lies. An entry §15.3 classifies reject-tile on a
-structural ground is neither — `[R-IDX-03]` gives it no stored extent
-for a re-pointing to target — so regenerating the region cannot
+structural ground is neither, since `[R-IDX-03]` gives it no stored
+extent for a re-pointing to target, so regenerating the region cannot
 proceed without meeting it, and the violation is thereafter one the
 rewriter has detected. `[R-WRT-06]` then leaves it two disposals,
 since it can neither reproduce the entry nor invent a replacement:
 drop the layer, which §20.4's table licenses and whose loss the
-rewriter SHOULD report as that table says, or refuse. That `[R-WRT-09]`'s checks reach the index
-chain and the checksum over each extent it copies rather than an
-entry's own value domain bounds how far a rewriter goes looking,
-not what it owes on what regenerating the region has already put in
-front of it.
+rewriter SHOULD report as that table says, or refuse. That
+`[R-WRT-09]`'s checks reach the index chain and the checksum over each
+extent it copies rather than an entry's own value domain bounds how
+far a rewriter goes looking, not what it owes on what regenerating the
+region has already put in front of it.
 
-No other record payload
-carries a file offset: MU = 0 records by rule (§7.2), and an
-MU = 1 type the rewriter does not implement never reaches this
-step (`[R-WRT-06]`). An MU = 1 type it *does* implement is the
-remaining case, and §7.2 admits it — such a type carries further
-references where this specification or registry review defines
-them — so a rewriter implementing one relocates whatever that
+No other record payload carries a file offset: MU = 0 records by rule
+(§7.2), and an MU = 1 type the rewriter does not implement never
+reaches this step (`[R-WRT-06]`). An MU = 1 type it *does* implement
+is the remaining case, and §7.2 admits it, such a type carrying
+further references where this specification or registry review defines
+them, so a rewriter implementing one relocates whatever that
 registration defines, on the same terms as the tile index. The
 reference array of every layer the output carries forward MUST equal
 the live generation's bit for bit (`[R-MDL-02]`): a rewrite changes
@@ -3484,22 +3483,21 @@ re-created layer denotes is the rewriter's to declare. `[R-WRT-07]`
 >
 > Every stored tile's bytes survive byte-for-byte, as does every
 > record extent but a tile-index region any of whose stored extents
-> moved — itself a record extent (§5.2), and the one kind this
+> moved, itself a record extent (§5.2), and the one kind this
 > operation regenerates rather than copies, since its entries carry
 > the offsets that moved. The reference arrays are identical; extent
 > slots are re-pointed and each index region any of whose stored
-> extents moved is regenerated — the ′ marks B's (`[R-WRT-07]`). In
+> extents moved is regenerated; the ′ marks B's (`[R-WRT-07]`). In
 > this placement A's stored extents happen not to move, so A's index
 > is copied and only its slot re-pointed; under a placement that moved
-> them it would be regenerated too, placement being the rewriter's
-> to choose.
-> Placement is what changes, which is why the output is a different
-> file rather than a later generation of the same one. The fresh
-> file_id is the mechanism, not bookkeeping: a
-> cache keyed (file_id, range) is sound precisely because ranges never
-> change beneath a file_id (§9.3), and a rewrite is the one operation
-> that changes what a range holds. Reusing the input's identifier would serve
-> the input's bytes for the output's ranges.
+> them it would be regenerated too, placement being the rewriter's to
+> choose. Placement is what changes, which is why the output is a
+> different file rather than a later generation of the same one. The
+> fresh file_id is the mechanism, not bookkeeping: a cache keyed
+> (file_id, range) is sound precisely because ranges never change
+> beneath a file_id (§9.3), and a rewrite is the one operation that
+> changes what a range holds. Reusing the input's identifier would
+> serve the input's bytes for the output's ranges.
 >
 > A rewrite is the only operation that reclaims slack; truncation past F
 > (`[R-LIF-04]`) and recovery to an earlier commit boundary
@@ -3513,22 +3511,21 @@ re-created layer denotes is the rewriter's to declare. `[R-WRT-07]`
 > whose walk completes reports the total (§9.7), and that total is
 > what tells an operator when to run this.
 
-A rewriter's verification depth over what it carries follows
-reliance (`[R-WRT-03]`): it relies structurally on every
-structure it copies, so it MUST verify each link of the chain —
-the open (§19.1), each retained layer's record (§19.3) and full
-index chain (`[R-IDX-04]`), and the checksum §8.1 states over each
-extent it copies, every stored tile's entry crc among them — before
-emitting that structure's bytes. The duty follows what the rewriter
-carries and not where it places it: an extent the output leaves at
-its input offset owes the same check as one it relocates. What it
-re-creates it decodes as a reader first, owing every check §19.3 and
-§19.4 place at that use (`[R-CNF-11]`).
-`[R-WRT-09]`
+A rewriter's verification depth over what it carries follows reliance
+(`[R-WRT-03]`): it relies structurally on every structure it copies,
+so it MUST verify each link of the chain before emitting that
+structure's bytes: the open (§19.1), each retained layer's record
+(§19.3) and full index chain (`[R-IDX-04]`), and the checksum §8.1
+states over each extent it copies, every stored tile's entry crc among
+them. The duty follows what the rewriter carries and not where it
+places it: an extent the output leaves at its input offset owes the
+same check as one it relocates. What it re-creates it decodes as a
+reader first, owing every check §19.3 and §19.4 place at that use
+(`[R-CNF-11]`). `[R-WRT-09]`
 
 > **Note.** A rewrite is the only true removal: logical deletion
 > supersedes bytes but leaves them in the file as slack
-> (`[R-CNT-21]`) — a privacy consideration (§23).
+> (`[R-CNT-21]`), a privacy consideration (§23).
 
 ### 21. Error-Handling Register and Limits
 
