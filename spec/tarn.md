@@ -3531,112 +3531,107 @@ reader first, owing every check §19.3 and §19.4 place at that use
 
 #### 21.1 How to read the register
 
-The register — §21.2 through §21.5 (`[R-ERR-02]`) — enumerates
-every detectable file-conformance violation this specification names: each row is one
-malformed condition, with the outcome class its scope determines
-(§2.4) — except where a rule assigns one expressly, as `[R-CNT-25]`'s
-quarantine does for every way a §21.5 row makes the document
-unreadable and `[R-MTA-09]` for the frame constraints R4 registers,
-whatever the containing scope —
-the actor obliged to detect it (`[R-CNF-04]`, `[R-CNF-11]`),
-the point by which detection is due (§19.2), and the requirement that
-defines it. A Governing rule cell names that requirement first; any
-identifiers following it in parentheses are further rules the
-condition reads, a finding aid and not the whole of them, or the
-section stating what it reads where no
-requirement identifier does, a value set (L31) or a registered
-type's scope (L26), cited without brackets to keep them distinct
-from the governing one. Its **completeness is normative** — a
-*detectable* file-conformance violation this specification names and
-the register omits is a defect in this document, detectability being the gate
-`[R-CNF-07]` already applies and §21.7 states the test for: a
-condition is detectable exactly where some file exhibiting it is
-separated from every file that does not by some check this
+The register, §21.2 through §21.5 (`[R-ERR-02]`), enumerates every
+detectable file-conformance violation this specification names: each
+row is one malformed condition, together with the outcome class its
+scope determines (§2.4), except where a rule assigns one expressly, as
+`[R-CNT-25]`'s quarantine does for every way a §21.5 row makes the
+document unreadable and `[R-MTA-09]` for the frame constraints R4
+registers, whatever the containing scope; the actor obliged to detect
+it (`[R-CNF-04]`, `[R-CNF-11]`); the point by which detection is due
+(§19.2); and the requirement that defines it. A Governing rule cell
+names that requirement first; any identifiers following it in
+parentheses are further rules the condition reads, a finding aid and
+not the whole of them, or the section stating what it reads where no
+requirement identifier does, a value set (L31) or a registered type's
+scope (L26), cited without brackets to keep them distinct from the
+governing one. Its **completeness is normative**: a *detectable*
+file-conformance violation this specification names and the register
+omits is a defect in this document, detectability being the gate
+`[R-CNF-07]` already applies and §21.7 states the test for, under
+which a condition is detectable exactly where some file exhibiting it
+is separated from every file that does not by some check this
 specification obliges a reader or a verifier to perform, not
-necessarily the same check for each such file
-— but each row *restates* its governing rule, and where a
-row and the rule it cites diverge, **the rule governs**. Conditions
-attach to the finest structure they damage, and the outcome follows
-from that scope — subject to the same exception stated above, a rule
-that assigns an outcome expressly — never from the severity of the
-corruption. Some
-rows are strict specializations of others: where every file
-exhibiting one row's condition — at a given instance of it, where the
-row enumerates several — necessarily exhibits another's, the file is
-recorded against the narrower row, whose detector and detection point
-are the ones that apply. F1's front-block instance of F6 and its
-trailer-magic instance of F8, F35 of F36, L24 of L25, F21 of F22 and
-L10 of L11 stand in that relation; the property decides any pair and
-this list is not offered as closed. Rows that merely overlap, each
-reachable without the other, do not stand in it. The subsections after §21.5 are not
-part of the register and carry no rows: neither this completeness
-clause nor the instance arithmetic below reaches §21.6's defined
-non-violations, §21.7's test for what no check detects, or
-§21.9's limits. §21.6's entries restate their governing rules on
-the same terms a row does, each rule its Rule cell lists governing
-the part of the entry it states and none first among them, and where
-such an entry and a rule it cites diverge, the rule governs there
-too.
+necessarily the same check for each such file. But each row *restates*
+its governing rule, and where a row and the rule it cites diverge,
+**the rule governs**. Conditions attach to the finest structure they
+damage, and the outcome follows from that scope, subject to the same
+exception stated above, a rule that assigns an outcome expressly, and
+never from the severity of the corruption. Some rows are strict
+specializations of others: where every file exhibiting one row's
+condition (at a given instance of it, where the row enumerates
+several) necessarily exhibits another's, the file is recorded against
+the narrower row, whose detector and detection point are the ones that
+apply. F1's front-block instance of F6 and its trailer-magic instance
+of F8, F35 of F36, L24 of L25, F21 of F22 and L10 of L11 stand in that
+relation; the property decides any pair and this list is not offered
+as closed. Rows that merely overlap, each reachable without the other,
+do not stand in it. The subsections after §21.5 are not part of the
+register and carry no rows: neither this completeness clause nor the
+instance arithmetic below reaches §21.6's defined non-violations,
+§21.7's test for what no check detects, or §21.9's limits. §21.6's
+entries restate their governing rules on the same terms a row does,
+each rule its Rule cell lists governing the part of the entry it
+states and none first among them, and where such an entry and a rule
+it cites diverge, the rule governs there too.
 
 The **Instances** column enumerates what a conformance corpus builds
 for that row (§21.8): the row is the unit a vector is attributed to
 (`[R-VEC-02]`), and each instance is one distinguishable file, covered
 by at least one vector (`[R-VEC-03]`). An instance names a field the
-condition ranges over, a
-container it can occur in, one of several alternatives the condition
-text states, or any combination of the three — a condition applying
-to two alternatives in two containers has four. What a cell
-enumerates is the condition's own alternatives and containers: a row
-whose check ranges over a family without the condition changing
-shape states that range as a single instance (T24's *any codec*),
-and one whose members give the condition materially different shapes
-enumerates them (T15, T25). Two axes recur often enough to be stated rather than judged each
-time. Where the quantity a condition derives varies by layout, the
-layout formulas are materially different shapes and the cell
-enumerates them. Where the condition compares two **magnitudes**
-either of which can be the greater — a *differs from* or *does not
-equal* — the two directions are likewise enumerated; where its own
-text bounds the comparison in one direction — an *exceeds*, a
-*larger than* — there is one. A comparison with no magnitude
-ordering enumerates no direction: a stored checksum against a
-computed one, or a byte pattern against a constant, is equal or it
-is not, and *greater* names nothing. Nor does a field tested only
-for being nonzero — an *A ≠ 0*, an *S ≠ 0* — which is a value test
-and not a comparison of two quantities at all. Instances within a
-cell are separated by semicolons, and a cell reading — is one
-instance; the count is therefore mechanical once the cell is
-written. One instance is one
-*distinguishable* file: where a condition is a single predicate over
-several fields — a sum against a bound, a combination of two flag
-bits — the fields it reads are not instances, because no two files
-could differ. Detection points name §19.2's reader tiers — open,
-layer access, tile use, extent use — or *certification* for the rows
-a verifier detects, which §19.2 places outside the reader tiers
+condition ranges over, a container it can occur in, one of several
+alternatives the condition text states, or any combination of the
+three; a condition applying to two alternatives in two containers has
+four. What a cell enumerates is the condition's own alternatives and
+containers: a row whose check ranges over a family without the
+condition changing shape states that range as a single instance (T24's
+*any codec*), and one whose members give the condition materially
+different shapes enumerates them (T15, T25). Two axes recur often
+enough to be stated rather than judged each time. Where the quantity a
+condition derives varies by layout, the layout formulas are materially
+different shapes and the cell enumerates them. Where the condition
+compares two **magnitudes** either of which can be the greater (a
+*differs from* or *does not equal*), the two directions are likewise
+enumerated; where its own text bounds the comparison in one direction
+(an *exceeds*, a *larger than*) there is one. A comparison with no
+magnitude ordering enumerates no direction: a stored checksum against
+a computed one, or a byte pattern against a constant, is equal or it
+is not, and *greater* names nothing. Nor does a field tested only for
+being nonzero (an *A ≠ 0*, an *S ≠ 0*), which is a value test and not
+a comparison of two quantities at all. Instances within a cell are
+separated by semicolons, and a cell reading "—" is one instance; the
+count is therefore mechanical once the cell is written. One instance
+is one *distinguishable* file: where a condition is a single predicate
+over several fields (a sum against a bound, a combination of two flag
+bits) the fields it reads are not instances, because no two files
+could differ. Detection points name §19.2's reader tiers (open, layer
+access, tile use, extent use) or *certification* for the rows a
+verifier detects, which §19.2 places outside the reader tiers
 entirely. For a row whose Detector is *verifier*, the outcome names
 the scope at which the damage is recorded, not an obligation on any
-reader: the governing rule states what a reader does, and for
-several such rows it obliges the reader that serves the structure to
-serve it unchanged (`[R-CNT-22]`, whose registered type keeps its
-fixed semantics, F28 and L49; and `[R-MTA-05]`, whose unsorted
-document readers process as they find it, F27 and L48), `[R-CNF-12]`'s
-licence to reject the nonconforming file being untouched in each, as
-it is for `[R-CNT-12]`'s reserved-flag rows (F26, L47), whose bits
-readers ignore. `[R-SER-08]` is the one rule that goes the other way
-for a value a reader returns: it resolves a nonconforming interleaved
+reader: the governing rule states what a reader does, and for several
+such rows it obliges the reader that serves the structure to serve it
+unchanged (`[R-CNT-22]`, whose registered type keeps its fixed
+semantics, F28 and L49; and `[R-MTA-05]`, whose unsorted document
+readers process as they find it, F27 and L48), `[R-CNF-12]`'s licence
+to reject the nonconforming file being untouched in each, as it is for
+`[R-CNT-12]`'s reserved-flag rows (F26, L47), whose bits readers
+ignore. `[R-SER-08]` is the one rule that goes the other way for a
+value a reader returns: it resolves a nonconforming interleaved
 boolean byte to a sample value rather than serving it through, which
 `[R-TYP-04]` (§12.3) records as the one such case; `[R-CNT-12]`'s
-reading of MU = 1 with PE = 0 as PE = 1 (F25, L46) resolves a flag
-and returns no data.
+reading of MU = 1 with PE = 0 as PE = 1 (F25, L46) resolves a flag and
+returns no data.
 
 #### 21.2 File-scope violations
 
 Outcome: reject-file. 35 conditions. Which rows reach a file declaring
 a format major other than 1 is decided by `[R-CNF-13]` (§2.3),
 condition by condition. Deriving it there yields F8, F14, F6 and both
-of F1's instances — each asserting an invariant `[R-CNT-24]` fixes in
-every major — and no other row. F18 is not an exception but a case outside the
-premise: version_major = 0 declares no major at all, so `[R-CNF-13]`'s
-premise is unmet and `[R-CNT-07]` governs (§21.6).
+of F1's instances, each asserting an invariant `[R-CNT-24]` fixes in
+every major, and no other row. F18 is not an exception but a case
+outside the premise: version_major = 0 declares no major at all, so
+`[R-CNF-13]`'s premise is unmet and `[R-CNT-07]` governs (§21.6).
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
@@ -3677,15 +3672,15 @@ premise is unmet and `[R-CNT-07]` governs (§21.6).
 | F36 | A top-level record carries a type value from the reserved range 0x0003-0x7FFF, which this specification has not assigned; emitting one is a violation whatever its MU bit | — | verifier | certification | `[R-CNT-15]` |
 
 > **Note.** Row label F11 is struck, and the gap it leaves in this
-> table is deliberate. A row label is retired on the model §2.2
-> states for a withdrawn requirement identifier — never renumbered,
-> never reused — so every label here denotes the condition it has
-> always denoted (§24, `[R-VEC-02]`).
+> table is deliberate. A row label is retired on the model §2.2 states
+> for a withdrawn requirement identifier (never renumbered, never
+> reused), so every label here denotes the condition it has always
+> denoted (§24, `[R-VEC-02]`).
 
 #### 21.3 Layer-scope violations
 
-Outcome: reject-layer — the named layer is unusable, every other
-layer unaffected. 49 conditions.
+Outcome: reject-layer; the named layer is unusable, every other layer
+unaffected. 49 conditions.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
@@ -3741,7 +3736,7 @@ layer unaffected. 49 conditions.
 
 #### 21.4 Tile-scope violations
 
-Outcome: reject-tile — that tile's read reports failure, and never
+Outcome: reject-tile; that tile's read reports failure, and never
 returns fill in place of data, for a rejection the reader is obliged
 to detect (`[R-CNF-09]`); where a row's Detector is *verifier* no
 reader is obliged to detect the condition, and the governing rule

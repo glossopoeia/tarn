@@ -137,6 +137,41 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §21.1 to §21.4: spruce-up pass, twenty-seven dash asides out of the register's prose
+
+- **Commit:** `Readable: §21.1–§21.4 — spruce-up pass: how to read the
+  register, three lead-ins and the F11 Note without asides` (the commit
+  carrying this entry). Previous: `1e2734f` (§20.5's pass).
+- **Sections:** §21.1 (both paragraphs), §21.2 (the lead-in, the F11
+  Note), §21.3 and §21.4 (the lead-ins). The register rows untouched. The
+  first of two passes over §21, not the maintainer's read-through;
+  proposed with before and after (`scratch/cleanroom/proposals/s21a-pass.md`),
+  approved ("Go").
+- **Edits.**
+  1. §21.1's register paragraph: a row's four parts a semicolon list after
+     "together with", the express-assignment exception inside the first;
+     "completeness is normative" with a colon and the detectability test
+     as an "under which" clause; "But each row restates its governing
+     rule" a sentence of its own; the scope exception and the
+     specialization qualifier a comma clause and a parenthesis;
+     re-wrapped.
+  2. §21.1's Instances paragraph: eleven asides parentheses and a
+     semicolon; "a cell reading —", which names the dash character a cell
+     can contain, reads a cell reading "—" in quotation marks, the one
+     dash kept; re-wrapped.
+  3. The §21.2 lead-in: the reaching rows' aside a comma clause (this
+     lead-in remains the surviving statement of the reach Note's results,
+     round 1's sixth item, kept cut). The F11 Note: a parenthesis. The
+     §21.3 and §21.4 lead-ins: semicolons.
+- **Removed restatements:** none. Nothing dropped: the word-level diff
+  shows "together with", "under which" and a capitalised "But" gained in
+  the first paragraph and nothing else.
+- **Reworded IDs:** none; no ID paragraph changed (§21.1's prose and the
+  lead-ins carry no marker; `[R-ERR-02]` in §21.1 is a citation).
+- **Soft items:** `ID_REWORDED_LISTED` ×103; the carried items as before.
+  Keyword counts unchanged. B is 4,783 lines and 48,410 words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §20.5: spruce-up pass, twenty-four dash asides out; the opening in four paragraphs
 
 - **Commit:** `Readable: §20.5 — spruce-up pass: the opening in four
