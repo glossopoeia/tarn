@@ -2764,23 +2764,21 @@ A conforming reader opens a file by these steps, in order:
 1. **End of file.** Obtain the transport-authoritative file size F
    (`[R-CNT-10]`); an F below 128 is a validity error at file scope
    decided from F alone and needing no other byte of the file
-   (`[R-CNT-27]`, F5). These steps are
-   ordered by dependency, not by
+   (`[R-CNT-27]`, F5). These steps are ordered by dependency, not by
    I/O: where the transport discloses a range response's complete
    length, a remote reader's suffix range for step 2 carries F in its
    own response, so steps 1 and 2 cost one request between them
-   (§6.4), and a local reader obtains F without any. A reader
-   whose open leaves bytes [0, 16) resident — a speculative suffix
-   window that reached offset 0 included — MUST verify the front
-   signature block by byte equality before other processing
-   (mismatch: reject-file); one that would have to issue a further
-   range request for them MAY defer or omit the check
-   (`[R-CNT-04]`).
-2. **Trailer.** Fetch bytes [F − 64, F) and validate them in
-   §6.2's fixed order — magic, trailer CRC, version gate, then the
-   remaining field gates (`[R-CNT-06]`, `[R-CNT-07]`,
-   `[R-CNT-08]`). The validated trailer is the session's snapshot
-   (§9.5, `[R-LIF-05]`); no later step re-reads the file's end.
+   (§6.4), and a local reader obtains F without any. A reader whose
+   open leaves bytes [0, 16) resident, a speculative suffix window
+   that reached offset 0 included, MUST verify the front signature
+   block by byte equality before other processing (mismatch:
+   reject-file); one that would have to issue a further range request
+   for them MAY defer or omit the check (`[R-CNT-04]`).
+2. **Trailer.** Fetch bytes [F − 64, F) and validate them in §6.2's
+   fixed order: magic, trailer CRC, version gate, then the remaining
+   field gates (`[R-CNT-06]`, `[R-CNT-07]`, `[R-CNT-08]`). The
+   validated trailer is the session's snapshot (§9.5, `[R-LIF-05]`);
+   no later step re-reads the file's end.
 3. **Directory.** Fetch [dir_offset, dir_offset + dir_length) and
    verify the directory CRC before any other use of the region
    (`[R-CNT-11]`).
@@ -2788,99 +2786,90 @@ A conforming reader opens a file by these steps, in order:
    (`[R-CNT-12]`), applying the MUST_UNDERSTAND gate for unknown
    top-level types (`[R-CNT-15]`), the per-type multiplicity rules
    (`[R-CNT-14]`), the extent-slot validity rules for non-layer
-   top-level records (`[R-CNT-13]`), and the framing rules a
-   top-level user-metadata record carries on top of those — no
-   (0, 0) slot, extent_length at least 5, inline_length exactly
-   1 (`[R-CNT-25]`, `[R-MTA-03]`) — all decidable from the
-   resident bytes and F — and build the layer table: each
-   layer record's name, parsed and checked per §4.6
-   (`[R-ENC-12]`). A duplicate layer name is a validity error at
-   file scope, here, at open (`[R-ENC-15]`, §19.2). The layer-name
-   namespace is built from the name fields a reader can obtain
-   under §7.4's framing: a layer record whose name field does not
-   lie entirely within that record's inline_length yields no name
-   field to compare, so it contributes no name to the namespace and
-   is instead a validity error at layer scope (`[R-CNT-18]`).
-   Uniqueness is
-   decided first, and over the raw name bytes whether or not each
-   name is itself well-formed — `[R-ENC-13]` makes name comparison a
-   byte comparison, which needs no valid name — so two layers whose
+   top-level records (`[R-CNT-13]`), and the framing rules a top-level
+   user-metadata record carries on top of those (no (0, 0) slot,
+   extent_length at least 5, inline_length exactly 1; `[R-CNT-25]`,
+   `[R-MTA-03]`), all decidable from the resident bytes and F, and
+   build the layer table: each layer record's name, parsed and checked
+   per §4.6 (`[R-ENC-12]`). A duplicate layer name is a validity error
+   at file scope, here, at open (`[R-ENC-15]`, §19.2). The layer-name
+   namespace is built from the name fields a reader can obtain under
+   §7.4's framing: a layer record whose name field does not lie
+   entirely within that record's inline_length yields no name field to
+   compare, so it contributes no name to the namespace and is instead
+   a validity error at layer scope (`[R-CNT-18]`). Uniqueness is
+   decided first, and over the raw name bytes whether or not each name
+   is itself well-formed, because `[R-ENC-13]` makes name comparison a
+   byte comparison, which needs no valid name; so two layers whose
    name fields are byte-identical are a duplicate even when neither
    name is valid.
 
-Completing these steps is **the open**. It consumes the trailer
-and directory only — no extent slot's content, no tile index, no
-payload — so its I/O is §6.4's request accounting (`[R-CNT-09]`,
-including the suffix speculation that merges steps 1–3) at any
-layer count and file size. `[R-RDR-01]`
+Completing these steps is **the open**. It consumes the trailer and
+directory only, no extent slot's content, no tile index, no payload,
+so its I/O is §6.4's request accounting (`[R-CNT-09]`, including the
+suffix speculation that merges steps 1–3) at any layer count and file
+size. `[R-RDR-01]`
 
 #### 19.2 Validation timing
 
-A reader MUST detect each violation whose detection this
-specification obliges readers to make — a violation whose assigned
-detector is the verifier (§2.4, `[R-CNF-12]`) imposes no reader
-obligation — no later than the reader's first reliance on the
-structure that carries it:
+A reader MUST detect each violation whose detection this specification
+obliges readers to make (a violation whose assigned detector is the
+verifier, §2.4, `[R-CNF-12]`, imposes no reader obligation) no later
+than the reader's first reliance on the structure that carries it:
 
 - **at open:** the front signature block, for a reader whose open
-  leaves it resident (`[R-CNT-04]`), the trailer, the directory
-  region and its record walk, and the layer-name namespace
-  (§19.1's steps);
-- **at first access to a layer:** the full validation of that
-  layer's record (§19.3), before any use of the layer's
-  declarations;
-- **at use of a tile:** the index-chain, payload, and decode
-  checks (§19.4), before any sample of that tile is returned;
-- **at use of a record's extent:** that extent's CRC and the
-  content rules of the document it carries — those §18.2 attaches
-  at its encoding (`[R-MTA-10]`) — before anything the
-  extent holds is returned — no earlier, since the open fetches
-  no extent (§19.1).
+  leaves it resident (`[R-CNT-04]`), the trailer, the directory region
+  and its record walk, and the layer-name namespace (§19.1's steps);
+- **at first access to a layer:** the full validation of that layer's
+  record (§19.3), before any use of the layer's declarations;
+- **at use of a tile:** the index-chain, payload, and decode checks
+  (§19.4), before any sample of that tile is returned;
+- **at use of a record's extent:** that extent's CRC and the content
+  rules of the document it carries, those §18.2 attaches at its
+  encoding (`[R-MTA-10]`), before anything the extent holds is
+  returned, and no earlier, since the open fetches no extent (§19.1).
 
-Failure at any point takes the violated rule's own outcome and
-scope — in particular, index-chain failures take layer scope
-(`[R-IDX-04]`) although their detection point is tile use. A
-reader MAY detect any violation earlier (`[R-CNF-12]`); it MUST
-NOT return data whose governing structure has not passed the
-validation this rule requires at its tier. Structures a request
-never relies on impose no detection obligation beyond the open
-steps: a violating record in a layer never accessed leaves every
-other layer's reads conforming. `[R-RDR-02]`
+Failure at any point takes the violated rule's own outcome and scope:
+in particular, index-chain failures take layer scope (`[R-IDX-04]`)
+although their detection point is tile use. A reader MAY detect any
+violation earlier (`[R-CNF-12]`); it MUST NOT return data whose
+governing structure has not passed the validation this rule requires
+at its tier. Structures a request never relies on impose no detection
+obligation beyond the open steps: a violating record in a layer never
+accessed leaves every other layer's reads conforming. `[R-RDR-02]`
 
-> **Rationale.** The rule fixes the *latest* detection point, so
-> the served-versus-failed boundary is deterministic: no
-> conforming reader returns data its tier's validation would have
-> refused. Earlier detection stays licensed, so a stricter reader
-> can reject a nonconforming file sooner — divergence is only
-> ever toward earlier rejection, never toward silent acceptance.
-> The open's I/O stays two requests regardless of layer count;
-> its one namespace-wide obligation — parsing each record's
-> name — runs over bytes already fetched and CRC-verified.
+> **Rationale.** The rule fixes the *latest* detection point, so the
+> served-versus-failed boundary is deterministic: no conforming reader
+> returns data its tier's validation would have refused. Earlier
+> detection stays licensed, so a stricter reader can reject a
+> nonconforming file sooner; divergence is only ever toward earlier
+> rejection, never toward silent acceptance. The open's I/O stays two
+> requests regardless of layer count; its one namespace-wide
+> obligation, parsing each record's name, runs over bytes already
+> fetched and CRC-verified.
 
 #### 19.3 Layer access
 
-A reader's **first access** to a layer — the first operation using
-any of the layer's declarations other than its name, whose parse
-§19.1 step 4 places at the open — MUST be preceded by full
-validation of the layer record — extent slot and inline payload
-both: the slot's validity rules (`[R-CNT-13]`), the §7.4
-constraint set (`[R-CNT-23]`, `[R-CNT-16]`), the exact parse,
-sub-record walk, and sub-record multiplicity (`[R-CNT-18]`,
-`[R-CNT-14]`), dimension- and channel-name rules (`[R-ENC-11]`,
-`[R-ENC-12]`, `[R-ENC-15]`), the framing rules a user-metadata
-sub-record carries — no (0, 0) slot, extent_length at least 5,
-inline_length exactly 1 (`[R-CNT-25]`, `[R-MTA-03]`) — the u64 value
-domain of §4.2 (`[R-ENC-03]`), the value sets of §7.4, §11.4, §12.2, §14.1,
-§17.2, and §17.3, the per-type fill constraints (§13.2,
+A reader's **first access** to a layer, which is the first operation
+using any of the layer's declarations other than its name (whose parse
+§19.1 step 4 places at the open), MUST be preceded by full validation
+of the layer record, extent slot and inline payload both: the slot's
+validity rules (`[R-CNT-13]`), the §7.4 constraint set (`[R-CNT-23]`,
+`[R-CNT-16]`), the exact parse, sub-record walk, and sub-record
+multiplicity (`[R-CNT-18]`, `[R-CNT-14]`), dimension- and channel-name
+rules (`[R-ENC-11]`, `[R-ENC-12]`, `[R-ENC-15]`), the framing rules a
+user-metadata sub-record carries (no (0, 0) slot, extent_length at
+least 5, inline_length exactly 1; `[R-CNT-25]`, `[R-MTA-03]`), the u64
+value domain of §4.2 (`[R-ENC-03]`), the value sets of §7.4, §11.4,
+§12.2, §14.1, §17.2, and §17.3, the per-type fill constraints (§13.2,
 `[R-TYP-07]`), the codec declaration bounds (`[R-COD-07]`), the
-geometry floor and its arithmetic (`[R-GEO-01]`–`[R-GEO-03]`),
-the 2⁶³ − 1 ceiling on every quantity that arithmetic derives
-(`[R-ENC-04]`) and on the decoded sizes §14 derives from it
-(`[R-SER-02]`, `[R-SER-07]`),
-and the index cross-checks computable without I/O
-(`[R-CNT-17]`). All are decidable from the resident directory and
-F: layer access performs no fetch, and failure takes each cited
-rule's own scope. `[R-RDR-03]`
+geometry floor and its arithmetic (`[R-GEO-01]`–`[R-GEO-03]`), the 2⁶³
+− 1 ceiling on every quantity that arithmetic derives (`[R-ENC-04]`)
+and on the decoded sizes §14 derives from it (`[R-SER-02]`,
+`[R-SER-07]`), and the index cross-checks computable without I/O
+(`[R-CNT-17]`). All are decidable from the resident directory and F:
+layer access performs no fetch, and failure takes each cited rule's
+own scope. `[R-RDR-03]`
 
 #### 19.4 The tile-read algorithm
 
@@ -2892,74 +2881,68 @@ against an accessed layer, a conforming reader proceeds as
 follows; each step's failure takes the cited rule's outcome:
 
 1. **Domain.** For a point request, verify 0 ≤ xᵢ < Eᵢ for every
-   dimension; a coordinate outside the extents addresses nothing
-   in the reference array (`[R-MDL-01]`) — the request fails as a
-   request, with no verdict on the file. A region request covers
-   the region's intersection with the extents: a region wholly
-   outside them, or any region of a zero-extent layer, succeeds
-   and returns no samples (`[R-GEO-02]`).
+   dimension; a coordinate outside the extents addresses nothing in
+   the reference array (`[R-MDL-01]`): the request fails as a request,
+   with no verdict on the file. A region request covers the region's
+   intersection with the extents: a region wholly outside them, or any
+   region of a zero-extent layer, succeeds and returns no samples
+   (`[R-GEO-02]`).
 2. **Ordinals.** Compute the tile coordinates, in-tile ordinal,
-   spatial ordinal s, and the disk ordinal of each needed tile — s
-   interleaved; c · N + s per requested channel c planar
+   spatial ordinal s, and the disk ordinal of each needed tile: s
+   interleaved, and c · N + s per requested channel c planar
    (`[R-GEO-06]`).
 3. **Index chain.** Steps 3 through 6 run once per needed entry.
-   Verify crc_of_crc_array over the fetched CRC array and the
-   segment CRC over the fetched segment containing the entry — the
-   two fetches MAY run in parallel and their verifications MAY be
-   cached per §15.4's note (`[R-IDX-04]`).
+   Verify crc_of_crc_array over the fetched CRC array and the segment
+   CRC over the fetched segment containing the entry; the two fetches
+   MAY run in parallel and their verifications MAY be cached per
+   §15.4's note (`[R-IDX-04]`).
 4. **Entry.** Classify per §15.3 (`[R-IDX-03]`). A valid sentinel
-   short-circuits steps 5 and 6 for that entry: every requested
-   sample position of its tile reads as fill — the entry's
-   channel's recorded fill in a planar layer; each carried
-   channel's, in declared order, in an interleaved layer —
-   bit-exactly and with no payload I/O (`[R-TYP-06]`,
-   `[R-TYP-08]`). A malformed entry rejects the tile; a rejected
-   tile's read reports failure, and fill is never a failure
-   fallback (`[R-CNF-09]`).
-5. **Payload.** Fetch [offset, offset + length) and verify the
-   entry's crc over the stored bytes before decoding
-   (`[R-CNT-20]`).
+   short-circuits steps 5 and 6 for that entry: every requested sample
+   position of its tile reads as fill, bit-exactly and with no payload
+   I/O, the fill being the entry's channel's recorded fill in a planar
+   layer and each carried channel's, in declared order, in an
+   interleaved layer (`[R-TYP-06]`, `[R-TYP-08]`). A malformed entry
+   rejects the tile; a rejected tile's read reports failure, and fill
+   is never a failure fallback (`[R-CNF-09]`).
+5. **Payload.** Fetch [offset, offset + length) and verify the entry's
+   crc over the stored bytes before decoding (`[R-CNT-20]`).
 6. **Decode.** Apply the codec, then the filter's inverse (§17.1,
-   `[R-COD-08]`); the decoded payload's length is exactly the
-   decoded size (`[R-SER-07]`).
+   `[R-COD-08]`); the decoded payload's length is exactly the decoded
+   size (`[R-SER-07]`).
 7. **Extract.** Locate each requested value by §14's offset
-   arithmetic; padding positions are never returned
-   (`[R-GEO-04]`).
-8. **Return.** Return the requested values' bit patterns
-   unaltered (`[R-MDL-02]`, `[R-TYP-04]`) — for every byte a
-   conforming file can carry, the whole of this step
-   (`[R-SER-08]` fixes what a reader returns for a byte a
-   conforming file cannot carry). Where the request covered several
-   entries — a region, or a planar layer's several channels —
-   each rejected entry's failure is bounded to the positions that
-   entry carries (§2.4): the reader MAY return the validating
-   entries' values together with a per-entry report of the failed
-   ones, or fail the request as a whole, but MUST NOT stand fill
-   in for a rejected tile's positions (`[R-CNF-09]`). That
+   arithmetic; padding positions are never returned (`[R-GEO-04]`).
+8. **Return.** Return the requested values' bit patterns unaltered
+   (`[R-MDL-02]`, `[R-TYP-04]`), which for every byte a conforming
+   file can carry is the whole of this step (`[R-SER-08]` fixes what a
+   reader returns for a byte a conforming file cannot carry). Where
+   the request covered several entries (a region, or a planar layer's
+   several channels), each rejected entry's failure is bounded to the
+   positions that entry carries (§2.4): the reader MAY return the
+   validating entries' values together with a per-entry report of the
+   failed ones, or fail the request as a whole, but MUST NOT stand
+   fill in for a rejected tile's positions (`[R-CNF-09]`). That
    bounding is a property of tile scope. A failure inside the same
-   request that takes layer scope instead — step 3's index-chain
-   failure (`[R-IDX-04]`) — bars the request's remaining entries
-   and all further service from the layer; the bar is prospective,
-   so values the reader has already returned under §19.2's timing
-   stand (§2.4).
-   `[R-RDR-04]`
+   request that takes layer scope instead, step 3's index-chain
+   failure (`[R-IDX-04]`), bars the request's remaining entries and
+   all further service from the layer; the bar is prospective, so
+   values the reader has already returned under §19.2's timing stand
+   (§2.4). `[R-RDR-04]`
 
 > **Note — planar all-channel reads.** The entries for one spatial
-> ordinal lie at disk ordinals c · N + s, spaced N · 20 region
-> bytes apart; for N ≥ 2¹⁶ they are guaranteed to fall in
-> different segments, each needing its own segment verification —
-> the whole-CRC-array verification is shared across all of them.
+> ordinal lie at disk ordinals c · N + s, spaced N · 20 region bytes
+> apart; for N ≥ 2¹⁶ they are guaranteed to fall in different
+> segments, each needing its own segment verification, while the
+> whole-CRC-array verification is shared across all of them.
 > Channel-subset reads verify only the segments they touch.
 
-> **Note — region reads.** A rectangular-region read is this
-> algorithm applied per covered tile. Readers MAY coalesce the
-> payload fetches of ordinal-adjacent stored tiles; a slab
-> declaration guarantees contiguity only for stored tiles within
-> one run (§16.2) — across runs, and across planar channel
-> blocks, placement is unconstrained (`[R-SLB-05]`), so
-> coalescing is always driven by the entries' explicit offsets
-> and lengths. Nothing obliges coalescing, and sentinel tiles
-> cost no I/O wherever they fall.
+> **Note — region reads.** A rectangular-region read is this algorithm
+> applied per covered tile. Readers MAY coalesce the payload fetches
+> of ordinal-adjacent stored tiles; a slab declaration guarantees
+> contiguity only for stored tiles within one run (§16.2), and across
+> runs, and across planar channel blocks, placement is unconstrained
+> (`[R-SLB-05]`), so coalescing is always driven by the entries'
+> explicit offsets and lengths. Nothing obliges coalescing, and
+> sentinel tiles cost no I/O wherever they fall.
 
 ### 20. Writing and Updating
 

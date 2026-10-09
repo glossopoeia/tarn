@@ -137,6 +137,47 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §19: spruce-up pass, thirty-six dash asides out
+
+- **Commit:** `Readable: §19 — spruce-up pass: both step lists, four
+  paragraphs, the timing bullets, the Rationale and two Notes without
+  asides; R-RDR-01 through -04 listed` (the commit carrying this entry).
+  Previous: `bdf68a5` (§18's pass).
+- **Sections:** §19.1 (the open's steps, `[R-RDR-01]`), §19.2 (the
+  lead-in, the four tiers, `[R-RDR-02]`, the Rationale), §19.3
+  (`[R-RDR-03]`), §19.4 (the tile-read steps, `[R-RDR-04]`, two Notes). A
+  spruce-up pass, not the maintainer's read-through; proposed with before
+  and after (`scratch/cleanroom/proposals/s19-pass.md`), approved ("Go").
+- **Edits.**
+  1. The open's four steps: eight asides made comma clauses, a colon, a
+     parenthesis (step 4's user-metadata framing rules) and a "because"
+     clause ("whether or not each name is itself well-formed, because
+     `[R-ENC-13]` makes name comparison a byte comparison, which needs no
+     valid name; so two layers …"); re-wrapped; the list tight. The list
+     carries no ID (`[R-RDR-01]` closes the paragraph after it, whose
+     aside is now a comma clause).
+  2. §19.2: the verifier-detector exclusion a parenthesis inside the
+     MUST; the extent tier's three asides comma clauses; `[R-RDR-02]`'s
+     index-chain aside a colon clause; the Rationale's three dashes a
+     semicolon and comma clauses.
+  3. `[R-RDR-03]`: the definition of first access a "which is" clause with
+     a parenthesis; "extent slot and inline payload both" a comma clause;
+     the sub-record framing rules a parenthesis; re-wrapped; the twelve
+     rule sets in A's order.
+  4. `[R-RDR-04]`'s eight steps: ten asides made colons, commas,
+     parentheses, a semicolon and a "which" clause; the sentinel's
+     fill-per-layout aside placed after "bit-exactly and with no payload
+     I/O"; the ID joined to the last line; the whole list the ID's text,
+     as before.
+  5. Two Notes: a "while" clause and an "and" clause; the labels' dashes
+     kept.
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-RDR-01`, `R-RDR-02`, `R-RDR-03`, `R-RDR-04`, listed;
+  eleven keyword clauses and figures checked.
+- **Soft items:** `ID_REWORDED_LISTED` ×94 (the four new); the carried items
+  as before. Keyword counts unchanged. B is 4,812 lines and 48,486 words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §18: spruce-up pass, twenty-nine dash asides out; `[R-MTA-09]` in five paragraphs
 
 - **Commit:** `Readable: §18 — spruce-up pass: seven paragraphs, the
