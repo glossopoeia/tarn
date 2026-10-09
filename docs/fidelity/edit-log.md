@@ -137,6 +137,36 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §13: spruce-up pass, thirteen dash asides out
+
+- **Commit:** `Readable: §13 — spruce-up pass: four paragraphs and three
+  blocks without asides; R-TYP-06, -08 listed` (the commit carrying this
+  entry). Previous: `6903d04` (§12's pass).
+- **Sections:** §13 (opening), §13.1 (`[R-TYP-06]`, the structural
+  paragraph, the Note), §13.2 (the Rationale), §13.3 (`[R-TYP-08]`, the
+  padding Note). A spruce-up pass, not the maintainer's read-through;
+  proposed with before and after (`scratch/cleanroom/proposals/s13-pass.md`),
+  approved ("Go").
+- **Edits.**
+  1. The opening: the reads-as-fill aside a "since" clause after "rather
+     than an error".
+  2. §13.1 `[R-TYP-06]`: "always present" given its reason as a "since"
+     clause; the reader's three keyword clauses verbatim.
+  3. §13.1's structural paragraph: "though it never affects how any byte
+     is located or decoded" a sentence; the length-prefix clause a
+     sentence.
+  4. §13.1's Note: "deliberately so" after a comma.
+  5. §13.2's Rationale: the §4.6 parallel after a colon.
+  6. §13.3 `[R-TYP-08]`: the sentinel definition a "which is" clause, the
+     declared-order aside a comma clause; the interleaved and planar
+     cases two sentences; the MUST verbatim.
+  7. §13.3's padding Note: the §14 aside a participial clause.
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-TYP-06`, `R-TYP-08`, listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×58 (the two new); the carried items
+  as before. Keyword counts unchanged. B is 4,852 lines and 48,601 words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §12: spruce-up pass, eleven dash asides out
 
 - **Commit:** `Readable: §12 — spruce-up pass: three paragraphs and three

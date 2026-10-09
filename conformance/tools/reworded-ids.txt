@@ -58,3 +58,5 @@ R-GEO-06: two dash asides in the ordinals list made a comma clause and a colon c
 R-TYP-03: the reader's three included cases moved from a dash aside inside the MUST to a colon clause after the citation; the value cases in A's order; all three keyword clauses verbatim
 R-TYP-04: the NaN consequences a comma clause; the no-exception sentence split at its semicolon; the MUST NOT and every clause verbatim
 R-TYP-05: the inclusions a colon clause; every clause verbatim
+R-TYP-06: "always present" given its reason as a "since" clause in place of the dash aside; the reader's MUST, MUST NOT and MUST verbatim
+R-TYP-08: the sentinel definition a "which is" clause and the declared-order aside a comma clause; the interleaved and planar cases two sentences; the MUST verbatim

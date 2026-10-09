@@ -1756,27 +1756,27 @@ representation). `[R-TYP-05]`
 
 Fill is what makes sparse layers first-class: an addressed tile that
 is not stored (§3.1) occupies no payload bytes, and reading it is
-defined behavior — each channel it carries reads as fill at every
-sample position (§13.3) — rather than an error. The owning scope of
-a fill field is the layer (`[R-CNT-23]`).
+defined behavior rather than an error, since each channel it carries
+reads as fill at every sample position (§13.3). The owning scope of a
+fill field is the layer (`[R-CNT-23]`).
 
 #### 13.1 The fill field
 
 Every channel entry records a fill value: exactly the channel's
-element size in bytes, holding the little-endian encoding of one
-value of the channel's type (§7.4, `[R-CNT-23]`). The field is
-always present — §7.4's framing leaves absence unrepresentable — and
-it is authoritative: a reader MUST take a channel's fill from its
-channel entry, MUST NOT substitute a type-derived default or any
-other value, and MUST return fill bit-exactly as recorded
-(`[R-TYP-04]`). `[R-TYP-06]`
+element size in bytes, holding the little-endian encoding of one value
+of the channel's type (§7.4, `[R-CNT-23]`). The field is always
+present, since §7.4's framing leaves absence unrepresentable, and it
+is authoritative: a reader MUST take a channel's fill from its channel
+entry, MUST NOT substitute a type-derived default or any other value,
+and MUST return fill bit-exactly as recorded (`[R-TYP-04]`).
+`[R-TYP-06]`
 
 The fill value is structural (§4.7): it fixes what unstored samples
 read as, and a verifier's acceptance of a tile turns on it, since
-`[R-SER-05]` fixes every padding position's content to it — though
-it never affects how any byte is located or decoded; the field's
-length prefix is §7.4's framing, cross-checked against the element
-size (`[R-CNT-23]`).
+`[R-SER-05]` fixes every padding position's content to it. It never
+affects how any byte is located or decoded. The field's length prefix
+is §7.4's framing, cross-checked against the element size
+(`[R-CNT-23]`).
 
 Fill is mandatory-with-default: a writer whose caller does not
 choose a fill SHOULD record all-zero bytes. A writer that defaults
@@ -1785,7 +1785,7 @@ regions read back as a value consumers of the conventional zero
 default will not expect. `[R-TYP-10]`
 
 > **Note.** Nothing distinguishes the recorded default from a
-> deliberately chosen zero — deliberately so: readers never guess,
+> deliberately chosen zero, and deliberately so: readers never guess,
 > and the "field absent, behavior undefined" class of divergence is
 > unrepresentable.
 
@@ -1798,22 +1798,22 @@ bool, the fill field is one byte and its value is constrained:
 byte; a reader MUST treat any other byte as a validity error at
 layer scope. `[R-TYP-07]`
 
-> **Rationale.** One value, one encoding. Admitting "any nonzero
-> byte is true" would create 255 encodings of true, and channel
-> entries with identical meaning but different bytes — the
-> two-encodings trap §4.6 closes for names, closed here for fill.
+> **Rationale.** One value, one encoding. Admitting "any nonzero byte
+> is true" would create 255 encodings of true, and channel entries
+> with identical meaning but different bytes: the two-encodings trap
+> §4.6 closes for names, closed here for fill.
 
 #### 13.3 Unstored tiles read as fill
 
-For every addressed tile that is not stored in the live generation —
-its index entry is the sentinel (§15.2) — a reader that returns any
-of the tile's sample positions inside the layer's extents MUST
-return, for each channel the tile carries, that channel's fill value
-at every such position. In an interleaved layer an unstored tile
-yields the full fill sample — each channel's fill, in declared
-channel order — at every position; in a planar layer exactly the
-entry's channel reads as fill there, and a single sample can mix
-decoded and fill channels (§3.2). `[R-TYP-08]`
+For every addressed tile that is not stored in the live generation,
+which is one whose index entry is the sentinel (§15.2), a reader that
+returns any of the tile's sample positions inside the layer's extents
+MUST return, for each channel the tile carries, that channel's fill
+value at every such position. In an interleaved layer an unstored tile
+yields the full fill sample at every position, each channel's fill in
+declared channel order. In a planar layer exactly the entry's channel
+reads as fill there, and a single sample can mix decoded and fill
+channels (§3.2). `[R-TYP-08]`
 
 > **Example.** An interleaved layer with channels `r`, `g`, `b`, all
 > uint8, fills `0xFF`, `0x00`, `0x00`: every sample of an unstored
@@ -1837,8 +1837,8 @@ rejection is never satisfied by returning fill (`[R-CNF-09]`).
 > a damaged entry rejects the tile rather than filling it.
 
 > **Note.** Fill governs unstored tiles. The padding positions of
-> stored edge tiles (§11.3) are a different mechanism — their stored
-> byte content is §14's subject — and a reader never returns padding
+> stored edge tiles (§11.3) are a different mechanism, their stored
+> byte content being §14's subject, and a reader never returns padding
 > positions in any case (`[R-GEO-04]`).
 
 > **Note — sparse writing.** A writer creates a sparse layer by
