@@ -137,6 +137,39 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §20.4: spruce-up pass, seven dash asides out
+
+- **Commit:** `Readable: §20.4 — spruce-up pass: four paragraphs and the
+  Rationale without asides; R-WRT-05, -08 listed` (the commit carrying
+  this entry). Previous: `26d651e` (§20.3's pass).
+- **Sections:** §20.4 (`[R-WRT-05]`, the persistence paragraph, the drop
+  paragraph, `[R-WRT-08]`, the Rationale). The preservation table
+  untouched: its cells carry five asides, but table values stay as they
+  are. The third of four passes over §20, not the maintainer's
+  read-through; proposed with before and after
+  (`scratch/cleanroom/proposals/s20c-pass.md`), approved ("Go").
+- **Edits.**
+  1. `[R-WRT-05]`: "header, inline payload, and extent slot" a parenthesis
+     after the MUST.
+  2. The persistence paragraph: the registered types' flags after a
+     colon; the MU = 1 row's reach given its reason as a "since" clause,
+     "so for an implemented type only the PE bit bites" after a
+     semicolon; re-wrapped. Every clause in A's order.
+  3. The drop paragraph: re-wrapped only; no word changed.
+  4. `[R-WRT-08]`: the no-embedded-offsets aside a comma; the ID joined to
+     the last line.
+  5. The Rationale: "the directory a commit emits differing from the one
+     it supersedes" for the aside.
+- **Removed restatements:** none. Nothing dropped: the word-level diff
+  shows "since" gained in the persistence paragraph and "differs" become
+  "differing" in the Rationale, nothing else.
+- **Reworded IDs:** `R-WRT-05`, `R-WRT-08`, listed; seven keyword clauses
+  checked.
+- **Soft items:** `ID_REWORDED_LISTED` ×100 (the two new); the carried
+  items as before. Keyword counts unchanged. B is 4,791 lines and 48,446
+  words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §20.3: spruce-up pass, twenty-five dash asides out of the append procedure
 
 - **Commit:** `Readable: §20.3 — spruce-up pass: the append procedure's

@@ -3277,30 +3277,30 @@ or the declaration is cleared (`[R-SLB-01]`, `[R-CNF-05]`).
 #### 20.4 Re-emission and preservation
 
 In the new complete directory, an updater MUST re-emit
-byte-identically — header, inline payload, and extent slot — every
+byte-identically (header, inline payload, and extent slot) every
 record it retains and does not logically modify, whether or not it
-implements the record's type; a record it modifies is new output
-under its writer obligations (`[R-CNF-05]`). `[R-WRT-05]`
+implements the record's type; a record it modifies is new output under
+its writer obligations (`[R-CNF-05]`). `[R-WRT-05]`
 
 Persistence governs every record type; only the authoritative source
 of the flags differs. For a type §7.3 registers, the registry's fixed
-flags govern rather than the stored ones (`[R-CNT-22]`) — the layer
+flags govern rather than the stored ones (`[R-CNT-22]`): the layer
 record carries PE = 0 and is dropped under the table's last row, the
 user-metadata record PE = 1, a top-level one never dropped and a
-sub-record only with the layer that carries it; implementing a record's type
-confers understanding of it, and the permission to drop it is the
-bit's alone. For a type the updater implements that this specification does not
-register, the definition it implements the type from supplies the
-flags, and the stored bits never do (`[R-CNT-22]`, §10.3). For a type
-the updater does not implement, the
-stored flags are authoritative (§7.3, `[R-CNT-15]`; MU = 1 with
-PE = 0 is read as PE = 1, `[R-CNT-12]`). The table states what an
-updater owes a record it does not logically modify, read under
-whichever flags govern it. Its MU = 1 row reaches only a type the
-updater does not implement — an updater implements both registered
-types and understands an unregistered type it implements from its
-definition, modifying their records as §20.3 and that definition
-provide — so for an implemented type only the PE bit bites:
+sub-record only with the layer that carries it; implementing a
+record's type confers understanding of it, and the permission to drop
+it is the bit's alone. For a type the updater implements that this
+specification does not register, the definition it implements the type
+from supplies the flags, and the stored bits never do (`[R-CNT-22]`,
+§10.3). For a type the updater does not implement, the stored flags
+are authoritative (§7.3, `[R-CNT-15]`; MU = 1 with PE = 0 is read as
+PE = 1, `[R-CNT-12]`). The table states what an updater owes a record
+it does not logically modify, read under whichever flags govern it.
+Its MU = 1 row reaches only a type the updater does not implement,
+since an updater implements both registered types and understands an
+unregistered type it implements from its definition, modifying their
+records as §20.3 and that definition provide; so for an implemented
+type only the PE bit bites:
 
 | Governing flags | Updater obligation |
 |---|---|
@@ -3312,43 +3312,41 @@ A commit MAY therefore drop a layer record, and the drop takes the
 layer whole: a sub-record's flags govern it within a layer the updater
 keeps, so a dropped layer's sub-records and their extents go with it
 whatever their PE bits. One sub-record blocks the drop, a sub-record
-of a type the updater does not implement with MU = 1, the drop being
-a modification of the scope it governs (the table's first row). A
-commit never removes a user-metadata record from a scope it keeps: a
+of a type the updater does not implement with MU = 1, the drop being a
+modification of the scope it governs (the table's first row). A commit
+never removes a user-metadata record from a scope it keeps: a
 top-level one from the file, or a sub-record from a layer the commit
-retains. Dropping a layer by commit
-strands its stored tiles, its tile-index region and its sub-records'
-extents as slack (§5.2), which
-only a rewrite reclaims, so the file is no smaller than before and
-the bytes remain in it (§23.1): a writer SHOULD instead rewrite where
-a drop would strand a large share of the file's stored bytes, a
-rewrite that drops the layer (§20.5) reclaiming what the commit would
-strand, and an updater that drops a layer SHOULD report the loss, as
-the table says of any record dropped. A dropped layer's name is free to the same commit and
-to any later one (§20.3 step 4, §19.1).
+retains. Dropping a layer by commit strands its stored tiles, its
+tile-index region and its sub-records' extents as slack (§5.2), which
+only a rewrite reclaims, so the file is no smaller than before and the
+bytes remain in it (§23.1): a writer SHOULD instead rewrite where a
+drop would strand a large share of the file's stored bytes, a rewrite
+that drops the layer (§20.5) reclaiming what the commit would strand,
+and an updater that drops a layer SHOULD report the loss, as the table
+says of any record dropped. A dropped layer's name is free to the same
+commit and to any later one (§20.3 step 4, §19.1).
 
 An updater MUST NOT re-encode a record whose type it does not
-implement, and MUST NOT modify one except by relocating its
-extent and re-pointing its slot under §20.5 — the operation the
+implement, and MUST NOT modify one except by relocating its extent and
+re-pointing its slot under §20.5, the operation the
 no-embedded-offsets rule (§7.2) makes safe for MU = 0 records.
 `[R-WRT-08]`
 
 > **Rationale.** Complete-directory commits make re-emission the
-> preservation mechanism; byte-identity makes preservation
-> testable — the directory a commit emits differs from the one it
-> supersedes exactly by the records modified, added, or dropped
-> (as a multiset: record order carries no meaning, `[R-CNT-14]`) —
-> and forecloses re-encode drift: a re-serializer that renormalized
-> a name would change the name's identity (`[R-ENC-13]`). Put that
-> way the claim is a commit's own and holds whether or not an
-> observer can pair the two directories. It cannot, from the
-> format: the live state names one generation, and two trailers of
-> one file_id are ordered by committed_file_length without being
-> counted, so nothing in either says how many commits separate
-> them. Adjacency is a fact about a file's history, which §9.7 does
-> not reconstruct; a tool that wants the pairing enumerates commit
-> states from the physical file (§9.6), and gets only the ones that
-> file still carries.
+> preservation mechanism; byte-identity makes preservation testable,
+> the directory a commit emits differing from the one it supersedes
+> exactly by the records modified, added, or dropped (as a multiset:
+> record order carries no meaning, `[R-CNT-14]`), and forecloses
+> re-encode drift: a re-serializer that renormalized a name would
+> change the name's identity (`[R-ENC-13]`). Put that way the claim is
+> a commit's own and holds whether or not an observer can pair the two
+> directories. It cannot, from the format: the live state names one
+> generation, and two trailers of one file_id are ordered by
+> committed_file_length without being counted, so nothing in either
+> says how many commits separate them. Adjacency is a fact about a
+> file's history, which §9.7 does not reconstruct; a tool that wants
+> the pairing enumerates commit states from the physical file (§9.6),
+> and gets only the ones that file still carries.
 
 #### 20.5 Rewriting
 
