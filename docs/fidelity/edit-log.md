@@ -137,6 +137,38 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §12: spruce-up pass, eleven dash asides out
+
+- **Commit:** `Readable: §12 — spruce-up pass: three paragraphs and three
+  blocks without asides; R-TYP-03, -04, -05 listed` (the commit carrying
+  this entry). Previous: `2dde2b2` (§11's pass).
+- **Sections:** §12.1 (the bfloat16 Example), §12.2 (`[R-TYP-03]`, its
+  Note), §12.3 (`[R-TYP-04]`, `[R-TYP-05]`, the channel-entry Example). A
+  spruce-up pass, not the maintainer's read-through; proposed with before
+  and after (`scratch/cleanroom/proposals/s12-pass.md`), approved ("Go").
+- **Edits.**
+  1. The bfloat16 Example: the nested aside a colon clause, the storage
+     bytes `80 3F` placed beside the value they store; every figure kept.
+  2. §12.2 `[R-TYP-03]`: the reader's three included cases moved from a
+     dash aside inside the MUST to a colon clause after the citation ("0,
+     every reserved value and the experimental range included"); the five
+     value cases in A's order; the three keyword clauses verbatim.
+  3. §12.2's Note: the 8-bit float reservation a clause and a sentence
+     ("no other 8-bit float definition will be considered"); every number
+     and name kept.
+  4. §12.3 `[R-TYP-04]`: "never quieted, canonicalized or collapsed" a comma
+     clause; the no-exception sentence split at its semicolon; the MUST
+     NOT verbatim.
+  5. §12.3 `[R-TYP-05]`: the inclusions a colon clause.
+  6. The channel-entry Example: "a NaN carrying a payload" a comma clause;
+     the twelve bytes kept on one line.
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-TYP-03`, `R-TYP-04`, `R-TYP-05`, listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×56 (the three new); the carried
+  items as before; the Example numbers unchanged (the tool reports none).
+  Keyword counts unchanged. B is 4,852 lines and 48,609 words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §11: spruce-up pass, ten dash asides out
 
 - **Commit:** `Readable: §11 — spruce-up pass: five paragraphs without

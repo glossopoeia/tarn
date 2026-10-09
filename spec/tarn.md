@@ -1697,52 +1697,51 @@ exactly the value that the IEEE 754 binary32 bit pattern b × 2¹⁶
 (b in the high 16 bits, low 16 bits zero) denotes; subnormals,
 infinities, and NaNs follow from that identification. `[R-TYP-02]`
 
-> **Example.** bfloat16 1.0 is `0x3F80` — binary32 1.0 is
-> `0x3F800000`, and keeping the high 16 bits leaves `0x3F80` —
-> stored as the bytes `80 3F`. The bit pattern `0x7FC0` denotes a
-> quiet NaN (binary32 `0x7FC00000`).
+> **Example.** bfloat16 1.0 is `0x3F80`, stored as the bytes `80 3F`:
+> binary32 1.0 is `0x3F800000`, and keeping the high 16 bits leaves
+> `0x3F80`. The bit pattern `0x7FC0` denotes a quiet NaN (binary32
+> `0x7FC00000`).
 
 #### 12.2 The type field's value set
 
-Field values: 0 is invalid; 1 through 13 are assigned per §12.1;
-values 14 through 19 are reserved without semantics; values 20
-through 0x7FFF are reserved for future assignment by this
-specification; values ≥ 0x8000 are the experimental range (§10).
-Writers MUST NOT emit a type value other than 1 through 13; a reader
-MUST treat any other value — 0, every reserved value, and the
-experimental range included — as a validity error at layer scope
-(`[R-CNT-23]`). Type identifiers are pure enumerators: a reader MUST
-NOT infer an element size or any semantics for a type value this
-specification does not assign, whatever pattern its bits suggest
-(`[R-CNF-04]`). `[R-TYP-03]`
+The field's values: 0 is invalid; 1 through 13 are assigned per §12.1;
+values 14 through 19 are reserved without semantics; values 20 through
+0x7FFF are reserved for future assignment by this specification;
+values ≥ 0x8000 are the experimental range (§10). Writers MUST NOT
+emit a type value other than 1 through 13, and a reader MUST treat any
+other value as a validity error at layer scope (`[R-CNT-23]`): 0,
+every reserved value and the experimental range included. Type
+identifiers are pure enumerators: a reader MUST NOT infer an element
+size or any semantics for a type value this specification does not
+assign, whatever pattern its bits suggest (`[R-CNF-04]`). `[R-TYP-03]`
 
-> **Note.** The reserved identifiers are pinned: 14 and 15 for 8-bit
-> floats — defined, if ever, as bit-exact OCP OFP8 E4M3 and E5M2, and
-> no other 8-bit float definition will be considered — 16, 17, and
-> 18 for int128, uint128, and float128, and 19 for a fixed-size
+> **Note.** The reserved identifiers are pinned. 14 and 15 are for
+> 8-bit floats, defined, if ever, as bit-exact OCP OFP8 E4M3 and E5M2;
+> no other 8-bit float definition will be considered. 16, 17 and 18
+> are for int128, uint128 and float128, and 19 for a fixed-size
 > raw-bytes type. Reservation forecloses collision; it is not a
-> commitment to assign. Reserved types enter, if ever, through a
-> minor version, which an unaware reader handles gracefully: the
-> unknown type value makes exactly that layer unreadable
-> (reject-layer), never the file.
+> commitment to assign. Reserved types enter, if ever, through a minor
+> version, which an unaware reader handles gracefully: the unknown
+> type value makes exactly that layer unreadable (reject-layer), never
+> the file.
 
 #### 12.3 Values are bit patterns
 
 A sample value is its bit pattern (§3.2, `[R-MDL-02]`). Writers and
 readers MUST NOT alter a value's encoded bytes in storing, decoding,
-or returning it: NaN payloads are preserved — never quieted,
-canonicalized, or collapsed — and −0.0 and +0.0 are distinct values.
+or returning it: NaN payloads are preserved, never quieted,
+canonicalized or collapsed, and −0.0 and +0.0 are distinct values.
 Wherever this specification treats two sample or fill values as the
 same value, it means their encoded bytes are identical; this format
-defines no numeric equality, no ordering, and no NaN-aware
-comparison over sample values. In a conforming file this rule admits
-no exception; the one case where a reader resolves a byte to a value
+defines no numeric equality, no ordering, and no NaN-aware comparison
+over sample values. In a conforming file this rule admits no
+exception. The one case where a reader resolves a byte to a value
 rather than passing it through arises only in a nonconforming file,
 and `[R-SER-08]` states it. `[R-TYP-04]`
 
 Every bit pattern of a numeric type's element size is a valid sample
-value and a valid fill value — subnormals, infinities, and every NaN
-payload included; there is no sample value a reader screens out.
+value and a valid fill value: subnormals, infinities and every NaN
+payload included, and there is no sample value a reader screens out.
 Boolean values are constrained by §13.2 (fill) and §14 (in-tile
 representation). `[R-TYP-05]`
 
@@ -1750,8 +1749,8 @@ representation). `[R-TYP-05]`
 > float32, fill the quiet NaN `0x7FC00000` is the twelve bytes
 > `04 74 65 6D 70 0C 00 04 00 00 C0 7F`: name length 4, the name
 > bytes, type `0C 00` (12, little-endian), fill length 4, fill bytes
-> `00 00 C0 7F`. A fill of `0x7FC00001` — a NaN carrying a payload —
-> is equally valid and round-trips bit-exactly (§13.1).
+> `00 00 C0 7F`. A fill of `0x7FC00001`, a NaN carrying a payload, is
+> equally valid and round-trips bit-exactly (§13.1).
 
 ### 13. Fill Values and Sparse Tiles
 
