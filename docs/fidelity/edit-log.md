@@ -137,6 +137,36 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §10: spruce-up pass, four dash asides out
+
+- **Commit:** `Readable: §10 — spruce-up pass: four paragraphs without
+  asides; R-EXT-01, -03, -04, -05 listed` (the commit carrying this entry).
+  Previous: `95b5a30` (§9's first pass).
+- **Sections:** §10.1 (`[R-EXT-01]`), §10.3 (`[R-EXT-03]`), §10.4
+  (`[R-EXT-04]`, `[R-EXT-05]`). A spruce-up pass on the maintainer's
+  instruction of 2026-10-09, not his read-through; proposed with before and
+  after (`scratch/cleanroom/proposals/s10-pass.md`), approved ("Go").
+- **Edits.**
+  1. §10.1's closing paragraph: the dash aside a clause ("never a minor
+     revision and never an implementation's private convention").
+  2. §10.3: the escape rationale its own sentence; the reader's three
+     outcomes set space first and outcome second, in A's order, after the
+     same colon; the MAY and both MUST NOTs verbatim.
+  3. §10.4, registration: the three requirements a colon list counted as
+     three (A lists exactly three); "sufficient for independent
+     implementation without consulting any implementation" a clause; the
+     MU = 0 sentence split at its semicolon.
+  4. §10.4, the registry: the precedence reason a colon clause ("the
+     registry is machine-readable convenience, never a second authority");
+     the §21.1 parenthesis a sentence.
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-EXT-01`, `R-EXT-03`, `R-EXT-04`, `R-EXT-05`, listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×48 (the four new); the eight term
+  rewordings, Appendix B's row, `HEADINGS` 130 against 129, SHOULD 46
+  against 47, all carried. Keyword counts unchanged. B is 4,852 lines and
+  48,620 words.
+- **Questions raised:** none.
+
 ### 2026-10-08 — §9, first pass: five dense paragraphs re-cut
 
 - **Commit:** `Readable: §9 — first pass: five dense paragraphs re-cut;

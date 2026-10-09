@@ -46,3 +46,7 @@ R-LIF-03: one sentence made five; the file_id's SHOULD and its reason a sentence
 R-LIF-04: two dash asides and a parenthesis made clauses and a sentence; the three MUST clauses verbatim
 R-LIF-06: one paragraph of 411 words made four; the eight dash asides made clauses and sentences; the two cautions numbered; both MUSTs and the candidate definition verbatim; the ID now governs the closing paragraph
 R-LIF-08: one paragraph of 435 words made four; three asides made sentences; the surviving statements of §5.2's cuts kept verbatim, the incomplete-walk cases in two sentences; the MUST NOT verbatim; one duplicate pointer to §8.1 dropped; the ID now governs the closing paragraph
+R-EXT-01: the dash aside made a clause ("never a minor revision and never an implementation's private convention"); every term verbatim
+R-EXT-03: the escape rationale a sentence of its own; the reader's three outcomes set space first, outcome second, in A's order; the MAY and both MUST NOTs verbatim
+R-EXT-04: the three registration requirements a colon list counted as three; the dash aside a clause; the MU = 0 sentence split at its semicolon; every requirement and listed item verbatim
+R-EXT-05: the precedence reason a colon clause; the §21.1 parenthesis a sentence; every rule verbatim

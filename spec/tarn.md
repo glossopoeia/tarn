@@ -1436,10 +1436,9 @@ this section collects them:
 4. **New standardized user-metadata keys** (§18.4).
 
 Nothing else extends this format. A new fixed field, a widened
-structure, a changed field width, or a reinterpreted assigned value
-is a new format major version (`[R-CNT-24]`) — never a minor
-revision, and never an implementation's private convention.
-`[R-EXT-01]`
+structure, a changed field width, or a reinterpreted assigned value is
+a new format major version (`[R-CNT-24]`), never a minor revision and
+never an implementation's private convention. `[R-EXT-01]`
 
 #### 10.2 Numeric identifier spaces
 
@@ -1470,42 +1469,41 @@ tabulated above; §6.3 partitions them instead.
 #### 10.3 The experimental range
 
 Experimental values are private use and carry **no collision
-protection**: two unrelated experiments MAY select the same value,
-and nothing in this format distinguishes them. Writers MUST NOT emit
-files carrying an experimental value in released software or
-published data, and a value from a reserved range MUST NOT be
-emitted at all before this specification assigns it — an
-unregistered value that escapes into circulation is precisely the
-failure the experimental range exists to absorb. A reader
-encountering either treats it as its space's rules require: a
-validity error at the owning scope for the value sets of §7.4,
-§11.4, §12.2, §14.1, §17.2, and §17.3; for record types, the MU-bit
-outcome of `[R-CNT-15]` at file scope and `[R-CNT-18]` for layer
-sub-records; and for the metadata-encoding space of §18.2,
-ignore-record under the quarantine (`[R-CNT-25]`), never a
-scope-level rejection. `[R-EXT-03]`
+protection**: two unrelated experiments MAY select the same value, and
+nothing in this format distinguishes them. Writers MUST NOT emit files
+carrying an experimental value in released software or published data,
+and a value from a reserved range MUST NOT be emitted at all before
+this specification assigns it. An unregistered value that escapes into
+circulation is precisely the failure the experimental range exists to
+absorb. A reader encountering either treats it as its space's rules
+require: for the value sets of §7.4, §11.4, §12.2, §14.1, §17.2 and
+§17.3, a validity error at the owning scope; for record types, the
+MU-bit outcome of `[R-CNT-15]` at file scope and `[R-CNT-18]` for
+layer sub-records; for the metadata-encoding space of §18.2,
+ignore-record under the quarantine (`[R-CNT-25]`), never a scope-level
+rejection. `[R-EXT-03]`
 
 #### 10.4 Registration
 
-A value leaves the reserved range by registration, which requires an
-unambiguous specification of its semantics — sufficient for
-independent implementation without consulting any implementation — a
-security review of what accepting it obliges a reader to do, and, for
-a record type, its MU and PE assignment with justification. A type
-registers MU = 0 only if ignoring it leaves every stored sample
-bit-exact and every geometry identical; sample types, geometry,
-channel sets and layout, codecs, filters, linearization, fill, and
-index location or encoding are never ignorable, so no record
-carrying them registers as ancillary. `[R-EXT-04]`
+A value leaves the reserved range by registration, which requires
+three things: an unambiguous specification of its semantics,
+sufficient for independent implementation without consulting any
+implementation; a security review of what accepting it obliges a
+reader to do; and, for a record type, its MU and PE assignment with
+justification. A type registers MU = 0 only if ignoring it leaves
+every stored sample bit-exact and every geometry identical. Sample
+types, geometry, channel sets and layout, codecs, filters,
+linearization, fill, and index location or encoding are never
+ignorable, so no record carrying them registers as ancillary.
+`[R-EXT-04]`
 
 The registry is `spec/registry.json` in this specification's
-repository, versioned with the specification itself; Appendix C is
-its snapshot at publication. Its `registry_version` field
-increments on every change to an assignment. Where the registry,
-§10.2's table, and Appendix C diverge, the section that defines the
-space governs — the registry is machine-readable convenience, never
-a second authority (§21.1 applies the same principle to the error
-register). `[R-EXT-05]`
+repository, versioned with the specification itself; Appendix C is its
+snapshot at publication. Its `registry_version` field increments on
+every change to an assignment. Where the registry, §10.2's table and
+Appendix C diverge, the section that defines the space governs: the
+registry is machine-readable convenience, never a second authority.
+§21.1 applies the same principle to the error register. `[R-EXT-05]`
 
 > **Note.** A registry hosted apart from the specification it serves
 > can be decommissioned out from under it, which is how a
