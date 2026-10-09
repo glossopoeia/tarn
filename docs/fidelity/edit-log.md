@@ -137,6 +137,29 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §20, first pass (opening, §20.1, §20.2): six dash asides out
+
+- **Commit:** `Readable: §20.1–§20.2 — spruce-up pass: the opening, the tier
+  list, R-WRT-01 and R-WRT-02 without asides; R-WRT-01, -02 listed` (the
+  commit carrying this entry). Previous: `d8b1af8` (§19's pass).
+- **Sections:** §20 (opening), §20.1 (the tier list, `[R-WRT-01]`), §20.2
+  (`[R-WRT-02]`). The first of four spruce-up passes over §20, not the
+  maintainer's read-through; proposed with before and after
+  (`scratch/cleanroom/proposals/s20a-pass.md`), approved ("Go").
+- **Edits.**
+  1. The opening: "it consolidates: each step cites the rule".
+  2. The tier list: the three label dashes colons; the list tight.
+  3. `[R-WRT-01]`: the latent-violation aside after a semicolon; every
+     clause in A's order.
+  4. `[R-WRT-02]`: "placement being otherwise free" a participial clause;
+     "both barriers, not one" a comma clause inside its parenthesis; the
+     MUST verbatim.
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-WRT-01`, `R-WRT-02`, listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×96 (the two new); the carried items
+  as before. Keyword counts unchanged. B is 4,810 lines and 48,479 words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §19: spruce-up pass, thirty-six dash asides out
 
 - **Commit:** `Readable: §19 — spruce-up pass: both step lists, four

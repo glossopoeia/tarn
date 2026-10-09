@@ -96,3 +96,5 @@ R-RDR-01: the consumes-only aside a comma clause; every clause verbatim
 R-RDR-02: the index-chain aside a colon clause; the MAY and the MUST NOT verbatim
 R-RDR-03: the definition of first access a "which is" clause with a parenthesis; "extent slot and inline payload both" a comma clause; the sub-record framing rules a parenthesis; the ragged lines re-wrapped; the MUST and every rule set and citation in A's order verbatim
 R-RDR-04: ten dash asides in the eight steps made colons, commas, parentheses, a semicolon and a "which" clause; the fill-per-layout aside placed after "bit-exactly and with no payload I/O"; the ID joined to the last line; all four keyword clauses verbatim
+R-WRT-01: the latent-violation aside after a semicolon; every clause in A's order verbatim
+R-WRT-02: "placement is otherwise free" a participial clause and "both barriers, not one" a comma clause; the MUST and every stage verbatim

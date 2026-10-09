@@ -2947,64 +2947,62 @@ follows; each step's failure takes the cited rule's outcome:
 ### 20. Writing and Updating
 
 Every conforming mutation of a file is a commit or a whole-file
-rewrite (`[R-LIF-01]`), by one writer at a time (`[R-LIF-05]`).
-This section defines the writer tiers and their procedures; like
-§19, it consolidates — each step cites the rule whose outcome
-governs it.
+rewrite (`[R-LIF-01]`), by one writer at a time (`[R-LIF-05]`). This
+section defines the writer tiers and their procedures; like §19, it
+consolidates: each step cites the rule whose outcome governs it.
 
 #### 20.1 Writer tiers
 
-- **creator** — emits a complete file in one commit, its first
+- **creator**: emits a complete file in one commit, its first
   generation: the minimal conforming writer.
-- **appender** — extends an existing file by commits (§9.2):
-  adding layers or records, superseding tiles, growing extents,
-  amending metadata.
-- **rewriter** — writes a new file from an existing one under a new
+- **appender**: extends an existing file by commits (§9.2): adding
+  layers or records, superseding tiles, growing extents, amending
+  metadata.
+- **rewriter**: writes a new file from an existing one under a new
   identity (§20.5), undertaking to preserve it as §20.4 provides, and
   carrying structures forward, re-creating some, or dropping some;
-  compaction, which carries every structure forward
-  and changes nothing but placement, is the rewrite that reclaims
-  slack.
+  compaction, which carries every structure forward and changes
+  nothing but placement, is the rewrite that reclaims slack.
 
 The tiers are shapes of operation and §2.3's classes are the
 obligations they carry. A creator is a writer and nothing more: it
-emits only conforming files (`[R-CNF-05]`). An appender and a
-rewriter are updaters: each satisfies every writer requirement for
-the bytes it produces and the preservation obligations of §20.4 for
-what it carries forward (`[R-CNF-06]`), and is a reader of every
-structure it processes (`[R-CNF-11]`) — a violation latent in a
-structure it carries forward unmodified travels with it, seen or
-unseen, and certifying the whole file is a verifier's office (§9.7).
-The appender's commit extends its input under the input's file_id;
-the rewriter's output is a new file under a fresh one (`[R-LIF-01]`).
-Every obligation of §20.3 through §20.5 attaches to an operation and
-binds whichever writer performs it. A writer that extends an input
-file is an appender and an updater, whatever it decodes: the file it
-leaves holds every byte of its input. A writer of a new file from an
-existing one takes one of two positions, and the choice is its own.
-As a **rewriter** it undertakes to preserve its input: §20.4's table
-for every record, the unknown ignore-lane bits (`[R-CNT-08]`), and
-§20.5 whole; in return it answers for what it carries forward
-unmodified only to `[R-WRT-09]`'s depth, a latent violation
-travelling with it. As a **creator** it undertakes nothing toward its
-input, whatever it read: §20.2 binds it, it writes flags = 0, and it
-answers for every byte of its output (`[R-CNF-05]`), bytes it copied
-from another file included. `[R-WRT-01]`
+emits only conforming files (`[R-CNF-05]`). An appender and a rewriter
+are updaters: each satisfies every writer requirement for the bytes it
+produces and the preservation obligations of §20.4 for what it carries
+forward (`[R-CNF-06]`), and is a reader of every structure it
+processes (`[R-CNF-11]`); a violation latent in a structure it carries
+forward unmodified travels with it, seen or unseen, and certifying the
+whole file is a verifier's office (§9.7). The appender's commit
+extends its input under the input's file_id; the rewriter's output is
+a new file under a fresh one (`[R-LIF-01]`). Every obligation of §20.3
+through §20.5 attaches to an operation and binds whichever writer
+performs it. A writer that extends an input file is an appender and an
+updater, whatever it decodes: the file it leaves holds every byte of
+its input. A writer of a new file from an existing one takes one of
+two positions, and the choice is its own. As a **rewriter** it
+undertakes to preserve its input: §20.4's table for every record, the
+unknown ignore-lane bits (`[R-CNT-08]`), and §20.5 whole; in return it
+answers for what it carries forward unmodified only to `[R-WRT-09]`'s
+depth, a latent violation travelling with it. As a **creator** it
+undertakes nothing toward its input, whatever it read: §20.2 binds it,
+it writes flags = 0, and it answers for every byte of its output
+(`[R-CNF-05]`), bytes it copied from another file included.
+`[R-WRT-01]`
 
 #### 20.2 Creation
 
 A creator MUST follow `[R-LIF-02]`'s creation path: the front
-signature block; each layer's stored tiles, tile-index region, and
-any record extents, in any order satisfying §5.2's coverage
-classes (`[R-CNT-02]`, `[R-CNT-03]`) and every declared layout
-invariant (`[R-SLB-01]`, `[R-SLB-03]`) — placement is otherwise
-free (`[R-SLB-05]`); then the complete directory and its CRC; then
-the barrier, the pad, the trailer with a fresh nonzero file_id
-(§9.3), and the barrier that makes the trailer durable
-(`[R-LIF-02]` steps 4–6 — both barriers, not one).
-Content obligations travel with the structures:
-fill-encoded edge padding (`[R-SER-05]`), boolean byte values
-(`[R-SER-08]`), and gaps zeroed as `[R-CNT-03]` advises. `[R-WRT-02]`
+signature block; each layer's stored tiles, tile-index region, and any
+record extents, in any order satisfying §5.2's coverage classes
+(`[R-CNT-02]`, `[R-CNT-03]`) and every declared layout invariant
+(`[R-SLB-01]`, `[R-SLB-03]`), placement being otherwise free
+(`[R-SLB-05]`); then the complete directory and its CRC; then the
+barrier, the pad, the trailer with a fresh nonzero file_id (§9.3), and
+the barrier that makes the trailer durable (`[R-LIF-02]` steps 4–6,
+both barriers, not one). Content obligations travel with the
+structures: fill-encoded edge padding (`[R-SER-05]`), boolean byte
+values (`[R-SER-08]`), and gaps zeroed as `[R-CNT-03]` advises.
+`[R-WRT-02]`
 
 #### 20.3 The append procedure
 
