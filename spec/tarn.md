@@ -2077,41 +2077,41 @@ layer's entries group channel-major. `[R-IDX-01]`
 #### 15.2 The sentinel
 
 An addressed tile that is not stored has the **sentinel entry**:
-offset and length both `0xFFFF_FFFF_FFFF_FFFF` and crc 0 — the 20
-bytes `FF ×16 00 ×4`. A sentinel tile contributes fill to the
-reference array (§3.2, §13). Sentinel entries are a reserved pattern,
-not offsets or lengths: `[R-ENC-03]`'s value-domain rule and
+offset and length both `0xFFFF_FFFF_FFFF_FFFF` and crc 0, the 20 bytes
+`FF ×16 00 ×4`. A sentinel tile contributes fill to the reference
+array (§3.2, §13). Sentinel entries are a reserved pattern, not
+offsets or lengths: `[R-ENC-03]`'s value-domain rule and
 `[R-ENC-04]`'s sum rule apply to the fields of non-sentinel entries
 only, and an entry with exactly one field at the sentinel value is
 §15.3's own row before either rule reads it. `[R-IDX-02]`
 
 > **Rationale.** All-ones was chosen over zero/zero for its failure
-> modes: a zeroed index region (uninitialized buffer, filesystem
-> hole) parses under this rule as offset 0 / length 0 — loudly
-> invalid (§15.3) — rather than as a valid all-sparse index silently
-> returning fill; an all-0xFF region (erased flash) is invalid too,
-> since a sentinel's crc field is 0. A reader that forgets the
-> sentinel test still fails safely: all-ones offsets trip the
-> overflow and bounds checks.
+> modes: a zeroed index region (uninitialized buffer, filesystem hole)
+> parses under this rule as offset 0 / length 0, loudly invalid
+> (§15.3), rather than as a valid all-sparse index silently returning
+> fill; an all-0xFF region (erased flash) is invalid too, since a
+> sentinel's crc field is 0. A reader that forgets the sentinel test
+> still fails safely: all-ones offsets trip the overflow and bounds
+> checks.
 
 #### 15.3 Entry validity
 
 For each entry, with F the committed file length and S denoting the
-sentinel value 2⁶⁴ − 1, a reader MUST classify as follows; rows
-marked *verifier* require whole-index or whole-file knowledge and
-bind verifiers, not ordinary readers. The per-entry outcomes below
-govern notwithstanding the general owning-scope mapping of
-`[R-ENC-03]`/`[R-ENC-04]`. Six rows are marked *structural*: they
-classify an entry whose own 20 bytes yield no usable extent. Such an
-entry contributes no stored extent to the *verifier* rows, which bind
-over well-formed entries' extents only — `[R-SLB-03]`'s run
-continuity closes over it as it does over a sentinel — and none to
-`[R-LIF-08]`'s coverage walk, so any bytes it nominally addressed
-that no other claimant claims fall to slack. An entry whose only
-defect is that its stored bytes fail its crc is well-formed: the
-defect lies in the bytes it addresses, not in the entry, so its
-extent stands and it keeps its place in the *verifier* rows, in run
-continuity, and in the coverage walk. `[R-IDX-03]`
+sentinel value 2⁶⁴ − 1, a reader MUST classify as follows; rows marked
+*verifier* require whole-index or whole-file knowledge and bind
+verifiers, not ordinary readers. The per-entry outcomes below override
+the general owning-scope mapping of `[R-ENC-03]` and `[R-ENC-04]`. Six
+rows are marked *structural*: they classify an entry whose own 20
+bytes yield no usable extent. Such an entry contributes no stored
+extent to the *verifier* rows, which bind over well-formed entries'
+extents only, and none to `[R-LIF-08]`'s coverage walk, so any bytes
+it nominally addressed that no other claimant claims fall to slack;
+`[R-SLB-03]`'s run continuity closes over it as it does over a
+sentinel. An entry whose only defect is that its stored bytes fail its
+crc is well-formed: the defect lies in the bytes it addresses, not in
+the entry, so its extent stands and it keeps its place in the
+*verifier* rows, in run continuity, and in the coverage walk.
+`[R-IDX-03]`
 
 | Entry state | Outcome |
 |---|---|
@@ -2131,14 +2131,14 @@ continuity, and in the coverage walk. `[R-IDX-03]`
 
 Segment s covers entries [s·2¹⁶, min((s+1)·2¹⁶, entry_count)); the
 s-th u32 of the segment CRC array is the CRC-32C over exactly those
-entries' bytes as stored — the final partial segment's CRC covers
+entries' bytes as stored, so the final partial segment's CRC covers
 only its actual bytes. The segment CRC array is covered by the layer
 record's crc_of_crc_array (§7.4, §8.1). To use entry k, a reader MUST
 verify, in dependency order, crc_of_crc_array over the fetched CRC
-array and the segment CRC over the fetched segment containing k
-(both ranges are computable from the layer record alone and MAY be
-fetched in parallel); any mismatch or cross-check failure
-(`[R-CNT-17]`) is reject-layer. `[R-IDX-04]`
+array and the segment CRC over the fetched segment containing k (both
+ranges are computable from the layer record alone and MAY be fetched
+in parallel); any mismatch or cross-check failure (`[R-CNT-17]`) is
+reject-layer. `[R-IDX-04]`
 
 > **Note.** "To use" obliges verification, not re-verification:
 > under committed-prefix immutability a reader MAY verify each
@@ -2147,25 +2147,25 @@ fetched in parallel); any mismatch or cross-check failure
 
 The CRC-32C of a segment consisting of 2¹⁶ sentinel entries is
 `0xEECB3BB2`; writers of sparse layers MAY emit this constant for any
-**full** segment — one covering exactly 2¹⁶ entries, final or not —
-whose entries are all sentinels, without computing
-it — a partial segment's CRC MUST be computed. Equality with
-the constant licenses nothing for readers: verification is byte
-comparison of computed CRCs, never constant matching. `[R-IDX-05]`
+**full** segment, one covering exactly 2¹⁶ entries, final or not,
+whose entries are all sentinels, without computing it. A partial
+segment's CRC MUST be computed. Equality with the constant licenses
+nothing for readers: verification is byte comparison of computed CRCs,
+never constant matching. `[R-IDX-05]`
 
 > **Example.** A layer with entry_count = 1,000,000: 16 segments (15
 > full, the last covering 16,960 entries), a 64-byte segment CRC
 > array, index region 20,000,064 bytes. Tile k = 999,999 lives in
 > segment 15 at segment-relative byte 20 × 16,959 = 339,180; a reader
 > fetches the CRC array at region bytes [20,000,000, 20,000,064) and
-> segment 15 at [19,660,800, 20,000,000) in parallel — ~339 KB
-> verified to read one cold tile here — and never more than one full
+> segment 15 at [19,660,800, 20,000,000) in parallel, about 339 KB
+> verified to read one cold tile here, and never more than one full
 > segment (1.25 MiB) plus the CRC array, at any layer scale. A layer
 > with 1 ≤ entry_count ≤ 65,536 has one segment and a 4-byte array:
 > fetching the whole region and verifying one CRC is the naive reader,
-> unchanged. At entry_count = 0 there is no region at all — zero
+> unchanged. At entry_count = 0 there is no region at all, with zero
 > segments, a zero-byte CRC array, extent slot (0, 0) and
-> crc_of_crc_array = 0 (§7.4, `[R-CNT-17]`, `[R-CNT-23]`) — so nothing
+> crc_of_crc_array = 0 (§7.4, `[R-CNT-17]`, `[R-CNT-23]`), so nothing
 > is fetched and nothing is verified.
 
 > **Example.** The planar layer of §11.4's example (C = 4, N = 32):

@@ -137,6 +137,40 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §15: spruce-up pass, thirteen dash asides out and one "notwithstanding"
+
+- **Commit:** `Readable: §15 — spruce-up pass: four paragraphs, a Rationale
+  and an Example without asides; R-IDX-02, -03, -04, -05 listed` (the
+  commit carrying this entry). Previous: `17c527a` (§14's pass).
+- **Sections:** §15.2 (`[R-IDX-02]`, the Rationale), §15.3 (`[R-IDX-03]`),
+  §15.4 (`[R-IDX-04]`, `[R-IDX-05]`, the first Example). A spruce-up pass,
+  not the maintainer's read-through; proposed with before and after
+  (`scratch/cleanroom/proposals/s15-pass.md`), approved ("Go").
+- **Edits.**
+  1. §15.2 `[R-IDX-02]`: the dash before the 20 bytes a comma. The
+     Rationale: "loudly invalid (§15.3)" a comma clause.
+  2. §15.3 `[R-IDX-03]`: "The per-entry outcomes below govern
+     notwithstanding the general owning-scope mapping of
+     `[R-ENC-03]`/`[R-ENC-04]`" reads "The per-entry outcomes below
+     override the general owning-scope mapping of `[R-ENC-03]` and
+     `[R-ENC-04]`", the same precedence in a word the maintainer does not
+     dislike; the run-continuity aside a sentence after a semicolon; the
+     MUST verbatim. The outcome table untouched (table values stay).
+  3. §15.4 `[R-IDX-04]`: the partial-segment aside a "so" clause, the
+     consequence of "exactly those entries' bytes as stored"; the MUST
+     and the MAY verbatim.
+  4. §15.4 `[R-IDX-05]`: the definition of a full segment a comma clause;
+     "a partial segment's CRC MUST be computed" a sentence of its own,
+     capitalised; the constant, the MAY and the MUST verbatim.
+  5. The first Example: four asides made comma and "with" clauses;
+     "~339 KB" reads "about 339 KB"; every figure kept.
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-IDX-02`, `R-IDX-03`, `R-IDX-04`, `R-IDX-05`, listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×68 (the four new); the carried items
+  as before; the Example numbers unchanged. Keyword counts unchanged. B
+  is 4,847 lines and 48,574 words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §14: spruce-up pass, twenty-seven dash asides out
 
 - **Commit:** `Readable: §14 — spruce-up pass: six paragraphs and seven

@@ -66,3 +66,7 @@ R-SER-03: two dash asides made colons (packing exclusive to planar bool; every b
 R-SER-05: the three fill forms after a "which is" clause; all three keyword clauses verbatim
 R-SER-07: the declarations aside a parenthesis; the MUST verbatim
 R-SER-08: "whether or not it detected the violation" a comma clause and the returned value a colon clause; both keyword clauses verbatim
+R-IDX-02: the dash before the 20 bytes a comma; every byte and clause verbatim
+R-IDX-03: "govern notwithstanding the general owning-scope mapping" reads "override the general owning-scope mapping" (the same precedence); the run-continuity aside a sentence after a semicolon; the MUST and every row count and consequence verbatim
+R-IDX-04: the partial-segment aside a "so" clause; every formula, the MUST and the MAY verbatim
+R-IDX-05: the definition of a full segment a comma clause; the partial-segment MUST a sentence of its own (its first letter capitalised); the constant, the MAY and the MUST verbatim
