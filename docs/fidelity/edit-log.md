@@ -137,6 +137,44 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §11: spruce-up pass, ten dash asides out
+
+- **Commit:** `Readable: §11 — spruce-up pass: five paragraphs without
+  asides; R-GEO-01, -03, -04, -05, -06 listed` (the commit carrying this
+  entry). Previous: `b1366ee` (§10's pass).
+- **Sections:** §11.1 (`[R-GEO-01]`), §11.2 (`[R-GEO-03]`), §11.3
+  (`[R-GEO-04]`), §11.4 (`[R-GEO-05]`, `[R-GEO-06]`). A spruce-up pass, not
+  the maintainer's read-through; proposed with before and after
+  (`scratch/cleanroom/proposals/s11-pass.md`), approved ("Go").
+- **Edits.**
+  1. §11.1 `[R-GEO-01]`: the parenthesis on the two tile-extent cases a
+     colon clause after the MAY.
+  2. §11.2 `[R-GEO-03]`: the dash aside on tile-index entries a comma
+     clause; the sentence split before the total sample-position count.
+  3. §11.3 `[R-GEO-04]`: three asides made a colon clause and a sentence
+     (the padding condition; the definition of a padding position; the
+     no-product form, "stated in a form that forms no product (§4.2)",
+     verbatim); the §14 parenthesis a clause.
+  4. §11.4 `[R-GEO-05]`: the value cases kept in A's order after a colon,
+     "the last-declared dimension varies fastest" an "in which" clause;
+     the reader's included cases ("0, every reserved value and the
+     experimental range, which no conforming writer of format major
+     version 1 emits") a sentence of their own.
+  5. §11.4 `[R-GEO-06]`: the ordinals list's two asides a comma clause
+     ("for every linearization value and permanently") and a colon clause
+     ("channel-major grouping"); the list tight as in A.
+- **Removed restatements:** none. Nothing dropped. §11.1's Rationale (272
+  words restating §20.3 step 4) is left whole: §20.3 states every rule it
+  restates except the two sentences on a growth that changes no grid
+  count, which the rule check finds in no other words, so it is not a
+  restatement this pass can cut; named for the read-through.
+- **Reworded IDs:** `R-GEO-01`, `R-GEO-03`, `R-GEO-04`, `R-GEO-05`,
+  `R-GEO-06`, listed; every keyword clause verbatim (eight checked).
+- **Soft items:** `ID_REWORDED_LISTED` ×53 (the five new); the carried
+  items as before. Keyword counts unchanged. B is 4,853 lines and 48,616
+  words.
+- **Questions raised:** none.
+
 ### 2026-10-09 — §10: spruce-up pass, four dash asides out
 
 - **Commit:** `Readable: §10 — spruce-up pass: four paragraphs without

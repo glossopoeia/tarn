@@ -1522,12 +1522,13 @@ The owning scope (§2.4) of a layer's geometry and linearization fields
 is the layer.
 
 A layer has rank d ≥ 1; each of its d dimensions has a name (§4.6), an
-extent Eᵢ ≥ 0, and a tile extent Tᵢ ≥ 1; and the layer has at least one
-channel. A tile extent MAY exceed its dimension's extent (where
-0 < Eᵢ < Tᵢ the grid is then a single padded tile along that axis;
-at Eᵢ = 0 the grid count is 0 and the layer addresses no tile, §11.2). Writers MUST NOT emit a
-layer with rank 0, any tile extent 0, or channel count 0; a reader MUST
-treat any of these as a validity error at layer scope. `[R-GEO-01]`
+extent Eᵢ ≥ 0, and a tile extent Tᵢ ≥ 1; and the layer has at least
+one channel. A tile extent MAY exceed its dimension's extent: where 0
+< Eᵢ < Tᵢ the grid is a single padded tile along that axis, and at Eᵢ
+= 0 the grid count is 0 and the layer addresses no tile (§11.2).
+Writers MUST NOT emit a layer with rank 0, any tile extent 0, or
+channel count 0; a reader MUST treat any of these as a validity error
+at layer scope. `[R-GEO-01]`
 
 A dimension with extent 0 is valid: its grid count is 0, the layer has
 zero addressed tiles, its tile index has zero entries, and its reference
@@ -1560,16 +1561,15 @@ region of it returns no samples. `[R-GEO-02]`
 
 #### 11.2 Grid arithmetic
 
-For each dimension, the **grid count** Gᵢ is the ceiling division
-⌈Eᵢ / Tᵢ⌉, equal to Eᵢ/Tᵢ plus 1 if Eᵢ mod Tᵢ ≠ 0 (integer division).
-The layer's **spatial-tile count** is N = ∏ Gᵢ, and its
-**sample-position count per tile** is P = ∏ Tᵢ. The layer's
-**addressed-tile count** — the number of its tile-index entries (§15) —
-is N for an interleaved layer and C · N for a planar layer, where C is
-the channel count, and its **total sample-position count** is N · P.
-These products are declaration-derived quantities under
-`[R-ENC-04]`: a reader MUST treat one exceeding
-2⁶³ − 1 as a validity error at layer scope. `[R-GEO-03]`
+For each dimension, the **grid count** Gᵢ is the ceiling division ⌈Eᵢ
+/ Tᵢ⌉, equal to Eᵢ/Tᵢ plus 1 if Eᵢ mod Tᵢ ≠ 0 (integer division). The
+layer's **spatial-tile count** is N = ∏ Gᵢ, and its **sample-position
+count per tile** is P = ∏ Tᵢ. The layer's **addressed-tile count**,
+the number of its tile-index entries (§15), is N for an interleaved
+layer and C · N for a planar layer, where C is the channel count; its
+**total sample-position count** is N · P. These products are
+declaration-derived quantities under `[R-ENC-04]`: a reader MUST treat
+one exceeding 2⁶³ − 1 as a validity error at layer scope. `[R-GEO-03]`
 
 > **Note.** The stated form of the ceiling division avoids the idiom
 > (Eᵢ + Tᵢ − 1)/Tᵢ, whose intermediate sum can exceed 2⁶³ − 1 — the
@@ -1586,14 +1586,14 @@ These products are declaration-derived quantities under
 #### 11.3 Uniform tiles and edge padding
 
 Every tile of a layer has the same logical shape (T₀, …, T_{d−1}).
-Where Eᵢ mod Tᵢ ≠ 0 — equivalently, where the grid overhangs the
-extent, stated in a form that forms no product (§4.2) — the tiles at
-the high edge of dimension i contain **padding positions** — sample
-positions whose coordinate along that axis would be ≥ Eᵢ. Padding
-positions are serialized like any other
-position (byte-level rules and padding content: §14) but are not part
-of the reference array (§3.2); a reader MUST NOT return padding
-positions as samples. `[R-GEO-04]`
+Where Eᵢ mod Tᵢ ≠ 0, the tiles at the high edge of dimension i contain
+**padding positions**: sample positions whose coordinate along that
+axis would be ≥ Eᵢ. That condition is where the grid overhangs the
+extent, stated in a form that forms no product (§4.2). Padding
+positions are serialized like any other position, under §14's
+byte-level rules and padding content, but are not part of the
+reference array (§3.2); a reader MUST NOT return padding positions as
+samples. `[R-GEO-04]`
 
 > **Note.** Tile extents are a writer's choice, and this
 > specification imposes none: the workable range in practice runs
@@ -1604,33 +1604,34 @@ positions as samples. `[R-GEO-04]`
 #### 11.4 Linearization
 
 Each layer carries a **linearization** field (`u16`, structural)
-selecting the rule that orders tiles within the grid and entries within
-the tile index. It does not govern sample order inside a tile: in-tile
-sample order is row-major for every linearization value, in every
-version of this format. Field values: 0 is invalid; **1 = row-major** —
-the last-declared dimension varies fastest — is the only value this
-format major version defines for writers, and writers MUST NOT emit any
-other value; values 2 and 3 are reserved without semantics; values 4
-through 0x7FFF are reserved for future assignment by this
-specification; values ≥ 0x8000 are the experimental range (§10). A
-reader MUST treat any linearization value other than 1 as a validity
-error at layer scope — this includes 0, all reserved values, and the
-experimental range, which no conforming writer of format major
-version 1 emits. `[R-GEO-05]`
+selecting the rule that orders tiles within the grid and entries
+within the tile index. It does not govern sample order inside a tile:
+in-tile sample order is row-major for every linearization value, in
+every version of this format. The field's values: 0 is invalid; **1 =
+row-major**, in which the last-declared dimension varies fastest, is
+the only value this format major version defines for writers, and
+writers MUST NOT emit any other value; values 2 and 3 are reserved
+without semantics; values 4 through 0x7FFF are reserved for future
+assignment by this specification; values ≥ 0x8000 are the experimental
+range (§10). A reader MUST treat any linearization value other than 1
+as a validity error at layer scope. That includes 0, every reserved
+value and the experimental range, which no conforming writer of format
+major version 1 emits. `[R-GEO-05]`
 
 With grid counts (G₀, …, G_{d−1}) and tile extents (T₀, …, T_{d−1}),
 all in declared dimension order, and the convention that an empty
 product is 1 (so at d = 1 the ordinals below reduce to u₀ and t₀):
 
 - A coordinate (x₀, …, x_{d−1}) lies in the tile with **tile
-  coordinates** tᵢ = xᵢ div Tᵢ, at **in-tile position** uᵢ = xᵢ mod Tᵢ.
-- The **in-tile sample ordinal** of (u₀, …, u_{d−1}) is
-  Σᵢ uᵢ · ∏_{j>i} Tⱼ — for every linearization value, permanently.
-- Under linearization 1, the **spatial tile ordinal** of
-  (t₀, …, t_{d−1}) is s = Σᵢ tᵢ · ∏_{j>i} Gⱼ.
+  coordinates** tᵢ = xᵢ div Tᵢ, at **in-tile position** uᵢ = xᵢ mod
+  Tᵢ.
+- The **in-tile sample ordinal** of (u₀, …, u_{d−1}) is Σᵢ uᵢ ·
+  ∏_{j>i} Tⱼ, for every linearization value and permanently.
+- Under linearization 1, the **spatial tile ordinal** of (t₀, …,
+  t_{d−1}) is s = Σᵢ tᵢ · ∏_{j>i} Gⱼ.
 - The **disk tile ordinal**, which orders tile-index entries (§15), is
   s for an interleaved layer, and **c · N + s** for a planar layer
-  (§14), where c is the channel's index (§3.1) — channel-major
+  (§14), where c is the channel's index (§3.1): channel-major
   grouping. `[R-GEO-06]`
 
 > **Example.** The layer of §11.2's example, grid (G_y, G_x) = (4, 8).

@@ -50,3 +50,8 @@ R-EXT-01: the dash aside made a clause ("never a minor revision and never an imp
 R-EXT-03: the escape rationale a sentence of its own; the reader's three outcomes set space first, outcome second, in A's order; the MAY and both MUST NOTs verbatim
 R-EXT-04: the three registration requirements a colon list counted as three; the dash aside a clause; the MU = 0 sentence split at its semicolon; every requirement and listed item verbatim
 R-EXT-05: the precedence reason a colon clause; the §21.1 parenthesis a sentence; every rule verbatim
+R-GEO-01: the parenthesis on the two tile-extent cases a colon clause after the MAY; the MAY, the writers' MUST NOT and the reader's MUST verbatim
+R-GEO-03: the dash aside on tile-index entries a comma clause; the sentence split before the total sample-position count; every formula and the MUST verbatim
+R-GEO-04: three dash asides made a colon clause and a sentence (the padding condition, the definition, the no-product form); the §14 parenthesis a clause; the MUST NOT verbatim
+R-GEO-05: the value cases in A's order after a colon, "the last-declared dimension varies fastest" an "in which" clause; the reader's included cases a sentence of their own; both keyword clauses verbatim
+R-GEO-06: two dash asides in the ordinals list made a comma clause and a colon clause; every formula verbatim; the list tight as in A
