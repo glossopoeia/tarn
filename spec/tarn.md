@@ -2178,74 +2178,70 @@ never constant matching. `[R-IDX-05]`
 
 A layer that declares neither alignment nor a slab makes no layout
 promise: its stored tiles MAY occupy any non-overlapping byte
-positions, in any order — a streaming writer places tiles in
+positions, in any order, so a streaming writer places tiles in
 acquisition order at no cost to conformance (`[R-CNT-13]`). That
 freedom is over *ordering and relative position*, and a byte the live
 state does not claim is slack whatever produced it (§5.2). A writer
 that scatters structures wastes space rather than violating a rule,
 and the verifier's slack total, where its walk completes, is what
-surfaces the waste.
-`[R-SLB-05]`
+surfaces the waste. `[R-SLB-05]`
 
 #### 16.1 Per-tile alignment
 
-A layer MAY declare alignment A (§7.4): a power of two with
-512 ≤ A ≤ 2⁶². Writers MUST NOT emit any other nonzero value; a reader MUST treat
-one as a validity error at layer scope (`[R-CNT-23]`). When declared:
-every stored tile's offset satisfies offset mod A = 0. The bytes
-alignment leaves between structures are slack (§5.2), which writers
-SHOULD zero and no conformance requirement constrains. A verifier MUST check the invariant
-(violation: reject-layer, §15.3); readers are not obligated to —
-offsets are always explicit, so alignment is reader-invisible.
-`[R-SLB-01]`
+A layer MAY declare alignment A (§7.4): a power of two with 512 ≤ A ≤
+2⁶². Writers MUST NOT emit any other nonzero value; a reader MUST
+treat one as a validity error at layer scope (`[R-CNT-23]`). When
+declared: every stored tile's offset satisfies offset mod A = 0. The
+bytes alignment leaves between structures are slack (§5.2), which
+writers SHOULD zero and no conformance requirement constrains. A
+verifier MUST check the invariant (violation: reject-layer, §15.3);
+readers are not obligated to, since offsets are always explicit and
+alignment is reader-invisible. `[R-SLB-01]`
 
-> **Note.** 4096 — the page size and modern physical sector size —
-> is the recommended value for writers that align: it satisfies
-> O_DIRECT, mmap, and GPU direct-storage paths everywhere. 512 is
-> the legacy sector floor.
+> **Note.** 4096, the page size and modern physical sector size, is
+> the value advised for writers that align: it satisfies O_DIRECT,
+> mmap, and GPU direct-storage paths everywhere. 512 is the legacy
+> sector floor.
 
 #### 16.2 The slab declaration
 
 A layer MAY declare a slab run length S ≥ 1 with slab alignment
 A_slab, a power of two ≥ 1 (§7.4; mutually exclusive with per-tile
-alignment, `[R-CNT-16]`). Runs partition each contiguous block of
-disk ordinals independently: for an interleaved layer the single
-block [0, N); for a planar layer each channel block [c·N, (c+1)·N) —
-runs never span channel blocks, and the final run of a block can
-cover fewer than S ordinals. Run r of a block starts at ordinal
-block_start + r·S. `[R-SLB-02]`
+alignment, `[R-CNT-16]`). Runs partition each contiguous block of disk
+ordinals independently: for an interleaved layer the single block [0,
+N), and for a planar layer each channel block [c·N, (c+1)·N); runs
+never span channel blocks, and the final run of a block can cover
+fewer than S ordinals. Run r of a block starts at ordinal block_start
++ r·S. `[R-SLB-02]`
 
 When declared, for every run: the run's stored tiles are contiguous
-and packed in ordinal order — each stored tile's offset equals the
-previous stored tile's offset plus that previous tile's length — and
-the first stored
-tile's offset satisfies offset mod A_slab = 0. The runs themselves
-are not mutually ordered or joined: between runs, placement freedom
-(`[R-SLB-05]`) governs, and the bytes left between them are slack
-(§5.2), which writers SHOULD zero. Sentinel tiles are transparent to run continuity: they
-occupy no bytes and do not break packing. So are the entries §15.3
-classifies reject-tile on a *structural* ground: they address no
-usable extent, and the run's stored tiles close over them. An entry
-whose only defect is that its stored bytes fail its crc is not
-transparent — its offset and length stand, and the packing relation
-reads them as it does any other stored tile's — so this invariant
-stays decidable from the index entries alone, given the committed
-file length §15.3 already requires to classify any entry. A run with no stored
-tiles
-imposes nothing. A verifier MUST
-check these invariants (violation: reject-layer, §15.3); readers are
-not obligated to, and MAY instead detect contiguity arithmetically
-from any index segment. `[R-SLB-03]`
+and packed in ordinal order, each stored tile's offset equal to the
+previous stored tile's offset plus that previous tile's length, and
+the first stored tile's offset satisfies offset mod A_slab = 0. The
+runs themselves are not mutually ordered or joined: between runs,
+placement freedom (`[R-SLB-05]`) governs, and the bytes left between
+them are slack (§5.2), which writers SHOULD zero. Sentinel tiles are
+transparent to run continuity: they occupy no bytes and do not break
+packing. So are the entries §15.3 classifies reject-tile on a
+*structural* ground: they address no usable extent, and the run's
+stored tiles close over them. An entry whose only defect is that its
+stored bytes fail its crc is not transparent: its offset and length
+stand, and the packing relation reads them as it does any other stored
+tile's, so this invariant stays decidable from the index entries
+alone, given the committed file length §15.3 already requires to
+classify any entry. A run with no stored tiles imposes nothing. A
+verifier MUST check these invariants (violation: reject-layer, §15.3);
+readers are not obligated to, and MAY instead detect contiguity
+arithmetically from any index segment. `[R-SLB-03]`
 
-A writer or updater whose commit changes the stored-tile set, the
-run partition, the byte placement of any run, the disk ordinal of
-any tile the new state stores, or the slab declaration itself, of a
-layer slab-declared in either the superseded or the new generation,
-MUST either
-re-establish the invariants for every such run — or clear the declaration in
-the new generation; carrying a stale declaration forward is a
-validity error at layer scope, detected as the invariant failures
-of `[R-SLB-03]` are: by a verifier. `[R-SLB-04]`
+A writer or updater whose commit changes the stored-tile set, the run
+partition, the byte placement of any run, the disk ordinal of any tile
+the new state stores, or the slab declaration itself, of a layer
+slab-declared in either the superseded or the new generation, MUST
+either re-establish the invariants for every such run, or clear the
+declaration in the new generation. Carrying a stale declaration
+forward is a validity error at layer scope, detected by a verifier as
+the invariant failures of `[R-SLB-03]` are. `[R-SLB-04]`
 
 > **Note.** Because this rule's detection *is* `[R-SLB-03]`'s, a stale
 > declaration carries no register row of its own: every file exhibiting
@@ -2260,24 +2256,23 @@ of `[R-SLB-03]` are: by a verifier. `[R-SLB-04]`
 
 > **Note — what slabs are, and are not.** A slab guarantees
 > *contiguity*: consecutive disk ordinals occupy consecutive bytes.
-> Which tiles are ordinal-consecutive is the linearization field's
-> job (§11.4); under row-major, a run is a band along the
-> last-declared dimension. Rectangular-window locality is therefore
-> not a slab property — it belongs to the reserved space-filling-
-> curve linearization values, under which the same slab machinery,
+> Which tiles are ordinal-consecutive is the linearization field's job
+> (§11.4); under row-major, a run is a band along the last-declared
+> dimension. Rectangular-window locality is therefore not a slab
+> property: it belongs to the reserved space-filling-curve
+> linearization values, under which the same slab machinery,
 > unchanged, would make compact windows contiguous. Slabs are the
 > byte-layout half of that future answer. With A_slab = 1 a slab is
-> contiguity-only — the right declaration for remote range
-> coalescing with no direct-I/O alignment need.
+> contiguity-only, the right declaration for remote range coalescing
+> with no direct-I/O alignment need.
 
-> **Example.** The §11.2 layer (grid 4 × 8, N = 32, interleaved)
-> with S = 8, A_slab = 4096: four runs — ordinals [0, 8), [8, 16),
-> [16, 24), [24, 32) — each one tile-row, each run's first stored
-> byte 4096-aligned, interiors packed. A viewport spanning tile rows
-> 1–2 is ordinals 8–23 = exactly runs 1 and 2: two range requests
-> regardless of stored-tile sizes. If ordinal 10 is a sentinel, run
-> 1's stored tiles are 8, 9, 11…15, packed with no gap where 10
-> would have been.
+> **Example.** The §11.2 layer (grid 4 × 8, N = 32, interleaved) with
+> S = 8, A_slab = 4096: four runs, ordinals [0, 8), [8, 16), [16, 24)
+> and [24, 32), each one tile-row, each run's first stored byte
+> 4096-aligned, interiors packed. A viewport spanning tile rows 1–2 is
+> ordinals 8–23 = exactly runs 1 and 2: two range requests regardless
+> of stored-tile sizes. If ordinal 10 is a sentinel, run 1's stored
+> tiles are 8, 9, 11…15, packed with no gap where 10 would have been.
 
 ### 17. Codecs and Filters
 

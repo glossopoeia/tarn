@@ -70,3 +70,8 @@ R-IDX-02: the dash before the 20 bytes a comma; every byte and clause verbatim
 R-IDX-03: "govern notwithstanding the general owning-scope mapping" reads "override the general owning-scope mapping" (the same precedence); the run-continuity aside a sentence after a semicolon; the MUST and every row count and consequence verbatim
 R-IDX-04: the partial-segment aside a "so" clause; every formula, the MUST and the MAY verbatim
 R-IDX-05: the definition of a full segment a comma clause; the partial-segment MUST a sentence of its own (its first letter capitalised); the constant, the MAY and the MUST verbatim
+R-SLB-01: the dash aside a "since" clause; the ragged lines re-wrapped; all five keyword clauses verbatim
+R-SLB-02: the dash a semicolon, "and" joining the two block cases; the MAY and every formula verbatim
+R-SLB-03: the packing relation an appositive clause; the crc-entry aside a colon clause ending in its "so" consequence; the ragged lines re-wrapped; the SHOULD, the MUST and the MAY verbatim
+R-SLB-04: the dash before "or clear" a comma; the detector a sentence of its own ("detected by a verifier as the invariant failures of [R-SLB-03] are"); the ragged lines re-wrapped; the MUST and both options verbatim
+R-SLB-05: the streaming-writer aside a "so" clause; the ID joined to the paragraph's last line; the MAY verbatim

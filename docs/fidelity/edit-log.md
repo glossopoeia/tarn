@@ -137,6 +137,42 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-09 — §16: spruce-up pass, fifteen dash asides out
+
+- **Commit:** `Readable: §16 — spruce-up pass: five paragraphs, two Notes
+  and the Example without asides; R-SLB-01 through -05 listed` (the commit
+  carrying this entry). Previous: `9793c06` (§15's pass).
+- **Sections:** §16 (`[R-SLB-05]`), §16.1 (`[R-SLB-01]`, its Note), §16.2
+  (`[R-SLB-02]`, `[R-SLB-03]`, `[R-SLB-04]`, the slabs Note, the Example). A
+  spruce-up pass, not the maintainer's read-through; proposed with before
+  and after (`scratch/cleanroom/proposals/s16-pass.md`), approved ("Go").
+- **Edits.**
+  1. `[R-SLB-05]`: the streaming-writer aside a "so" clause; the ID joined
+     to the paragraph's last line.
+  2. `[R-SLB-01]`: "readers are not obligated to, since offsets are always
+     explicit and alignment is reader-invisible"; re-wrapped; all five
+     keyword clauses verbatim.
+  3. §16.1's Note: the page-size aside a comma clause; A's lowercase
+     "recommended" reads "advised", the line being re-wrapped.
+  4. `[R-SLB-02]`: the dash a semicolon, "and" joining the two block cases.
+  5. `[R-SLB-03]`: the packing relation an appositive clause; the
+     crc-failing entry's aside a colon clause ending in its "so"
+     consequence; re-wrapped; the SHOULD, MUST and MAY verbatim.
+  6. `[R-SLB-04]`: the dash before "or clear" a comma; "detected by a
+     verifier as the invariant failures of `[R-SLB-03]` are" a sentence of
+     its own; re-wrapped; the MUST and both options verbatim.
+  7. The slabs Note: two dashes a colon and a comma, the label's dash
+     kept; the Example: the run list after a comma; every figure kept.
+- **Removed restatements:** none. Nothing dropped.
+- **Reworded IDs:** `R-SLB-01`, `R-SLB-02`, `R-SLB-03`, `R-SLB-04`,
+  `R-SLB-05`, listed; twelve keyword clauses and figures checked.
+- **Soft items:** `ID_REWORDED_LISTED` ×73 (the five new); the carried items
+  as before; the Example numbers unchanged. Keyword counts unchanged. B
+  is 4,842 lines and 48,563 words.
+- **Questions raised:** none. Process note: the session scratchpad was
+  swept mid-session; the pass scripts now live in
+  `scratch/cleanroom/pass/` (git-ignored) with the proposals beside them.
+
 ### 2026-10-09 — §15: spruce-up pass, thirteen dash asides out and one "notwithstanding"
 
 - **Commit:** `Readable: §15 — spruce-up pass: four paragraphs, a Rationale
