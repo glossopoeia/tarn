@@ -4039,112 +4039,110 @@ chosen here too rather than consequences of the u64 domain; and the
 
 #### 22.1 Threat model
 
-A TARN file is untrusted input. This section assumes an adversary
-who fully controls the bytes a reader is given — including files
-that validate — and who can control the transport. The defenses
-below are structural: they hold because a conforming reader derives
-what it allocates and fetches from *declarations it has verified*,
-never from payload content. `[R-SEC-01]`
+A TARN file is untrusted input. This section assumes an adversary who
+fully controls the bytes a reader is given (including files that
+validate) and who can control the transport. The defenses below are
+structural: they hold because a conforming reader derives what it
+allocates and fetches from *declarations it has verified*, never from
+payload content. `[R-SEC-01]`
 
 #### 22.2 Resource exhaustion
 
 Three properties bound what a hostile file can make a reader spend.
 Decoded tile size is a function of the layer's declarations alone
-(§14.2, §14.3), so a reader allocates from geometry and never from
-a length embedded in a payload — a compressed stream that expands
-beyond the declared decoded size is a tile-scope error
-(`[R-COD-08]`), which is this format's decompression-bomb defense
-and the reason no codec's embedded size field is ever an allocation
-source (`[R-COD-06]`). Every declaration-derived sum and product
-`[R-ENC-04]` designates is overflow-checked before use. And nothing is
-allocated, sought, or fetched on the strength of a field before the
-checksum covering it verifies (`[R-ENC-05]`). A reader MUST
-NOT size an allocation, fetch, or index walk in proportion to a
-declared magnitude it has not corroborated against the file's actual
-length: a layer can declare 2⁶³ − 1 addressed tiles, and the
-declaration alone costs nothing to state. `[R-SEC-02]`
+(§14.2, §14.3), so a reader allocates from geometry and never from a
+length embedded in a payload; a compressed stream that expands beyond
+the declared decoded size is a tile-scope error (`[R-COD-08]`), which
+is this format's decompression-bomb defense and the reason no codec's
+embedded size field is ever an allocation source (`[R-COD-06]`). Every
+declaration-derived sum and product `[R-ENC-04]` designates is
+overflow-checked before use. And nothing is allocated, sought, or
+fetched on the strength of a field before the checksum covering it
+verifies (`[R-ENC-05]`). A reader MUST NOT size an allocation, fetch,
+or index walk in proportion to a declared magnitude it has not
+corroborated against the file's actual length: a layer can declare 2⁶³
+− 1 addressed tiles, and the declaration alone costs nothing to state.
+`[R-SEC-02]`
 
 > **Note.** The index is the cheapest hostile amplifier: entry_count
-> is one `u64`, and `[R-CNT-17]`'s cross-check ties it to the
-> region's declared length while `[R-CNT-13]` ties that length to
-> the file's actual size — a reader that validates both before
-> fetching cannot be induced to read more than the file contains.
+> is one `u64`, and `[R-CNT-17]`'s cross-check ties it to the region's
+> declared length while `[R-CNT-13]` ties that length to the file's
+> actual size; a reader that validates both before fetching cannot be
+> induced to read more than the file contains.
 
 #### 22.3 Structural attacks
 
 Extents are owned exactly once (`[R-CNT-13]`): no two structures
-overlap, which removes aliasing — two index entries pointing at one
-payload, or a payload overlapping a structure that governs it — as
-a class. Byte coverage (`[R-CNT-02]`) partitions the *live* state
-exactly: every byte a reader can reach is the front signature block or
-belongs to exactly one named structure.
-It bounds nothing outside that — slack is unconstrained and can
-hold anything (§23.1) — so coverage makes bytes reachable by a reader
-accounted for, and makes everything else *countable* rather than
-absent: a verifier reports the slack total (§9.7), which is the number
-that distinguishes a working file from a padded one — a verifier that
-stopped early reports it only as partial (`[R-CNT-21]`), so the
-distinguishing figure comes from a walk that completes. Both are
-verifier-detected: a reader that skips them is still conforming, so a
-pipeline accepting files from untrusted sources SHOULD verify rather
-than merely read; without that, an
+overlap, which removes aliasing as a class (two index entries pointing
+at one payload, or a payload overlapping a structure that governs it).
+Byte coverage (`[R-CNT-02]`) partitions the *live* state exactly:
+every byte a reader can reach is the front signature block or belongs
+to exactly one named structure. It bounds nothing outside that, slack
+being unconstrained and able to hold anything (§23.1), so coverage
+makes bytes reachable by a reader accounted for, and makes everything
+else *countable* rather than absent: a verifier reports the slack
+total (§9.7), which is the number that distinguishes a working file
+from a padded one; a verifier that stopped early reports it only as
+partial (`[R-CNT-21]`), so the distinguishing figure comes from a walk
+that completes. Both are verifier-detected: a reader that skips them
+is still conforming, so a pipeline accepting files from untrusted
+sources SHOULD verify rather than merely read; without that, an
 attacker's smuggled bytes travel unexamined. `[R-SEC-03]`
 
 Four residues are stated rather than defended. Slack is covered by no
 checksum (§8.1) and constrained by no rule: corruption confined to it
 is invisible to reader and verifier alike, and is caught only by the
-slack total changing (§9.7) — which is why a writer that zeroes its
+slack total changing (§9.7), which is why a writer that zeroes its
 gaps (`[R-CNT-03]`) makes its own files easier to reason about, not
 because conformance turns on it. The extent of a record of a type this
 specification has not assigned is covered by no checksum either
 (§8.1), so corruption inside it is equally invisible: §20.4's
 byte-identical re-emission (`[R-WRT-05]`) carries such an extent
 forward unread, and `[R-WRT-08]` bars re-encoding it, so nothing an
-updater does would surface the damage. And a payload can contain a byte string that mimics
-a trailer; recovery tooling that scans backward can land on one, which
-is why recovery output is re-verified as a whole file before being
-trusted (`[R-LIF-06]`): under live-state coverage a mimic in slack
-is inert — nothing enumerates it — and one in a live payload is the
-bytes of the extent or region the walk claims (`[R-LIF-08]`), but a
-recovery tool that
-truncates to one produces a different file. And the extent of a user-metadata
-record under an experimental-range encoding is covered by its
-terminal CRC
+updater does would surface the damage. And a payload can contain a
+byte string that mimics a trailer; recovery tooling that scans
+backward can land on one, which is why recovery output is re-verified
+as a whole file before being trusted (`[R-LIF-06]`): under live-state
+coverage a mimic in slack is inert, since nothing enumerates it, and
+one in a live payload is the bytes of the extent or region the walk
+claims (`[R-LIF-08]`), but a recovery tool that truncates to one
+produces a different file. And the extent of a user-metadata record
+under an experimental-range encoding is covered by its terminal CRC
 but constrained by no content rule (`[R-MTA-10]`): the CRC detects
-corruption and authenticates nothing (§4.5), so a certificate
-covers those bytes uninspected — which is why `[R-MTA-10]` makes
-the verifier's report name each such record, and an operator who
-wants no such bytes rejects on that report line, a policy above
-conformance. `[R-SEC-04]`
+corruption and authenticates nothing (§4.5), so a certificate covers
+those bytes uninspected, which is why `[R-MTA-10]` makes the
+verifier's report name each such record, and an operator who wants no
+such bytes rejects on that report line, a policy above conformance.
+`[R-SEC-04]`
 
 #### 22.4 Content the reader hands onward
 
-Names are length-prefixed and screened for C0 controls
-(`[R-ENC-12]`), which removes ESC-introduced escape sequences and
-CR/LF injection from the identifiers a tool is most likely to print.
-It removes nothing else: U+007F, the C1 range U+0080-U+009F (where
-U+009B is CSI to a terminal in 8-bit mode), and bidirectional
-overrides such as U+202E are all legal in a conforming name. A
-display surface MUST NOT assume a name is safe for its own syntax, and a reader MUST NOT interpret a name
-as a filesystem path — nothing in this format names a path, and
+Names are length-prefixed and screened for C0 controls (`[R-ENC-12]`),
+which removes ESC-introduced escape sequences and CR/LF injection from
+the identifiers a tool is most likely to print. It removes nothing
+else: U+007F, the C1 range U+0080-U+009F (where U+009B is CSI to a
+terminal in 8-bit mode), and bidirectional overrides such as U+202E
+are all legal in a conforming name. A display surface MUST NOT assume
+a name is safe for its own syntax, and a reader MUST NOT interpret a
+name as a filesystem path: nothing in this format names a path, and
 treating one as such reintroduces traversal in the consumer.
-`[R-SEC-05]` User metadata is application data and is never
-structural (§7.3): a reader MUST NOT let it influence how any byte
-is located or decoded. `[R-SEC-06]`
+`[R-SEC-05]` User metadata is application data and is never structural
+(§7.3): a reader MUST NOT let it influence how any byte is located or
+decoded. `[R-SEC-06]`
 
 #### 22.5 What this format does not provide
 
-Checksums detect accidental corruption. They do not authenticate:
-an adversary who can modify bytes can recompute every checksum in
-the file, and a file that verifies proves only internal consistency
+Checksums detect accidental corruption. They do not authenticate: an
+adversary who can modify bytes can recompute every checksum in the
+file, and a file that verifies proves only internal consistency
 (§4.5). This format provides no confidentiality, no authenticity, no
-signing, and no access control; deployments needing them wrap the
-file in a mechanism that does. Committed-prefix immutability (§9.1)
-makes that compose well: a detached signature over the committed
-prefix [0, F) of one generation, pinned to the file_id its trailer
-names and to that F, stays valid over that prefix under every later
-append — though it attests that generation, not the file a reader
-opens later. `[R-SEC-07]`
+signing, and no access control; deployments needing them wrap the file
+in a mechanism that does. Committed-prefix immutability (§9.1) makes
+that compose well: a detached signature over the committed prefix [0,
+F) of one generation, pinned to the file_id its trailer names and to
+that F, stays valid over that prefix under every later append, though
+it attests that generation, not the file a reader opens later.
+`[R-SEC-07]`
 
 ### 23. Privacy Considerations
 
@@ -4156,83 +4154,76 @@ unreachable and never by erasing it: superseding a stored tile's
 payload, unstoring a tile so its entry becomes the sentinel (§15.2),
 and shortening a planar layer's channel list from its end, which takes
 the removed channels' tiles out of the addressed set (§20.3 step 4),
-all do it, and a record's
-extent goes the same way whether a commit drops the record (§20.4) or
-supersedes it — editing a user-metadata document appends a new extent
-and strands the old one (§20.3 places this with shape (b)), which is
-the case most
-likely to strand content a caller believes it deleted, and a commit
-that drops a layer (§20.4) strands every tile it stored, its
-tile-index region and its sub-records' extents, a layer's
-user-metadata document among them. **Where the structure carrying the bytes leaves the
-live state**, they remain in the file as slack (`[R-CNT-21]`),
-readable by anyone with the bytes and a hex editor, and recoverable
-by any tool that scans backward for an earlier trailer (§9.6). That
-is every case: no commit turns a real position of a stored tile into
-padding, a shrink of a layer that stores a tile being a rewrite
-(§20.3 step 4), so the bytes a commit makes unreachable always leave
-the live state whole; the list
+all do it, and a record's extent goes the same way whether a commit
+drops the record (§20.4) or supersedes it; editing a user-metadata
+document appends a new extent and strands the old one (§20.3 places
+this with shape (b)), which is the case most likely to strand content
+a caller believes it deleted, and a commit that drops a layer (§20.4)
+strands every tile it stored, its tile-index region and its
+sub-records' extents, a layer's user-metadata document among them.
+**Where the structure carrying the bytes leaves the live state**, they
+remain in the file as slack (`[R-CNT-21]`), readable by anyone with
+the bytes and a hex editor, and recoverable by any tool that scans
+backward for an earlier trailer (§9.6). That is every case: no commit
+turns a real position of a stored tile into padding, a shrink of a
+layer that stores a tile being a rewrite (§20.3 step 4), so the bytes
+a commit makes unreachable always leave the live state whole; the list
 of operations above is not offered as closed. Writers and the tools
 built on them MUST NOT represent any commit that makes sample data
-unreachable as erasure of it — a channel removal reported as erasure
-misleads exactly as a supersede so reported does.
-`[R-PRV-01]`
+unreachable as erasure of it: a channel removal reported as erasure
+misleads exactly as a supersede so reported does. `[R-PRV-01]`
 
-A rewrite (§20.5) is the only operation that removes slack,
-and it does so by writing a new file — the input persists,
-unmodified, until something outside this specification deletes it,
-and a filesystem-level deletion leaves the bytes recoverable on many
-media. A deployment whose obligation is erasure MUST treat that
-obligation as belonging to its storage layer, not to this format.
-`[R-PRV-02]`
+A rewrite (§20.5) is the only operation that removes slack, and it
+does so by writing a new file: the input persists, unmodified, until
+something outside this specification deletes it, and a
+filesystem-level deletion leaves the bytes recoverable on many media.
+A deployment whose obligation is erasure MUST treat that obligation as
+belonging to its storage layer, not to this format. `[R-PRV-02]`
 
 #### 23.2 What a file discloses
 
 A conforming file discloses more than its sample values: layer,
 dimension, and channel names; declared geometry; the write footprint
 of every layer at tile granularity, since a sentinel entry (§15.2)
-marks each addressed tile not stored in the live generation — a tile
+marks each addressed tile not stored in the live generation (a tile
 unstored by a later commit leaves its earlier payload in the file as
-slack (§23.1) — so the index
-publishes which regions were written without disclosing what is in
-them; the user-metadata document,
-which is quarantined from structural interpretation (§7.3) but not
-hidden; and the shape of its own history — the size of each commit
-and the slack it left behind, recoverable by probing backward for
-the superseded trailers that committed-prefix immutability keeps in
-place (§9.1, §9.6). No field carries a count of the commits that
-produced a file, so their number follows only from that probe: it is
-unavailable to anyone holding just the live trailer, and absent
-altogether from a rewritten file (§20.5), which retains no earlier
-trailer to find.
-Writers handling sensitive material SHOULD treat names and metadata
-as published content, and SHOULD compact before publication when the
+slack, §23.1), so the index publishes which regions were written
+without disclosing what is in them; the user-metadata document, which
+is quarantined from structural interpretation (§7.3) but not hidden;
+and the shape of its own history, the size of each commit and the
+slack it left behind, recoverable by probing backward for the
+superseded trailers that committed-prefix immutability keeps in place
+(§9.1, §9.6). No field carries a count of the commits that produced a
+file, so their number follows only from that probe: it is unavailable
+to anyone holding just the live trailer, and absent altogether from a
+rewritten file (§20.5), which retains no earlier trailer to find.
+Writers handling sensitive material SHOULD treat names and metadata as
+published content, and SHOULD compact before publication when the
 history itself is sensitive. `[R-PRV-03]`
 
 The `file_id` (§9.3) is a stable 64-bit identifier that persists
-across every generation of a file - high-entropy only when its
-writer follows §9.3's randomness advice, which `[R-LIF-03]` states
-as a SHOULD. It is what makes
-`(file_id, range)` caching sound, and equally what lets an observer
-correlate two copies of a file as the same artifact. A rewrite
-mints a new one (`[R-WRT-06]`) - the only defined way to break
-*file_id* linkage, and not an unlinkability measure: `[R-WRT-07]`
-preserves every stored tile's bytes and every index entry's crc bit
-for bit, so a compacted file remains trivially correlatable with its
-input by content. `[R-PRV-04]`
+across every generation of a file, high-entropy only when its writer
+follows §9.3's randomness advice, which `[R-LIF-03]` states as a
+SHOULD. It is what makes `(file_id, range)` caching sound, and equally
+what lets an observer correlate two copies of a file as the same
+artifact. A rewrite mints a new one (`[R-WRT-06]`), the only defined
+way to break *file_id* linkage, and not an unlinkability measure:
+`[R-WRT-07]` preserves every stored tile's bytes and every index
+entry's crc bit for bit, so a compacted file remains trivially
+correlatable with its input by content. `[R-PRV-04]`
 
 #### 23.3 Remote access patterns
 
 The remote read path (§6.4, §19.4) issues byte ranges determined by
-which layer and which tiles a reader wants. An observer who sees
-those ranges — a server operator, a proxy, or anyone on an
-unencrypted transport — learns which region of which layer was read,
-and the tile grid makes that inference precise. This is a property
-of range-based random access, not a defect. A reader that needs to
-hide its access pattern MAY fetch whole files or interpose a
-private-retrieval layer, and SHOULD read only over an encrypted
-transport; over an unencrypted one every range it requests is
-visible to anyone on the path. `[R-PRV-05]`
+which layer and which tiles a reader wants. An observer who sees those
+ranges (a server operator, a proxy, or anyone on an unencrypted
+transport) learns which region of which layer was read, and the tile
+grid makes that inference precise. This is a property of range-based
+random access, not a defect. A reader that needs to hide its access
+pattern MAY fetch whole files or interpose a private-retrieval layer,
+and SHOULD read only over an encrypted transport; over an unencrypted
+one every range it requests is visible to anyone on the path.
+`[R-PRV-05]`
 
 ### 24. Conformance Test Vectors
 

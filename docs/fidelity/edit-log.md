@@ -137,6 +137,47 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-12 — §22 and §23: spruce-up pass, twenty-three asides out
+
+- **Commit:** `Readable: §22–§23 — spruce-up pass: every R-SEC and R-PRV
+  paragraph and the index Note without asides; R-SEC-01 through -07 and
+  R-PRV-01 through -05 listed` (the commit carrying this entry). Previous:
+  `cfb70aa` (§21's second pass).
+- **Sections:** §22.1 through §22.5 (`[R-SEC-01]` through `[R-SEC-07]`, the
+  §22.2 Note), §23.1 through §23.3 (`[R-PRV-01]` through `[R-PRV-05]`). A
+  spruce-up pass, not the maintainer's read-through; proposed with before
+  and after (`scratch/cleanroom/proposals/s22-pass.md`), approved ("Go").
+- **Edits.**
+  1. `[R-SEC-01]`: "including files that validate" a parenthesis.
+     `[R-SEC-02]`: the decompression-bomb aside after a semicolon; the
+     MUST NOT verbatim. The Note: a semicolon.
+  2. `[R-SEC-03]`: the aliasing examples a parenthesis after "as a class";
+     "slack being unconstrained and able to hold anything" for the aside;
+     the partial-total caveat after a semicolon; the SHOULD verbatim.
+     `[R-SEC-04]`: four asides "which is why" and "since" clauses; the four
+     residues in A's order.
+  3. `[R-SEC-05]` and `[R-SEC-06]` (one paragraph): the filesystem-path
+     aside a colon clause; all three MUST NOTs verbatim; their existing
+     lines in `reworded-ids.txt` (from the §7 re-pointing) updated in
+     place rather than duplicated. `[R-SEC-07]`: the attests-that-generation
+     aside a comma.
+  4. `[R-PRV-01]`: two dashes a semicolon and a colon; the MUST NOT and
+     every operation in A's order, "not offered as closed" kept.
+     `[R-PRV-02]`: a colon; the MUST verbatim. `[R-PRV-03]`: a parenthesis
+     and a comma clause; both SHOULDs verbatim. `[R-PRV-04]`: two spaced
+     hyphens used as dashes made commas. `[R-PRV-05]`: the observers a
+     parenthesis; the MAY and the SHOULD verbatim.
+- **Removed restatements:** none. Nothing dropped: the word-level diff
+  shows "since" gained in `[R-SEC-04]` and "being … able to" for "is … can"
+  in `[R-SEC-03]`, nothing else.
+- **Reworded IDs:** `R-SEC-01`, `-02`, `-03`, `-04`, `-07`, `R-PRV-01`
+  through `-05` listed anew; `R-SEC-05` and `R-SEC-06` updated.
+- **Soft items:** `ID_REWORDED_LISTED` ×117 (the ten new; 118 lines in the
+  file, `R-COD-11`'s line having been retired from the list on
+  2026-09-27 and kept as a comment); the carried items as before. Keyword
+  counts unchanged. B is 4,769 lines and 48,372 words.
+- **Questions raised:** none.
+
 ### 2026-10-12 — §21.5 to §21.9: spruce-up pass, twenty dash asides out; a stale pointer repaired
 
 - **Commit:** `Readable: §21.5–§21.9 — spruce-up pass: the ignored-records

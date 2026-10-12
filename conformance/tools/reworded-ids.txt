@@ -29,8 +29,8 @@ R-CNT-26: the dash aside set in parentheses ('for a file expressible under this 
 R-CNT-10: two sentences made five: what handling a 200 response is (abort, or accept the full body deliberately, never the body's prefix as the range) stated after a colon instead of in a parenthetical imperative; the HTTP note its own sentence; the three MUSTs, the SHOULD with its consequence and the MUST NOT verbatim
 R-CNT-25: moved from §7.1 to the end of §7.3, after the extent slot (§7.2) and the record types it uses; in two paragraphs, the ID standing in the second (the quarantine), the first (storage, the extent rule, the encoding rule) being an ID-less rule paragraph; the 'always raw' sentence joined to the opening one; 'notwithstanding the owning-scope mapping' restated as the quarantine overriding [R-CNF-08]'s mapping; the resource-decline sentence restated as the quarantine's limit; both SHOULDs and the MAY verbatim ('and SHOULD be reported' gains its 'and')
 R-MTA-01: its citation of the user-metadata record's rules re-pointed from §7.1 to §7.3, where they now are; nothing else
-R-SEC-05: shares the paragraph with R-SEC-06; its own sentence is verbatim
-R-SEC-06: its citation re-pointed from §7.1 to §7.3; the MUST NOT verbatim
+R-SEC-05: shares the paragraph with R-SEC-06; the filesystem-path aside made a colon clause; both MUST NOTs verbatim
+R-SEC-06: its citation re-pointed from §7.1 to §7.3; shares the paragraph with R-SEC-05, re-cut on 2026-10-12; the MUST NOT verbatim
 R-PRV-03: its citation of the quarantine re-pointed from §7.1 to §7.3; nothing else
 R-CNT-11: the region's contents stated first (the record sequence in its first dir_length − 4 bytes, a CRC-32C over them in its final 4) where A gave the CRC first; 'always raw' its own sentence; the MUST and the owning scope verbatim
 R-CNT-13: the extent-slot paragraph re-cut without dashes; the inline definition of the live committed state and the no-overlap statement reduced to a pointer at §5.2 [R-CNT-02], which defines both; the verifier's MUST with its three outcomes verbatim, its 'including …' clause following the outcome; the reader sentence out of its parenthesis
@@ -110,3 +110,13 @@ R-ERR-02: the counts a parenthesis; every figure verbatim
 R-ERR-03: the finding-aid aside a colon; the MUST and the MAY verbatim
 R-ERR-04: the two capability refusals a sentence of their own after the floor sentence; the stale pointer "§21.6's closing paragraph names" (that paragraph no longer closes §21.6 in B since the grounds moved there on 2026-09-24) reads "§21.6 names as conforming files a reader nevertheless refuses"; all three keyword clauses verbatim
 R-ERR-05: the structures aside a colon before the list; every figure, bound and citation verbatim
+R-SEC-01: the files-that-validate aside a parenthesis; every clause verbatim
+R-SEC-02: the decompression-bomb aside after a semicolon; the MUST NOT verbatim
+R-SEC-03: the aliasing examples a parenthesis after "as a class"; "slack being unconstrained and able to hold anything" for the aside; the partial-total caveat after a semicolon; re-wrapped; the SHOULD verbatim
+R-SEC-04: four asides made "which is why" clauses and a "since" clause; re-wrapped; every clause in A's order
+R-SEC-07: the attests-that-generation aside a comma; every clause verbatim
+R-PRV-01: two dashes a semicolon and a colon; the ID joined to the last line; re-wrapped; the MUST NOT and every operation in A's order verbatim
+R-PRV-02: the input-persists aside a colon; the ID joined to the last line; the MUST verbatim
+R-PRV-03: the unstored-tile aside a parenthesis, the history aside a comma clause; re-wrapped; both SHOULDs verbatim
+R-PRV-04: two spaced hyphens used as dashes made commas; re-wrapped; every clause verbatim
+R-PRV-05: the observers aside a parenthesis; the MAY and the SHOULD verbatim
