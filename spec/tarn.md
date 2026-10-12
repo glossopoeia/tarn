@@ -3773,24 +3773,23 @@ states what a reader does. 26 conditions.
 
 #### 21.5 Ignored records
 
-Outcome: ignore-record — the record is skipped as though absent and
-decoding of stored data is unaffected. Readers SHOULD report the
-loss; silent metadata loss defeats the record's purpose. User
-metadata is quarantined (`[R-CNT-25]`): every way its document can
-be unreadable takes this outcome, whatever the containing scope —
-as a violation in the rows below, except at an experimental-range
-encoding, where no document rule attaches and §21.6 records the
-defined non-violation (`[R-MTA-10]`), and except where a reader or
-verifier declines the decode on the size bound or on the frame's
-declared window, which `[R-MTA-09]` makes that actor's capability and
-not a fact about the file. Encoding 0 and a reserved-range
-value are unassigned too, and R1 registers both as violations: what
-`[R-MTA-10]` withdraws is the document's content rules, never the
-encoding byte's own value set (`[R-MTA-03]`). Every row
-here is a violation all the same: the outcome bounds a reader's
-blast radius and never makes the file conforming (`[R-CNF-12]`);
-§21.6 lists the ignore-record conditions that are not violations.
-10 conditions.
+Outcome: ignore-record; the record is skipped as though absent and
+decoding of stored data is unaffected. Readers SHOULD report the loss;
+silent metadata loss defeats the record's purpose. User metadata is
+quarantined (`[R-CNT-25]`): every way its document can be unreadable
+takes this outcome, whatever the containing scope, as a violation in
+the rows below, except at an experimental-range encoding, where no
+document rule attaches and §21.6 records the defined non-violation
+(`[R-MTA-10]`), and except where a reader or verifier declines the
+decode on the size bound or on the frame's declared window, which
+`[R-MTA-09]` makes that actor's capability and not a fact about the
+file. Encoding 0 and a reserved-range value are unassigned too, and R1
+registers both as violations: what `[R-MTA-10]` withdraws is the
+document's content rules, never the encoding byte's own value set
+(`[R-MTA-03]`). Every row here is a violation all the same: the
+outcome bounds a reader's blast radius and never makes the file
+conforming (`[R-CNF-12]`); §21.6 lists the ignore-record conditions
+that are not violations. 10 conditions.
 
 | # | Condition | Instances | Detector | Detected | Governing rule |
 |---|---|---|---|---|---|
@@ -3834,8 +3833,8 @@ Two conditions that once sat in this table are violations and are
 registered above: a user-metadata document whose object members are
 unsorted (`[R-MTA-05]`), and a registered record type whose stored MU
 or PE bit differs from §7.3's registry (`[R-CNT-22]`). Both make the
-file nonconforming while leaving every reader behavior unchanged —
-readers process the document and apply the type's fixed semantics —
+file nonconforming while leaving every reader behavior unchanged
+(readers process the document and apply the type's fixed semantics),
 so both carry detector *verifier*, on the precedent `[R-CNT-12]`'s
 reserved-flag rows already set. What belongs here is the reader's
 obligation, and it is unchanged: neither obliges a reader to reject
@@ -3850,20 +3849,19 @@ does not implement**: the reader rejects the file (`[R-CNT-07]`), but
 the file can be perfectly conforming under that major. The second is
 an **experimental-range top-level record type carrying MU = 1**
 (§10.2, §10.3): `[R-CNT-15]` obliges the reader to reject, and
-`[R-CNF-02]` makes the file conforming all the same. The qualifier is
-load-bearing — the same type as a layer sub-record is reject-layer and
-never a ground to refuse the file (`[R-CNT-18]`), so only the
-top-level case is a file a reader refuses, since the prohibition on
-publishing experimental values binds a writer's conduct and not the
-bytes. In both the outcome records a reader's capability, not a defect
-in the bytes, and the diagnostic ought to distinguish the two.
-Neither is a register row: the register enumerates file-conformance
-violations (§21.1); the first is a file this document declines to
-judge under format major 1 (§2.3, `[R-CNF-13]`), and the file in the
-second carries no violation at all. What is registered in each case
-is the neighbouring condition
-that *is* a violation — version_major = 0, which declares no major at
-all (F18, `[R-CNT-07]`), and a *reserved*-range
+`[R-CNF-02]` makes the file conforming all the same. The qualifier
+decides: the same type as a layer sub-record is reject-layer and never
+a ground to refuse the file (`[R-CNT-18]`), so only the top-level case
+is a file a reader refuses, since the prohibition on publishing
+experimental values binds a writer's conduct and not the bytes. In
+both the outcome records a reader's capability, not a defect in the
+bytes, and the diagnostic ought to distinguish the two. Neither is a
+register row: the register enumerates file-conformance violations
+(§21.1); the first is a file this document declines to judge under
+format major 1 (§2.3, `[R-CNF-13]`), and the file in the second
+carries no violation at all. What is registered in each case is the
+neighbouring condition that *is* a violation: version_major = 0, which
+declares no major at all (F18, `[R-CNT-07]`), and a *reserved*-range
 type, whose emission `[R-CNT-15]` does make a violation (F35, F36,
 L24, L25).
 
@@ -3882,18 +3880,18 @@ a layer's or a tile's decode on resource grounds and so cannot check
 Stated plainly, because a register invites the opposite assumption:
 this format detects *corruption of structure*, not *incorrectness of
 content*. A writer that emits well-formed structures carrying wrong
-sample values — a mis-strided filter (`[R-COD-10]`), an undisclosed
-compression dictionary (`[R-COD-06]`, and `[R-MTA-09]` for a
-user-metadata document, whose wrong content is the document's
-rather than a tile's samples), or simply wrong data — produces a
-file that every checksum in §8 certifies. Checksums are
-computed over what the writer wrote. The obligations of §14.5 and
-`[R-SER-08]` narrow this only where content is structurally
-constrained: padding positions, pad bits, and boolean bytes.
-Nothing here authenticates, either (§4.5). None of these is a
-requirement a verifier is *unable to check* within the meaning of
-`[R-CNF-11]`: no file-level witness exists to check, so nothing about
-the file is left undetermined and the verdict is unaffected.
+sample values produces a file that every checksum in §8 certifies: a
+mis-strided filter (`[R-COD-10]`), an undisclosed compression
+dictionary (`[R-COD-06]`, and `[R-MTA-09]` for a user-metadata
+document, whose wrong content is the document's rather than a tile's
+samples), or simply wrong data. Checksums are computed over what the
+writer wrote. The obligations of §14.5 and `[R-SER-08]` narrow this
+only where content is structurally constrained: padding positions, pad
+bits, and boolean bytes. Nothing here authenticates, either (§4.5).
+None of these is a requirement a verifier is *unable to check* within
+the meaning of `[R-CNF-11]`: no file-level witness exists to check, so
+nothing about the file is left undetermined and the verdict is
+unaffected.
 
 A condition this specification names is **unwitnessed** where, for
 every file exhibiting it, some file that does not exhibit it cannot
@@ -3913,33 +3911,34 @@ it, and its absence is not the defect that clause names.
 That is the whole of the test, and it decides any condition put to it
 without appeal to a list. The instrument is the checks this
 specification obliges an actor to perform, and deliberately not the
-register's own rows — a test
-keyed to the rows would make §21.1's completeness clause vacuous,
-every omitted condition being undetectable by construction.
+register's own rows: a test keyed to the rows would make §21.1's
+completeness clause vacuous, every omitted condition being
+undetectable by construction.
 
 **The subject is the condition and not the requirement**, as
-`[R-CNF-13]` individuates them and as `[R-CNT-06]` shows by stating
+`[R-CNF-13]` tells them apart and as `[R-CNT-06]` shows by stating
 nine. A single requirement states conditions of both kinds where it
-states several, and is classified as a whole by neither. Being unwitnessed bears on
-detection and not on permission: the requirement binds its actor as
-any other does, and the outcome classes of §2.4 are assigned to
-violations a reader or verifier can establish rather than to every
-violation this document names.
+states several, and is classified as a whole by neither. Being
+unwitnessed bears on detection and not on permission: the requirement
+binds its actor as any other does, and the outcome classes of §2.4 are
+assigned to violations a reader or verifier can establish rather than
+to every violation this document names.
 
 Distinguish an unwitnessed condition from a requirement that states
-**no condition a file can exhibit**. `[R-ENC-06]`'s fixed field widths are not a state a file
-can be in — the parse is always at the widths this specification
-fixes, and a structure written at any other yields different values
-at them — a different file, conforming or not on its own terms.
-Nothing is omitted from the register on its account, there being no
-condition to omit. `[R-ERR-01]`
+**no condition a file can exhibit**. `[R-ENC-06]`'s fixed field widths
+are not a state a file can be in: the parse is always at the widths
+this specification fixes, and a structure written at any other yields
+different values at them, a different file, conforming or not on its
+own terms. Nothing is omitted from the register on its account, there
+being no condition to omit. `[R-ERR-01]`
 
 #### 21.8 Conformance vector coverage
 
-Every row of §21.2 through §21.5 — 120 conditions over 277
-instances — has at least one conformance vector (§24) whose expected
-outcome is that row's outcome, and at least one vector per instance. A row without a vector is a
-gap in the corpus, not a licence to skip the check. `[R-ERR-02]`
+Every row of §21.2 through §21.5 (120 conditions over 277 instances)
+has at least one conformance vector (§24) whose expected outcome is
+that row's outcome, and at least one vector per instance. A row
+without a vector is a gap in the corpus, not a licence to skip the
+check. `[R-ERR-02]`
 
 #### 21.9 Implementation limits
 
@@ -3947,11 +3946,11 @@ Every limit affecting which files are valid, or which files a
 conforming reader accepts, lives in this specification and never only
 in an implementation (`[R-CNF-10]`); this section collects the ones an
 implementer most often needs at hand. The hard limits it restates are
-a finding aid rather than an inventory — each is normative where the
-structure forcing it is defined. The table
-below states **minimum guarantees**, not caps: a conforming reader
-MUST accept any conforming file whose quantities lie within these
-bounds, and a writer MAY rely on that. `[R-ERR-03]`
+a finding aid rather than an inventory: each is normative where the
+structure forcing it is defined. The table below states **minimum
+guarantees**, not caps: a conforming reader MUST accept any conforming
+file whose quantities lie within these bounds, and a writer MAY rely
+on that. `[R-ERR-03]`
 
 | Quantity | A conforming reader MUST accept at least |
 |---|---|
@@ -3978,67 +3977,63 @@ that row, whatever its declarations would derive. The first five rows
 range over declarations, which every file and every layer carries.
 
 A file exceeding any of these remains conforming, and a reader MAY
-decline it: at the whole file, or at the narrowest scope whose
-stated or derived quantities exceed what it can serve, be that a
-layer, a tile, the record carrying a user-metadata document (as
-§18.2 assigns), or the file itself where the quantity is the file's,
-as layers per file and dir_length are. It MAY also decline at any
-scope that contains the
-narrowest one, as `[R-COD-06]` provides for a frame's window and
-`[R-CNF-11]` presupposes. Software that declines **on that ground** a file whose every quantity lies
-within the table is not a conforming reader (`[R-CNF-03]`) — the two
-capability refusals §21.6's closing paragraph names, a foreign format
-major and an unimplemented top-level MU = 1 type, are not this
-ground — the
-guarantees are the floor, not a suggestion. In every case, a refusal
-on resource grounds MUST be reported as a resource limit and not as
-a validity error: the two send a user to opposite remedies, and a
-reader that reports "too large" as "corrupt" invites the deletion
-of intact data. `[R-ERR-04]`
+decline it: at the whole file, or at the narrowest scope whose stated
+or derived quantities exceed what it can serve, be that a layer, a
+tile, the record carrying a user-metadata document (as §18.2 assigns),
+or the file itself where the quantity is the file's, as layers per
+file and dir_length are. It MAY also decline at any scope that
+contains the narrowest one, as `[R-COD-06]` provides for a frame's
+window and `[R-CNF-11]` presupposes. Software that declines **on that
+ground** a file whose every quantity lies within the table is not a
+conforming reader (`[R-CNF-03]`): the guarantees are the floor, not a
+suggestion. The two capability refusals §21.6 names as conforming
+files a reader nevertheless refuses, a foreign format major and an
+unimplemented top-level MU = 1 type, are not this ground. In every
+case, a refusal on resource grounds MUST be reported as a resource
+limit and not as a validity error: the two send a user to opposite
+remedies, and a reader that reports "too large" as "corrupt" invites
+the deletion of intact data. `[R-ERR-04]`
 
 > **Note.** Where the numbers come from: rank and channel counts
-> follow established array-ecosystem ceilings; 2³² addressed tiles
-> is the point where the segment-CRC array a reader fetches whole
-> before using any entry (§15.4) is still 256 KiB — it reaches 4 MiB
-> at 2³⁶; 65,536 layers is roughly a 12.5 MiB directory at the small
-> layer records that figure assumed, and the 16 MiB directory row
-> states that same budget over the region itself, because the
-> region's size is the product of the layer count with each record's
-> channel entries and names rather than the layer count alone, and
-> §19.1's open fetches and CRCs it whole before any other use
-> (`[R-CNT-11]`, `[R-RDR-01]`); 256 MiB is
-> an order of magnitude above the tile sizes §11.3 describes as
-> ordinary, so the guarantee never binds a typical file; 8 MiB is
-> the decoder window support
-> RFC 8878 itself recommends, which stock encoder settings stay
-> within.
+> follow established array-ecosystem ceilings; 2³² addressed tiles is
+> the point where the segment-CRC array a reader fetches whole before
+> using any entry (§15.4) is still 256 KiB (it reaches 4 MiB at 2³⁶);
+> 65,536 layers is roughly a 12.5 MiB directory at the small layer
+> records that figure assumed, and the 16 MiB directory row states
+> that same budget over the region itself, because the region's size
+> is the product of the layer count with each record's channel entries
+> and names rather than the layer count alone, and §19.1's open
+> fetches and CRCs it whole before any other use (`[R-CNT-11]`,
+> `[R-RDR-01]`); 256 MiB is an order of magnitude above the tile sizes
+> §11.3 describes as ordinary, so the guarantee never binds a typical
+> file; 8 MiB is the decoder window support RFC 8878 itself
+> recommends, which stock encoder settings stay within.
 
-Some limits are instead **hard**: a file violating one is invalid,
-not merely large. They are stated where the structures forcing them
-are defined — a layer, dimension or channel name at most 255 bytes
+Some limits are instead **hard**: a file violating one is invalid, not
+merely large. They are stated where the structures forcing them are
+defined: a layer, dimension or channel name at most 255 bytes
 (`[R-ENC-12]`, a `u8` length prefix), and a user-metadata key at most
 255 bytes by §18.2's folding of §4.6's name rules onto keys, which
-carry no such prefix; rank at most 255 and channel count at most 65,535 (§7.4's
-`u8` and `u16` fields); a layer declaring codec 4 with every
-addressed tile's decoded size at most `0x7E000000`, the largest
+carry no such prefix; rank at most 255 and channel count at most
+65,535 (§7.4's `u8` and `u16` fields); a layer declaring codec 4 with
+every addressed tile's decoded size at most `0x7E000000`, the largest
 channel plane governing in a planar layer (`[R-COD-07]`); every
-offset, length,
-extent, and count at most 2⁶³ − 1 (`[R-ENC-03]`); a declared
-alignment A a power of two with 512 ≤ A ≤ 2⁶², and a declared slab
-alignment A_slab a power of two with 1 ≤ A_slab ≤ 2⁶² (§16.1, §16.2,
-`[R-SLB-01]`, `[R-CNT-23]`); a slab run length S with
-1 ≤ S ≤ 2⁶³ − 1 (§16.2, `[R-CNT-23]`); a directory of at least 4
-bytes at an offset of at least 16 (§6.2, `[R-CNT-06]`); and no
-conforming file shorter than 128 bytes (§5.1, `[R-CNT-27]`). Most
-follow from a field's width, an external format, or the value
-domain, and the rest from arithmetic over structures a generation
-cannot omit. Some do not: the 512 floor on A is a number chosen
-here, fixed at the legacy sector size (§16.1) so that a declared
-alignment is worth declaring; the 2⁶² ceilings on A and A_slab, and
-the power-of-two shape each takes, are chosen here too rather than
-consequences of the u64 domain; and the 255-byte cap on a user-metadata
-key is this specification folding §4.6's name rules onto keys, which
-carry no length prefix to force it. `[R-ERR-05]`
+offset, length, extent, and count at most 2⁶³ − 1 (`[R-ENC-03]`); a
+declared alignment A a power of two with 512 ≤ A ≤ 2⁶², and a declared
+slab alignment A_slab a power of two with 1 ≤ A_slab ≤ 2⁶² (§16.1,
+§16.2, `[R-SLB-01]`, `[R-CNT-23]`); a slab run length S with 1 ≤ S ≤
+2⁶³ − 1 (§16.2, `[R-CNT-23]`); a directory of at least 4 bytes at an
+offset of at least 16 (§6.2, `[R-CNT-06]`); and no conforming file
+shorter than 128 bytes (§5.1, `[R-CNT-27]`). Most follow from a
+field's width, an external format, or the value domain, and the rest
+from arithmetic over structures a generation cannot omit. Some do not:
+the 512 floor on A is a number chosen here, fixed at the legacy sector
+size (§16.1) so that a declared alignment is worth declaring; the 2⁶²
+ceilings on A and A_slab, and the power-of-two shape each takes, are
+chosen here too rather than consequences of the u64 domain; and the
+255-byte cap on a user-metadata key is this specification folding
+§4.6's name rules onto keys, which carry no length prefix to force it.
+`[R-ERR-05]`
 
 ### 22. Security Considerations
 

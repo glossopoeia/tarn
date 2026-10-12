@@ -105,3 +105,8 @@ R-WRT-08: the no-embedded-offsets aside a comma; the ID joined to the last line;
 R-WRT-06: the vehicles aside, which split the SHOULD from its subject, moved to a sentence of its own after the SHOULD's reason ("On a conforming input such a feature is …"), its inner list after a comma; all three keyword clauses and the nine row numbers verbatim
 R-WRT-07: the §7.2 aside a participial clause; re-wrapped; the MUST verbatim
 R-WRT-09: the links of the chain moved after "before emitting that structure's bytes" as a colon list; the ID joined to the last line; the MUST verbatim
+R-ERR-01: the field-widths aside a colon clause and a comma; every clause verbatim
+R-ERR-02: the counts a parenthesis; every figure verbatim
+R-ERR-03: the finding-aid aside a colon; the MUST and the MAY verbatim
+R-ERR-04: the two capability refusals a sentence of their own after the floor sentence; the stale pointer "§21.6's closing paragraph names" (that paragraph no longer closes §21.6 in B since the grounds moved there on 2026-09-24) reads "§21.6 names as conforming files a reader nevertheless refuses"; all three keyword clauses verbatim
+R-ERR-05: the structures aside a colon before the list; every figure, bound and citation verbatim

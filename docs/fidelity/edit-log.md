@@ -137,6 +137,57 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-12 — §21.5 to §21.9: spruce-up pass, twenty dash asides out; a stale pointer repaired
+
+- **Commit:** `Readable: §21.5–§21.9 — spruce-up pass: the ignored-records
+  lead-in, the non-violations, what no check detects, coverage and limits
+  without asides; R-ERR-04's pointer at §21.6 repaired; R-ERR-01 through
+  -05 listed` (the commit carrying this entry). Previous: `8f70e4f` (§21's
+  first pass).
+- **Sections:** §21.5 (the lead-in), §21.6 (both prose paragraphs), §21.7
+  (five paragraphs, `[R-ERR-01]`), §21.8 (`[R-ERR-02]`), §21.9
+  (`[R-ERR-03]`, `[R-ERR-04]`, the Note, `[R-ERR-05]`). The tables untouched.
+  The second of two passes over §21, not the maintainer's read-through;
+  proposed with before and after (`scratch/cleanroom/proposals/s21b-pass.md`),
+  approved ("Go").
+- **A defect of the rewrite, found and repaired.** `[R-ERR-04]` names the
+  two capability refusals as the ones "§21.6's closing paragraph names".
+  In A that paragraph was the two conforming-but-refused cases; the entry
+  for 2026-09-24 moved `[R-CNF-11]`'s cannot-establish grounds into §21.6
+  as a new closing paragraph, so B's pointer named the wrong paragraph
+  (A's other such pointer, in §2.3, was cut in the same entry). It now
+  reads "the two capability refusals §21.6 names as conforming files a
+  reader nevertheless refuses", the paragraph's own words. The same class
+  as the §8.1 pointer repaired on 2026-10-08; a search for "§21.6's
+  closing paragraph" finds no other in B.
+- **Edits.**
+  1. The §21.5 lead-in: the outcome's gloss after a semicolon; the
+     quarantine's exceptions after a comma; the SHOULD verbatim.
+  2. §21.6: the reader-behavior aside a parenthesis; "The qualifier is
+     load-bearing —" reads "The qualifier decides:" (a word the maintainer
+     dislikes, in explanatory prose); the neighbouring-condition aside a
+     colon. Every clause of the two-cases paragraph kept, round 1's first
+     item resting on it.
+  3. §21.7: the three kinds of wrong content moved after the main clause
+     as a colon list; the rows aside a colon; "as `[R-CNF-13]`
+     individuates them" reads "tells them apart" (likewise); `[R-ERR-01]`'s
+     widths aside a colon clause and a comma.
+  4. `[R-ERR-02]`: the counts a parenthesis. `[R-ERR-03]`: the finding-aid
+     aside a colon. `[R-ERR-04]`: the two capability refusals a sentence of
+     their own with the pointer above; the three keyword clauses verbatim.
+     The Note: a parenthesis. `[R-ERR-05]`: the structures aside a colon
+     before its list; re-wrapped.
+- **Removed restatements:** none. Nothing dropped: the word-level diff
+  shows exactly the three intended word changes and the pointer's words.
+- **Reworded IDs:** `R-ERR-01`, `R-ERR-02`, `R-ERR-03`, `R-ERR-04`,
+  `R-ERR-05`, listed; thirteen keyword clauses and figures checked.
+- **Soft items:** `ID_REWORDED_LISTED` ×108 (the five new); the carried
+  items as before. Keyword counts unchanged. B is 4,778 lines and 48,395
+  words. §21 is done for this pass: 46 dashes in its prose to 1, the
+  quoted cell character; the tables keep their 68.
+- **Questions raised:** none; the pointer repair is reported for the
+  maintainer's eye.
+
 ### 2026-10-09 — §21.1 to §21.4: spruce-up pass, twenty-seven dash asides out of the register's prose
 
 - **Commit:** `Readable: §21.1–§21.4 — spruce-up pass: how to read the
