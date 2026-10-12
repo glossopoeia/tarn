@@ -137,6 +137,38 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-12 — Appendix G: spruce-up pass, twenty-one dash asides out
+
+- **Commit:** `Readable: Appendix G — spruce-up pass: the reproducible-writer
+  profile's intro, ten items and closing paragraph without asides` (the
+  commit carrying this entry). Previous: `92f5789` (§24's pass).
+- **Sections:** Appendix G whole but its heading. Non-normative; no ID
+  paragraph. A spruce-up pass, not the maintainer's read-through;
+  proposed with before and after (`scratch/cleanroom/proposals/sG-pass.md`),
+  approved ("Go").
+- **Edits.**
+  1. The intro: the byte-identical applications a parenthesis.
+  2. Items 1 to 9: sixteen asides made commas, colons, parentheses, "which
+     is" and "since" clauses. Item 2's hash definition a sentence of its
+     own ("The hash is a named function at a named version … and the
+     identifier is the digest's last eight bytes in output order, the
+     eight a named hash emits last"); "already-compact" rejoined across
+     its line break. Item 3's alignment gap a parenthesis and "which is
+     `[R-CNT-03]`'s advice taken as a requirement here". Item 5's
+     placement and filter cases after colons. Item 7: "which is
+     `[R-TYP-10]`'s SHOULD taken as a requirement here". Item 9: "since
+     number formatting varies by runtime". The list tight; re-wrapped.
+  3. Item 10: the dash a comma; set apart as in A. The closing paragraph:
+     the mandatory examples a comma clause, the item-8 aside a
+     parenthesis.
+- **Removed restatements:** none. Nothing dropped: the word-level diff
+  over the 1,360-word list shows only connectives gained ("is" ×4,
+  "which" ×2, "and", "since", a capital) and one "the" lost to the split.
+- **Reworded IDs:** none; no ID paragraph changed.
+- **Soft items:** `ID_REWORDED_LISTED` ×121; the carried items as before.
+  Keyword counts unchanged. B is 4,758 lines and 48,346 words.
+- **Questions raised:** none.
+
 ### 2026-10-12 — §24, Appendix A and Appendix D: spruce-up pass, twelve dash asides out
 
 - **Commit:** `Readable: §24, Appendices A and D — spruce-up pass: the four

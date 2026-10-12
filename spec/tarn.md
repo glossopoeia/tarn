@@ -4492,176 +4492,170 @@ sample-type identifiers 14 and 15 would mean if ever assigned (§12.2).
 
 Core writer conformance is semantic: two conforming writers given the
 same input can emit different files (`[R-CNF-05]`). Applications that
-need byte-identical output — content-addressed storage, reproducible
-builds — can adopt this profile, which closes the degrees of freedom
+need byte-identical output (content-addressed storage, reproducible
+builds) can adopt this profile, which closes the degrees of freedom
 this format deliberately leaves open. It adds no requirement to any
 actor: a writer ignoring it is fully conforming, and conformance to
 the profile can be refuted cheaply but confirmed only by reproducing
 the file.
 
 1. **Codec 1 (none), or a named codec implementation at a named
-   version with fixed encoder settings** — level, strategy, and
-   thread count included, since a multithreaded encoder can vary its
-   output run to run. This is the profile's real boundary: RFC 1951
-   and RFC 8878 constrain what a decoder accepts, not how an encoder
-   chooses blocks, matches, or tables, so two conforming encoders
-   emit different, equally valid streams for the same input.
-   Byte-identity across *implementations* is therefore unattainable
-   for codecs 2–4; codec 1 is reproducible by anyone.
+   version with fixed encoder settings**, level, strategy, and thread
+   count included, since a multithreaded encoder can vary its output
+   run to run. This is the profile's real boundary: RFC 1951 and RFC
+   8878 constrain what a decoder accepts, not how an encoder chooses
+   blocks, matches, or tables, so two conforming encoders emit
+   different, equally valid streams for the same input. Byte-identity
+   across *implementations* is therefore unattainable for codecs 2–4;
+   codec 1 is reproducible by anyone.
 2. **`file_id` from a cryptographic hash of the file's own emitted
    bytes**, computed over [0, F − 64) together with the trailer's
    other fields with the `file_id` field taken as zero, then written
-   in — the hash a named function at a named version, its input the
+   in. The hash is a named function at a named version, its input the
    bytes [0, F − 64) followed by the trailer's first 60 bytes with the
-   `file_id` field zeroed, and the identifier the digest's **last
-   eight bytes in output order** — the eight a named hash emits last,
+   `file_id` field zeroed, and the identifier is the digest's **last
+   eight bytes in output order**, the eight a named hash emits last,
    read little-endian; naming the end rather than calling them the
    *low* bytes is deliberate, that word being read as a position by
    some and as an arithmetic magnitude by others. The value
-   0x0000000000000001 is
-   substituted in the measure-zero case that they are all zero
-   (§6.2 forbids `file_id` = 0). This is a creator's rule: a rewriter
-   adopting the profile takes `[R-WRT-06]`'s fresh draw instead, since
-   a derived value is not a draw and re-deriving it on an already-
-   compact input would reproduce the input's own `file_id`.
-   Deterministic, and high-entropy — satisfying §9.3's advice
-   rather than contradicting it, which a counter would not. Hashing
-   the bytes rather than an abstract notion of "content" is what
-   makes the identifier well defined: this format fixes no canonical
-   serialization of logical content, and two files carrying the same
-   arrays can legitimately differ in tiling, layout, and codec.
+   0x0000000000000001 is substituted in the measure-zero case that
+   they are all zero (§6.2 forbids `file_id` = 0). This is a creator's
+   rule: a rewriter adopting the profile takes `[R-WRT-06]`'s fresh
+   draw instead, since a derived value is not a draw and re-deriving
+   it on an already-compact input would reproduce the input's own
+   `file_id`. Deterministic, and high-entropy, satisfying §9.3's
+   advice rather than contradicting it, which a counter would not.
+   Hashing the bytes rather than an abstract notion of "content" is
+   what makes the identifier well defined: this format fixes no
+   canonical serialization of logical content, and two files carrying
+   the same arrays can legitimately differ in tiling, layout, and
+   codec.
 3. **A total emission order, contiguously.** For each layer in
    ascending layer-name byte order, compared as `[R-MTA-05]` compares
-   keys: its stored tiles in disk-ordinal
-   order, then its tile-index region; then any remaining record
-   extents in ascending record order — all of them after every layer's tiles and
-   index region, not interleaved with them; then the directory. That
-   order runs over top-level records first, then, within each layer
-   record, its sub-records; and the directory's own record sequence,
-   with each layer record's sub-record sequence, is emitted in that
-   same order, so that record placement and record order are pinned
-   together rather than one without the other (`[R-CNT-14]` leaves
-   order free, which is why the profile fixes it here). Records and a
-   layer record's
-   sub-records alike are ordered by type; within a type, type 0x0001
-   ties by layer name, and every other type by the record's header
-   with **extent_offset masked to zero**, then its inline payload,
-   then the contents of its extent, compared as `[R-MTA-05]` compares
-   keys — the comparison every byte order in this item uses, the
-   layer-name tie included.
-   extent_offset is masked because this very order is what fixes it:
-   a key containing it would depend on its own result, and two
-   records of one type could not be placed at all. Every other
-   component is a function of content alone, so the key is one a
-   reader can derive, which a creation order is not. Two records
-   this key does not separate are byte-identical in type, flags,
-   lengths, payload and extent content; emitting them in either
-   order yields the same file, so the writer chooses. Record order carries no meaning (`[R-CNT-14]`), so it
-   is otherwise free to vary, as is structure placement
-   (`[R-LIF-02]` step 2). The first structure begins at 16, directly
-   after the front signature block, which §5.2 counts as no
-   structure — or, where that structure is a stored tile and a declared
-   A or A_slab admits none at 16, at the least position above it the
-   declaration admits, a structure no declaration constrains beginning
-   at 16 like any other; each
-   later structure begins where the previous one
-   ended, save where alignment forces a gap — a
-   declared A or A_slab, or §6.2's 64-byte trailer alignment, the
-   pre-trailer pad included — and every byte of every such gap is zero — `[R-CNT-03]`'s advice, taken as a requirement
-   here: order alone does not fix bytes while the space between
-   structures is free in either extent or content.
+   keys: its stored tiles in disk-ordinal order, then its tile-index
+   region; then any remaining record extents in ascending record
+   order, all of them after every layer's tiles and index region and
+   not interleaved with them; then the directory. That order runs over
+   top-level records first, then, within each layer record, its
+   sub-records; and the directory's own record sequence, with each
+   layer record's sub-record sequence, is emitted in that same order,
+   so that record placement and record order are pinned together
+   rather than one without the other (`[R-CNT-14]` leaves order free,
+   which is why the profile fixes it here). Records and a layer
+   record's sub-records alike are ordered by type; within a type, type
+   0x0001 ties by layer name, and every other type by the record's
+   header with **extent_offset masked to zero**, then its inline
+   payload, then the contents of its extent, compared as `[R-MTA-05]`
+   compares keys, the comparison every byte order in this item uses,
+   the layer-name tie included. extent_offset is masked because this
+   very order is what fixes it: a key containing it would depend on
+   its own result, and two records of one type could not be placed at
+   all. Every other component is a function of content alone, so the
+   key is one a reader can derive, which a creation order is not. Two
+   records this key does not separate are byte-identical in type,
+   flags, lengths, payload and extent content; emitting them in either
+   order yields the same file, so the writer chooses. Record order
+   carries no meaning (`[R-CNT-14]`), so it is otherwise free to vary,
+   as is structure placement (`[R-LIF-02]` step 2). The first
+   structure begins at 16, directly after the front signature block,
+   which §5.2 counts as no structure, or, where that structure is a
+   stored tile and a declared A or A_slab admits none at 16, at the
+   least position above it the declaration admits, a structure no
+   declaration constrains beginning at 16 like any other; each later
+   structure begins where the previous one ended, save where alignment
+   forces a gap (a declared A or A_slab, or §6.2's 64-byte trailer
+   alignment, the pre-trailer pad included), and every byte of every
+   such gap is zero, which is `[R-CNT-03]`'s advice taken as a
+   requirement here: order alone does not fix bytes while the space
+   between structures is free in either extent or content.
 4. **One generation**, so that the file is the output of a single
-   commit. Appending is reproducible only in the weaker sense that
-   the appended bytes are. No field records how many commits a file
-   has had, so nothing refutes this item by reading a value: what
-   refutes it is §9.6's backward probe finding a superseded trailer
-   in the slack that committed-prefix immutability leaves in place.
-5. **No declared alignment and no slab**, or fixed declared values —
+   commit. Appending is reproducible only in the weaker sense that the
+   appended bytes are. No field records how many commits a file has
+   had, so nothing refutes this item by reading a value: what refutes
+   it is §9.6's backward probe finding a superseded trailer in the
+   slack that committed-prefix immutability leaves in place.
+5. **No declared alignment and no slab**, or fixed declared values:
    both change placement and neither is implied by content. **A fixed
-   filter value** likewise: §17.3 leaves the choice to the writer, and no
-   content implies it, so two writers agreeing on everything else still
-   disagree on bytes without it pinned. The filter is the identity
-   exactly where its permutation is — where the stride is 1, as for a
-   packed boolean plane, and equally where the decoded image is a
-   single group, n = L/s being 1 (`[R-COD-10]`); elsewhere it changes
-   the stored bytes of any tile whose decoded image the permutation
-   does not leave unchanged, and where it does, the stored bytes are
-   the same under either filter and are no evidence of which was
-   declared. **Fixed declared tile
-   extents and a fixed layout** likewise, as item 2's closing sentence
-   names both:
-   §11.3 states that tile extents are a writer's choice and that this
-   specification imposes none, and §14.1 leaves the layout to the
-   writer. Without both pinned, two writers agreeing on everything
-   above still disagree on bytes: the tile extents fix every tile's
-   shape and with it the grid count, while the layout fixes how many
-   tile-index entries the layer addresses (§11.2) and how each tile's
-   values are arranged (§14.2). Where neither effect of the layout reaches the data, as
-   §14.4's Note says of a single-channel numeric layer, the layer
-   record's own layout field still differs, and the pin is needed for
-   that byte.
+   filter value** likewise: §17.3 leaves the choice to the writer, and
+   no content implies it, so two writers agreeing on everything else
+   still disagree on bytes without it pinned. The filter is the
+   identity exactly where its permutation is: where the stride is 1,
+   as for a packed boolean plane, and equally where the decoded image
+   is a single group, n = L/s being 1 (`[R-COD-10]`); elsewhere it
+   changes the stored bytes of any tile whose decoded image the
+   permutation does not leave unchanged, and where it does, the stored
+   bytes are the same under either filter and are no evidence of which
+   was declared. **Fixed declared tile extents and a fixed layout**
+   likewise, as item 2's closing sentence names both: §11.3 states
+   that tile extents are a writer's choice and that this specification
+   imposes none, and §14.1 leaves the layout to the writer. Without
+   both pinned, two writers agreeing on everything above still
+   disagree on bytes: the tile extents fix every tile's shape and with
+   it the grid count, while the layout fixes how many tile-index
+   entries the layer addresses (§11.2) and how each tile's values are
+   arranged (§14.2). Where neither effect of the layout reaches the
+   data, as §14.4's Note says of a single-channel numeric layer, the
+   layer record's own layout field still differs, and the pin is
+   needed for that byte.
 6. **The sentinel for every all-fill tile**, so that a tile whose
    samples all equal fill is never stored; otherwise two writers
    agreeing on content still disagree on bytes.
-7. **The all-zero fill default.** Where a caller chooses no fill,
-   the writer records all-zero bytes — `[R-TYP-10]`'s SHOULD, taken
+7. **The all-zero fill default.** Where a caller chooses no fill, the
+   writer records all-zero bytes, which is `[R-TYP-10]`'s SHOULD taken
    as a requirement here. This one reaches further than the fill
    field: item 6 stores no tile whose samples all equal fill, so two
    writers that default fill differently disagree about which tiles
    exist, not merely about eight bytes of the layer record.
-8. **`version_minor` at the floor** `[R-CNT-26]` states, and
-   `flags` = 0. The `flags` half is a creator's rule, as item 2's
-   identifier is: a rewriter adopting the profile carries its input's
-   unknown ignore-lane bits forward instead, setting no other
-   (`[R-CNT-08]`). The
-   version_minor floor binds a rewriter too, save where its output
+8. **`version_minor` at the floor** `[R-CNT-26]` states, and `flags` =
+   0. The `flags` half is a creator's rule, as item 2's identifier is:
+   a rewriter adopting the profile carries its input's unknown
+   ignore-lane bits forward instead, setting no other (`[R-CNT-08]`).
+   The version_minor floor binds a rewriter too, save where its output
    carries a feature it does not implement, when §20.5's floor governs
    instead (`[R-WRT-06]`). A rewriter's output is therefore
    reproducible only modulo its trailer and the records §20.4 lets it
    drop: `[R-WRT-06]`'s fresh file_id is no function of content, this
-   item's floor turns on which features the rewriter implements, and
-   a record whose governing flags are MU = 0 and PE = 0 is retained or
+   item's floor turns on which features the rewriter implements, and a
+   record whose governing flags are MU = 0 and PE = 0 is retained or
    dropped at the rewriter's choice (§20.4), which no item here pins.
-   An adopter needing byte-identity
-   across rewriters pins the rewriter, as items 1 and 9 pin their
-   producers.
-9. **User metadata either absent, or serialized by a named JSON
-   writer at a named version, at a fixed storage encoding (§18.2) —
-   and, where that encoding is 2, by a named zstd implementation at a
-   named version with fixed settings, as item 1 pins a tile codec.** `[R-MTA-05]`'s sorted keys make one
-   writer's output reproducible but explicitly do not make two
-   writers' output identical — number formatting varies by runtime —
-   so this degree of freedom closes the same way item 1 does, by
-   pinning the producer.
+   An adopter needing byte-identity across rewriters pins the
+   rewriter, as items 1 and 9 pin their producers.
+9. **User metadata either absent, or serialized by a named JSON writer
+   at a named version, at a fixed storage encoding (§18.2), and, where
+   that encoding is 2, by a named zstd implementation at a named
+   version with fixed settings, as item 1 pins a tile codec.**
+   `[R-MTA-05]`'s sorted keys make one writer's output reproducible
+   but explicitly do not make two writers' output identical, since
+   number formatting varies by runtime, so this degree of freedom
+   closes the same way item 1 does, by pinning the producer.
 
 10. **Names normalized to Unicode Normalization Form C**, which
-   `[R-ENC-14]` states as a SHOULD. A caller-supplied decomposed name is a
-   different name under `[R-ENC-13]`, because its bytes differ — whether or
-   not its length differs with them. §4.6's `température` is 12 bytes in NFC
-   and 13 in NFD, while a name differing only by canonical reordering is the
-   same length in both forms. So a writer that does not normalize emits a
-   different layer record.
+   `[R-ENC-14]` states as a SHOULD. A caller-supplied decomposed name
+   is a different name under `[R-ENC-13]`, because its bytes differ,
+   whether or not its length differs with them. §4.6's `température`
+   is 12 bytes in NFC and 13 in NFD, while a name differing only by
+   canonical reordering is the same length in both forms. So a writer
+   that does not normalize emits a different layer record.
 
-Everything else the profile needs is already mandatory — fill-encoded
+Everything else the profile needs is already mandatory, fill-encoded
 edge padding (`[R-SER-05]`) and explicitly recorded fill
 (`[R-TYP-06]`) among them. The items above add what is not, and the
-list is not short: gap *content*, which `[R-CNT-03]` only advises;
-gap *extent*, which placement freedom (`[R-SLB-05]`) leaves open;
-record and sub-record order, which `[R-CNT-14]` leaves free; the fill
-a writer records when its caller chooses none (`[R-TYP-10]`, a
-SHOULD); the sentinel for every all-fill tile, which no rule requires;
-a single generation, which §9 nowhere constrains; the absence or
-fixing of a declared alignment and slab, which §16 leaves to the
-writer; a fixed filter, which §17.3 leaves to the writer; fixed
-declared tile extents, of which §11.3 imposes none; a fixed layout,
-which §14.1 leaves to the writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
-SHOULD — item 8, binding creator and rewriter alike save §20.5's
-carried-feature case, its `flags` half a creator's rule alone; a
+list is not short: gap *content*, which `[R-CNT-03]` only advises; gap
+*extent*, which placement freedom (`[R-SLB-05]`) leaves open; record
+and sub-record order, which `[R-CNT-14]` leaves free; the fill a
+writer records when its caller chooses none (`[R-TYP-10]`, a SHOULD);
+the sentinel for every all-fill tile, which no rule requires; a single
+generation, which §9 nowhere constrains; the absence or fixing of a
+declared alignment and slab, which §16 leaves to the writer; a fixed
+filter, which §17.3 leaves to the writer; fixed declared tile extents,
+of which §11.3 imposes none; a fixed layout, which §14.1 leaves to the
+writer; `version_minor` at its floor, which `[R-CNT-26]` states as a
+SHOULD (item 8, binding creator and rewriter alike save §20.5's
+carried-feature case, its `flags` half a creator's rule alone); a
 derived `file_id`, where §9.3 states only advice; NFC-normalized
-names, which `[R-ENC-14]` states as a SHOULD; and the
-producer pinning of items 1 and 9. Read the numbered items as the
-list; this paragraph names what they are for, not how many there
-are.
+names, which `[R-ENC-14]` states as a SHOULD; and the producer pinning
+of items 1 and 9. Read the numbered items as the list; this paragraph
+names what they are for, not how many there are.
 
 ### Appendix H — Conformance checklists (non-normative)
 
