@@ -31,7 +31,7 @@ R-CNT-25: moved from §7.1 to the end of §7.3, after the extent slot (§7.2) an
 R-MTA-01: its citation of the user-metadata record's rules re-pointed from §7.1 to §7.3, where they now are; nothing else
 R-SEC-05: shares the paragraph with R-SEC-06; the filesystem-path aside made a colon clause; both MUST NOTs verbatim
 R-SEC-06: its citation re-pointed from §7.1 to §7.3; shares the paragraph with R-SEC-05, re-cut on 2026-10-12; the MUST NOT verbatim
-R-PRV-03: its citation of the quarantine re-pointed from §7.1 to §7.3; nothing else
+R-PRV-03: its citation of the quarantine re-pointed from §7.1 to §7.3; the unstored-tile aside a parenthesis and the history aside a comma clause (2026-10-12); re-wrapped; both SHOULDs verbatim
 R-CNT-11: the region's contents stated first (the record sequence in its first dir_length − 4 bytes, a CRC-32C over them in its final 4) where A gave the CRC first; 'always raw' its own sentence; the MUST and the owning scope verbatim
 R-CNT-13: the extent-slot paragraph re-cut without dashes; the inline definition of the live committed state and the no-overlap statement reduced to a pointer at §5.2 [R-CNT-02], which defines both; the verifier's MUST with its three outcomes verbatim, its 'including …' clause following the outcome; the reader sentence out of its parenthesis
 R-CNT-14: one sentence made five; the zero-layer-records case stated as 'including none (§21.6)', the row there saying a directory carrying no layer record is a conforming generation, in place of stating it twice; 'an empty directory included' removed by the maintainer as a special case of the same; both MUST NOTs and the two at-most-one rules verbatim
@@ -117,6 +117,9 @@ R-SEC-04: four asides made "which is why" clauses and a "since" clause; re-wrapp
 R-SEC-07: the attests-that-generation aside a comma; every clause verbatim
 R-PRV-01: two dashes a semicolon and a colon; the ID joined to the last line; re-wrapped; the MUST NOT and every operation in A's order verbatim
 R-PRV-02: the input-persists aside a colon; the ID joined to the last line; the MUST verbatim
-R-PRV-03: the unstored-tile aside a parenthesis, the history aside a comma clause; re-wrapped; both SHOULDs verbatim
 R-PRV-04: two spaced hyphens used as dashes made commas; re-wrapped; every clause verbatim
 R-PRV-05: the observers aside a parenthesis; the MAY and the SHOULD verbatim
+R-VEC-01: the evidence-not-definition aside a colon; every clause verbatim
+R-VEC-02: the row-label aside a sentence of its own; the §6.2 field-gates aside a parenthesis; the ID joined to the last line; re-wrapped; every clause in A's order verbatim
+R-VEC-03: the tile-count aside after a semicolon; the ID joined to the last line; every clause verbatim
+R-VEC-04: the sibling's definition and the verifier-case fields comma clauses; re-wrapped; every clause verbatim

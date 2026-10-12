@@ -4236,7 +4236,7 @@ The corpus is **derivative**: a conforming implementation is one that
 satisfies this specification's requirements, and where a vector's
 recorded expectation and this specification disagree, this
 specification governs and the vector is corrected. Passing the corpus
-is evidence of conformance, never its definition — a corpus exercises
+is evidence of conformance, never its definition: a corpus exercises
 what someone thought to write, and this document states more than any
 finite set of files can demonstrate. `[R-VEC-01]`
 
@@ -4247,54 +4247,51 @@ floating-point value written as a hexadecimal bit pattern so that no
 comparison depends on a number formatter; and, for each structure the
 file damages, the outcome class (§2.4), the scope, and the §21
 register row it exercises together with that row's governing
-requirement identifier — a row label is never renumbered and never
+requirement identifier. A row label is never renumbered and never
 reused, so it denotes one condition for the life of format major 1,
 exactly as §2.2 makes the identifier permanent, and recording both
-ties the vector to the rule as well as to the row.
-The two axes are independent: a conforming
-file can carry a record a reader ignores (§21.5, §21.6), and a
-nonconforming file can still read correctly outside the scope its
-violation damages. Naming the row is a constraint on how a vector is
-built, not a claim about the file: a vector is constructed so that one
-row is the one it exercises, and where a condition cannot be isolated —
-§6.2's field gates are validated together, so a file failing two of
-them attributes to neither alone — the entry records every row the file
-exercises and says which it was built for. A vector whose expectation
-cannot be stated in
-those terms is testing something this specification has not defined,
-which makes it a finding against this document rather than a vector.
-`[R-VEC-02]`
+ties the vector to the rule as well as to the row. The two axes are
+independent: a conforming file can carry a record a reader ignores
+(§21.5, §21.6), and a nonconforming file can still read correctly
+outside the scope its violation damages. Naming the row is a
+constraint on how a vector is built, not a claim about the file: a
+vector is constructed so that one row is the one it exercises, and
+where a condition cannot be isolated (§6.2's field gates are validated
+together, so a file failing two of them attributes to neither alone)
+the entry records every row the file exercises and says which it was
+built for. A vector whose expectation cannot be stated in those terms
+is testing something this specification has not defined, which makes
+it a finding against this document rather than a vector. `[R-VEC-02]`
 
 Every vector whose recorded outcome is reject-layer or reject-tile is
-built inside a file that also carries an **intact sibling** — another
-layer, or another tile of the same layer where that layer is one a
-reader is still permitted to serve — whose decoded content the
-manifest records, and a vector's expectation is therefore a pair.
-Where the row's detector is the reader, that pair is the scope no
-reader is permitted to serve and the content a reader that serves
-anything at all owes. Where it is the verifier, no reader is obliged
-to refuse anything (§21.1), so the pair is the scope at which a
-verifier confines its finding — carried by the entry's own scope and
-detector fields (`[R-VEC-02]`) — and the content a reader owes from
-every scope, the damaged one included. Without the sibling a vector cannot
-distinguish a reader that scopes its refusal from one that rejects
-the file entire, because `[R-CNF-12]` permits the latter for any
+built inside a file that also carries an **intact sibling**, another
+layer or another tile of the same layer where that layer is one a
+reader is still permitted to serve, whose decoded content the manifest
+records, and a vector's expectation is therefore a pair. Where the
+row's detector is the reader, that pair is the scope no reader is
+permitted to serve and the content a reader that serves anything at
+all owes. Where it is the verifier, no reader is obliged to refuse
+anything (§21.1), so the pair is the scope at which a verifier
+confines its finding, carried by the entry's own scope and detector
+fields (`[R-VEC-02]`), and the content a reader owes from every scope,
+the damaged one included. Without the sibling a vector cannot
+distinguish a reader that scopes its refusal from one that rejects the
+file entire, because `[R-CNF-12]` permits the latter for any
 nonconforming file and every vector built from §21's register is
-nonconforming. A corpus of single-scope vectors would demonstrate
-only that a violation was detected, which is the weaker of the two
-claims §24 makes. `[R-VEC-04]`
+nonconforming. A corpus of single-scope vectors would demonstrate only
+that a violation was detected, which is the weaker of the two claims
+§24 makes. `[R-VEC-04]`
 
-Coverage is the corpus's own obligation, inherited from
-`[R-ERR-02]`: every register row has at least one vector for each
-instance it names, and every sentinel, every boundary value, and every
-hard limit of `[R-ERR-05]` has one at its stated bound. §21.9's
-minimum guarantees are exercised where a vector at the bound is
-constructible — the tile-count guarantee is not, its index region
-alone running to tens of gigabytes of incompressible entries, and is
-exercised instead by a scaled vector spanning several segments with
-the bound checked arithmetically. A missing vector is a gap in the
-corpus and never a licence to skip the check it would have exercised.
-`[R-VEC-03]`
+Coverage is the corpus's own obligation, inherited from `[R-ERR-02]`:
+every register row has at least one vector for each instance it names,
+and every sentinel, every boundary value, and every hard limit of
+`[R-ERR-05]` has one at its stated bound. §21.9's minimum guarantees
+are exercised where a vector at the bound is constructible; the
+tile-count guarantee is not, its index region alone running to tens of
+gigabytes of incompressible entries, and is exercised instead by a
+scaled vector spanning several segments with the bound checked
+arithmetically. A missing vector is a gap in the corpus and never a
+licence to skip the check it would have exercised. `[R-VEC-03]`
 
 > **Note.** A recorded outcome is the *narrowest* scope a reader may
 > refuse to serve, not the only one: a vector exercising a
@@ -4302,7 +4299,7 @@ corpus and never a licence to skip the check it would have exercised.
 > implementation that instead rejects the whole nonconforming file is
 > exercising `[R-CNF-12]`'s licence, not failing the vector. What the
 > corpus tests is that no reader serves data from a scope this
-> specification rejects — which a corpus checking only "accepted or
+> specification rejects, which a corpus checking only "accepted or
 > rejected" could not tell you. The distinction is worth reporting
 > rather than hiding: an implementation that reads the intact sibling
 > and refuses the damaged scope has been tested for scope, and one
@@ -4351,15 +4348,14 @@ contains no layers, which §21.6 records as valid.
 A remote reader opens this file in §6.4's two requests: the final 64
 bytes, validated per §6.2; then [16, 20), whose CRC it verifies. A
 local reader additionally verifies bytes [0, 16) by equality first,
-which `[R-CNT-04]` requires of any reader holding them — as a remote
+which `[R-CNT-04]` requires of any reader holding them, as a remote
 reader does too whenever its speculative suffix window reaches offset
 0, which on this 128-byte file means a window of the whole file. A
 shorter window can still spare the second request: 112 bytes covering
 [16, 128) contains the directory, so §6.4's containment test applies,
 while bytes [0, 16) stay non-resident, so §6.1 leaves the front-block
-check to the reader. That is §19.1's four-step open
-applied to this file; the layer table is empty, and there is nothing
-further to read.
+check to the reader. That is §19.1's four-step open applied to this
+file; the layer table is empty, and there is nothing further to read.
 
 ### Appendix B — Constants (non-normative)
 
@@ -4434,13 +4430,12 @@ states the request accounting rather than leaving it to be discovered.
 
 **Append-only, with a complete directory per generation.** Every
 commit re-emits the whole directory, so a torn write leaves the prior
-state intact. The cost is slack — and the decision that shaped
-this specification most is what slack *is not*: not a history to
-certify, not a log to audit, just waste awaiting compaction. Coverage
-therefore certifies the live state and counts the rest (§5.2, §9.7),
-which is why this document has no generation-attribution machinery,
-no trailer chain, and no counter in the trailer numbering the
-commits.
+state intact. The cost is slack, and the decision that shaped this
+specification most is what slack *is not*: not a history to certify,
+not a log to audit, just waste awaiting compaction. Coverage therefore
+certifies the live state and counts the rest (§5.2, §9.7), which is
+why this document has no generation-attribution machinery, no trailer
+chain, and no counter in the trailer numbering the commits.
 
 **Checksums everywhere, with per-scope outcomes.** Integrity is not a
 mode. The cost is one CRC per structure and a strictly ordered chain

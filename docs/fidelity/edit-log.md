@@ -137,6 +137,42 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-12 — §24, Appendix A and Appendix D: spruce-up pass, twelve dash asides out
+
+- **Commit:** `Readable: §24, Appendices A and D — spruce-up pass: the four
+  R-VEC paragraphs, the Note and two appendix paragraphs without asides;
+  R-VEC-01 through -04 listed` (the commit carrying this entry). Previous:
+  `2ae99f9` (§22–§23's pass).
+- **Sections:** §24 (`[R-VEC-01]` through `[R-VEC-04]`, the Note), Appendix
+  A (the open applied), Appendix D (append-only). A spruce-up pass, not
+  the maintainer's read-through; proposed with before and after
+  (`scratch/cleanroom/proposals/s24-pass.md`), approved ("Go").
+- **Edits.**
+  1. `[R-VEC-01]`: the evidence-not-definition aside a colon.
+  2. `[R-VEC-02]`: the row-label permanence a sentence of its own; the
+     §6.2 field-gates aside a parenthesis; the ID joined to the last
+     line; "The two axes are independent", a surviving statement of
+     §2.4's cut bridge (round 1, item 4, kept cut), unchanged.
+  3. `[R-VEC-04]`: the sibling's definition and the verifier-case fields
+     comma clauses. `[R-VEC-03]`: the tile-count aside after a semicolon;
+     the ID joined to the last line.
+  4. The Note: the dash a comma; its first line, which carries A's
+     lowercase "may", untouched. Appendix A's open paragraph and
+     Appendix D's append-only paragraph: a comma each.
+- **Removed restatements:** none. Nothing dropped: the word-level diff
+  shows one sentence-initial capital and nothing else.
+- **Reworded IDs:** `R-VEC-01`, `R-VEC-02`, `R-VEC-03`, `R-VEC-04`, listed.
+- **Correction to the entry for `2ae99f9`.** The 118th line of
+  `reworded-ids.txt` was not a retired `R-COD-11` line but a second
+  `R-PRV-03` line, added by that pass beside the one from the §7
+  re-pointing (the tool keys by ID, hence 117 listed). The two are merged
+  here into one line carrying both reasons; the file has 121 lines and
+  121 distinct IDs, all listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×121 (the four new); the carried
+  items as before. Keyword counts unchanged. B is 4,764 lines and 48,360
+  words.
+- **Questions raised:** none.
+
 ### 2026-10-12 — §22 and §23: spruce-up pass, twenty-three asides out
 
 - **Commit:** `Readable: §22–§23 — spruce-up pass: every R-SEC and R-PRV
