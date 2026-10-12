@@ -137,6 +137,50 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-12 — §9.7: the word-diff preflight's one repair, "above" restored
+
+- **Commit:** `Readable: §9.7 — word-diff preflight: "above" restored to the
+  bound sentence` (the commit carrying this entry). Previous: `7a2046e`
+  (Appendix H's pass).
+- **Sections:** §9.7, the verifier's second paragraph (ID-less;
+  `[R-LIF-08]` governs the fourth). Found by the word-diff preflight that
+  round 2 was owed: for every commit from `95b5a30` to `7a2046e`, the
+  diff's removed and added lines tokenised as `propose.py` does and the
+  Counter difference read word by word
+  (`scratch/cleanroom/pass/word-diff-preflight.py`; the per-commit result
+  goes into `docs/fidelity/3-round-2/word-diff.md` with the round's
+  artifacts).
+- **Edits.** A's "the [16, F − 64) bound above already keeps every other
+  claimant disjoint from them" had lost "above" in the §9 first pass
+  (`95b5a30`): the word was absent from the proposal's after-text and
+  named nowhere in its inventory or in the entry below, so it is a
+  transcription loss and not an approved cut. Restored; the line is 70
+  characters and no re-wrap was needed. The bound it points at stands two
+  sentences earlier in the same paragraph ("that each lies within [16,
+  F − 64)"), as in A.
+- **The preflight's other findings, none a defect.** Over the twenty-one
+  commits every other word lost or gained is a connective, an inflection,
+  a capital at a sentence split, a recorded swap ("has to" for the
+  lowercase *must*, "can" for *may*, "advised" for *recommended*,
+  "override" for "govern notwithstanding", "decides" for "is
+  load-bearing", "tells apart" for "individuates", "nevertheless" for "—
+  but"), the `[R-ERR-04]` pointer's words, or the dropped duplicate
+  "(§8.1)". Three wordings the entries did not name are in the approved
+  proposals' after-texts: "Field values:" → "The field's values:" (§11.4's
+  and §12.2's lead-ins), "all reserved values" → "every reserved value"
+  (§11.4, quoted in the §11 entry), and "the table's forms with k" → "the
+  table's form with k" (§14.2's offsets Example). The range pooled commit
+  by commit and the range as one diff agree word for word.
+- **Removed restatements:** none.
+- **Reworded IDs:** none new; the sentence stands in an ID-less paragraph,
+  and `R-LIF-08` is listed already.
+- **Soft items:** `ID_REWORDED_LISTED` ×121; the carried items as before
+  (the eight §3.1 term rewordings, Appendix B's row, HEADINGS 130 against
+  129, SHOULD 46 against 47). Keyword counts unchanged. B is 4,755 lines
+  and 48,337 words.
+- **Questions raised:** none; reported for the maintainer's eye before
+  round 2's launch.
+
 ### 2026-10-12 — Appendix H: spruce-up pass, sixteen dash asides out; the series closed
 
 - **Commit:** `Readable: Appendix H — spruce-up pass: the five checklists

@@ -1389,7 +1389,7 @@ that each lies within [16, F − 64), and that each verifies against the
 checksum covering it, where §8.1's map states one. The front signature
 block at [0, 16) and the live trailer at [F − 64, F) are claimed by
 the walk as well, being members of the live committed state
-(`[R-CNT-02]`); the [16, F − 64) bound already keeps every other
+(`[R-CNT-02]`); the [16, F − 64) bound above already keeps every other
 claimant disjoint from them. Bytes the walk does not reach are slack:
 the verifier sums them and reports the total, and their content is not
 its concern.
