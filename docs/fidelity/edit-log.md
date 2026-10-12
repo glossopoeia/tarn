@@ -135,6 +135,33 @@ cut: the rules stand at §20.4 `[R-WRT-05]`, the outcome table's own row and
 every requirement. §2.3's three-row reach Note stays cut: the results stand
 in §21.2's lead-in. No edit to B follows from the round.
 
+**Fidelity round 2 ran on 2026-10-12** over B at `7b5b9a7`, the head of
+`readable` with §1 through §8 rewritten, §9 re-cut and §10 through the
+appendices spruced up (`wf_ed2decfe-4e2`;
+[3-round-2/findings.md](3-round-2/findings.md)): no seeds, the repository's
+`spec/tarn.md` as edition B, 30 agents on `claude-sonnet-5`, 66 minutes, the
+launch turn the single word "Go". Before the launch the word-diff preflight
+the spruce-up owed read every word lost or gained over its twenty-one
+commits ([3-round-2/word-diff.md](3-round-2/word-diff.md)) and found one
+transcription loss, "above" in §9.7's bound sentence, restored as `7b5b9a7`
+(the entry below). **No byte-level divergence and no addition, and nothing
+graded LOSS or ADDITION by any lane from §5 to the end of the document**:
+the spruce-up series drew no finding from any instrument. Eight groups were
+graded LOSS by at least one triage pass, every one a cut of explanatory
+prose in the front matter and §1–§4 that this log records: round 1's items
+3 through 6 (the §3.3 Note and §1's roadmap sentence, §2.4's
+preserve-verbatim bridge, §2.4's reject Note, §2.3's reach Note), all ruled
+kept cut on 2026-10-08, and three new grades on cuts of 2026-09-23 and
+2026-09-25 (§4.4's bit-numbering Note, standing at §14.3; the tail of §4.7's
+layout-table Note, standing at §4.6 `[R-ENC-15]`, rows F4 and L9 and
+`[R-ENC-16]`; the front-matter clause on vectors citing identifiers,
+standing at §2.2 and §24 `[R-VEC-02]`). Six split refuters stood on
+EQUIVALENT, the bridge's loss-refuter stood on LOSS and the reach Note's
+overturned it; every one is EQUIVALENT by hand and all eight go to the
+maintainer with both texts, as decision 4 says. Round 1's items 1 and 2
+were graded EQUIVALENT this time. None is changed in B by this round. The
+ten blind-walk findings are shared text of A, for the ledger.
+
 ## Entries
 
 ### 2026-10-12 — §9.7: the word-diff preflight's one repair, "above" restored
