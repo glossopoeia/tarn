@@ -4663,96 +4663,93 @@ A summary of each class's obligations, for implementers auditing their
 own work. §2.3 defines the classes; each entry's authority is the
 requirement or section cited, never this summary.
 
-**Conforming file** — every requirement at every scope holds (§2.4);
+**Conforming file**: every requirement at every scope holds (§2.4);
 bytes partition into the coverage classes (§5.2, `[R-CNT-02]`); every
 structure's checksum verifies where §8.1's map states one (§8.1); no
 violation row of §21.2–§21.5 applies, though §21.6's defined
-conditions can — an experimental-range MU = 0 record being conforming
+conditions can, an experimental-range MU = 0 record being conforming
 (`[R-CNT-15]`, §10.2).
 
-**Conforming reader** — validates the trailer in §6.2's order; verifies
+**Conforming reader**: validates the trailer in §6.2's order; verifies
 each checksum before acting on what it covers (§4.5, §8.2); detects
 every reader-assigned violation no later than its tier (§19.2);
-implements all four codecs, both filters, both layouts, all
-thirteen sample types, both user-metadata encodings, and both
-registered record types (`[R-CNF-03]`, §2.3); accepts every conforming
-file of a major it implements that carries no top-level MU = 1 record
-of a type it does not implement and lies within §21.9's minimum
-guarantees, and reports any resource refusal as a limit rather than
-as corruption (`[R-ERR-04]`, §21.6); applies
-the outcome and scope §21 assigns; never returns padding positions (§11.3) and never returns
-fill for a rejected tile (§2.4); returns sample bit patterns unaltered
-(§3.2), the sole resolved case (`[R-TYP-04]`, §12.3) being a
-nonconforming interleaved boolean byte it chooses to return rather
-than reject (`[R-SER-08]`, §14.2).
+implements all four codecs, both filters, both layouts, all thirteen
+sample types, both user-metadata encodings, and both registered record
+types (`[R-CNF-03]`, §2.3); accepts every conforming file of a major
+it implements that carries no top-level MU = 1 record of a type it
+does not implement and lies within §21.9's minimum guarantees, and
+reports any resource refusal as a limit rather than as corruption
+(`[R-ERR-04]`, §21.6); applies the outcome and scope §21 assigns;
+never returns padding positions (§11.3) and never returns fill for a
+rejected tile (§2.4); returns sample bit patterns unaltered (§3.2),
+the sole resolved case (`[R-TYP-04]`, §12.3) being a nonconforming
+interleaved boolean byte it chooses to return rather than reject
+(`[R-SER-08]`, §14.2).
 
-**Conforming writer** — emits only conforming files (§2.3); records
+**Conforming writer**: emits only conforming files (§2.3); records
 fill for every channel (`[R-TYP-06]`, §13.1); fill-encodes edge
 padding and pad bits (`[R-SER-05]`, §14.5); emits interleaved boolean
-values as only 0x00 or 0x01 (`[R-SER-08]`, §14.2); sorts
-user-metadata object members by their keys' UTF-8 bytes
-(`[R-MTA-05]`, §18.2); follows the commit protocol
-including both barriers (§9.2); writes flags = 0 when it creates a
-file, a rewriter instead carrying its input's unknown ignore-lane
-bits forward and setting no other (`[R-CNT-08]`, §6.3, §20.5); honors
-any alignment or slab it declares (§16). Advisory, and not a conformance condition: a writer
-SHOULD zero the gaps it creates (`[R-CNT-03]`, §5.2).
+values as only 0x00 or 0x01 (`[R-SER-08]`, §14.2); sorts user-metadata
+object members by their keys' UTF-8 bytes (`[R-MTA-05]`, §18.2);
+follows the commit protocol including both barriers (§9.2); writes
+flags = 0 when it creates a file, a rewriter instead carrying its
+input's unknown ignore-lane bits forward and setting no other
+(`[R-CNT-08]`, §6.3, §20.5); honors any alignment or slab it declares
+(§16). Advisory, and not a conformance condition: a writer SHOULD zero
+the gaps it creates (`[R-CNT-03]`, §5.2).
 
-**Conforming updater**, an appender or a rewriter (§20.1) — everything
-a writer does for the bytes it produces, plus: validates, as an appender, the trailer and full directory, and every
-layer it modifies (§20.3), a rewriter's depth being `[R-WRT-09]`'s; as an appender, changes a layer that stores a tile in the
-generation its commit supersedes only as §20.3 step 4 permits — its
-names, a grown dimension extent, a planar channel list extended at its
-end or
-shortened from it (not both in one commit), a slab or alignment
-declaration declared, changed or cleared —
-and makes any other change to it as a new layer or a whole-file
-rewrite (§20.3);
-re-emits every retained record it does not logically modify
-byte-identically, a modified one being new output under its writer
-obligations (§20.4, `[R-WRT-05]`); copies forward the input's unknown
-ignore-lane flag bits, clears none and sets no other (`[R-CNT-08]`,
-§6.3); respects every record's MU and PE bits, the
+**Conforming updater**, an appender or a rewriter (§20.1): everything
+a writer does for the bytes it produces, plus: validates, as an
+appender, the trailer and full directory, and every layer it modifies
+(§20.3), a rewriter's depth being `[R-WRT-09]`'s; as an appender,
+changes a layer that stores a tile in the generation its commit
+supersedes only as §20.3 step 4 permits (its names, a grown dimension
+extent, a planar channel list extended at its end or shortened from
+it, not both in one commit, a slab or alignment declaration declared,
+changed or cleared) and makes any other change to it as a new layer or
+a whole-file rewrite (§20.3); re-emits every retained record it does
+not logically modify byte-identically, a modified one being new output
+under its writer obligations (§20.4, `[R-WRT-05]`); copies forward the
+input's unknown ignore-lane flag bits, clears none and sets no other
+(`[R-CNT-08]`, §6.3); respects every record's MU and PE bits, the
 registry's fixed values governing for a registered type (§20.4,
-`[R-CNT-22]`); drops a layer record only under §20.4's PE = 0
-licence, its sub-records with it, and never removes a user-metadata
-record from a scope it keeps (§20.4); never modifies or drops a layer that carries an unknown critical
-sub-record, and rejects outright a file carrying an unimplemented
-top-level MU = 1 record (`[R-CNT-15]`, §20.4). A rewriter, in
-addition, mints a fresh file_id and follows the creation path
-(`[R-WRT-06]`); preserves the content of every structure it carries
-forward, re-pointing each extent slot it relocates and regenerating
-each tile-index region any of whose stored extents it relocates
-(`[R-WRT-07]`); verifies the checksum over every extent it
+`[R-CNT-22]`); drops a layer record only under §20.4's PE = 0 licence,
+its sub-records with it, and never removes a user-metadata record from
+a scope it keeps (§20.4); never modifies or drops a layer that carries
+an unknown critical sub-record, and rejects outright a file carrying
+an unimplemented top-level MU = 1 record (`[R-CNT-15]`, §20.4). A
+rewriter, in addition, mints a fresh file_id and follows the creation
+path (`[R-WRT-06]`); preserves the content of every structure it
+carries forward, re-pointing each extent slot it relocates and
+regenerating each tile-index region any of whose stored extents it
+relocates (`[R-WRT-07]`); verifies the checksum over every extent it
 copies (`[R-WRT-09]`); drops a layer or a PE = 0 record by omitting
 it, reclaiming what it addressed, and refuses to rewrite a file
 carrying an unimplemented MU = 1 record (§20.5). Advisory, and not a
 conformance condition, of an appender and a rewriter alike: an updater
 that drops a record SHOULD report the loss (§20.4).
 
-**Conforming verifier** — every reader obligation, plus the checks
+**Conforming verifier**: every reader obligation, plus the checks
 readers are exempt from: the live-state coverage partition and the
-slack total (§9.7) — reported as partial — an upper bound,
-naming the scope or violation that stopped the walk — where its walk
-did not complete (`[R-CNT-21]`); extent overlap (§7.2); record flag bits — reserved
-bits, MU = 1 with PE = 0, and a registered type's stored bits against
-§7.3's registry (`[R-CNT-12]`, `[R-CNT-22]`);
-the 16-byte front signature block by byte equality, which
-`[R-CNT-04]` lets a reader not holding it resident defer or omit and
-§2.3 does not (F1, F6);
-no structure between the live directory's end and the live trailer
-(`[R-CNT-05]`, F7); a reserved-range record or sub-record type value,
-whatever its MU bit (`[R-CNT-15]`, F36, L25);
-alignment and slab invariants (§16); decoded-content obligations —
-padding samples, pad bits and interleaved boolean bytes (§14.5, §14.3,
-§14.2);
+slack total (§9.7), reported as partial, an upper bound naming the
+scope or violation that stopped the walk, where its walk did not
+complete (`[R-CNT-21]`); extent overlap (§7.2); record flag bits, the
+reserved bits, MU = 1 with PE = 0, and a registered type's stored bits
+against §7.3's registry (`[R-CNT-12]`, `[R-CNT-22]`); the 16-byte
+front signature block by byte equality, which `[R-CNT-04]` lets a
+reader not holding it resident defer or omit and §2.3 does not (F1,
+F6); no structure between the live directory's end and the live
+trailer (`[R-CNT-05]`, F7); a reserved-range record or sub-record type
+value, whatever its MU bit (`[R-CNT-15]`, F36, L25); alignment and
+slab invariants (§16); decoded-content obligations, the padding
+samples, pad bits and interleaved boolean bytes (§14.5, §14.3, §14.2);
 user-metadata member ordering (`[R-MTA-05]`, §18.2); certifies only
-files with no violation at any scope (§2.4) — a user-metadata
-record at an experimental-range encoding is no violation and no bar,
-and is instead reported: owning scope, encoding value, stored extent
-length (`[R-MTA-10]`) — encoding 0 and the reserved range stay
-violations (R1); reports *nonconforming*
-whenever it has established a violation, reserving *cannot
-establish* for a traversal that established none; and reports each
-requirement it was unable to check on a capability or resource
-ground, and each scope it did not examine (`[R-CNF-11]`).
+files with no violation at any scope (§2.4), a user-metadata record at
+an experimental-range encoding being no violation and no bar, and
+instead reported with its owning scope, encoding value and stored
+extent length (`[R-MTA-10]`), while encoding 0 and the reserved range
+stay violations (R1); reports *nonconforming* whenever it has
+established a violation, reserving *cannot establish* for a traversal
+that established none; and reports each requirement it was unable to
+check on a capability or resource ground, and each scope it did not
+examine (`[R-CNF-11]`).

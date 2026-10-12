@@ -137,6 +137,49 @@ in §21.2's lead-in. No edit to B follows from the round.
 
 ## Entries
 
+### 2026-10-12 — Appendix H: spruce-up pass, sixteen dash asides out; the series closed
+
+- **Commit:** `Readable: Appendix H — spruce-up pass: the five checklists
+  without asides` (the commit carrying this entry). Previous: `586b36f`
+  (Appendix G's pass).
+- **Sections:** Appendix H's five checklists. Non-normative; no ID
+  paragraph. The last pass of the spruce-up series the maintainer asked
+  for on 2026-10-09 ("a spruce-up pass that will hopefully make my requests
+  later on fewer", not his read-through); proposed with before and after
+  (`scratch/cleanroom/proposals/sH-pass.md`), approved ("Go").
+- **Edits.** The five label dashes colons, as §20.1's tier list's; the
+  file checklist's example aside a comma clause; the updater's permitted
+  changes a parenthesis with "not both in one commit" a comma clause
+  inside it; the verifier's seven asides comma clauses and a "while"
+  clause ("a user-metadata record at an experimental-range encoding being
+  no violation and no bar, and instead reported with its owning scope,
+  encoding value and stored extent length, while encoding 0 and the
+  reserved range stay violations (R1)"); re-wrapped.
+- **Removed restatements:** none. Nothing dropped: the word-level diff is
+  empty for four checklists and shows connectives only for the verifier's.
+- **Reworded IDs:** none; no ID paragraph changed.
+- **Soft items:** `ID_REWORDED_LISTED` ×121; the carried items as before.
+  Keyword counts unchanged. B is 4,755 lines and 48,336 words.
+- **The series, closed.** Twenty commits from `95b5a30` (§9's first pass,
+  2026-10-08) to this one, over §9 through §24 and Appendices A, D, G and
+  H: em-dashes in B 589 → 189, of which outside tables and headings 491 →
+  91; those 91 are §1–§8's (46, the maintainer's read-through stretch),
+  §9's Notes (14), Appendix F's reference labels (13), the §21.1 cell
+  character, and label dashes. Lines 4,847 → 4,755; words 48,606 →
+  48,336; Notes, Examples and Rationales unchanged at 56, 20 and 13;
+  `reworded-ids.txt` 39 → 121 IDs. Every pass: every keyword clause
+  verbatim, nothing cut but duplicate pointers, every rule paragraph
+  listed, a word-level diff per item from §20.3 on. Two defects of the
+  rewrite found and repaired on the way: `[R-ERR-04]`'s stale pointer at
+  §21.6 (2026-10-12) and the duplicate `R-PRV-03` line (merged). Four
+  words the maintainer dislikes replaced in explanatory prose
+  ("notwithstanding" in §15.3, "load-bearing" and "individuates" in §21,
+  "recommended" and other lowercase keywords of A's in re-wrapped Notes).
+  Held for the read-through: §11.1's Rationale (restates §20.3 step 4; two
+  sentences stated nowhere else), §9's Notes, and the table cells of
+  §15.3, §20.4 and §21 that carry asides (table values stay).
+- **Questions raised:** none.
+
 ### 2026-10-12 — Appendix G: spruce-up pass, twenty-one dash asides out
 
 - **Commit:** `Readable: Appendix G — spruce-up pass: the reproducible-writer
