@@ -1134,28 +1134,29 @@ reader that skips it is not a conforming reader.
 #### 9.1 Committed-prefix immutability
 
 A TARN file changes only by **commit**: an append-only transaction
-that extends the file and never modifies a committed byte. Bytes in
-[0, F) — F being the live trailer's committed file length — are
-immutable: a writer MUST NOT modify them, and every conforming
+that extends the file and never modifies a committed byte. All bytes
+in [0, F), with F being the live trailer's committed file length, are
+immutable: a writer MUST NOT modify them. Every conforming
 mutation of a file is either a commit (§9.2) or a whole-file rewrite
-under a new file_id (a rewrite, §20.5). `[R-LIF-01]` The owning scope
+under a new file_id (§20.5). `[R-LIF-01]` The owning scope
 of the structures this section defines is the file.
 
 #### 9.2 The commit protocol
 
 A writer performing a commit MUST, in order:
 
-1. begin writing at exactly F (§9.4); 2. append the new stored-tile
-   payloads and tile-index regions of the layers it changes, and any
-   new record extents at file scope or layer scope, in any order
-   satisfying §5.2's coverage classes; 3. append the new complete
-   directory, re-emitting every retained record per §20's preservation
-   rules, followed by its CRC; 4. make steps 1 to 3 durable, with a
-   storage barrier such as fdatasync or the platform equivalent needed
-   to order writes against power loss; 5. append the pad to the next
-   64-byte boundary, zeroed by advice (`[R-CNT-03]`), and the new
-   trailer, with committed_file_length equal to the new end; 6. make
-   the trailer durable.
+1. begin writing at exactly F (§9.4);
+2. append the new stored-tile payloads and tile-index regions of the
+   layers it changes, and any new record extents at file scope or layer
+   scope, in any order satisfying §5.2's coverage classes;
+3. append the new complete directory, re-emitting every retained record
+   per §20's preservation rules, followed by its CRC;
+4. make steps 1 to 3 durable, with a storage barrier such as fdatasync
+   or the platform equivalent needed to order writes against power loss;
+5. append the pad to the next 64-byte boundary, zeroed by advice
+   (`[R-CNT-03]`), and the new trailer, with committed_file_length equal
+   to the new end;
+6. make the trailer durable.
 
 A commit's committed_file_length is strictly greater than the prior
 trailer's, by at least 128, so the committed file length orders a
@@ -1170,11 +1171,11 @@ requirement as an actor, and the file it produces is never
 nonconforming by virtue of it, as `[R-CNF-02]` says of every conduct
 rule.
 
-On creation there is no prior trailer: the writer first emits the
-front signature block (§6.1) — whose durability the barriers of steps
-4 and 6 cover — then performs steps 2–6, writing
-beginning at offset 16. There being no prior committed file length,
-the strict increase above binds from the second commit onward.
+On creation there is no prior trailer. The writer first emits the front
+signature block (§6.1), then performs steps 2–6 beginning at offset 16;
+the barriers of steps 4 and 6 cover the block's durability. Because
+there is no prior committed file length, the strict increase above binds
+from the second commit onward.
 
 > **Note.** Step 3 is not discharged by a directory an earlier
 > generation appended: each commit appends its own complete

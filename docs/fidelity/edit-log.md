@@ -177,6 +177,60 @@ round.
 
 ## Entries
 
+### 2026-10-13 — §9.1, §9.2: the maintainer's edits, reviewed; the creation paragraph in order
+
+- **Commit:** `Readable: §9.1–§9.2 — maintainer's edits, reviewed` (the
+  commit carrying this entry). Previous: `0bca6d5` (the log: round 2's
+  rulings); the spec's previous commit `7b5b9a7`. The maintainer's
+  read-through from §9 begins with this batch.
+- **Sections:** §9.1 (`[R-LIF-01]`); §9.2 (the six steps, the creation
+  paragraph).
+- **The maintainer's edits.**
+  1. §9.1, `[R-LIF-01]`: "Bytes in [0, F) — F being the live trailer's
+     committed file length — are immutable: a writer MUST NOT modify
+     them, and every conforming mutation … (a rewrite, §20.5)" → "All
+     bytes in [0, F), with F being the live trailer's committed file
+     length, are immutable: a writer MUST NOT modify them. Every
+     conforming mutation … (§20.5)". The interval and the MUST NOT
+     verbatim; the dash aside a comma clause; one sentence made two; "a
+     rewrite," dropped as a duplicate of "whole-file rewrite". Same
+     statement. A first version read "All bytes up to the live trailer's
+     committed file length"; the interval came back on the driver's note
+     that "up to" is looser than [0, F), and "in" on his note that A
+     says "Bytes in".
+  2. §9.2, the six steps: each set at a line start. No word changed. At
+     `7b5b9a7` steps 2 to 6 stood mid-line after the first pass of
+     2026-10-08, so Markdown rendered the six as one list item; the edit
+     makes them six. Re-wrapped by the driver to 72 columns with
+     three-space continuations.
+  3. §9.2, the creation paragraph: the dash aside on the front block's
+     durability a comma clause ("whose durability is covered by steps 4
+     and 6").
+- **The driver's edit, on the maintainer's observation that the paragraph
+  names steps 4 and 6 before steps 2–6.** "On creation there is no prior
+  trailer: the writer first emits the front signature block (§6.1), whose
+  durability is covered by steps 4 and 6, then performs steps 2–6, writing
+  beginning at offset 16. There being no prior committed file length, the
+  strict increase above binds from the second commit onward." → "On
+  creation there is no prior trailer. The writer first emits the front
+  signature block (§6.1), then performs steps 2–6 beginning at offset 16;
+  the barriers of steps 4 and 6 cover the block's durability. Because
+  there is no prior committed file length, the strict increase above binds
+  from the second commit onward." The sequence first and the durability
+  remark after it, in A's words ("the barriers of steps 4 and 6 cover");
+  "Because there is" for "There being" at the maintainer's word. Every
+  fact kept: no prior trailer; the block first; steps 2–6 from offset 16;
+  durability by the barriers of 4 and 6; the strict increase from the
+  second commit. No ID, no keyword.
+- **Removed restatements:** none. The word-level diff of §9.1–§9.2 against
+  `7b5b9a7` shows the splits' connectives and capitals, "a rewrite" and
+  "writing" lost, "with", "block's" and "Because" gained, nothing else.
+- **Reworded IDs:** `R-LIF-01`, listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×122 (the one new); the carried
+  items as before. Keyword counts unchanged. B is 4,756 lines and 48,333
+  words.
+- **Questions raised:** none.
+
 ### 2026-10-12 — §9.7: the word-diff preflight's one repair, "above" restored
 
 - **Commit:** `Readable: §9.7 — word-diff preflight: "above" restored to the
