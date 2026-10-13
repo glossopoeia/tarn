@@ -177,6 +177,44 @@ round.
 
 ## Entries
 
+### 2026-10-13 — §9.2, §9.3: two of the maintainer's Note edits, reviewed; §9.3's first Note cites the rules
+
+- **Commit:** `Readable: §9.2–§9.3 — maintainer's edits, reviewed; §9.3's
+  first Note cites the rules its derivation rests on` (the commit
+  carrying this entry). Previous: `48e65f4` (the crash Example's lead-in).
+- **Sections:** §9.2 (the barriers Note); §9.3 (the first and the last
+  Note). All non-normative.
+- **The maintainer's edits.**
+  1. §9.2, the barriers Note: "the outcome is rejection at the affected
+     scope, never silent corruption" → "… not silent corruption". Same
+     statement.
+  2. §9.3, the last Note: "tells a cache which one it holds" → "which
+     generation it holds". Same statement; re-wrapped by the driver.
+- **The driver's edit, on the maintainer's question whether §9.3's first
+  Note should cite normative text.** It said "The strict increase is what
+  makes that revalidation sound, and §9.2's second Note is what makes it
+  checkable". A Note is non-normative under `[R-CNF-01]`, and §9.2's
+  second Note only writes out a derivation whose premises are rules. It
+  now reads "The strict increase (`[R-LIF-02]`) is what makes that
+  revalidation sound, and it is forced by the steps a conforming writer
+  performs rather than promised beside them: `[R-LIF-01]`, `[R-LIF-02]`'s
+  steps 1, 3 and 5 and `[R-CNT-06]` yield it, as §9.2's second Note
+  derives." The colon sentence that followed ("no two commits of one file
+  share a committed file length, so …") is now a sentence of its own,
+  unchanged in words; the rest of the Note from "Where one has" is
+  untouched, its dash pair included. "Checkable" reads "forced by the
+  steps … rather than promised beside them", which is what the second
+  Note now says of itself (the entry below).
+- **Removed restatements:** none. The word-level diff of §9.2–§9.3
+  against `48e65f4`: "never", "one", "checkable" lost; "not",
+  "generation", the citations' words ("1", "3", "5", "LIF", "CNT",
+  "forced", "performs", "promised", "yield", "derives") and connectives
+  gained; every figure kept.
+- **Reworded IDs:** none; Notes.
+- **Soft items:** `ID_REWORDED_LISTED` ×122; the carried items as before.
+  Keyword counts unchanged. B is 4,759 lines and 48,367 words.
+- **Questions raised:** none.
+
 ### 2026-10-13 — §9.2: the crash Example's lead-in, the maintainer's edit, reviewed
 
 - **Commit:** `Readable: §9.2 — maintainer's edit, reviewed: the crash

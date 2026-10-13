@@ -1198,7 +1198,7 @@ from the second commit onward.
 > **Note.** Where barriers are weaker than assumed, safety degrades
 > from "torn commits are invisible" to "torn commits are detected":
 > §8's chain still catches every inconsistent state loudly — the
-> outcome is rejection at the affected scope, never silent corruption.
+> outcome is rejection at the affected scope, not silent corruption.
 
 > **Example — what a crash sees.** In the following, ▓ marks bytes
 > outside the live committed state. In row 2, it is the partial write
@@ -1244,16 +1244,18 @@ remains valid; a higher F, and the directory is refetched; a different
 file_id or a lower F, and the file is treated as a different file.
 `[R-LIF-03]`
 
-> **Note.** The strict increase is what makes that revalidation
-> sound, and §9.2's second Note is what makes it checkable: no two
-> commits of one file share a committed file length, so where no
-> other file has drawn the same file_id, a matching (file_id, F) pair
-> names the same committed prefix a cache already holds. Where one
-> has, the collision this requirement's randomness advice exists to
-> prevent is what the cache serves, and no comparison of F detects
-> it. A lower F under a known file_id is not a stale read to retry —
-> it is a file that has lost committed bytes, which `[R-LIF-01]`
-> forbids — so it is treated as a different file.
+> **Note.** The strict increase (`[R-LIF-02]`) is what makes that
+> revalidation sound, and it is forced by the steps a conforming
+> writer performs rather than promised beside them: `[R-LIF-01]`,
+> `[R-LIF-02]`'s steps 1, 3 and 5 and `[R-CNT-06]` yield it, as §9.2's
+> second Note derives. No two commits of one file share a committed
+> file length, so where no other file has drawn the same file_id, a
+> matching (file_id, F) pair names the same committed prefix a cache
+> already holds. Where one has, the collision this requirement's
+> randomness advice exists to prevent is what the cache serves, and no
+> comparison of F detects it. A lower F under a known file_id is not a
+> stale read to retry — it is a file that has lost committed bytes,
+> which `[R-LIF-01]` forbids — so it is treated as a different file.
 
 > **Note.** The ordering quantity is bounded above, and by two rules
 > rather than one: F is a u64 offset under `[R-ENC-03]`, so
@@ -1266,14 +1268,14 @@ file_id or a lower F, and the file is treated as a different file.
 > operational concern.
 
 > **Note.** F counts bytes, not commits. It orders a file's
-> generations and tells a cache which one it holds, but it does not
-> number them: how many commits a file has undergone is not
+> generations and tells a cache which generation it holds, but it does
+> not number them: how many commits a file has undergone is not
 > recoverable from the live trailer, and no field records it — a
 > deployment needing that count keeps it out of band or in user
-> metadata (§18). The contract above also assumes a conforming
-> writer: a file truncated to an earlier commit and re-appended can
-> present an already-seen F over different bytes, which is the
-> rollback case §9.6 names as needing out-of-band state.
+> metadata (§18). The contract above also assumes a conforming writer:
+> a file truncated to an earlier commit and re-appended can present an
+> already-seen F over different bytes, which is the rollback case §9.6
+> names as needing out-of-band state.
 
 #### 9.4 Recovery before re-append
 
