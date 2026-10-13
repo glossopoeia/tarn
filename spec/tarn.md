@@ -1200,9 +1200,10 @@ from the second commit onward.
 > §8's chain still catches every inconsistent state loudly — the
 > outcome is rejection at the affected scope, never silent corruption.
 
-> **Example — what a crash sees.** ▓ marks bytes outside the live
-> committed state: in row 2 the partial write of an interrupted
-> commit, in row 3 the structures commit n + 1 superseded.
+> **Example — what a crash sees.** In the following, ▓ marks bytes
+> outside the live committed state. In row 2, it is the partial write
+> of an interrupted commit. In row 3, it is the structures commit
+> n + 1 superseded.
 >
 > ```
 > committed    │ … │ dirₙ │pad│ trailₙ │

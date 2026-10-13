@@ -177,6 +177,29 @@ round.
 
 ## Entries
 
+### 2026-10-13 — §9.2: the crash Example's lead-in, the maintainer's edit, reviewed
+
+- **Commit:** `Readable: §9.2 — maintainer's edit, reviewed: the crash
+  Example's lead-in in sentences` (the commit carrying this entry).
+  Previous: `005045f` (the merge of main's Q-A10); the spec's previous
+  commit `1df7b0d`.
+- **Sections:** §9.2, the Example "what a crash sees", its lead-in
+  paragraph. Non-normative.
+- **The maintainer's edit.** "▓ marks bytes outside the live committed
+  state: in row 2 the partial write of an interrupted commit, in row 3
+  the structures commit n + 1 superseded." → "In the following, ▓ marks
+  bytes outside the live committed state. In row 2, it is the partial
+  write of an interrupted commit. In row 3, it is the structures commit
+  n + 1 superseded." The colon list made three sentences; the same three
+  facts; the figure and the paragraph after it untouched. Re-wrapped by
+  the driver to 70 columns inside the blockquote. The run-in label's
+  dash kept, as every label's is.
+- **Removed restatements:** none.
+- **Reworded IDs:** none; an Example.
+- **Soft items:** `ID_REWORDED_LISTED` ×122; the carried items as before.
+  Keyword counts unchanged. B is 4,757 lines and 48,341 words.
+- **Questions raised:** none.
+
 ### 2026-10-13 — §9.2: the strict-increase Note's premise is step 3's requirement, not the Note's
 
 - **Commit:** `Readable: §9.2 — the strict-increase Note's premise stated as
