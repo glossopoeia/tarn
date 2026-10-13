@@ -1961,6 +1961,50 @@ conformance stays semantic.
   (b) Nothing in v1.
 - **What settles it:** Demand; costs one appendix.
 
+### Q-A10. Is a recovery tool a conformance class, and which obligations bind it? [shaping]
+**Question:** §2.3 defines five conformance classes — file, reader,
+writer, updater, verifier — and Appendix H carries five checklists, none
+for recovery. §9.6 names a further actor: "Recovery tools and verifiers
+locate commit states as follows. A conforming reader on the default path
+never does"; its probe ends "the nearest-to-end candidate that survives
+the whole-file re-verification below is the last committed state, and
+truncating to it recovers the file"; `[R-LIF-06]` binds "the tool" with
+two MUSTs (recovery output re-verified as a whole file under §8 before it
+is trusted; the candidate settled on and the count rejected reported);
+and "for a verifier the probe is diagnosis, saying which commit state is
+recoverable". Truncation is otherwise a writer's act: §9.4 `[R-LIF-04]`
+has a writer that established F from re-verified recovery output
+truncate to F or overwrite from it before re-appending, and §20.3 step 1
+has the appender take F from that output. §22 notes that "a recovery
+tool that truncates to one" (a trailer mimic) "produces a different
+file". So the tool that scans, picks and truncates is named, is bound by
+`[R-LIF-06]`, and belongs to no class: whether it inherits a verifier's
+obligations beyond `[R-LIF-06]` (every reader obligation, §9.7's walk,
+the certification bar) or a writer's for the file it leaves
+(`[R-LIF-04]`; answering for every byte of its output, §20.1 and
+`[R-CNF-05]`) is not stated. Raised by the maintainer on 2026-10-13
+reading §9.2's Example ("the old state is *recoverable*") in the
+readable edition; both editions carry the text identically.
+- **Why it matters:** a recovery tool writes a file other actors will
+  open. If it is no class, nothing says the file it leaves is conforming
+  or that it answers for the bytes; if it is a verifier, §9.6 separates
+  diagnosis from truncation and the truncating act has no owner; if it is
+  a writer, it owes `[R-LIF-04]` and `[R-CNF-05]` and the text says so
+  nowhere.
+- **Options:** (a) A sixth class, the conforming recovery tool: a verifier
+  (every reader obligation, §9.6's probe, re-verification under §8) that
+  MAY truncate to a re-verified candidate and answers as a writer for the
+  file it leaves, with its own Appendix H checklist. (b) No new class:
+  recovery is an operation a verifier performs as diagnosis and a writer
+  performs before re-append (§9.4), so a tool that truncates is a writer
+  bound by `[R-LIF-04]` and `[R-CNF-05]`, said in one sentence of §9.6.
+  (c) Recovery tools stay outside the classes, bound by `[R-LIF-06]`
+  alone, and §2.3 says so.
+- **What settles it:** whether any conformance claim is to be made about
+  a recovery tool's output. (b) costs a sentence in §9.6 and a line in
+  Appendix H's writer checklist; (a) a class and a checklist; (c) a
+  sentence in §2.3. Owning sections §2.3, §9.6.
+
 ### Q-I2. Cleanroom-test protocol details. [Resolved → ADR-0034]
 **Resolution:** four parallel roles (reader/verifier/writer/quiz),
 spec-text-only access, finding taxonomy with mandatory disposition;
