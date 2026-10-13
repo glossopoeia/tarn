@@ -162,6 +162,19 @@ maintainer with both texts, as decision 4 says. Round 1's items 1 and 2
 were graded EQUIVALENT this time. None is changed in B by this round. The
 ten blind-walk findings are shared text of A, for the ledger.
 
+**The maintainer's rulings, 2026-10-13: all three kept cut** ("Keep the
+three cuts"). §4.4's bit-numbering Note stays cut: the mapping of boolean
+samples to bits stands at §14.3, with its own pointer to §4.4, and
+`[R-ENC-08]` is cited nowhere else. The tail of §4.7's layout-table Note
+stays cut: the duplicate-name rule stands at §4.6 `[R-ENC-15]` and rows F4
+and L9, "every other field this specification defines is structural" at
+`[R-ENC-16]`, and the remaining sentences describe the document's own
+conventions. The front-matter clause on vectors stays cut: §2.2 makes the
+identifier permanent and §24 `[R-VEC-02]` ties every vector to its row's
+governing requirement identifier. Round 1's items 3 through 6, graded again
+by this round, stand ruled from 2026-10-08. No edit to B follows from the
+round.
+
 ## Entries
 
 ### 2026-10-12 — §9.7: the word-diff preflight's one repair, "above" restored

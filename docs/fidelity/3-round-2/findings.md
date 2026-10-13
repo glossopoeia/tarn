@@ -73,6 +73,12 @@ maintainer's standing instruction send every LOSS on an approved cut to the
 maintainer with both texts quoted, so all eight are listed in full, the five
 already ruled with their ruling.
 
+*Ruled 2026-10-13.* The maintainer read the three new grades (items 6, 7
+and 8) with both texts and kept every cut ("Keep the three cuts"); the
+rulings stand in the edit log's round-2 paragraph, one sentence per item
+with the surviving location. Items 1 through 5 stand ruled from 2026-10-08.
+B is unchanged.
+
 1. **§2.4's preserve-verbatim bridge** (`cmp-reader-04` EQUIVALENT,
    `swab-03` LOSS, `swba-01` LOSS byte-level, `adv-01` LOSS; unanimous LOSS
    at triage, `LOSS_STANDS` on refute). A, after `[R-CNF-07]`: *"The same
