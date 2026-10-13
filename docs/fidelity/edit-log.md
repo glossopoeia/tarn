@@ -177,6 +177,56 @@ round.
 
 ## Entries
 
+### 2026-10-13 — §9.2: the strict-increase Note's premise is step 3's requirement, not the Note's
+
+- **Commit:** `Readable: §9.2 — the strict-increase Note's premise stated as
+  step 3's requirement, not the first Note's` (the commit carrying this
+  entry). Previous: `58d3201` (§9.1–§9.2, the maintainer's edits).
+- **Sections:** §9.2, the second Note (ADR-0111's derivation of the
+  128-byte floor from the steps).
+- **The maintainer's questions, 2026-10-13.** Three on §9.2: whether the
+  first Note describes a writer that violates step 3 and still produces
+  a conforming file; whether a Note can forbid, as the second Note's "the
+  Note above forbids" has it; and whether recovery is a class of tool.
+  Answers given with the text: yes, a trailer re-pointed at an earlier
+  generation's directory leaves a file every register row accepts (the
+  old directory inside the immutable prefix, the appended payloads
+  slack under `[R-CNT-21]`, no row comparing dir_offset with the prior F,
+  which `[R-LIF-05]` keeps a reader from seeing), unwitnessed by §21.7's
+  own test since one conforming commit can write the same bytes, so a
+  conforming file from a nonconforming writer; no, a Note is
+  non-normative under `[R-CNF-01]` and the forbidding is step 3's "append
+  the new complete directory"; and recovery is a role, not a class (the
+  ledger question Q-A10, opened on main the same day). The maintainer
+  added that the second Note's "so there is such a directory" is not a
+  fact about every file, only about a writer that performs the steps,
+  and that a reader relies on the strict increase alone, never on its
+  size (§9.3's first Note), which the text confirms: no reader check and
+  no register row cites the floor.
+- **Edits.** The second Note, every figure and citation kept: "is forced
+  by the steps before it, not an extra obligation on the writer" reads
+  "is forced on a writer that performs the steps before it; it is not an
+  extra obligation", so the derivation is framed as what the steps force
+  on a writer performing them; "so this commit's directory lies at
+  dir_offset ≥ the prior F; the Note above forbids reusing an earlier
+  generation's, so there is such a directory" reads "so the directory
+  step 3 appends, this commit's own as the Note above reads it, lies at
+  dir_offset ≥ the prior F", which puts the force where it is, in step
+  3, and asserts nothing about files a nonconforming writer leaves. The
+  reader's side is not added, at the maintainer's word. Re-wrapped.
+- **Removed restatements:** none. The word-level diff of the Note: "by",
+  "an", "so", "directory", "forbids", "reusing", "earlier",
+  "generation's", "there", "such" lost; "that", "performs", "it", "step",
+  "3", "appends", "own", "as", "reads" gained; every number and ID kept.
+- **Reworded IDs:** none; a Note.
+- **Soft items:** `ID_REWORDED_LISTED` ×122; the carried items as before.
+  Keyword counts unchanged. B is 4,756 lines and 48,340 words.
+- **Questions raised:** Q-A10 (recovery as a class) opened on main at the
+  maintainer's word. For the ledger when the maintainer asks: a trailer
+  re-pointed at an earlier generation's directory violates step 3 and
+  leaves a conforming file, unwitnessed by §21.7's test, which the text
+  says of steps 4 and 6 only.
+
 ### 2026-10-13 — §9.1, §9.2: the maintainer's edits, reviewed; the creation paragraph in order
 
 - **Commit:** `Readable: §9.1–§9.2 — maintainer's edits, reviewed` (the

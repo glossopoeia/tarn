@@ -1183,17 +1183,17 @@ from the second commit onward.
 > that re-points a new trailer at a prior generation's directory
 > region has left step 3 unperformed.
 
-> **Note.** Step 5's strict increase is forced by the steps before
-> it, not an extra obligation on the writer. Step 1 begins writing at
-> exactly the prior F, and `[R-LIF-01]` holds every byte below it
-> immutable, so this commit's directory lies at dir_offset ≥ the
-> prior F; the Note above forbids reusing an earlier generation's, so
-> there is such a directory; and `[R-CNT-06]` requires dir_length ≥ 4
-> and dir_offset + dir_length ≤ the new F − 64. The new F is
-> therefore at least the prior F plus 68, and since `[R-CNT-06]`
-> makes every committed file length a multiple of 64, at least the
-> prior F plus 128. It is `[R-CNT-27]`'s 128-byte floor argument run
-> from F rather than from offset 0.
+> **Note.** Step 5's strict increase is forced on a writer that
+> performs the steps before it; it is not an extra obligation. Step 1
+> begins writing at exactly the prior F, and `[R-LIF-01]` holds every
+> byte below it immutable, so the directory step 3 appends, this
+> commit's own as the Note above reads it, lies at dir_offset ≥ the
+> prior F; and `[R-CNT-06]` requires dir_length ≥ 4 and dir_offset +
+> dir_length ≤ the new F − 64. The new F is therefore at least the
+> prior F plus 68, and since `[R-CNT-06]` makes every committed file
+> length a multiple of 64, at least the prior F plus 128. It is
+> `[R-CNT-27]`'s 128-byte floor argument run from F rather than from
+> offset 0.
 
 > **Note.** Where barriers are weaker than assumed, safety degrades
 > from "torn commits are invisible" to "torn commits are detected":
