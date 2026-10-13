@@ -177,6 +177,43 @@ round.
 
 ## Entries
 
+### 2026-10-13 — §7.2, §7.4: "residue" stated as rows F29 and L14 state it
+
+- **Commit:** `Readable: §7.2, §7.4 — residue stated as the register states
+  it; R-CNT-12 listed` (the commit carrying this entry). Previous: `8b1eefe`
+  (§9.4–§9.5).
+- **Sections:** §7.2 (`[R-CNT-12]`); §7.4 (`[R-CNT-18]`, the layer-record
+  Example). At the maintainer's ask, on finding "residue" defined nowhere
+  (the entry above).
+- **Edits.** Each use of "residue" in §7 replaced by the words the
+  register's condition cells use for the same condition.
+  1. §7.2, `[R-CNT-12]`: "The sequence MUST parse as zero or more
+     complete records with no residue." → "… with no bytes remaining
+     after the last complete record." (row F29: "or bytes remain after
+     the last complete record"). The paragraph's other sentences and its
+     six keyword clauses verbatim; re-wrapped.
+  2. §7.4, `[R-CNT-18]`: "… MUST parse as zero or more complete
+     sub-records under §7.2's framing with no residue. Any overrun,
+     truncation, or residue is a validity error at layer scope." → "…
+     with no bytes remaining after the last complete sub-record. Any
+     overrun, truncation, or bytes remaining after the last complete
+     sub-record is a validity error at layer scope." (row L14). The
+     qualifier is spelled out both times because "the remaining bytes"
+     earlier in the sentence means the payload after the fixed fields.
+     Every other clause verbatim; re-wrapped.
+  3. The Example: "81 exactly, with no residue, so the sub-record
+     sequence is empty" → "with no bytes remaining, so …"; the figures
+     kept.
+  The register rows keep "trailing residue" in their instances cells,
+  rows being fixed while B is open; §22's "Four residues are stated
+  rather than defended" is the other sense, residual risks, and stands.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-CNT-12`, listed; `R-CNT-18`'s line extended.
+- **Soft items:** `ID_REWORDED_LISTED` ×124 (the one new); the carried
+  items as before. Keyword counts unchanged. B is 4,762 lines and
+  48,404 words.
+- **Questions raised:** none.
+
 ### 2026-10-13 — §9.4, §9.5: the maintainer's edits, reviewed; §9.5's Note says which bytes
 
 - **Commit:** `Readable: §9.4–§9.5 — maintainer's edits, reviewed; §9.5's

@@ -848,20 +848,20 @@ is a 24-byte header followed by inline_length bytes of inline payload:
 | 8 | 8 | u64 | extent_offset | structural |
 | 16 | 8 | u64 | extent_length | structural |
 
-The sequence MUST parse as zero or more complete records with no
-residue. A record whose header or inline payload would extend past
-the end of its containing record sequence is a validity error at the
-sequence's owning scope: reject-file for the directory's top-level sequence,
-reject-layer for a layer record's sub-record sequence (§7.4). Type 0
-is not an unknown type: a reader MUST treat a record of type 0 as a
-validity error at the same scope. Reserved flag bits: writers MUST
-emit zero; readers MUST ignore them. Writers MUST NOT emit the
-combination MU = 1 with PE = 0; a reader or updater encountering it
-MUST treat the record as PE = 1 (never silently deletable). Both
-writer violations make the file nonconforming (`[R-CNF-05]`) while
-leaving conforming behavior unchanged, so their detection is a
-verifier's: a verifier MUST treat a nonzero reserved flag bit or
-the MU = 1 with PE = 0 combination as a validity error at the
+The sequence MUST parse as zero or more complete records with no bytes
+remaining after the last complete record. A record whose header or
+inline payload would extend past the end of its containing record
+sequence is a validity error at the sequence's owning scope: reject-file
+for the directory's top-level sequence, reject-layer for a layer
+record's sub-record sequence (§7.4). Type 0 is not an unknown type: a
+reader MUST treat a record of type 0 as a validity error at the same
+scope. Reserved flag bits: writers MUST emit zero; readers MUST ignore
+them. Writers MUST NOT emit the combination MU = 1 with PE = 0; a reader
+or updater encountering it MUST treat the record as PE = 1 (never
+silently deletable). Both writer violations make the file nonconforming
+(`[R-CNF-05]`) while leaving conforming behavior unchanged, so their
+detection is a verifier's: a verifier MUST treat a nonzero reserved flag
+bit or the MU = 1 with PE = 0 combination as a validity error at the
 record's governing scope. `[R-CNT-12]`
 
 > **Note.** The two flag bits are not orthogonal. `[R-CNT-12]` leaves a
@@ -1020,16 +1020,18 @@ with no alignment or padding between them. The fixed fields, the d
 dimension entries, the C channel entries, and the trailing fixed fields
 MUST lie entirely within the inline payload, and the remaining bytes
 MUST parse as zero or more complete sub-records under §7.2's framing
-with no residue. Any overrun, truncation, or residue is a validity error
-at layer scope. Sub-records are layer-scope records. A sub-record MUST
-NOT itself contain records (nesting depth beyond two is a validity error
-at layer scope). An unknown sub-record type with MU = 1 is reject-layer,
-and where the file is otherwise conforming a reader MUST NOT reject the
-file for it; on a nonconforming file `[R-CNF-12]`'s licence to reject on
-any detected violation is untouched. With MU = 0 an unknown sub-record
-type is ignore-record. A *known* type appearing where §7.3's table does
-not scope it (a layer record nested as a sub-record, say) is a validity
-error at layer scope, not an unknown type. `[R-CNT-18]`
+with no bytes remaining after the last complete sub-record. Any overrun,
+truncation, or bytes remaining after the last complete sub-record is a
+validity error at layer scope. Sub-records are layer-scope records. A
+sub-record MUST NOT itself contain records (nesting depth beyond two is
+a validity error at layer scope). An unknown sub-record type with MU = 1
+is reject-layer, and where the file is otherwise conforming a reader
+MUST NOT reject the file for it; on a nonconforming file `[R-CNF-12]`'s
+licence to reject on any detected violation is untouched. With MU = 0 an
+unknown sub-record type is ignore-record. A *known* type appearing where
+§7.3's table does not scope it (a layer record nested as a sub-record,
+say) is a validity error at layer scope, not an unknown type.
+`[R-CNT-18]`
 
 > **Example — a complete layer record payload.** A rank-1 layer named
 > `sst`: dimension `x` with extent 100 and tile extent 32; one
@@ -1063,14 +1065,14 @@ error at layer scope, not an unknown type. `[R-CNT-18]`
 > 77  2E 98 EE C4                crc_of_crc_array = 0xC4EE982E
 > ```
 >
-> Name and the nine scalars from layout through channel count occupy
-> 4 + 34 bytes, the dimension entry 18, the channel entry 12, and the
-> trailing fixed fields 13 — 81 exactly, with no residue, so the
-> sub-record sequence is empty. The record framing this payload
-> (§7.2) carries type 0x0001, the registry-fixed flags MU = 0,
-> PE = 0 (§7.3), inline_length = 81, and — `[R-CNT-17]`'s
-> arithmetic — an extent slot of length 4 × 20 + ⌈4 / 2¹⁶⌉ × 4 = 84
-> addressing the index region wherever the writer placed it.
+> Name and the nine scalars from layout through channel count occupy 4
+> + 34 bytes, the dimension entry 18, the channel entry 12, and the
+> trailing fixed fields 13 — 81 exactly, with no bytes remaining, so
+> the sub-record sequence is empty. The record framing this payload
+> (§7.2) carries type 0x0001, the registry-fixed flags MU = 0, PE = 0
+> (§7.3), inline_length = 81, and — `[R-CNT-17]`'s arithmetic — an
+> extent slot of length 4 × 20 + ⌈4 / 2¹⁶⌉ × 4 = 84 addressing the
+> index region wherever the writer placed it.
 
 > **Note.** The nesting prohibition binds writers and any type a later
 > version registers; in format major 1 it has no reader-detectable
