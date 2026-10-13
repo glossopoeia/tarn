@@ -1288,14 +1288,14 @@ append. Once F is established, directly or by a recovery whose output
 has been re-verified, a writer whose physical file is longer than F
 MUST either truncate to F before step 1 of `[R-LIF-02]`, or overwrite
 from F and truncate the physical file to the new committed_file_length
-no later than step 6. Either way, after any commit completes the
+no later than step 6. Either way, after any commit is completed the
 physical file length equals committed_file_length, and bytes beyond a
 committed length never survive into any committed state. `[R-LIF-04]`
 
 #### 9.5 Concurrency and the default read path
 
-One writer at a time, any number of concurrent readers: this
-specification defines no multi-writer coordination, and external
+TARN supports any number of concurrent readers, but only one writer at a time.
+This specification defines no multi-writer coordination, and external
 locking is the deployment's responsibility. A reader opening a file
 takes the trailer at the current end of file as its snapshot: the
 generation it validates is immutable, so its entire read session is
@@ -1304,12 +1304,13 @@ trailer-at-end-or-fail: a reader that finds no valid trailer in the
 final 64 bytes MUST report the file torn or invalid and MUST NOT scan
 backward. `[R-LIF-05]`
 
-> **Note.** Residue past a completed commit carries no register row of
-> its own. A reader meets it as a trailer that fails its gates — the
-> magic, the CRC, or committed_file_length against the transport size,
-> each of which §21.2 already registers — and `[R-LIF-05]` forbids it to
-> scan backward, so it cannot tell residue from corruption and is not
-> asked to. What the residue violates is `[R-LIF-04]`'s writer
+> **Note.** The case in which extra bytes are present in the file
+> beyond the committed file length carries no register row of its own.
+> A reader meets it as a trailer that fails its gates — the magic, the
+> CRC, or committed_file_length against the transport size, each of
+> which §21.2 already registers — and `[R-LIF-05]` forbids it to scan
+> backward, so it cannot tell such bytes from corruption and is not
+> asked to. What those bytes violate is `[R-LIF-04]`'s writer
 > obligation to truncate or overwrite, and the state a reader can
 > observe is already named.
 

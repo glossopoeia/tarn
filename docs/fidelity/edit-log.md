@@ -177,6 +177,43 @@ round.
 
 ## Entries
 
+### 2026-10-13 — §9.4, §9.5: the maintainer's edits, reviewed; §9.5's Note says which bytes
+
+- **Commit:** `Readable: §9.4–§9.5 — maintainer's edits, reviewed; §9.5's
+  Note says which bytes it means` (the commit carrying this entry).
+  Previous: `44f113d` (§9.2–§9.3's Notes).
+- **Sections:** §9.4 (`[R-LIF-04]`); §9.5 (`[R-LIF-05]`, the first Note).
+  §9.3 declared done by the maintainer the same day; §9 joins the
+  stretch list when its last subsection is done.
+- **The maintainer's edits.**
+  1. §9.4, `[R-LIF-04]`: "after any commit completes" → "after any commit
+     is completed". Same statement; the three MUST clauses verbatim.
+  2. §9.5, `[R-LIF-05]`: "One writer at a time, any number of concurrent
+     readers: this specification defines no multi-writer coordination,
+     …" → "TARN supports any number of concurrent readers, but only one
+     writer at a time. This specification defines no multi-writer
+     coordination, …". The model in a sentence of its own; both MUSTs
+     verbatim. A first version cut the model sentence; the driver
+     flagged that §20's opening cites `[R-LIF-05]` for "by one writer at
+     a time", and the sentence came back in the maintainer's words.
+- **The driver's edit, on the maintainer's question whether "residue" is
+  defined.** It is defined nowhere and used in three senses (the bytes
+  after the last complete record, §7.2, §7.4, rows F29 and L14; the
+  bytes past the committed file length, this Note; residual risks,
+  §22). The Note's three uses replaced, the first in the maintainer's
+  words: "Residue past a completed commit carries no register row of its
+  own" → "The case in which extra bytes are present in the file beyond
+  the committed file length carries no register row of its own";
+  "cannot tell residue from corruption" → "cannot tell such bytes from
+  corruption"; "What the residue violates" → "What those bytes violate".
+  Every citation and the dash pair kept; re-wrapped.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-LIF-05`, listed; `R-LIF-04`'s line extended.
+- **Soft items:** `ID_REWORDED_LISTED` ×123 (the one new); the carried
+  items as before. Keyword counts unchanged. B is 4,760 lines and
+  48,385 words.
+- **Questions raised:** none.
+
 ### 2026-10-13 — §9.2, §9.3: two of the maintainer's Note edits, reviewed; §9.3's first Note cites the rules
 
 - **Commit:** `Readable: §9.2–§9.3 — maintainer's edits, reviewed; §9.3's
