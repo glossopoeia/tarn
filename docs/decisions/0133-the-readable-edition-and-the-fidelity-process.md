@@ -218,3 +218,24 @@ alternation over its phrasings, distinct spans counted, a cut told from a
 flip), and the refute brief tells a refuter that a change outside its
 group's claim is a new finding and not a refutation, both paid on
 2026-09-25.
+
+## Erratum, 2026-10-14 — the reference moves with `main`
+
+Decision 1 names edition A as `spec/tarn.md` at `81e2ad2`, "never
+edited", and in the same breath sends every decision taken while B is open
+to an ADR "against A on `main`". ADR-0134, the first such decision, shows
+which reading holds: the reference is `main`'s `spec/tarn.md`, and the tag
+`edition-a` marks where B branched. The procedure, followed for ADR-0134:
+the ADR and its spec change land on `main` under the old gates
+(`tarn_check`, `tarn_adr_quotes`, `tarn_propagate`); the export at
+`scratch/cleanroom/editions/a/tarn.md`, which the contract tool and every
+fidelity round read as A, is refreshed from `main` so that the port does
+not read as an ADDITION; the change is ported to B by hand as a listed
+edit naming the ADR, in B's own wording where B has reworded the
+paragraph; and the merge of `main` into `readable` keeps B's
+`spec/tarn.md`, since a textual merge of A's words into B's reworded
+paragraphs is not the port. A round's pre-launch check compares the export
+with `main`'s spec, not with the tag. The inventory's hard items hold
+across the port only if the two editions gain the same requirement IDs,
+which they do: `[R-LIF-09]` is in both.
+
