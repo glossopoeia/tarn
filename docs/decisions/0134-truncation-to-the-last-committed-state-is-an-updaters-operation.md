@@ -88,3 +88,14 @@ leaves as the committed state it is.
   row.
 - **ADR-0133** decision 1: a decision against A on `main`, ported to B as
   a listed edit.
+
+## Erratum, 2026-10-14 — the referent in `[R-LIF-09]`
+
+The maintainer, reading the port, took "equal to that committed file
+length" in `[R-LIF-09]` for a length other than the candidate's; "that"
+pointed back across a clause. The sentence now reads "it MUST leave the
+physical file length equal to the candidate's committed file length",
+the referent repeated; the operation it binds is unchanged. A word inside
+a normative sentence, so it lands here and not under ADR-0104's editorial
+route, which would report it as content.
+
