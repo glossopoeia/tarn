@@ -177,6 +177,25 @@ round.
 
 ## Entries
 
+### 2026-10-14 — §9.6: ADR-0134's erratum ported, `[R-LIF-09]`'s referent repeated
+
+- **Commit:** `Readable: §9.6 — ADR-0134's erratum ported: "the candidate's
+  committed file length" for "that committed file length"` (the commit
+  carrying this entry). Previous: the merge of `main` (`7cf0e0c`, the
+  erratum) with B's spec kept; the spec's previous commit `a4ac2d2`.
+- **Sections:** §9.6, the `[R-LIF-09]` paragraph.
+- **Edit.** The maintainer, reading the port, took "equal to that
+  committed file length" for a length other than the candidate's. On
+  `main`, by erratum to ADR-0134: "it MUST leave the physical file length
+  equal to the candidate's committed file length". Ported here in the
+  same words and the same wrapping; the paragraph stays byte-identical to
+  A's and unlisted. The A export refreshed from `main` before the gates.
+- **Removed restatements:** none.
+- **Reworded IDs:** none.
+- **Soft items:** `ID_REWORDED_LISTED` ×124; the carried items as before.
+  Keyword counts unchanged. B is 4,783 lines and 48,644 words.
+- **Questions raised:** none.
+
 ### 2026-10-14 — §2.3, §9.6, §20.1, Appendix H: ADR-0134 ported, `[R-LIF-09]` added to both editions
 
 - **Commit:** `Readable: §2.3, §9.6, §20.1, Appendix H — ADR-0134 ported:

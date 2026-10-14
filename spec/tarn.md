@@ -1374,14 +1374,15 @@ A tool that truncates a file to its last committed state is an updater,
 and the truncation is its operation (§20.1, `[R-CNF-06]`): the file it
 leaves is its output. It MUST NOT modify a byte below the candidate's
 committed file length, and it MUST leave the physical file length equal
-to that committed file length, so that what it leaves is exactly the
-committed state the re-verification above established. `[R-LIF-01]`
-binds it as it binds every updater, so an earlier commit state is not
-one it is free to truncate to: that truncation removes committed bytes
-and is the rollback the cautions above describe. Its probe is this
-section's and not the default read path, so `[R-LIF-05]` does not reach
-it there. A violation latent in the state it leaves travels with it, and
-certifying that state is a verifier's office (§9.7). `[R-LIF-09]`
+to the candidate's committed file length, so that what it leaves is
+exactly the committed state the re-verification above established.
+`[R-LIF-01]` binds it as it binds every updater, so an earlier commit
+state is not one it is free to truncate to: that truncation removes
+committed bytes and is the rollback the cautions above describe. Its
+probe is this section's and not the default read path, so `[R-LIF-05]`
+does not reach it there. A violation latent in the state it leaves
+travels with it, and certifying that state is a verifier's office
+(§9.7). `[R-LIF-09]`
 
 Writers performing very large single commits SHOULD emit intermediate
 checkpoint commits (a directory and trailer mid-stream, ~a few KiB
