@@ -5,7 +5,7 @@
 R-CNF-02: the three conduct examples and the closed enumeration of expressly-declared cases cut, each stated at its site; the other-major and conduct rules kept in tighter words with the same subjects and quantifiers
 R-CNF-03: the experimental-range gloss, two pointers to §21.9 and §21.6, and the repeated six-item list cut; the three MUSTs and the no-subset-profiles rule verbatim
 R-CNF-04: shares the reader item with R-CNF-03; its MUST, MAY and MUST NOT sentences are verbatim
-R-CNF-06: the dash gloss on §20.4 cut (§20.4 states it) and the tiers sentence joined to the definition; both MUSTs verbatim
+R-CNF-06: the dash gloss on §20.4 cut (§20.4 states it) and the tiers sentence joined to the definition; both MUSTs verbatim; ADR-0134's sentence on the truncating updater added after 'are §20.1's.', as in A (2026-10-14)
 R-CNF-11: the as-when list of cannot-establish grounds moved verbatim to §21.6 with a pointer left; the experimental-encoding carve-out cut ([R-MTA-10] states it); the two report-versus-verdict sentences merged; every MUST, MUST NOT and MAY verbatim
 R-CNF-13: the version_major = 0 sentence and the [R-CNT-06] nine-conditions gloss cut (§21.2's lead-in states both), a pointer to §21.2 added; the whole paragraph restated in plain words: condition defined as one specific way a file's bytes can fail a requirement, reach decided per condition, 'invariant' as 'property', the two MUSTs kept with the same subjects and the [R-CNT-04] exemption clause, [R-CNT-07]'s diagnostic 'given where' every reaching condition is satisfied, the verifier's 'finds' for 'establishes', and 'so the finding is not relative to format major 1' dropped as implied by 'shared among all majors'
 R-CNF-07: the two explanatory sentences after the ID cut (the vocabulary's use for non-violations, §21.6; preserve-verbatim as an updater obligation, the table's own row and §20.4); the rule sentence verbatim
@@ -96,7 +96,7 @@ R-RDR-01: the consumes-only aside a comma clause; every clause verbatim
 R-RDR-02: the index-chain aside a colon clause; the MAY and the MUST NOT verbatim
 R-RDR-03: the definition of first access a "which is" clause with a parenthesis; "extent slot and inline payload both" a comma clause; the sub-record framing rules a parenthesis; the ragged lines re-wrapped; the MUST and every rule set and citation in A's order verbatim
 R-RDR-04: ten dash asides in the eight steps made colons, commas, parentheses, a semicolon and a "which" clause; the fill-per-layout aside placed after "bit-exactly and with no payload I/O"; the ID joined to the last line; all four keyword clauses verbatim
-R-WRT-01: the latent-violation aside after a semicolon; every clause in A's order verbatim
+R-WRT-01: the latent-violation aside after a semicolon; every clause in A's order verbatim; ADR-0134's sentence on the truncating updater added after the rewriter's-output sentence, as in A (2026-10-14)
 R-WRT-02: "placement is otherwise free" a participial clause and "both barriers, not one" a comma clause; the MUST and every stage verbatim
 R-WRT-03: the re-emission aside a "since" clause; every clause verbatim
 R-WRT-04: twenty-three dash asides across the six steps and step 4's three continuation paragraphs made colons, commas, parentheses, semicolons and "since" clauses; the long paragraphs re-wrapped; all fifteen keyword clauses, every row number and every sentence in A's order verbatim; the ID's block keeps A's shape (the bounds paragraph running into steps 5 and 6)

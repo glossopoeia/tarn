@@ -238,12 +238,14 @@ Conformance is defined for five classes.
   `[R-CNF-05]` Writer conformance is semantic: this specification does not
   promise canonical bytes, and two conforming writers given identical
   input MAY produce different conforming files.
-- **Conforming updater.** A tool that modifies an existing file, or
-  as a rewriter writes a new one from it, without necessarily
-  understanding all of its content; its tiers, the appender and the
-  rewriter, are §20.1's. An updater MUST satisfy every writer
-  requirement for the bytes it produces, and additionally MUST honor
-  the preservation obligations of §20.4. `[R-CNF-06]`
+- **Conforming updater.** A tool that modifies an existing file, or as a
+  rewriter writes a new one from it, without necessarily understanding
+  all of its content; its tiers, the appender and the rewriter, are
+  §20.1's. A tool that truncates a file to its last committed state is
+  an updater as well, bound as §9.6 provides (`[R-LIF-09]`). An updater
+  MUST satisfy every writer requirement for the bytes it produces, and
+  additionally MUST honor the preservation obligations of §20.4.
+  `[R-CNF-06]`
 - **Conforming verifier.** A reader that additionally checks every
   file-level requirement, including those ordinary readers are
   exempted from, and certifies conformance. Verifiers and updaters are
@@ -1367,6 +1369,19 @@ fails was not a commit state, so the tool continues the probe past it,
 and MUST report the candidate it settled on and how many candidates it
 rejected on that re-verification, or, where no candidate survived it,
 that none did and how many it rejected. `[R-LIF-06]`
+
+A tool that truncates a file to its last committed state is an updater,
+and the truncation is its operation (§20.1, `[R-CNF-06]`): the file it
+leaves is its output. It MUST NOT modify a byte below the candidate's
+committed file length, and it MUST leave the physical file length equal
+to that committed file length, so that what it leaves is exactly the
+committed state the re-verification above established. `[R-LIF-01]`
+binds it as it binds every updater, so an earlier commit state is not
+one it is free to truncate to: that truncation removes committed bytes
+and is the rollback the cautions above describe. Its probe is this
+section's and not the default read path, so `[R-LIF-05]` does not reach
+it there. A violation latent in the state it leaves travels with it, and
+certifying that state is a verifier's office (§9.7). `[R-LIF-09]`
 
 Writers performing very large single commits SHOULD emit intermediate
 checkpoint commits (a directory and trailer mid-stream, ~a few KiB
@@ -2971,29 +2986,31 @@ consolidates: each step cites the rule whose outcome governs it.
   compaction, which carries every structure forward and changes
   nothing but placement, is the rewrite that reclaims slack.
 
-The tiers are shapes of operation and §2.3's classes are the
-obligations they carry. A creator is a writer and nothing more: it
-emits only conforming files (`[R-CNF-05]`). An appender and a rewriter
-are updaters: each satisfies every writer requirement for the bytes it
+The tiers are shapes of operation and §2.3's classes are the obligations
+they carry. A creator is a writer and nothing more: it emits only
+conforming files (`[R-CNF-05]`). An appender and a rewriter are
+updaters: each satisfies every writer requirement for the bytes it
 produces and the preservation obligations of §20.4 for what it carries
-forward (`[R-CNF-06]`), and is a reader of every structure it
-processes (`[R-CNF-11]`); a violation latent in a structure it carries
-forward unmodified travels with it, seen or unseen, and certifying the
-whole file is a verifier's office (§9.7). The appender's commit
-extends its input under the input's file_id; the rewriter's output is
-a new file under a fresh one (`[R-LIF-01]`). Every obligation of §20.3
-through §20.5 attaches to an operation and binds whichever writer
-performs it. A writer that extends an input file is an appender and an
-updater, whatever it decodes: the file it leaves holds every byte of
-its input. A writer of a new file from an existing one takes one of
-two positions, and the choice is its own. As a **rewriter** it
-undertakes to preserve its input: §20.4's table for every record, the
-unknown ignore-lane bits (`[R-CNT-08]`), and §20.5 whole; in return it
-answers for what it carries forward unmodified only to `[R-WRT-09]`'s
-depth, a latent violation travelling with it. As a **creator** it
-undertakes nothing toward its input, whatever it read: §20.2 binds it,
-it writes flags = 0, and it answers for every byte of its output
-(`[R-CNF-05]`), bytes it copied from another file included.
+forward (`[R-CNF-06]`), and is a reader of every structure it processes
+(`[R-CNF-11]`); a violation latent in a structure it carries forward
+unmodified travels with it, seen or unseen, and certifying the whole
+file is a verifier's office (§9.7). The appender's commit extends its
+input under the input's file_id; the rewriter's output is a new file
+under a fresh one (`[R-LIF-01]`). A tool that truncates a file to its
+last committed state is an updater too: the operation is `[R-LIF-09]`'s,
+it produces no bytes, and it carries forward every byte of the state it
+leaves. Every obligation of §20.3 through §20.5 attaches to an operation
+and binds whichever writer performs it. A writer that extends an input
+file is an appender and an updater, whatever it decodes: the file it
+leaves holds every byte of its input. A writer of a new file from an
+existing one takes one of two positions, and the choice is its own. As a
+**rewriter** it undertakes to preserve its input: §20.4's table for
+every record, the unknown ignore-lane bits (`[R-CNT-08]`), and §20.5
+whole; in return it answers for what it carries forward unmodified only
+to `[R-WRT-09]`'s depth, a latent violation travelling with it. As a
+**creator** it undertakes nothing toward its input, whatever it read:
+§20.2 binds it, it writes flags = 0, and it answers for every byte of
+its output (`[R-CNF-05]`), bytes it copied from another file included.
 `[R-WRT-01]`
 
 #### 20.2 Creation
@@ -4705,36 +4722,39 @@ input's unknown ignore-lane bits forward and setting no other
 (§16). Advisory, and not a conformance condition: a writer SHOULD zero
 the gaps it creates (`[R-CNT-03]`, §5.2).
 
-**Conforming updater**, an appender or a rewriter (§20.1): everything
-a writer does for the bytes it produces, plus: validates, as an
-appender, the trailer and full directory, and every layer it modifies
-(§20.3), a rewriter's depth being `[R-WRT-09]`'s; as an appender,
-changes a layer that stores a tile in the generation its commit
-supersedes only as §20.3 step 4 permits (its names, a grown dimension
-extent, a planar channel list extended at its end or shortened from
-it, not both in one commit, a slab or alignment declaration declared,
-changed or cleared) and makes any other change to it as a new layer or
-a whole-file rewrite (§20.3); re-emits every retained record it does
-not logically modify byte-identically, a modified one being new output
-under its writer obligations (§20.4, `[R-WRT-05]`); copies forward the
-input's unknown ignore-lane flag bits, clears none and sets no other
-(`[R-CNT-08]`, §6.3); respects every record's MU and PE bits, the
-registry's fixed values governing for a registered type (§20.4,
-`[R-CNT-22]`); drops a layer record only under §20.4's PE = 0 licence,
-its sub-records with it, and never removes a user-metadata record from
-a scope it keeps (§20.4); never modifies or drops a layer that carries
-an unknown critical sub-record, and rejects outright a file carrying
-an unimplemented top-level MU = 1 record (`[R-CNT-15]`, §20.4). A
-rewriter, in addition, mints a fresh file_id and follows the creation
-path (`[R-WRT-06]`); preserves the content of every structure it
-carries forward, re-pointing each extent slot it relocates and
-regenerating each tile-index region any of whose stored extents it
-relocates (`[R-WRT-07]`); verifies the checksum over every extent it
-copies (`[R-WRT-09]`); drops a layer or a PE = 0 record by omitting
-it, reclaiming what it addressed, and refuses to rewrite a file
-carrying an unimplemented MU = 1 record (§20.5). Advisory, and not a
-conformance condition, of an appender and a rewriter alike: an updater
-that drops a record SHOULD report the loss (§20.4).
+**Conforming updater**, an appender or a rewriter (§20.1): everything a
+writer does for the bytes it produces, plus: validates, as an appender,
+the trailer and full directory, and every layer it modifies (§20.3), a
+rewriter's depth being `[R-WRT-09]`'s; as an appender, changes a layer
+that stores a tile in the generation its commit supersedes only as §20.3
+step 4 permits (its names, a grown dimension extent, a planar channel
+list extended at its end or shortened from it, not both in one commit, a
+slab or alignment declaration declared, changed or cleared) and makes
+any other change to it as a new layer or a whole-file rewrite (§20.3);
+re-emits every retained record it does not logically modify
+byte-identically, a modified one being new output under its writer
+obligations (§20.4, `[R-WRT-05]`); copies forward the input's unknown
+ignore-lane flag bits, clears none and sets no other (`[R-CNT-08]`,
+§6.3); respects every record's MU and PE bits, the registry's fixed
+values governing for a registered type (§20.4, `[R-CNT-22]`); drops a
+layer record only under §20.4's PE = 0 licence, its sub-records with it,
+and never removes a user-metadata record from a scope it keeps (§20.4);
+never modifies or drops a layer that carries an unknown critical
+sub-record, and rejects outright a file carrying an unimplemented
+top-level MU = 1 record (`[R-CNT-15]`, §20.4). A rewriter, in addition,
+mints a fresh file_id and follows the creation path (`[R-WRT-06]`);
+preserves the content of every structure it carries forward, re-pointing
+each extent slot it relocates and regenerating each tile-index region
+any of whose stored extents it relocates (`[R-WRT-07]`); verifies the
+checksum over every extent it copies (`[R-WRT-09]`); drops a layer or a
+PE = 0 record by omitting it, reclaiming what it addressed, and refuses
+to rewrite a file carrying an unimplemented MU = 1 record (§20.5). A
+tool truncating a file to its last committed state (§9.6) modifies no
+byte below that state's committed file length, leaves the physical
+length equal to it, truncates to no earlier commit state, and
+re-verifies and reports as `[R-LIF-06]` requires (`[R-LIF-09]`).
+Advisory, and not a conformance condition, of an appender and a rewriter
+alike: an updater that drops a record SHOULD report the loss (§20.4).
 
 **Conforming verifier**: every reader obligation, plus the checks
 readers are exempt from: the live-state coverage partition and the

@@ -177,6 +177,47 @@ round.
 
 ## Entries
 
+### 2026-10-14 — §2.3, §9.6, §20.1, Appendix H: ADR-0134 ported, `[R-LIF-09]` added to both editions
+
+- **Commit:** `Readable: §2.3, §9.6, §20.1, Appendix H — ADR-0134 ported:
+  truncation to the last committed state is an updater's operation;
+  R-LIF-09 added` (the commit carrying this entry). Previous: the merge
+  of `main` (ADR-0134 `80d2dc6`, ADR-0133's erratum `02e19bb`) with B's
+  spec kept; the spec's previous commit `64b6e5e`.
+- **Sections:** §2.3 (`[R-CNF-06]`); §9.6 (new `[R-LIF-09]`, after
+  `[R-LIF-06]`'s paragraph); §20.1 (`[R-WRT-01]`); Appendix H's updater
+  entry.
+- **The decision.** ADR-0134 (Q-A10, option (b), the maintainer's
+  direction of 2026-10-14): a tool that truncates a file to its last
+  committed state is an updater and the truncation its operation; the
+  first decision against A since B opened, taken on `main` under the old
+  gates and ported here under ADR-0133 decision 1 and its erratum of
+  2026-10-14.
+- **Edits**, each in the words the ADR put into A.
+  1. §9.6: the `[R-LIF-09]` paragraph, byte-identical to A's (the MUST
+     NOT and the MUST; `[R-LIF-01]` reaching the tool; the probe off the
+     default path; the latent violation travelling with the state).
+  2. §20.1, `[R-WRT-01]`: "A tool that truncates a file to its last
+     committed state is an updater too: the operation is `[R-LIF-09]`'s,
+     it produces no bytes, and it carries forward every byte of the state
+     it leaves." after the rewriter's-output sentence; re-wrapped.
+  3. §2.3, `[R-CNF-06]`: "A tool that truncates a file to its last
+     committed state is an updater as well, bound as §9.6 provides
+     (`[R-LIF-09]`)." after "are §20.1's."; re-wrapped.
+  4. Appendix H, the updater entry: the one sentence before the Advisory
+     sentence; re-wrapped.
+- **The reference.** The export `scratch/cleanroom/editions/a/tarn.md` is
+  refreshed from `main` (`80d2dc6`'s spec), as the erratum directs; the
+  inventory below compares against it. The merge kept B's spec.
+- **Removed restatements:** none.
+- **Reworded IDs:** none new; `R-WRT-01` and `R-CNF-06` lines extended;
+  `R-LIF-09` identical in both editions and not listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×124; the carried items as before;
+  the ID inventory now 163 in each edition. Keyword counts: MUST NOT and
+  MUST one higher in both editions. B is 4,782 lines and
+  48,643 words.
+- **Questions raised:** none; Q-A10 resolved on `main`.
+
 ### 2026-10-13 — §7.2, §7.4: "residue" stated as rows F29 and L14 state it
 
 - **Commit:** `Readable: §7.2, §7.4 — residue stated as the register states
