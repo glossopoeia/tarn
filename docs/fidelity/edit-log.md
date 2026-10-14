@@ -177,6 +177,63 @@ round.
 
 ## Entries
 
+### 2026-10-14 — §9.7: the claimants paragraph says what a claimant is and what a record adds
+
+- **Commit:** `Readable: §9.7 — the claimants paragraph: a claimant glossed
+  from R-CNT-02 and §5.2; a record claims nothing in its own right` (the
+  commit carrying this entry). Previous: `2d3e790` (ADR-0134's erratum
+  ported). §9.6 declared done by the maintainer.
+- **Sections:** §9.7, the first paragraph (ID-less since the first pass;
+  `[R-LIF-08]` governs the fourth).
+- **The maintainer's questions.** The two sentences on what is not a
+  claimant were hard to get the gist of; then whether "claims nothing
+  new" meant suppressing errors during directory traversal (it does not:
+  the sentences say which byte ranges enter the claimed set the next
+  paragraph checks for disjointness, bounds, checksums and the slack
+  total); then that "claim" had slipped his mind, and a callback to its
+  definition was wanted. The document introduces the verb once, in
+  §5.2 ("Every byte the live state does not claim is **slack**"), right
+  after `[R-CNT-02]`'s partition, and uses "claimant" from there on
+  without a sentence of its own; §9.7's "the claimants `[R-CNT-02]`
+  names" pointed at a paragraph that says "structures".
+- **Edits**, in the maintainer's direction and partly his words.
+  1. "reaches the claimants `[R-CNT-02]` names: the directory itself, …"
+     → "reaches the claimants: the structures `[R-CNT-02]` partitions the
+     live committed state into, each claiming the bytes that belong to
+     it, the rest being slack (§5.2). They are the directory itself, …".
+     The gloss is derived from A's own text, `[R-CNT-02]`'s "Every byte
+     of the live committed state belongs to exactly one of these … a
+     structure" and §5.2's slack sentence; B saying what A implies, for
+     the round to grade. "Claimants" left unbolded, §5.2 using the word
+     first.
+  2. "A record is not a claimant of its own: its header and inline
+     payload lie inside the directory region, which is the claimant
+     covering them, so reaching a record through the directory is
+     traversal, not a second claim on those bytes." → "A record does not
+     claim bytes in its own right. Its header and inline payload lie
+     inside the directory region, and the directory region is the
+     claimant that covers them, so a record reached through the directory
+     adds no claimed range of its own." The first sentence the
+     maintainer's; "claimed range" is the next paragraph's own term.
+  3. "A layer record's extent slot addresses that layer's tile-index
+     region (§7.4), so the region enters the walk once, as that record's
+     extent, and is not a second claimant beside it." → "A layer's
+     tile-index region is the extent that its layer record's extent slot
+     addresses (§7.4), so it is claimed once, as that record's extent, and
+     not again as a region." The counted thing made the subject.
+  The `[R-IDX-03]` sentence, the list of claimants and every pointer
+  unchanged; "its crc" kept lowercase, the entry's field name as §15.1
+  names it, on the maintainer's question. Re-wrapped.
+- **Removed restatements:** none. Word-level diff: "names", "which",
+  "covering", "reaching", "traversal", "second", "those", "enters",
+  "beside" and connectives lost; the gloss's words, "right", "covers",
+  "adds", "claimed", "range", "again" gained; every pointer and figure
+  kept.
+- **Reworded IDs:** none; no ID paragraph.
+- **Soft items:** `ID_REWORDED_LISTED` ×124; the carried items as before.
+  Keyword counts unchanged. B is 4,784 lines and 48,669 words.
+- **Questions raised:** none.
+
 ### 2026-10-14 — §9.6: ADR-0134's erratum ported, `[R-LIF-09]`'s referent repeated
 
 - **Commit:** `Readable: §9.6 — ADR-0134's erratum ported: "the candidate's

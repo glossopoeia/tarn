@@ -1392,20 +1392,21 @@ append is recoverable only by scanning back across its entire length.
 
 #### 9.7 Coverage verification
 
-A verifier checking `[R-CNT-02]`'s partition walks the live state
-only. From the live trailer it reads the live directory and, through
-its records and their sub-records, reaches the claimants `[R-CNT-02]`
-names: the directory itself, each record's extent, and the stored
-extent of each non-sentinel tile-index entry. An entry `[R-IDX-03]`
-classifies reject-tile on a *structural* ground contributes no stored
-extent to the walk; one whose stored bytes alone fail its crc keeps
-its extent. A record is not a claimant of its own: its header and
-inline payload lie inside the directory region, which is the claimant
-covering them, so reaching a record through the directory is
-traversal, not a second claim on those bytes. A layer record's extent
-slot addresses that layer's tile-index region (§7.4), so the region
-enters the walk once, as that record's extent, and is not a second
-claimant beside it.
+A verifier checking `[R-CNT-02]`'s partition walks the live state only.
+From the live trailer it reads the live directory and, through its
+records and their sub-records, reaches the claimants: the structures
+`[R-CNT-02]` partitions the live committed state into, each claiming the
+bytes that belong to it, the rest being slack (§5.2). They are the
+directory itself, each record's extent, and the stored extent of each
+non-sentinel tile-index entry. An entry `[R-IDX-03]` classifies
+reject-tile on a *structural* ground contributes no stored extent to the
+walk; one whose stored bytes alone fail its crc keeps its extent. A
+record does not claim bytes in its own right. Its header and inline
+payload lie inside the directory region, and the directory region is the
+claimant that covers them, so a record reached through the directory
+adds no claimed range of its own. A layer's tile-index region is the
+extent that its layer record's extent slot addresses (§7.4), so it is
+claimed once, as that record's extent, and not again as a region.
 
 The verifier checks that these claimants occupy disjoint byte ranges,
 that each lies within [16, F − 64), and that each verifies against the
