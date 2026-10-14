@@ -1961,7 +1961,18 @@ conformance stays semantic.
   (b) Nothing in v1.
 - **What settles it:** Demand; costs one appendix.
 
-### Q-A10. Is a recovery tool a conformance class, and which obligations bind it? [shaping]
+### Q-A10. Is a recovery tool a conformance class, and which obligations bind it? [Resolved → ADR-0134]
+**Resolution (ADR-0134, option (b)):** no new class. Truncation of a file
+to its last committed state is an operation of the updater class on
+ADR-0129's model, beside the appender's commit and the rewriter's rewrite;
+the tool performing it is an updater and the file it leaves is its output.
+New `[R-LIF-09]` in §9.6 binds it: no byte below the candidate's committed
+file length modified, the physical length left equal to it, `[R-LIF-01]`
+reaching it so that an earlier commit state is not one it truncates to,
+its probe off the default read path, a latent violation travelling with
+the state it leaves. §20.1 and `[R-CNF-06]` name the operation; Appendix
+H's updater entry carries it. A verifier that probes and does not
+truncate is doing diagnosis, as §9.6 said.
 **Question:** §2.3 defines five conformance classes — file, reader,
 writer, updater, verifier — and Appendix H carries five checklists, none
 for recovery. §9.6 names a further actor: "Recovery tools and verifiers
