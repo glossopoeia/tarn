@@ -211,7 +211,9 @@ Conformance is defined for five classes.
   every writer requirement for the bytes it produces, and additionally
   MUST honor the preservation obligations of §20.4 — which govern every
   record type, not only those it does not understand. Its tiers, the
-  appender and the rewriter, are §20.1's. `[R-CNF-06]`
+  appender and the rewriter, are §20.1's. A tool that truncates a file
+  to its last committed state is an updater as well, bound as §9.6
+  provides (`[R-LIF-09]`). `[R-CNF-06]`
 - **Conforming verifier.** A reader that additionally checks every
   file-level requirement — including those ordinary readers are
   exempted from — and certifies conformance. Verifiers and updaters are
@@ -1497,6 +1499,19 @@ state, so the tool continues the probe past it, and MUST report the
 candidate it settled on and how many candidates it rejected on that
 re-verification, or, where no candidate survived it, that none did
 and how many it rejected. `[R-LIF-06]`
+
+A tool that truncates a file to its last committed state is an updater,
+and the truncation is its operation (§20.1, `[R-CNF-06]`): the file it
+leaves is its output. It MUST NOT modify a byte below the candidate's
+committed file length, and it MUST leave the physical file length equal
+to that committed file length, so that what it leaves is exactly the
+committed state the re-verification above established. `[R-LIF-01]`
+binds it as it binds every updater, so an earlier commit state is not
+one it is free to truncate to: that truncation removes committed bytes
+and is the rollback the cautions above describe. Its probe is this
+section's and not the default read path, so `[R-LIF-05]` does not reach
+it there. A violation latent in the state it leaves travels with it, and
+certifying that state is a verifier's office (§9.7). `[R-LIF-09]`
 
 Writers performing very large single commits SHOULD emit intermediate
 checkpoint commits (a directory and trailer mid-stream, ~a few KiB
@@ -3156,6 +3171,9 @@ structure it carries forward unmodified travels with it, seen or
 unseen, and certifying the whole file is a verifier's office (§9.7).
 The appender's commit extends its input under the input's file_id;
 the rewriter's output is a new file under a fresh one (`[R-LIF-01]`).
+A tool that truncates a file to its last committed state is an updater
+too: the operation is `[R-LIF-09]`'s, it produces no bytes, and it
+carries forward every byte of the state it leaves.
 Every obligation of §20.3 through §20.5 attaches to an operation and
 binds whichever writer performs it. A writer that extends an input
 file is an appender and an updater, whatever it decodes: the file it
@@ -4949,7 +4967,11 @@ each tile-index region any of whose stored extents it relocates
 (`[R-WRT-07]`); verifies the checksum over every extent it
 copies (`[R-WRT-09]`); drops a layer or a PE = 0 record by omitting
 it, reclaiming what it addressed, and refuses to rewrite a file
-carrying an unimplemented MU = 1 record (§20.5). Advisory, and not a
+carrying an unimplemented MU = 1 record (§20.5). A tool truncating a
+file to its last committed state (§9.6) modifies no byte below that
+state's committed file length, leaves the physical length equal to it,
+truncates to no earlier commit state, and re-verifies and reports as
+`[R-LIF-06]` requires (`[R-LIF-09]`). Advisory, and not a
 conformance condition, of an appender and a rewriter alike: an updater
 that drops a record SHOULD report the loss (§20.4).
 
