@@ -462,6 +462,41 @@ entirely on layout regardless).
   during the tile-serialization draft with vectors for both candidates in
   hand.
 
+### Q-D7. Sub-byte unsigned integer types (uint2, uint4) for packable small-range counts? [deferrable]
+**Question:** the thirteen core types (§12.1) have no element narrower
+than a byte except bool, whose planar planes are bit-packed (§14.3) while
+its interleaved values are single bytes (§14.2, ADR-0038). Count-like data
+with a range of 4 or 16 values stores at a byte per sample, four to eight
+times its information, and relies on the codec to recover the difference.
+Should a minor version add uint2 and uint4 (and int2, int4?) on bool's
+pattern? Raised by the maintainer on 2026-10-15 reading §12.2. IDs 14
+through 19 are pinned to other types (ADR-0036); new ones take 20 onward
+from the future-assignment range, and an unaware reader rejects the layer
+(§12.2's Note).
+- **Why it matters:** every core type binds every conforming reader
+  (`[R-TYP-01]`), and a packed type is two layouts, not one. Bool's cost is
+  the measure: the fill byte rule (§13.2, L35), the packed plane with its
+  pad bits (§14.3, `[R-SER-03]`, `[R-SER-05]`, T5), the interleaved byte rule
+  (`[R-SER-08]`, T2), the filter stride (§17.3), the decoded-size rows that
+  name the packed plane as an instance (T3, T14, T21, T22), and a vector
+  per instance. A sub-byte integer repeats all of it, twice if signed too,
+  and amends §12.1's "exactly thirteen".
+- **Options:** (a) uint2 and uint4 in a minor version, bool's pattern:
+  planar planes packed LSB-first with pad bits, interleaved values one byte
+  with the high bits zero, a one-byte fill in range, shuffle stride 1. (b)
+  Signed variants as well, two's complement in the low bits. (c) Defer:
+  store counts as uint8 and let zstd or lz4 take the redundancy; measure
+  first. (d) Reserve 20 = uint2 and 21 = uint4 now without semantics, as
+  ADR-0036 reserved the float8s, and define on demand. (e) A width
+  parameter instead of new IDs, rejected in advance: it breaks the pure
+  enumerator (`[R-CNF-04]`) and the fill-length cross-check the same way
+  `opaque<N>` did (Q-D2).
+- **What settles it:** a named consumer with count data where the stored
+  size matters after compression, and a measurement of codec ratios on
+  such data against packing. (d) costs one ADR and two table rows; (a) a
+  minor version and bool's machinery over again. Owning sections §12,
+  §13.2, §14.
+
 ## E. Codecs and filters
 
 ### Q-E1. Codec wrapper pinning. [Resolved → ADR-0039; its zstd half reopened by Q-E4 and re-closed by ADR-0088]
