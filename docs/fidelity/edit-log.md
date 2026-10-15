@@ -132,8 +132,18 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   fastest" (`[R-GEO-05]`); "c · N + s for a planar layer" (`[R-GEO-06]`,
   restated in §14 and §15's worked figures: a flip tests reach).
 
-Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14; §11 on
-2026-10-15.
+- **§12** (read through 2026-10-15): `R-TYP-03`, `-04`, `-05` listed by
+  the spruce-up, `R-TYP-03`'s lead-in and §12.3's Example edited by the
+  maintainer. Candidate seeds: "a reader MUST NOT infer an element size or
+  any semantics for a type value this specification does not assign"
+  (`[R-TYP-03]`, stated once); "never quieted, canonicalized or collapsed"
+  (`[R-TYP-04]`); "bits 14–7 the biased exponent, and bits 6–0 the
+  trailing significand" (`[R-TYP-02]`, stated once); "every bit pattern of
+  the element size is a valid fill" (`[R-TYP-05]`, restated at §13.2: a
+  flip tests reach).
+
+Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14; §11 and
+§12 on 2026-10-15.
 
 **Fidelity round 1 ran on 2026-10-08** over B at `5220d1a`, the head of
 `readable` with §1 through §8 done (`wf_e2a8d709-b50`;
@@ -208,6 +218,33 @@ by this round, stand ruled from 2026-10-08. No edit to B follows from the
 round.
 
 ## Entries
+
+### 2026-10-15 — §12.3, §13.1: the maintainer's edits, reviewed; §12 read through
+
+- **Commit:** `Readable: §12.3, §13.1 — maintainer's edits, reviewed; R-TYP-10
+  listed` (the commit carrying this entry). Previous: `1309ac7` (the merge
+  of main's Q-D7); the spec's previous commit `3ed24c3`.
+- **Sections:** §12.3, the channel-entry Example; §13.1, `[R-TYP-10]`.
+- **The maintainer's edits.**
+  1. §12.3's Example: "type float32, fill the quiet NaN `0x7FC00000` is the
+     twelve bytes" → "type float32, with fill of the quiet NaN
+     `0x7FC00000` is the twelve bytes". Every byte and figure kept.
+  2. §13.1, `[R-TYP-10]`: "read back as a value consumers of the
+     conventional zero default will not expect" → "… a value that
+     consumers …". The SHOULD verbatim; same statement.
+- **Read through.** §12 declared done by the maintainer ("section 12 is
+  done"); added under "Ready for calibration 2".
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-TYP-10`, listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×125 (the one new); the carried
+  items as before; the Example's numbers unchanged. Keyword counts
+  unchanged. B is 4,786 lines and 48,710 words.
+- **Questions raised:** the maintainer asked why a bool byte is 0x01 alone
+  for true, fearing a reader-side cost of checking every byte; answered
+  from ADR-0036 and ADR-0038 (one value, one encoding, byte equality being
+  value identity throughout; readers are not obligated to screen and
+  `[R-SER-08]` has a reader take every nonzero byte as true; the verifier
+  is the detector). No edit.
 
 ### 2026-10-15 — §12.2: the maintainer's edit, reviewed; the value set's lead-in counts its ranges
 

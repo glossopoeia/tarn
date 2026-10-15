@@ -1772,7 +1772,7 @@ Boolean values are constrained by §13.2 (fill) and §14 (in-tile
 representation). `[R-TYP-05]`
 
 > **Example.** A channel entry (§7.4) declaring name `temp`, type
-> float32, fill the quiet NaN `0x7FC00000` is the twelve bytes
+> float32, with fill of the quiet NaN `0x7FC00000` is the twelve bytes
 > `04 74 65 6D 70 0C 00 04 00 00 C0 7F`: name length 4, the name
 > bytes, type `0C 00` (12, little-endian), fill length 4, fill bytes
 > `00 00 C0 7F`. A fill of `0x7FC00001`, a NaN carrying a payload, is
@@ -1807,7 +1807,7 @@ is §7.4's framing, cross-checked against the element size
 Fill is mandatory-with-default: a writer whose caller does not
 choose a fill SHOULD record all-zero bytes. A writer that defaults
 differently still emits a conforming file, but its unwritten
-regions read back as a value consumers of the conventional zero
+regions read back as a value that consumers of the conventional zero
 default will not expect. `[R-TYP-10]`
 
 > **Note.** Nothing distinguishes the recorded default from a
@@ -1834,7 +1834,7 @@ layer scope. `[R-TYP-07]`
 For every addressed tile that is not stored in the live generation,
 which is one whose index entry is the sentinel (§15.2), a reader that
 returns any of the tile's sample positions inside the layer's extents
-MUST return, for each channel the tile carries, that channel's fill
+MUST return (for each channel the tile carries) that channel's fill
 value at every such position. In an interleaved layer an unstored tile
 yields the full fill sample at every position, each channel's fill in
 declared channel order. In a planar layer exactly the entry's channel
