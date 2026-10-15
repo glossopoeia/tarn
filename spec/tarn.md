@@ -1469,7 +1469,7 @@ never an implementation's private convention. `[R-EXT-01]`
 Every numeric identifier space is partitioned identically: values
 this specification assigns; a **reserved** range only this
 specification assigns from; and an **experimental** range for
-private use. The spaces, defined in the sections that own them and
+private use. The spaces are defined in the sections that own them but
 collected here:
 
 | Space | Width | Assigned | Reserved | Experimental |

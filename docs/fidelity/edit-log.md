@@ -101,7 +101,27 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   each stated once now that §4.5's copy is gone); "a user-metadata extent's
   CRC, ignore-record" (`[R-CNT-20]`, restated by R2).
 
-Stretches done through §8 on 2026-10-08.
+- **§9** (read through 2026-10-13 to 2026-10-14, after the first pass of
+  2026-10-08): every subsection; `R-LIF-01` through `-06` and `-08` listed,
+  `R-LIF-09` added by ADR-0134 in both editions; §9.2's second Note, §9.3's
+  first Note, §9.5's first Note and §9.7's first paragraph re-cut on the
+  maintainer's questions. Candidate seeds: "by at least 128" (`[R-LIF-02]`,
+  restated at §9.3 and §20.3 step 6: a flip tests reach); "MUST NOT scan
+  backward" (`[R-LIF-05]`, restated at §9.6 and §9.2's Example); "only one
+  writer at a time" (`[R-LIF-05]`, restated at §1 and §20); "truncate to F
+  before step 1 of `[R-LIF-02]`, or overwrite from F" (`[R-LIF-04]`, stated
+  once); "MUST report the candidate it settled on and how many candidates
+  it rejected" (`[R-LIF-06]`, stated once); "MUST leave the physical file
+  length equal to the candidate's committed file length" (`[R-LIF-09]`,
+  stated once, identical in both editions).
+- **§10** (read through 2026-10-14, one edit): `R-EXT-01`, `-03`, `-04`,
+  `-05` listed by the spruce-up. Candidate seeds: "never a minor revision
+  and never an implementation's private convention" (`[R-EXT-01]`);
+  "sufficient for independent implementation without consulting any
+  implementation" (`[R-EXT-04]`); "the registry is machine-readable
+  convenience, never a second authority" (`[R-EXT-05]`).
+
+Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14.
 
 **Fidelity round 1 ran on 2026-10-08** over B at `5220d1a`, the head of
 `readable` with §1 through §8 done (`wf_e2a8d709-b50`;
@@ -176,6 +196,26 @@ by this round, stand ruled from 2026-10-08. No edit to B follows from the
 round.
 
 ## Entries
+
+### 2026-10-14 — §10: the maintainer's edit, reviewed; §9 and §10 read through
+
+- **Commit:** `Readable: §10 — maintainer's edit, reviewed: the identifier
+  spaces' lead-in a sentence` (the commit carrying this entry). Previous:
+  `66b0f01` (§9.7's claimants paragraph).
+- **Sections:** §10, the opening paragraph before the identifier-space
+  table. No ID; no keyword.
+- **The maintainer's edit.** "The spaces, defined in the sections that own
+  them and collected here:" → "The spaces are defined in the sections
+  that own them but collected here:". A fragment made a sentence before
+  the table; the same two facts.
+- **Read through.** The maintainer's read-through has covered §9 whole
+  (§9.1–§9.7, 2026-10-13 to 2026-10-14, the entries above) and §10 ("otherwise
+  I think it looks good"); both added under "Ready for calibration 2".
+- **Removed restatements:** none.
+- **Reworded IDs:** none.
+- **Soft items:** `ID_REWORDED_LISTED` ×124; the carried items as before.
+  Keyword counts unchanged. B is 4,784 lines and 48,670 words.
+- **Questions raised:** none.
 
 ### 2026-10-14 — §9.7: the claimants paragraph says what a claimant is and what a record adds
 
