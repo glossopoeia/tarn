@@ -1596,16 +1596,15 @@ declaration-derived quantities under `[R-ENC-04]`: a reader MUST treat
 one exceeding 2⁶³ − 1 as a validity error at layer scope. `[R-GEO-03]`
 
 > **Note.** The stated form of the ceiling division avoids the idiom
-> (Eᵢ + Tᵢ − 1)/Tᵢ, whose intermediate sum can exceed 2⁶³ − 1 — the
-> declared valid domain (§4.2) and the range of signed 64-bit
-> integers — for large extents, even though it fits an unsigned 64-bit
-> integer.
+> (Eᵢ + Tᵢ − 1)/Tᵢ: for large extents its intermediate sum can exceed
+> 2⁶³ − 1, the declared valid domain (§4.2) and the range of signed
+> 64-bit integers, even though it fits an unsigned 64-bit integer.
 
 > **Example.** A layer declared (y, x) with extents (1024, 2048) and
-> tile extents (256, 256): G = (4, 8), N = 32 spatial tiles,
-> P = 65,536 sample positions per tile. With extents (1000, 2048)
-> instead, G_y = ⌈1000/256⌉ = 4 still — the last row of tiles is
-> padded (§11.3).
+> tile extents (256, 256): G = (4, 8), N = 32 spatial tiles, P =
+> 65,536 sample positions per tile. With extents (1000, 2048) instead,
+> G_y = ⌈1000/256⌉ = 4 still, and the last row of tiles is padded
+> (§11.3).
 
 #### 11.3 Uniform tiles and edge padding
 

@@ -197,6 +197,35 @@ round.
 
 ## Entries
 
+### 2026-10-15 — §11.2: the ceiling-division Note and the Example without dashes
+
+- **Commit:** `Readable: §11.2 — the ceiling-division Note and the Example
+  without dashes` (the commit carrying this entry). Previous: `dc66fc9`
+  (§11.1's Rationale).
+- **Sections:** §11.2, the Note and the Example after `[R-GEO-03]`. Both
+  non-normative. At the maintainer's ask ("First note of 11.2 needs some
+  dashes fixed"); proposed with before and after, both taken ("Go, both").
+- **Edits.**
+  1. The Note: "whose intermediate sum can exceed 2⁶³ − 1 — the declared
+     valid domain (§4.2) and the range of signed 64-bit integers — for
+     large extents, even though it fits an unsigned 64-bit integer" →
+     "avoids the idiom (Eᵢ + Tᵢ − 1)/Tᵢ: for large extents its
+     intermediate sum can exceed 2⁶³ − 1, the declared valid domain (§4.2)
+     and the range of signed 64-bit integers, even though it fits an
+     unsigned 64-bit integer". The aside an appositive; "for large
+     extents" moved to the front of the clause it qualifies; the four
+     facts and the pointer kept.
+  2. The Example: "G_y = ⌈1000/256⌉ = 4 still — the last row of tiles is
+     padded (§11.3)." → "… = 4 still, and the last row of tiles is padded
+     (§11.3)."; every figure kept.
+- **Removed restatements:** none. Word-level diff: "whose" lost, "its"
+  and "and" gained, nothing else.
+- **Reworded IDs:** none.
+- **Soft items:** `ID_REWORDED_LISTED` ×124; the carried items as before;
+  the Example's numbers unchanged. Keyword counts unchanged. B is
+  4,783 lines and 48,677 words.
+- **Questions raised:** none.
+
 ### 2026-10-14 — §11.1: the Rationale in plain language, A's six lowercase keywords rewritten around
 
 - **Commit:** `Readable: §11.1 — the growth Rationale in plain language; the
