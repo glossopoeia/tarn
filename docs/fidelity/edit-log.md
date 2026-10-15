@@ -197,6 +197,38 @@ round.
 
 ## Entries
 
+### 2026-10-15 — §11.4: the linearization Note in ordinary sentences
+
+- **Commit:** `Readable: §11.4 — the linearization Note in ordinary
+  sentences` (the commit carrying this entry). Previous: `0b9ed09`
+  (§11.2's Note and Example).
+- **Sections:** §11.4, the Note after the Example. Non-normative. The
+  maintainer found a block of §11.4 terse and "LLM obvious"; the Note was
+  proposed and approved ("Go"), the Example being the block he meant
+  (the next entry).
+- **Edit.** "Linearization fixes the mapping from *declared dimension
+  order* to bytes; it says nothing about axis direction or orientation
+  (whether y points up or down is semantics, carried in user metadata,
+  §18). Column-major ecosystems (Fortran, Julia, MATLAB) write zero-copy
+  by declaring dimensions in reversed order — the same convention their
+  HDF5 and netCDF bindings already apply." → "Linearization decides only
+  how the declared dimension order maps to bytes. It carries no notion of
+  axis direction or orientation: whether y points up or down is
+  semantics, and that travels in user metadata (§18). A column-major
+  ecosystem such as Fortran, Julia or MATLAB gets zero-copy writes by
+  declaring its dimensions in reversed order, which is the convention its
+  HDF5 and netCDF bindings already apply." Five facts kept; the semicolon,
+  the parenthesis and the dash gone; the italics on "declared dimension
+  order" dropped; "semantics" and "zero-copy" kept as the document's
+  words.
+- **Removed restatements:** none. Word-level diff: "fixes", "mapping",
+  "says nothing about", "carried", "same", "their" lost; "decides only
+  how", "carries no notion", "travels", "such as", "gets", "which" gained.
+- **Reworded IDs:** none.
+- **Soft items:** `ID_REWORDED_LISTED` ×124; the carried items as before.
+  Keyword counts unchanged. B is 4,784 lines and 48,688 words.
+- **Questions raised:** none.
+
 ### 2026-10-15 — §11.2: the ceiling-division Note and the Example without dashes
 
 - **Commit:** `Readable: §11.2 — the ceiling-division Note and the Example

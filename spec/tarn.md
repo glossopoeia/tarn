@@ -1665,12 +1665,13 @@ product is 1 (so at d = 1 the ordinals below reduce to u₀ and t₀):
 > C = 4 channels, the tile carrying channel 2 at that spatial position
 > has disk ordinal 2·32 + 10 = 74.
 
-> **Note.** Linearization fixes the mapping from *declared dimension
-> order* to bytes; it says nothing about axis direction or orientation
-> (whether y points up or down is semantics, carried in user metadata,
-> §18). Column-major ecosystems (Fortran, Julia, MATLAB) write
-> zero-copy by declaring dimensions in reversed order — the same
-> convention their HDF5 and netCDF bindings already apply.
+> **Note.** Linearization decides only how the declared dimension
+> order maps to bytes. It carries no notion of axis direction or
+> orientation: whether y points up or down is semantics, and that
+> travels in user metadata (§18). A column-major ecosystem such as
+> Fortran, Julia or MATLAB gets zero-copy writes by declaring its
+> dimensions in reversed order, which is the convention its HDF5 and
+> netCDF bindings already apply.
 
 ### 12. Channels and Sample Types
 
