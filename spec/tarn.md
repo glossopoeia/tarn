@@ -1657,13 +1657,14 @@ product is 1 (so at d = 1 the ordinals below reduce to u₀ and t₀):
   (§14), where c is the channel's index (§3.1): channel-major
   grouping. `[R-GEO-06]`
 
-> **Example.** The layer of §11.2's example, grid (G_y, G_x) = (4, 8).
-> Spatial ordinals: tile (0, 0) → 0; tile (0, 1) → 1; tile (1, 0) →
-> 1·8 + 0 = 8. The coordinate (y, x) = (300, 700) lies in tile
-> (1, 2) → s = 1·8 + 2 = 10, at in-tile position (44, 188) → in-tile
-> ordinal 44·256 + 188 = 11,452. If the same layer is planar with
-> C = 4 channels, the tile carrying channel 2 at that spatial position
-> has disk ordinal 2·32 + 10 = 74.
+> **Example.** Take the layer of §11.2's example, with grid (G_y, G_x)
+> = (4, 8). Under linearization 1, tile (0, 0) has spatial ordinal 0,
+> tile (0, 1) has ordinal 1, and tile (1, 0) has ordinal 1·8 + 0 = 8.
+> The coordinate (y, x) = (300, 700) lies in tile (1, 2), whose
+> spatial ordinal is s = 1·8 + 2 = 10, at in-tile position (44, 188),
+> whose in-tile ordinal is 44·256 + 188 = 11,452. If the same layer is
+> planar with C = 4 channels, the tile that carries channel 2 at that
+> spatial position has disk ordinal 2·32 + 10 = 74.
 
 > **Note.** Linearization decides only how the declared dimension
 > order maps to bytes. It carries no notion of axis direction or

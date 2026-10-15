@@ -121,7 +121,19 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   implementation" (`[R-EXT-04]`); "the registry is machine-readable
   convenience, never a second authority" (`[R-EXT-05]`).
 
-Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14.
+- **§11** (read through 2026-10-14 to 2026-10-15): `R-GEO-01`, `-03`,
+  `-04`, `-05`, `-06` listed by the spruce-up; §11.1's Rationale in plain
+  language, §11.2's Note and Example and §11.4's Note and Example re-cut
+  at the maintainer's ask. Candidate seeds: "channel count 0" among
+  `[R-GEO-01]`'s three barred values (row L32 restates it: a flip tests
+  reach); "a reader MUST treat one exceeding 2⁶³ − 1 as a validity error
+  at layer scope" (`[R-GEO-03]`); "stated in a form that forms no product
+  (§4.2)" (`[R-GEO-04]`, stated once); "the last-declared dimension varies
+  fastest" (`[R-GEO-05]`); "c · N + s for a planar layer" (`[R-GEO-06]`,
+  restated in §14 and §15's worked figures: a flip tests reach).
+
+Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14; §11 on
+2026-10-15.
 
 **Fidelity round 1 ran on 2026-10-08** over B at `5220d1a`, the head of
 `readable` with §1 through §8 done (`wf_e2a8d709-b50`;
@@ -196,6 +208,40 @@ by this round, stand ruled from 2026-10-08. No edit to B follows from the
 round.
 
 ## Entries
+
+### 2026-10-15 — §11.4: the ordinals Example in sentences, its three arrows gone; §11 read through
+
+- **Commit:** `Readable: §11.4 — the ordinals Example in sentences, its three
+  arrows gone` (the commit carrying this entry). Previous: `0db63fe`
+  (§11.4's Note).
+- **Sections:** §11.4, the Example after `[R-GEO-06]`. Non-normative. The
+  block the maintainer meant by "written a bit tersely"; proposed with
+  before and after and the number sequence checked; approved ("Go").
+- **Edit.** "The layer of §11.2's example, grid (G_y, G_x) = (4, 8).
+  Spatial ordinals: tile (0, 0) → 0; tile (0, 1) → 1; tile (1, 0) → 1·8
+  + 0 = 8. The coordinate (y, x) = (300, 700) lies in tile (1, 2) → s =
+  1·8 + 2 = 10, at in-tile position (44, 188) → in-tile ordinal 44·256 +
+  188 = 11,452. …" → "Take the layer of §11.2's example, with grid (G_y,
+  G_x) = (4, 8). Under linearization 1, tile (0, 0) has spatial ordinal 0,
+  tile (0, 1) has ordinal 1, and tile (1, 0) has ordinal 1·8 + 0 = 8. The
+  coordinate (y, x) = (300, 700) lies in tile (1, 2), whose spatial
+  ordinal is s = 1·8 + 2 = 10, at in-tile position (44, 188), whose
+  in-tile ordinal is 44·256 + 188 = 11,452. …"; the planar sentence
+  "the tile carrying channel 2" reads "the tile that carries channel 2".
+  Every figure kept in order (the number sequence identical before and
+  after; the arithmetic re-done by hand: 300 div 256 = 1, 700 div 256 =
+  2, 300 mod 256 = 44, 700 mod 256 = 188, 44·256 + 188 = 11,452, 2·32 +
+  10 = 74); each arrow replaced by the sentence it stood for; "Under
+  linearization 1" is the list's own qualifier a line above.
+- **Read through.** §11 is done (§11.1 to §11.4, 2026-10-14 to
+  2026-10-15); added under "Ready for calibration 2".
+- **Removed restatements:** none. Word-level diff: "Spatial ordinals",
+  "carrying" lost; "Take", "Under linearization 1", "has", "whose",
+  "is", "carries" gained.
+- **Reworded IDs:** none.
+- **Soft items:** `ID_REWORDED_LISTED` ×124; the carried items as before;
+  the Example's numbers unchanged. Keyword counts unchanged. B is 4,785 lines and 48,702 words.
+- **Questions raised:** none.
 
 ### 2026-10-15 — §11.4: the linearization Note in ordinary sentences
 
