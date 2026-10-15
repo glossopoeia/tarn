@@ -209,6 +209,26 @@ round.
 
 ## Entries
 
+### 2026-10-15 — §12.2: the maintainer's edit, reviewed; the value set's lead-in counts its ranges
+
+- **Commit:** `Readable: §12.2 — maintainer's edit, reviewed: the type
+  field's values fall into five ranges` (the commit carrying this entry).
+  Previous: `c21a48d` (§11.4's Example).
+- **Sections:** §12.2, `[R-TYP-03]`'s paragraph.
+- **The maintainer's edit.** "The field's values: 0 is invalid; 1 through
+  13 are assigned per §12.1; …" → "The type field's values fall into
+  five ranges: 0 is invalid; 1 through 13 are assigned per §12.1; …".
+  The field named; the count the list's own (0; 1–13; 14–19; 20–0x7FFF;
+  ≥ 0x8000). The five value cases, both MUSTs and the MUST NOT verbatim.
+  Re-wrapped by the driver.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-TYP-03`, already listed; line extended.
+- **Soft items:** `ID_REWORDED_LISTED` ×124; the carried items as before.
+  Keyword counts unchanged. B is 4,786 lines and 48,707 words.
+- **Questions raised:** the maintainer floated a ledger question on 2-bit
+  and 4-bit unsigned integer types for packable small-range counts;
+  drafted for his word (Q-D7 if opened).
+
 ### 2026-10-15 — §11.4: the ordinals Example in sentences, its three arrows gone; §11 read through
 
 - **Commit:** `Readable: §11.4 — the ordinals Example in sentences, its three

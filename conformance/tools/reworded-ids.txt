@@ -55,7 +55,7 @@ R-GEO-03: the dash aside on tile-index entries a comma clause; the sentence spli
 R-GEO-04: three dash asides made a colon clause and a sentence (the padding condition, the definition, the no-product form); the §14 parenthesis a clause; the MUST NOT verbatim
 R-GEO-05: the value cases in A's order after a colon, "the last-declared dimension varies fastest" an "in which" clause; the reader's included cases a sentence of their own; both keyword clauses verbatim
 R-GEO-06: two dash asides in the ordinals list made a comma clause and a colon clause; every formula verbatim; the list tight as in A
-R-TYP-03: the reader's three included cases moved from a dash aside inside the MUST to a colon clause after the citation; the value cases in A's order; all three keyword clauses verbatim
+R-TYP-03: the reader's three included cases moved from a dash aside inside the MUST to a colon clause after the citation; the value cases in A's order; all three keyword clauses verbatim; 'The field's values:' written as 'The type field's values fall into five ranges:' (the maintainer, 2026-10-15), the five being the list's own
 R-TYP-04: the NaN consequences a comma clause; the no-exception sentence split at its semicolon; the MUST NOT and every clause verbatim
 R-TYP-05: the inclusions a colon clause; every clause verbatim
 R-TYP-06: "always present" given its reason as a "since" clause in place of the dash aside; the reader's MUST, MUST NOT and MUST verbatim

@@ -1729,16 +1729,17 @@ infinities, and NaNs follow from that identification. `[R-TYP-02]`
 
 #### 12.2 The type field's value set
 
-The field's values: 0 is invalid; 1 through 13 are assigned per §12.1;
-values 14 through 19 are reserved without semantics; values 20 through
-0x7FFF are reserved for future assignment by this specification;
-values ≥ 0x8000 are the experimental range (§10). Writers MUST NOT
-emit a type value other than 1 through 13, and a reader MUST treat any
-other value as a validity error at layer scope (`[R-CNT-23]`): 0,
-every reserved value and the experimental range included. Type
-identifiers are pure enumerators: a reader MUST NOT infer an element
-size or any semantics for a type value this specification does not
-assign, whatever pattern its bits suggest (`[R-CNF-04]`). `[R-TYP-03]`
+The type field's values fall into five ranges: 0 is invalid; 1 through
+13 are assigned per §12.1; values 14 through 19 are reserved without
+semantics; values 20 through 0x7FFF are reserved for future assignment
+by this specification; values ≥ 0x8000 are the experimental range (§10).
+Writers MUST NOT emit a type value other than 1 through 13, and a reader
+MUST treat any other value as a validity error at layer scope
+(`[R-CNT-23]`): 0, every reserved value and the experimental range
+included. Type identifiers are pure enumerators: a reader MUST NOT infer
+an element size or any semantics for a type value this specification
+does not assign, whatever pattern its bits suggest (`[R-CNF-04]`).
+`[R-TYP-03]`
 
 > **Note.** The reserved identifiers are pinned. 14 and 15 are for
 > 8-bit floats, defined, if ever, as bit-exact OCP OFP8 E4M3 and E5M2;
