@@ -219,6 +219,31 @@ round.
 
 ## Entries
 
+### 2026-10-15 — §13.2: the fill Rationale says readers need not screen value bytes
+
+- **Commit:** `Readable: §13.2 — the fill Rationale points at the reader's
+  exemption from screening value bytes` (the commit carrying this entry).
+  Previous: `fd87472` (§12.3 and §13.1).
+- **Sections:** §13.2, the Rationale after `[R-TYP-07]`. Non-normative.
+- **The maintainer's question.** Why 0x01 alone for true, given the reader
+  cost of checking every bool byte. Answered from ADR-0036 (one value, one
+  encoding; value identity throughout is byte equality, which the padding
+  check and channel-entry comparison rely on) and ADR-0038 (the value-byte
+  rule binds writers with the verifier as detector; `[R-SER-08]` says a
+  reader is not obligated to screen and returns every nonzero byte as
+  true). The Rationale argued the fill rule without naming the exemption,
+  which is where the question came from.
+- **Edit.** One sentence appended, in the maintainer's words ("need not"
+  rather than "never", a combined reader-verifier being free to screen):
+  "Readers need not screen value bytes for it (§14.2, `[R-SER-08]`)."
+  Derived from A's own `[R-SER-08]` ("A reader is not obligated to screen
+  decoded content"); B saying what A implies, for the round to grade.
+- **Removed restatements:** none.
+- **Reworded IDs:** none; a Rationale.
+- **Soft items:** `ID_REWORDED_LISTED` ×125; the carried items as before.
+  Keyword counts unchanged. B is 4,787 lines and 48,721 words.
+- **Questions raised:** none.
+
 ### 2026-10-15 — §12.3, §13.1: the maintainer's edits, reviewed; §12 read through
 
 - **Commit:** `Readable: §12.3, §13.1 — maintainer's edits, reviewed; R-TYP-10

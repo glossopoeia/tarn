@@ -1827,7 +1827,8 @@ layer scope. `[R-TYP-07]`
 > **Rationale.** One value, one encoding. Admitting "any nonzero byte
 > is true" would create 255 encodings of true, and channel entries
 > with identical meaning but different bytes: the two-encodings trap
-> §4.6 closes for names, closed here for fill.
+> §4.6 closes for names, closed here for fill. Readers need not screen
+> value bytes for it (§14.2, `[R-SER-08]`).
 
 #### 13.3 Unstored tiles read as fill
 
