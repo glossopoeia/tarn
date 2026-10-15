@@ -197,6 +197,46 @@ round.
 
 ## Entries
 
+### 2026-10-14 — §11.1: the Rationale in plain language, A's six lowercase keywords rewritten around
+
+- **Commit:** `Readable: §11.1 — the growth Rationale in plain language; the
+  §20.3 summary kept, the two stated-once sentences kept` (the commit
+  carrying this entry). Previous: `f96eb0b` (§10's lead-in).
+- **Sections:** §11.1, the Rationale after `[R-GEO-02]`. Non-normative; the
+  item held for the read-through since the §11 pass of 2026-10-09.
+- **The maintainer's ask:** "The rationale may need more plain language in
+  11.1, but the rest of 11.1 is fine." Proposed with before and after and
+  the inventory; approved ("Go").
+- **Edits.** The Rationale rewritten in plain sentences, every fact kept
+  in order: the schema-first purpose; §20.3 step 4 named as the rule
+  ("is §20.3 step 4's to say" for "states normatively, and governs") and
+  its summary kept item by item (extents grow and never shrink; a planar
+  channel list extended or shortened at its end, not both in one commit;
+  names; a slab or alignment declaration declared, changed or cleared;
+  several in one commit, each subject to every rule the resulting
+  declarations are under; every other declaration fixed while the layer
+  stores a tile, a change being a new layer or a rewrite; a layer that
+  stored no tile re-declared freely, not one the commit itself empties);
+  the two sentences stated nowhere else kept ("Growth is cheap where it
+  changes no grid count": the no-change growth and the one-rises-one-
+  stays-0 growth touch the directory alone; any other growth changes
+  entry_count and extent_length (`[R-CNT-17]`), renumbers ordinals where
+  `[R-GEO-06]` moves them, and re-emits the whole tile-index region
+  (§20.3, `[R-WRT-04]`), the last-zero-grid-count growth included). A's
+  six lowercase "may"s rewritten around ("is allowed to", "is extended",
+  "can be re-declared"); the two dash asides made a colon clause and a
+  "since" clause; "**only remaining**" reads "the last", unbolded.
+- **Removed restatements:** none; the §20.3 summary stays as a Rationale's
+  summary with the rule named.
+- **Reworded IDs:** none; a Rationale.
+- **Soft items:** `ID_REWORDED_LISTED` ×124; the carried items as before;
+  Rationales 13 against 13. Keyword counts unchanged. B is 4,784
+  lines and 48,680 words.
+- **Questions raised:** none. The maintainer asked why a channel count of
+  0 is barred; answered from ADR-0028 (a zero-channel layer has no sample
+  content; every channel-indexed formula degenerates; extent 0 and the
+  channel-list extension of §20.3 serve the schema-first case). No edit.
+
 ### 2026-10-14 — §10: the maintainer's edit, reviewed; §9 and §10 read through
 
 - **Commit:** `Readable: §10 — maintainer's edit, reviewed: the identifier

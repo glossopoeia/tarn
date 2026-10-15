@@ -1560,28 +1560,28 @@ array is empty. Readers MUST accept such a layer, and a read of any
 region of it returns no samples. `[R-GEO-02]`
 
 > **Rationale.** Empty layers serve schema-first workflows: declare
-> layers at creation, grow extents as data arrives. §20.3 states
-> normatively, and governs, what a commit may do to a layer that
-> already stored tiles in the generation a commit supersedes: its
-> extents may grow and not shrink; a planar layer's channel list may
-> be extended or shortened at its end, one or the other in a commit;
-> its names may change, and a
-> slab or alignment declaration may be declared, changed or
-> cleared; several of these in one commit, each subject to every rule
-> the declarations it produces are under; and every other declaration
-> is fixed while the layer stores a tile, a change to one being a new
-> layer or a whole-file rewrite. A layer that stored no tile in the
-> generation the commit supersedes may be re-declared freely, subject
-> to every rule its new declarations are under; a layer the commit
-> itself empties does not qualify. A growth that changes no grid count
-> ⌈Eᵢ / Tᵢ⌉ (§11.2) moves no entry and adds none, and taken alone
-> touches the directory alone; so does one that raises a grid count
-> while another stays 0, the product holding at 0 and the index empty
-> either way. Any other growth changes the index content — entry_count
-> and extent_length with it (`[R-CNT-17]`), and disk ordinals renumber
-> wherever `[R-GEO-06]` moves them — so the layer's whole tile-index
-> region is re-emitted (§20.3, `[R-WRT-04]`), the growth that raises
-> a zero-extent layer's **only remaining** zero grid count included.
+> the layers when the file is created and grow their extents as data
+> arrives. What a commit is allowed to change on a layer that already
+> stored a tile in the generation it supersedes is §20.3 step 4's to
+> say. In short: extents grow and never shrink; a planar layer's
+> channel list is extended or shortened at its end, not both in one
+> commit; names change; a slab or alignment declaration is declared,
+> changed or cleared; several of these in one commit, each subject to
+> every rule the resulting declarations are under; and every other
+> declaration stays fixed while the layer stores a tile, a change to
+> one being a new layer or a whole-file rewrite. A layer that stored
+> no tile in the superseded generation can be re-declared freely,
+> subject to every rule its new declarations are under, though not a
+> layer the commit itself empties. Growth is cheap where it changes no
+> grid count. A growth that leaves every ⌈Eᵢ / Tᵢ⌉ (§11.2) as it was
+> moves no index entry and adds none, so taken alone it touches the
+> directory alone; the same holds when one grid count rises while
+> another stays 0, since the product stays 0 and the index stays
+> empty. Any other growth changes the index: entry_count and
+> extent_length with it (`[R-CNT-17]`), and the disk ordinals renumber
+> wherever `[R-GEO-06]` moves them, so the commit re-emits the layer's
+> whole tile-index region (§20.3, `[R-WRT-04]`). That includes the
+> growth that raises the last zero grid count of a zero-extent layer.
 
 #### 11.2 Grid arithmetic
 
