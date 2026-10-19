@@ -242,6 +242,45 @@ round.
 
 ## Entries
 
+### 2026-10-19 — §15.4: a Rationale for segments; a bracket edit reverted
+
+- **Commit:** `Readable: §15.4 — a Rationale for segments: why, and that a
+  writer has no choice in them` (the commit carrying this entry).
+  Previous: `a183cf6` (§15.1).
+- **Sections:** §15.4, a Rationale added after `[R-IDX-04]`'s Note;
+  `[R-IDX-04]`'s paragraph unchanged in the end.
+- **The maintainer's edit, flagged and reverted.** The interval "[s·2¹⁶,
+  min((s+1)·2¹⁶, entry_count))" had been changed to end in "]". The
+  interval is half-open, the document's notation throughout and
+  ADR-0024's; closed, each segment would also hold the next segment's
+  first entry and the last would hold entry entry_count, which does not
+  exist. The inventory could not see it, `R-IDX-04` being listed: the
+  case the reading instruments exist for. Flagged; the maintainer:
+  "Restore the ')'". Restored.
+- **The maintainer's ask.** A rationale for segments, and whether they
+  are optional or mandatory for a file creator. The section stated the
+  mechanism and its Example the figures, but not the purpose or the
+  writer's position.
+- **Edit.** A Rationale after the "To use" Note: segments bound what a
+  reader verifies to use one entry; a single whole-index CRC would make
+  a remote reader fetch the whole index (about 19 MiB at a million tiles,
+  190 MiB at ten million); one CRC per 2¹⁶ entries plus the CRC over the
+  array bounds the fetch at one segment, 1.25 MiB, plus the array, both
+  ranges following from the layer record; segments are not an option a
+  writer takes or declines, every index under index_encoding 1 being laid
+  out so, the writer's whole duty one CRC per segment plus the CRC over
+  the array; at most 65,536 entries is one segment and one CRC, the naive
+  reader unchanged. Derived from the section's Example (339 KB; 1.25 MiB;
+  "the naive reader, unchanged"), the entry size and ADR-0024's context
+  (`[entry array: n × 20 B]`; the 19 MiB and 190 MiB figures are
+  entry_count × 20 bytes). New explanatory prose, for the round to grade.
+- **Removed restatements:** none.
+- **Reworded IDs:** none; `R-IDX-04`'s paragraph is as it was.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before;
+  Rationales 14 in B against A's 13 (the one added). Keyword counts
+  unchanged. B is 4,804 lines and 48,947 words.
+- **Questions raised:** none.
+
 ### 2026-10-19 — §15.1: the maintainer's edit, reviewed; R-IDX-01 listed; the opening re-wrapped
 
 - **Commit:** `Readable: §15.1 — maintainer's edit, reviewed: entries grouped

@@ -2173,6 +2173,22 @@ reject-layer. `[R-IDX-04]`
 > range once and cache the result, keyed as §9.3 licenses
 > (`[R-LIF-03]`).
 
+> **Rationale.** Segments bound what a reader verifies to use one
+> entry. Under a single CRC over the whole entry array,
+> verify-before-use (§8.2) would oblige a remote reader to fetch the
+> entire index to use any entry: about 19 MiB at a million tiles and
+> 190 MiB at ten million. With one CRC per 2¹⁶ entries and a CRC over
+> the CRC array, a reader fetches the array and the one segment
+> holding its entry, never more than 1.25 MiB plus the array at any
+> layer scale, and both ranges follow from the layer record alone.
+> Segments are not an option a writer takes or declines: every tile
+> index under index_encoding 1 is laid out this way, and a writer's
+> whole duty is one CRC per segment, full or partial, and the CRC over
+> the array. A layer of at most 65,536 entries has a single segment
+> and a single CRC, so its writer and the naive whole-index reader see
+> nothing they would not see under one CRC; the segmentation shows
+> only when an index outgrows that.
+
 The CRC-32C of a segment consisting of 2¹⁶ sentinel entries is
 `0xEECB3BB2`; writers of sparse layers MAY emit this constant for any
 **full** segment, one covering exactly 2¹⁶ entries, final or not,
