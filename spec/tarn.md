@@ -1949,15 +1949,15 @@ verifier, and it never arises in a conforming file, where the only
 bytes present are 0x00 and 0x01. `[R-SER-08]`
 
 > **Rationale.** The writer-side constraint and the reader-side
-> interpretation answer different questions, and the earlier text
-> answered only the first. One encoding per value is what keeps
-> §14.5's padding check, `[R-COD-10]`'s stride detection and
-> Appendix G's byte reproducibility working, so the constraint
-> stays. But leaving the return value undefined bought nothing: two
-> readers handed the same malformed tile could disagree about a
-> sample and both be conforming, which is the divergence this
-> document exists to prevent. Defining the charitable path costs
-> nothing, since a conforming file never exercises it.
+> interpretation answer different questions, and both need an answer.
+> One encoding per value is what keeps §14.5's padding check,
+> `[R-COD-10]`'s stride detection and Appendix G's byte
+> reproducibility working, so the constraint stands. Leaving the
+> return value undefined would buy nothing: two readers handed the
+> same malformed tile could disagree about a sample and both be
+> conforming, which is the divergence this document exists to prevent.
+> Defining the charitable path costs nothing, since a conforming file
+> never exercises it.
 
 > **Note.** The parallel constraint on a bool *fill* byte (§13.2)
 > needs no such rule: `[R-TYP-07]` assigns its detection to the reader

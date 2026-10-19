@@ -229,6 +229,33 @@ round.
 
 ## Entries
 
+### 2026-10-19 — §14.2: the boolean-byte Rationale without its history
+
+- **Commit:** `Readable: §14.2 — the boolean-byte Rationale argues the rule,
+  not the draft it replaced` (the commit carrying this entry). Previous:
+  `ff7bac9` (§14.1's layout paragraph).
+- **Sections:** §14.2, the Rationale after `[R-SER-08]`. Non-normative. At
+  the maintainer's ask ("should not mention 'earlier text'"); proposed
+  with before and after; approved ("Go").
+- **Edit.** The Rationale came in with ADR-0051 (`d8b8418`), which added
+  the reader's return rule to a §14.2 that carried only the writer's
+  constraint, and it argued against that draft: "and the earlier text
+  answered only the first", "so the constraint stays", "But leaving the
+  return value undefined bought nothing". Now: "and both need an answer",
+  "so the constraint stands", "Leaving the return value undefined would
+  buy nothing". The four reasons kept: the two questions differ; one
+  encoding per value serves §14.5's padding check, `[R-COD-10]`'s stride
+  detection and Appendix G's reproducibility; an undefined return lets
+  two conforming readers disagree on a sample; the charitable path costs
+  nothing. "Earlier text" occurs nowhere else in B.
+- **Removed restatements:** none. Word-level diff: "the earlier text
+  answered only the first", "stays", "But", "bought" lost; "both need an
+  answer", "stands", "would buy" gained.
+- **Reworded IDs:** none; a Rationale.
+- **Soft items:** `ID_REWORDED_LISTED` ×126; the carried items as before.
+  Keyword counts unchanged. B is 4,788 lines and 48,740 words.
+- **Questions raised:** none.
+
 ### 2026-10-19 — §14.1: the maintainer's edit to the layout field's paragraph, reviewed; R-SER-06 listed
 
 - **Commit:** `Readable: §14.1 — maintainer's edit, reviewed: the layout
