@@ -2038,10 +2038,12 @@ for its combination of layout and channel types. `[R-SER-09]`
 > **Rationale.** Bits inside a mixed sample tuple would need
 > per-sample packed sub-fields with their own offset arithmetic and
 > pad rules; single bytes keep the stride arithmetic uniform, and the
-> packed form remains available as a planar plane. A bool channel is
+> packed form remains available in planar layout. A bool channel is
 > deliberately expressible in both layouts so that co-located mask +
-> value tuples keep their schema type: a format that makes the honest
-> type inexpressible gets the dishonest one.
+> value tuples keep their schema type. Barred from interleaved layers,
+> a bool channel would be declared int8 instead, the same bytes with
+> the type label erased, and every consumer would inherit an untyped
+> 0/1 conversion.
 
 #### 14.5 Padding content
 

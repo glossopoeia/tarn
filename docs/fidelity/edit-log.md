@@ -229,6 +229,32 @@ round.
 
 ## Entries
 
+### 2026-10-19 — §14.4: the layout Rationale, the maintainer's edit and its epigram said plainly
+
+- **Commit:** `Readable: §14.4 — the layout Rationale: maintainer's edit
+  reviewed; ADR-0038's epigram in its own terms` (the commit carrying this
+  entry). Previous: `a02401c` (the merge of main's tarn_check message);
+  the spec's previous commit `770ffcb`.
+- **Sections:** §14.4, the Rationale. Non-normative.
+- **The maintainer's edit.** "the packed form remains available as a planar
+  plane" → "… remains available in planar layout". Same statement.
+- **The driver's edit, on the maintainer's observation that the last
+  sentence is vague.** "a format that makes the honest type inexpressible
+  gets the dishonest one" is ADR-0038's epigram (`f38b6ec`); the ADR's
+  context says what it means. Now: "A bool channel is deliberately
+  expressible in both layouts so that co-located mask + value tuples keep
+  their schema type. Barred from interleaved layers, a bool channel would
+  be declared int8 instead, the same bytes with the type label erased,
+  and every consumer would inherit an untyped 0/1 conversion." The
+  colon made a full stop; the epigram replaced by its content.
+- **Removed restatements:** none. Word-level diff: "as a planar plane"
+  and the epigram's words lost; "in planar layout", "int8", "type label
+  erased", "untyped 0/1 conversion" gained.
+- **Reworded IDs:** none; a Rationale.
+- **Soft items:** `ID_REWORDED_LISTED` ×127; the carried items as before.
+  Keyword counts unchanged. B is 4,789 lines and 48,753 words.
+- **Questions raised:** none.
+
 ### 2026-10-19 — §14.4, §2.2: the retired-identifier Note moved to where the rule is
 
 - **Commit:** `Readable: §14.4, §2.2 — the R-SER-04 withdrawal Note moved from
