@@ -152,8 +152,21 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   once); "MUST NOT return" a value from an unverified chain
   (`[R-TYP-09]`).
 
+- **§14** (read through 2026-10-19): `R-SER-01`, `-02`, `-03`, `-05`,
+  `-07`, `-08` listed by the spruce-up, `R-SER-06` and `R-SER-04` (the
+  withdrawal Note moved to §2.2) on the read-through; §14.1's bullets,
+  §14.2's and §14.4's Rationales re-cut. Candidate seeds: "value k is
+  channel (k mod C)'s value at in-tile ordinal k div C" (`[R-SER-01]`,
+  restated by §11.4's ordinals and §14.2's offsets: a flip tests reach);
+  "value k occupies bit k mod 8 of byte k div 8" and "⌈P/8⌉ bytes"
+  (`[R-SER-03]`); "MUST return 0x00 as false and every other byte as true"
+  (`[R-SER-08]`, stated once); "A reader MUST NOT reject a layer for its
+  combination of layout and channel types" (`[R-SER-09]`, stated once);
+  the pad bits "fixed by `[R-SER-05]`" to the channel's fill (restated at
+  row T5: a flip tests reach).
+
 Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14; §11 and
-§12 on 2026-10-15; §13 on 2026-10-19.
+§12 on 2026-10-15; §13 and §14 on 2026-10-19.
 
 **Fidelity round 1 ran on 2026-10-08** over B at `5220d1a`, the head of
 `readable` with §1 through §8 done (`wf_e2a8d709-b50`;
