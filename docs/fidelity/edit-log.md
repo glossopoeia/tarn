@@ -242,6 +242,27 @@ round.
 
 ## Entries
 
+### 2026-10-19 — §15.1: the maintainer's edit, reviewed; R-IDX-01 listed; the opening re-wrapped
+
+- **Commit:** `Readable: §15.1 — maintainer's edit, reviewed: entries grouped
+  in channel-major order; R-IDX-01 listed` (the commit carrying this
+  entry). Previous: `10d2c58` (the log: §14 done); the spec's previous
+  commit `586e412`.
+- **Sections:** §15.1, `[R-IDX-01]`'s paragraph; the opening paragraph
+  re-wrapped.
+- **The maintainer's edit.** "entry order is disk-ordinal order, so a
+  planar layer's entries group channel-major." → "… so a planar layer's
+  entries are grouped in channel-major order." Same statement; no keyword.
+- **Re-wrap.** The opening paragraph ("The owning scope of a layer's tile
+  index … is, contiguously:") had a ragged break at "the tile. Under" from
+  an earlier pass; re-wrapped to 72 columns, no word changed.
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-IDX-01`, listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×128 (the one new); the carried
+  items as before. Keyword counts unchanged. B is 4,788 lines and
+  48,756 words.
+- **Questions raised:** none.
+
 ### 2026-10-19 — §14.4: the layout Rationale, the maintainer's edit and its epigram said plainly
 
 - **Commit:** `Readable: §14.4 — the layout Rationale: maintainer's edit

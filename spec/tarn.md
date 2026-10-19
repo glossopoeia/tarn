@@ -2081,12 +2081,11 @@ it, and a violation is a validity error at tile scope. `[R-SER-05]`
 
 #### 15.1 Region and entry layout
 
-The owning scope of a layer's tile index is the layer; the owning
-scope of an individual entry, and of the stored tile it addresses, is
-the tile. Under
-index_encoding 1 (the only encoding this format major version defines,
-§7.4), the tile-index region addressed by the layer record's extent
-slot is, contiguously:
+The owning scope of a layer's tile index is the layer; the owning scope
+of an individual entry, and of the stored tile it addresses, is the
+tile. Under index_encoding 1 (the only encoding this format major
+version defines, §7.4), the tile-index region addressed by the layer
+record's extent slot is, contiguously:
 
 > [ entry array: entry_count × 20 bytes ] [ segment CRC array:
 > ⌈entry_count / 2¹⁶⌉ × 4 bytes ]
@@ -2101,7 +2100,7 @@ with no padding anywhere inside the region. Each entry is 20 bytes:
 
 The entry for the tile with disk ordinal k (§11.4) is the k-th entry,
 at region byte 20·k; entry order is disk-ordinal order, so a planar
-layer's entries group channel-major. `[R-IDX-01]`
+layer's entries are grouped in channel-major order. `[R-IDX-01]`
 
 #### 15.2 The sentinel
 
