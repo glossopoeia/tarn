@@ -2298,17 +2298,25 @@ the invariant failures of `[R-SLB-03]` are. `[R-SLB-04]`
 > modify a layer parse its full layer record, with the updater
 > obligations detailed in §20.
 
-> **Note — what slabs are, and are not.** A slab guarantees
-> *contiguity*: consecutive disk ordinals occupy consecutive bytes.
-> Which tiles are ordinal-consecutive is the linearization field's job
-> (§11.4); under row-major, a run is a band along the last-declared
-> dimension. Rectangular-window locality is therefore not a slab
-> property: it belongs to the reserved space-filling-curve
-> linearization values, under which the same slab machinery,
-> unchanged, would make compact windows contiguous. Slabs are the
-> byte-layout half of that future answer. With A_slab = 1 a slab is
-> contiguity-only, the right declaration for remote range coalescing
-> with no direct-I/O alignment need.
+> **Rationale.** A slab promises one thing, contiguity: within a run,
+> consecutive disk ordinals occupy consecutive bytes. A reader that
+> wants a run can therefore fetch it as one range, however many tiles
+> it holds and whatever their stored sizes, and a planner can size a
+> buffer and issue one direct read per run before it has fetched a
+> single index byte. A reader holding the index entries can always
+> detect contiguity by arithmetic; what the declaration adds is the
+> promise in advance, checkable by a verifier, with the index left as
+> it is, one entry per tile. Which tiles are consecutive in ordinal is
+> not the slab's business but the linearization field's (§11.4): under
+> row-major, a run is a band along the last-declared dimension. So a
+> slab does not by itself make a rectangular window contiguous; that
+> locality belongs to the reserved space-filling-curve linearization
+> values, under which the same slab machinery, unchanged, would make
+> compact windows contiguous. Slabs are the byte-layout half of that
+> future answer. A_slab adds alignment for direct I/O at each run's
+> start; with A_slab = 1 a slab is contiguity alone, the right
+> declaration for coalescing remote range requests when no direct-I/O
+> alignment is needed.
 
 > **Example.** The §11.2 layer (grid 4 × 8, N = 32, interleaved) with
 > S = 8, A_slab = 4096: four runs, ordinals [0, 8), [8, 16), [16, 24)

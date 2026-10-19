@@ -165,8 +165,20 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   the pad bits "fixed by `[R-SER-05]`" to the channel's fill (restated at
   row T5: a flip tests reach).
 
+- **§15** (read through 2026-10-19): `R-IDX-02`, `-03`, `-04`, `-05` listed
+  by the spruce-up, `R-IDX-01` on the read-through; a Rationale for
+  segments added to §15.4; a bracket edit that would have closed the
+  segment interval caught by hand (the inventory blind to it, `R-IDX-04`
+  being listed). Candidate seeds: "[s·2¹⁶, min((s+1)·2¹⁶, entry_count))"
+  (`[R-IDX-04]`, the half-open bound: a one-character flip inside a listed
+  paragraph, calibration 2's floor case); "A partial segment's CRC MUST
+  be computed" (`[R-IDX-05]`, stated once); "`0xEECB3BB2`" (`[R-IDX-05]`,
+  restated in §8's Note: a flip tests reach); "entry order is
+  disk-ordinal order" (`[R-IDX-01]`); the sentinel's "crc 0" (`[R-IDX-02]`,
+  restated at §15.3's table and L-rows).
+
 Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14; §11 and
-§12 on 2026-10-15; §13 and §14 on 2026-10-19.
+§12 on 2026-10-15; §13, §14 and §15 on 2026-10-19.
 
 **Fidelity round 1 ran on 2026-10-08** over B at `5220d1a`, the head of
 `readable` with §1 through §8 done (`wf_e2a8d709-b50`;
@@ -241,6 +253,41 @@ by this round, stand ruled from 2026-10-08. No edit to B follows from the
 round.
 
 ## Entries
+
+### 2026-10-19 — §16.2: the slab-scope Note made a Rationale with its motivations; §15 read through
+
+- **Commit:** `Readable: §16.2 — the slab-scope Note made a Rationale that
+  says what slabs are for` (the commit carrying this entry). Previous:
+  `39c2ff5` (§15.4's Rationale).
+- **Sections:** §16.2, the third labelled block, "Note — what slabs are,
+  and are not" (ADR-0022's scoping note), now a Rationale. §15 declared
+  done ("Section 15 is done"); added under "Ready for calibration 2".
+- **The maintainer's ask.** The Note "feels like it should be more of a
+  rational, and maybe written in clearer language or with more
+  motivations explained."
+- **Edit.** Relabelled Rationale and rewritten. The Note's five facts kept:
+  contiguity is the guarantee; which tiles are ordinal-consecutive is the
+  linearization field's job, a band under row-major; rectangular-window
+  locality belongs to the reserved space-filling-curve linearization
+  values, under which the same machinery would make compact windows
+  contiguous; slabs are the byte-layout half of that answer; A_slab = 1
+  is contiguity alone, for range coalescing. Added, the motivations: a
+  run fetched as one range whatever its tiles' sizes (the section's
+  Example, "two range requests regardless of stored-tile sizes"); a
+  planner sizing a buffer and issuing one direct read per run before any
+  index byte is fetched (ADR-0022's context, the promise known in
+  advance); arithmetic detection remaining to readers (`[R-SLB-03]`'s
+  "MAY instead detect contiguity arithmetically"), the declaration adding
+  the verifier-checkable promise with the index left per-tile (§15.1);
+  A_slab's alignment at a run's start for direct I/O (`[R-SLB-03]`, §16.1's
+  Note). New explanatory prose, for the round to grade.
+- **Removed restatements:** none.
+- **Reworded IDs:** none; a labelled block.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before;
+  Notes 55 and Rationales 15 in B against A's 61 and 13 (this block
+  relabelled, §15.4's added). Keyword counts unchanged. B is
+  4,812 lines and 49,058 words.
+- **Questions raised:** none.
 
 ### 2026-10-19 — §15.4: a Rationale for segments; a bracket edit reverted
 
