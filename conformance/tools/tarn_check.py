@@ -43,7 +43,7 @@ from pathlib import Path
 # --------------------------------------------------------------------------
 
 # §2.2 permanently retires a withdrawn identifier and never reassigns it.
-WITHDRAWN_IDS = {"R-SER-04": "§14.4 records the withdrawal"}
+WITHDRAWN_IDS = {"R-SER-04": "§2.2's Note records the withdrawal (§14.4's until 2026-10-19 in the readable edition)"}
 
 # §21 row labels are retired, never renumbered or reused, on the same discipline
 # §2.2 applies to requirement identifiers (ADR-0111; §24 [R-VEC-02]). A label
