@@ -1894,15 +1894,16 @@ fixed order. With P the sample-position count per tile (§11.2), C the
 channel count, and in-tile positions ordered by the permanent
 row-major in-tile ordinal (§11.4):
 
-- **Planar**: the tile with disk ordinal c · N + s (§11.4) carries
-  exactly the values of channel c at the tile's P positions: value k
-  of the sequence is channel c's value at in-tile ordinal k, and the
-  sequence has V = P values.
-- **Interleaved**: the tile at spatial ordinal s carries all C
-  channels at the tile's P positions, sample-major: value k of the
-  sequence is channel (k mod C)'s value at in-tile ordinal k div C,
-  with each sample's channel values adjacent in declared channel
-  order, and the sequence has V = P · C values. `[R-SER-01]`
+- **Planar**: the tile with disk ordinal c · N + s (§11.4) carries one
+  channel, c, at the tile's P positions and nothing else. Its sequence
+  runs through the positions in in-tile order: value k is channel c's
+  value at in-tile ordinal k. The sequence has V = P values.
+- **Interleaved**: the tile at spatial ordinal s carries every channel
+  at the tile's P positions. Its sequence is sample-major: it runs
+  through the positions in in-tile order and, within each position,
+  through the channels in declared order, so that value k is channel
+  (k mod C)'s value at in-tile ordinal k div C and each sample's channel
+  values sit together. The sequence has V = P · C values. `[R-SER-01]`
 
 The layer's layout field (§7.4) selects the mode. Field values: 0 is
 invalid; 1 = interleaved and 2 = planar are the only values this

@@ -142,8 +142,18 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   the element size is a valid fill" (`[R-TYP-05]`, restated at §13.2: a
   flip tests reach).
 
+- **§13** (read through 2026-10-15 to 2026-10-19, no edit but §13.2's
+  Rationale gaining the reader's exemption): `R-TYP-06`, `-08`, `-10`
+  listed. Candidate seeds: "MUST NOT substitute a type-derived default or
+  any other value" (`[R-TYP-06]`, stated once); "`0x00` (false) or `0x01`
+  (true)" (`[R-TYP-07]`, restated at §14.2 and row L35: a flip tests
+  reach); "MUST return … that channel's fill" for the sentinel
+  (`[R-TYP-08]`); "SHOULD record all-zero bytes" (`[R-TYP-10]`, stated
+  once); "MUST NOT return" a value from an unverified chain
+  (`[R-TYP-09]`).
+
 Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14; §11 and
-§12 on 2026-10-15.
+§12 on 2026-10-15; §13 on 2026-10-19.
 
 **Fidelity round 1 ran on 2026-10-08** over B at `5220d1a`, the head of
 `readable` with §1 through §8 done (`wf_e2a8d709-b50`;
@@ -218,6 +228,46 @@ by this round, stand ruled from 2026-10-08. No edit to B follows from the
 round.
 
 ## Entries
+
+### 2026-10-19 — §14.1: the two layout bullets in short sentences; §13 read through
+
+- **Commit:** `Readable: §14.1 — the value sequence's two bullets in short
+  sentences; R-SER-01's line extended` (the commit carrying this entry).
+  Previous: `58dd3bb` (§13.2's Rationale).
+- **Sections:** §14.1, the two bullets `[R-SER-01]` governs. At the
+  maintainer's ask ("the two bullets are pretty complexly stated, hard to
+  parse"); proposed with before and after and the inventory; approved
+  ("Go"). §13 declared done ("Section 13 is done"), no edits saved;
+  added under "Ready for calibration 2".
+- **Edits.** Each bullet now says in turn what the tile holds, how its
+  sequence runs, and its length.
+  1. Planar: "carries exactly the values of channel c at the tile's P
+     positions: value k of the sequence is channel c's value at in-tile
+     ordinal k, and the sequence has V = P values" → "carries one channel,
+     c, at the tile's P positions and nothing else. Its sequence runs
+     through the positions in in-tile order: value k is channel c's value
+     at in-tile ordinal k. The sequence has V = P values."
+  2. Interleaved: "carries all C channels at the tile's P positions,
+     sample-major: value k of the sequence is channel (k mod C)'s value at
+     in-tile ordinal k div C, with each sample's channel values adjacent in
+     declared channel order, and the sequence has V = P · C values" →
+     "carries every channel at the tile's P positions. Its sequence is
+     sample-major: it runs through the positions in in-tile order and,
+     within each position, through the channels in declared order, so that
+     value k is channel (k mod C)'s value at in-tile ordinal k div C and
+     each sample's channel values sit together. The sequence has V = P · C
+     values." Sample-major, used nowhere else, is spelled out before its
+     formula; "adjacent in declared channel order" becomes the order
+     clause and "sit together".
+  Every ordinal, formula, count and the §11.4 pointer kept; no keyword
+  in either bullet.
+- **Removed restatements:** none. Word-level diff: "exactly", "all",
+  "adjacent" and connectives lost; "one", "nothing else", "runs through",
+  "within each position", "sit together" gained.
+- **Reworded IDs:** `R-SER-01`, already listed; line extended.
+- **Soft items:** `ID_REWORDED_LISTED` ×125; the carried items as before.
+  Keyword counts unchanged. B is 4,788 lines and 48,741 words.
+- **Questions raised:** none.
 
 ### 2026-10-15 — §13.2: the fill Rationale says readers need not screen value bytes
 
