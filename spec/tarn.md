@@ -1905,11 +1905,11 @@ row-major in-tile ordinal (§11.4):
   (k mod C)'s value at in-tile ordinal k div C and each sample's channel
   values sit together. The sequence has V = P · C values. `[R-SER-01]`
 
-The layer's layout field (§7.4) selects the mode. Field values: 0 is
-invalid; 1 = interleaved and 2 = planar are the only values this
-specification defines and the only values a writer MAY emit; values
-3 through 255 are reserved without semantics. A reader MUST treat
-any value other than 1 or 2 as a validity error at layer scope
+The layer's layout field (§7.4) selects the mode. 1 = interleaved and
+2 = planar are the only values this specification defines for the field,
+and the only values a writer MAY emit; 0 is invalid, and values 3
+through 255 are reserved without semantics. A reader MUST treat any
+value other than 1 or 2 as a validity error at layer scope
 (`[R-CNT-23]`). `[R-SER-06]`
 
 #### 14.2 Byte layout and decoded size

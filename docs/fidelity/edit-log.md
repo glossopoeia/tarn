@@ -229,6 +229,34 @@ round.
 
 ## Entries
 
+### 2026-10-19 — §14.1: the maintainer's edit to the layout field's paragraph, reviewed; R-SER-06 listed
+
+- **Commit:** `Readable: §14.1 — maintainer's edit, reviewed: the layout
+  field's value set reordered; R-SER-06 listed` (the commit carrying this
+  entry). Previous: `b96560c` (§14.1's bullets).
+- **Sections:** §14.1, `[R-SER-06]`'s paragraph.
+- **The maintainer's edit.** "Field values: 0 is invalid; 1 = interleaved
+  and 2 = planar are the only values this specification defines and the
+  only values a writer MAY emit; values 3 through 255 are reserved
+  without semantics." → "1 = interleaved and 2 = planar are the only
+  values this specification defines for the field, and the only values a
+  writer MAY emit; 0 is invalid, and values 3 through 255 are reserved
+  without semantics." The defined values first, "for the field" added,
+  the invalid and reserved values after; the MAY and the reader's MUST
+  verbatim. Re-wrapped by the driver.
+- **Flagged and resolved.** The edit first read "0 is permanently
+  invalid". A says "0 is invalid" and makes no promise about future
+  versions for this field, as it makes none for the type and
+  linearization fields' zeros; "permanently" would have decided what A
+  leaves open (new content, a decision against A by ADR). The maintainer
+  dropped the word ("Drop permanently, Go").
+- **Removed restatements:** none.
+- **Reworded IDs:** `R-SER-06`, listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×126 (the one new); the carried
+  items as before. Keyword counts unchanged. B is 4,788 lines and
+  48,743 words.
+- **Questions raised:** none.
+
 ### 2026-10-19 — §14.1: the two layout bullets in short sentences; §13 read through
 
 - **Commit:** `Readable: §14.1 — the value sequence's two bullets in short
