@@ -229,6 +229,45 @@ round.
 
 ## Entries
 
+### 2026-10-19 — §14.4, §2.2: the retired-identifier Note moved to where the rule is
+
+- **Commit:** `Readable: §14.4, §2.2 — the R-SER-04 withdrawal Note moved from
+  §14.4 to §2.2; R-SER-04 listed` (the commit carrying this entry).
+  Previous: `52dbc95` (§14.2's Rationale).
+- **Sections:** §14.4 (the first Note, removed); §2.2 (a Note added after
+  the prefixes paragraph). Both non-normative. At the maintainer's ask
+  ("Can we remove the first note of section 14.4"); proposed as a move
+  after a trial showed a plain removal fails both gates; approved ("Go,
+  both").
+- **Why a move and not a cut.** `tarn_inventory.py`'s hard item requires
+  the identifier set of B to equal A's, and `[R-SER-04]` is in A's only
+  through this Note; `tarn_check`'s SPEC-02 fails a hole in a prefix's
+  numbering unless the identifier is recorded somewhere in the text, and
+  SPEC-01 requires a withdrawn one to have no definition site. The fact
+  therefore stays in B; §2.2, which states the retirement rule, is where a
+  reader would look for it.
+- **Edits.**
+  1. §14.4: "> **Note.** Identifier `[R-SER-04]`, which earlier governed
+     this subsection, is withdrawn; per §2.2 it is permanently retired and
+     never reassigned." removed. Added by ADR-0038 (`f38b6ec`), which
+     withdrew `[R-SER-04]` when interleaved bool values became single
+     bytes.
+  2. §2.2, after "existing prefixes are never reassigned.": "> **Note.**
+     One identifier is retired: `[R-SER-04]`, which once governed §14.4,
+     is withdrawn and never reassigned." The same fact in the same words
+     but for "per §2.2", which the placement makes redundant.
+- **Removed restatements:** none; a relocation. Notes unchanged in count.
+- **Reworded IDs:** `R-SER-04`, listed: the inventory takes the Note as the
+  withdrawn identifier's governing paragraph and sees it moved, which is
+  the case the list exists for; the identifier is defined nowhere in
+  either edition.
+- **Soft items:** `ID_REWORDED_LISTED` ×127 (the one new); the carried
+  items as before. Keyword counts unchanged. B is 4,787 lines and
+  48,735 words.
+- **Questions raised:** none. `tarn_check`'s WITHDRAWN_IDS message for
+  `R-SER-04` ("§14.4 records the withdrawal") is a string, not a check;
+  updated to §2.2 on `main` behind `gate.sh` and merged, the same day.
+
 ### 2026-10-19 — §14.2: the boolean-byte Rationale without its history
 
 - **Commit:** `Readable: §14.2 — the boolean-byte Rationale argues the rule,

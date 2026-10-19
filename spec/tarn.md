@@ -200,6 +200,9 @@ The prefixes:
 New prefixes are added by ADR when a section needs one; existing
 prefixes are never reassigned.
 
+> **Note.** One identifier is retired: `[R-SER-04]`, which once
+> governed §14.4, is withdrawn and never reassigned.
+
 #### 2.3 Conformance classes
 
 Conformance is defined for five classes.
@@ -2023,10 +2026,6 @@ serializing under §14.2 or §14.3 by its type alone, and interleaved
 layers carry any mix, numeric values at element size and bool
 values as single bytes (§14.2). A reader MUST NOT reject a layer
 for its combination of layout and channel types. `[R-SER-09]`
-
-> **Note.** Identifier `[R-SER-04]`, which earlier governed this
-> subsection, is withdrawn; per §2.2 it is permanently retired and
-> never reassigned.
 
 > **Note.** A single-channel numeric layer produces byte-identical
 > tile images under either layout. A single-channel bool layer does
