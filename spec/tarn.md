@@ -2508,22 +2508,20 @@ sample content, undetectable by construction (§21.7). `[R-COD-10]`
 
 #### 17.4 Certification under codecs
 
-The decoded-content obligations of §14 (`[R-SER-05]`,
-`[R-SER-08]`) require decoding. A verifier that cannot execute a
-layer's codec or filter cannot establish that layer's conformance
-and MUST NOT certify the file. That inability is not a finding that
-the file is nonconforming, and it fixes the file's verdict as
-*cannot establish* only where the verifier established no violation
-elsewhere (`[R-CNF-11]`). For a conforming reader that
-position arises only at a reserved or experimental value, every
-assigned codec and filter being core: it rejects the layer
-(`[R-COD-03]`, `[R-COD-09]`);
-software unable to execute an assigned codec or filter is not a
-conforming reader (`[R-CNF-03]`). `[R-COD-11]` The
-metadata-encoding space differs from the codec and filter spaces:
-an experimental-range document encoding in a conforming file is not
-a violation (§21.6), no document rule attaches to its extent, and
-certification is unaffected (`[R-MTA-10]`, §18.2).
+The decoded-content obligations of §14 (`[R-SER-05]`, `[R-SER-08]`)
+require decoding. A verifier that cannot execute a layer's codec or
+filter cannot establish that layer's conformance and MUST NOT certify
+the file. That inability is not a finding that the file is
+nonconforming, and it fixes the file's verdict as *cannot establish*
+only where the verifier established no violation elsewhere
+(`[R-CNF-11]`). For a conforming reader that position arises only at a
+reserved or experimental value, every assigned codec and filter being
+core: it rejects the layer (`[R-COD-03]`, `[R-COD-09]`); software unable
+to execute an assigned codec or filter is not a conforming reader
+(`[R-CNF-03]`). `[R-COD-11]` The metadata-encoding space differs from
+the codec and filter spaces: an experimental-range document encoding in
+a conforming file is not a violation (§21.6), no document rule attaches
+to its extent, and certification is unaffected (`[R-MTA-10]`, §18.2).
 
 ### 18. User Metadata
 

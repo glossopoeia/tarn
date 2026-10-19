@@ -177,8 +177,25 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   disk-ordinal order" (`[R-IDX-01]`); the sentinel's "crc 0" (`[R-IDX-02]`,
   restated at §15.3's table and L-rows).
 
+- **§16** (read 2026-10-19, "good for now"): `R-SLB-01` through `-05`
+  listed by the spruce-up; §16.2's scoping Note made a Rationale.
+  Candidate seeds: "512 ≤ A ≤ 2⁶²" (`[R-SLB-01]`, restated in Appendix B:
+  a flip tests reach); "runs never span channel blocks" (`[R-SLB-02]`,
+  stated once); "the first stored tile's offset satisfies offset mod
+  A_slab = 0" (`[R-SLB-03]`); "MUST either re-establish the invariants
+  for every such run, or clear the declaration" (`[R-SLB-04]`, stated
+  once).
+- **§17** (read 2026-10-19, "good for now"): `R-COD-01` through `-10`
+  listed by the spruce-up, `R-COD-11` untouched. Candidate seeds: "all
+  four are core" (`[R-COD-03]`, restated at §2.3 `[R-CNF-03]`: a flip
+  tests reach); "0x7E000000" (`[R-COD-07]`, restated at row L44);
+  "MUST NOT certify the file" for a codec it cannot execute
+  (`[R-COD-11]`, restated at §2.3's grounds and §21.6); the shuffle
+  mapping's inverse (`[R-COD-10]`, stated once).
+
 Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14; §11 and
-§12 on 2026-10-15; §13, §14 and §15 on 2026-10-19.
+§12 on 2026-10-15; §13, §14 and §15 on 2026-10-19; §16 and §17 the same day,
+"good for now".
 
 **Fidelity round 1 ran on 2026-10-08** over B at `5220d1a`, the head of
 `readable` with §1 through §8 done (`wf_e2a8d709-b50`;
@@ -253,6 +270,20 @@ by this round, stand ruled from 2026-10-08. No edit to B follows from the
 round.
 
 ## Entries
+
+### 2026-10-19 — §17.4 re-wrapped; §16 and §17 read through
+
+- **Commit:** `Readable: §17.4 — re-wrapped, no word changed` (the commit
+  carrying this entry). Previous: `03b5329` (§16.2's Rationale).
+- **Sections:** §17.4, its one paragraph (`[R-COD-11]`), ragged since the
+  §7 re-pointing of 2026-09-29; re-wrapped to 72 columns, the words
+  identical (asserted). §16 and §17 declared good by the maintainer
+  ("look good for now"); both added under "Ready for calibration 2".
+- **Removed restatements:** none.
+- **Reworded IDs:** none; the inventory reports no paragraph changed.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before.
+  Keyword counts unchanged. B is 4,810 lines and 49,058 words.
+- **Questions raised:** none.
 
 ### 2026-10-19 — §16.2: the slab-scope Note made a Rationale with its motivations; §15 read through
 
