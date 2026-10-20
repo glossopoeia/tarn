@@ -90,6 +90,12 @@ approved cut to the maintainer with both texts quoted, so all six are
 listed, the five ruled ones with their ruling and a pointer to the round
 that quoted them in full.
 
+*Ruled 2026-10-20.* The maintainer read the six with both texts and kept
+every cut ("Keep cut"); the rulings stand in the edit log's round-3
+paragraph, one sentence per item with the surviving location. Items 1
+through 5 stand ruled from 2026-10-08 and 2026-10-13. B is unchanged by
+them.
+
 1. **`[R-CNF-03]`'s experimental-range gloss** (`cmp-verifier-01` LOSS,
    `cmp-verifier-05` OBSERVATION; unanimous LOSS at triage, severity
    content; `LOSS_REFUTED` on refute, the refuter finding the derivation in §21.6's closing paragraph, which A's own clause cites and which is identical in both editions). A's conforming-reader item: *"carrying no top-level
@@ -181,6 +187,11 @@ by sentence against A's text and the log entry that records the
 derivation. Decision 3 lets B say what A implies only where the
 derivation is A's own text; the round grades anything else as an addition
 for the maintainer.
+
+*Ruled 2026-10-20.* §15.4's Rationale kept ("Keep"); §16.2's planner
+clause cut ("Cut") as `de6032c`, the Rationale otherwise unchanged; the
+`fd87472` hunk the word-diff preflight found recorded as `792a0b7`
+("Yes").
 
 1. **§15.4's Rationale for segments** (`swab-06` ADDITION; `swba-01`
    EQUIVALENT; the adversary's rejected candidate 3, EQUIVALENT; unanimous

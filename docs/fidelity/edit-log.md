@@ -308,6 +308,21 @@ findings and the one author finding are shared text of A, for the ledger.
 All eight graded items go to the maintainer with both texts, as decision
 4 says; none is changed in B by this round.
 
+**The maintainer's rulings, 2026-10-20: all six cuts kept, §15.4's
+Rationale kept, §16.2's clause cut, `fd87472`'s hunk recorded** ("Keep
+cut", "Keep", "Cut", "Yes"). `[R-CNF-03]`'s experimental-range gloss,
+§2.3's reach Note, §2.4's reject Note, §3.3's Note and §4.4's
+bit-numbering Note stand ruled from 2026-10-08 and 2026-10-13. The
+experimental-encoding carve-out cut from `[R-CNF-11]`'s grounds stays
+cut: the rule stands at §18.2 `[R-MTA-10]` in the cut clause's own words
+and at §17.4, §21.5, §9.7 and Appendix H. §15.4's segments Rationale
+stays: every figure and claim is A's own rule, Example and arithmetic.
+§16.2's planner clause is cut as `de6032c` ("Readable: §16.2 — the planner
+clause cut from the slab Rationale"), the entry above. The `fd87472` hunk
+is recorded as `792a0b7` ("Readable: log — fd87472's third hunk recorded;
+R-TYP-08's reason line"). The read-through at §18 waits on the
+maintainer's word.
+
 ## Entries
 
 ### 2026-10-20 — §16.2: the planner clause cut from the slab Rationale, on round 3's ruling
