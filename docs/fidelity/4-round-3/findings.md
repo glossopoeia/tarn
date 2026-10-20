@@ -598,10 +598,24 @@ fidelity findings.
    `evidence` optional with the four accepted at either level, and the
    brief showing the return's skeleton once. A harness change, on the
    maintainer's word, before round 4; `rebuild.py` and `collect-fidelity.py`
-   follow it.
+   follow it. *Paid 2026-10-20*, on the maintainer's word ("Fix the harness
+   for round 4"): the evidence object is optional in both return schemas
+   and requires no key inside it, the four fields are accepted at the top
+   level as well, a return without them is kept and its gap logged in the
+   result's `evidenceGaps`, every brief that wants them shows the return's
+   shape once, and every brief tells an agent whose return is rejected as
+   unparseable JSON to shorten its quotations and resend. The live schemas
+   were dumped and twelve return shapes checked against them: the exact
+   shape the B-into-A sweep lost this round now validates; an unknown key,
+   a missing required field and a bad enum are still rejected. Selftest,
+   preflight under the pin, the render and the path audit pass on the
+   changed harness, and the rendered briefs differ from this round's only
+   at the changed lines. The collection tools needed no change.
 2. **Round 2's two small debts are still unpaid**: probe R4's field names
    (*offset*, *length*), and the ACCESS rule naming `/tmp` as the shared
    directory it means, a third agent having written there this round.
+   *Paid 2026-10-20* with item 1: probe R4 reads "offset" and "length",
+   and both ACCESS blocks name `/tmp`.
 3. **For B, not the harness, after this round and on the maintainer's
    word**: §16.2's planner clause, kept with A's support stated or cut;
    and the entry for `fd87472` and `R-TYP-08`'s reason line recording the
