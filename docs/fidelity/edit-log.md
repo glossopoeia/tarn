@@ -639,7 +639,8 @@ All eight graded items go to the maintainer with both texts, as decision
 - **Commit:** `Readable: §12.3, §13.1 — maintainer's edits, reviewed; R-TYP-10
   listed` (the commit carrying this entry). Previous: `1309ac7` (the merge
   of main's Q-D7); the spec's previous commit `3ed24c3`.
-- **Sections:** §12.3, the channel-entry Example; §13.1, `[R-TYP-10]`.
+- **Sections:** §12.3, the channel-entry Example; §13.1, `[R-TYP-10]`;
+  §13.3, `[R-TYP-08]`'s paragraph (the third hunk, recorded 2026-10-20).
 - **The maintainer's edits.**
   1. §12.3's Example: "type float32, fill the quiet NaN `0x7FC00000` is the
      twelve bytes" → "type float32, with fill of the quiet NaN
@@ -647,10 +648,19 @@ All eight graded items go to the maintainer with both texts, as decision
   2. §13.1, `[R-TYP-10]`: "read back as a value consumers of the
      conventional zero default will not expect" → "… a value that
      consumers …". The SHOULD verbatim; same statement.
+  3. §13.3, `[R-TYP-08]`: "MUST return, for each channel the tile
+     carries, that channel's fill" → "MUST return (for each channel the
+     tile carries) that channel's fill". Punctuation only; the MUST's
+     words verbatim; the same statement. This hunk was in the commit and
+     not in this entry as written on 2026-10-15; round 3's word-diff
+     preflight found it (2026-10-20) and the maintainer had it recorded
+     ("Yes"), here and in `R-TYP-08`'s reason line.
 - **Read through.** §12 declared done by the maintainer ("section 12 is
   done"); added under "Ready for calibration 2".
 - **Removed restatements:** none.
-- **Reworded IDs:** `R-TYP-10`, listed.
+- **Reworded IDs:** `R-TYP-10`, listed. `R-TYP-08`, listed since the §13
+  spruce-up (`db2b575`), whose paragraph this commit also changed: its
+  reason line records the parentheses as of 2026-10-20.
 - **Soft items:** `ID_REWORDED_LISTED` ×125 (the one new); the carried
   items as before; the Example's numbers unchanged. Keyword counts
   unchanged. B is 4,786 lines and 48,710 words.
