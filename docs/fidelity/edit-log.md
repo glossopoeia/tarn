@@ -269,6 +269,45 @@ governing requirement identifier. Round 1's items 3 through 6, graded again
 by this round, stand ruled from 2026-10-08. No edit to B follows from the
 round.
 
+**Fidelity round 3 ran on 2026-10-20** over B at `0c3ab26`, the head of
+`readable` after the read-through of §9 through §17 (`wf_401e3f0b-8d4`;
+[4-round-3/findings.md](4-round-3/findings.md)): no seeds, the repository's
+`spec/tarn.md` as edition B against `main`'s spec at `fe30c96` as edition A
+(ADR-0133's erratum of 2026-10-14), 31 agents on `claude-sonnet-5`, 60
+minutes, the launch turn the single word "Go". Before the launch the
+word-diff preflight read every word lost or gained over the twenty-six
+commits since round 2 against their entries below
+([4-round-3/word-diff.md](4-round-3/word-diff.md)) and found no
+transcription defect; it found that `fd87472` carries a punctuation-only
+change to §13.3's `[R-TYP-08]` paragraph (commas to parentheses around
+"for each channel the tile carries") that its entry does not record and
+`R-TYP-08`'s reason line ("the MUST verbatim") does not mention. **No
+byte-level divergence.** Six groups were graded LOSS, unanimously, every
+one a cut of explanatory prose this log records: round 1's items 1, 3, 5
+and 6 and round 2's item 6, all ruled kept cut, and one new, the
+carve-out cut from `[R-CNF-11]`'s grounds on 2026-09-24 (the entry "§2.3
+verifier and updater items; the cannot-establish grounds moved to §21.6"
+below), that an experimental-range user-metadata encoding is not a
+cannot-establish ground, standing in B at §18.2 `[R-MTA-10]` in the cut
+clause's own words and at §17.4, §21.5, §9.7 and Appendix H; four of the
+six were overturned on refute and all six are EQUIVALENT by hand. Two
+groups were graded ADDITION, the Rationales added to §15.4 and §16.2 on
+2026-10-19: §15.4's states A's own rule, Example and arithmetic and is
+EQUIVALENT by hand; §16.2's carries one clause A's text does not support
+("a planner can size a buffer and issue one direct read per run before it
+has fetched a single index byte", where a run's offset and length come
+only from its index entries, `[R-SLB-01]`, `[R-SLB-03]`), an ADDITION by
+hand, non-normative, for the maintainer to reword with A's support stated
+or to cut. The rest of the read-through's new prose (§9.7's gloss, §13.2's
+sentence, §14.4's epigram, §11.1's Rationale, §9.2's and §9.3's Notes,
+§2.2's Note) was reported by no lane and is EQUIVALENT by hand against the
+entries that record its derivation. Two two-edition returns were lost at
+the validator on the missing evidence object and recovered from their
+transcripts; neither carried a LOSS or ADDITION. The ten blind-walk
+findings and the one author finding are shared text of A, for the ledger.
+All eight graded items go to the maintainer with both texts, as decision
+4 says; none is changed in B by this round.
+
 ## Entries
 
 ### 2026-10-19 — §17.4 re-wrapped; §16 and §17 read through

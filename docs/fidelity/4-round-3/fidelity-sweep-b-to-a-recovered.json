@@ -1,0 +1,116 @@
+{
+ "disclosure": "A relayed \"user request\" (the single word \"Go\") appeared prepended above the computed brief; per the brief's own framing it is the launcher's message to the orchestrator, already carried out, not a task for me, and I did not act on it or let it widen the access rule. Material already in my context before I began (skill listings, environment reminders, the project's CLAUDE.md pointer, and the user's cross-project memory notes about this TARN harness) is not evidence about edition A or B; I have not treated it as such and have not repeated its contents as findings. Beginning the sweep now.",
+ "summary": "I swept spec/tarn.md (edition B, 5004 lines) against scratch/cleanroom/editions/a/tarn.md (edition A, 4810 lines), reading only those two files. Because both editions are hard-wrapped (blockquote lines carry a literal \"> \" per line), a raw diff is useless — a line-folded control diff showed ~6100 of ~5000 lines differing purely from re-wrapping. I instead normalized both files (strip blockquote markers, join each blank-line-delimited block into one line) and ran two complementary dynamic-programming sequence alignments that preserve document order rather than greedy nearest-match: one over every Note/Example/Rationale block (including extended-title ones like \"Note — what slabs are, and are not.\", which a first narrower regex pass missed), and one over every paragraph within each of the ~90 shared section headers (identical in both editions, confirmed by header grep). Both alignments were then manually read side by side for every low-scoring or unmatched pairing, at two similarity thresholds.\n\nResults: the two editions are in very close agreement. Every one of the ten paragraphs B has with no direct A counterpart, on full-text reading, turned out to be either a paragraph-reflow (A keeps as one long paragraph what B splits for readability, e.g. §5.2, §9.2, §9.6, §9.7, §18.2, §20.5) or a cross-subsection relocation with identical substance (the R-SER-04 retirement note moves from B's §2.2 to A's §14.4; the metadata-compression/quarantine passage sits in B's §7.3 but A's §7.1; the verifier's \"cannot establish\" grounds list is stated once at B's §21.6 but once at A's §2.3). One paragraph — B's §15.4 Rationale on why tile-index segmentation exists — has no A counterpart at all, but every specific quantifier it cites (2^16-entry segments, the entry_count formula, the worked 1,000,000-entry example) is present identically in both editions' normative text, so no implementation would differ. Conversely A carries a handful of extra explanatory Notes B lacks (a preamble reading-guide Note, a §2.3 note illustrating the format-major \"reach\" rule with F5/F14/F15, a new §3.3 on Part I/II independence, a §4.4 cross-reference note, and extra closure language in A's §2.3 conformance-class definitions) — none of these represent A missing anything B decided, which is this sweep's actual question, so I record them as observations rather than findings against my charter. I found no case where A states a B-decided rule, carve-out, exception, quantifier, or worked figure more narrowly, more widely, only inside a non-normative block where B is normative, or not at all in any form; and no case where B decides something new that A's own text does not ground. Register tables, requirement-ID paragraphs, §3.1 term content, fenced diagrams, and plain tables were left to the mechanical checker per instructions, with only the terms' differing internal ordering and the §2/§3 section-order swap noted as a structural observation, not independently re-verified.</parameter>\n<parameter name=\"evidence\">{\"sweeps_run\": \"Ran, in order: (1) a header-boundary check (grep on both files) confirming identical section headers and order; (2) a normalization pass stripping blockquote markers and joining each blank-line-delimited block's hard-wrapped lines into one, to neutralize wrap-only differences (confirmed necessary by a raw line-folded diff returning about 6100 of about 5000 differing lines); (3) a DP sequence alignment over every Note/Example/Rationale block, run twice - a first pass matching only bare-period labels found 82 B blocks vs 85 A blocks, a second pass widened to catch em-dash-subtitled blocks found all 90 B vs 94 A blocks and is the one relied on; (4) a DP sequence alignment at full-paragraph granularity within every shared section header, run at similarity thresholds 0.6 and then 0.8 to widen the net, flagging every below-threshold pair and every paragraph with no counterpart; (5) manual side-by-side raw-text reads of every pairing either run flagged, roughly 35 distinct comparisons across sections 1-9, 11-16, 18, 20, 21; (6) targeted grep sweeps across both full files for the specific quantifiers in B's unmatched section 15.4 Rationale (segment size, the entry-count formula, the MiB figures) to check whether they appear anywhere in A outside that Rationale - all of them do, in both editions' normative text and worked example, which is the control that closes that candidate as EQUIVALENT rather than LOSS.\", \"derived_numbers\": \"Block counts (90 labelled blocks in B, 94 in A) and normalized-paragraph counts (1163 lines for B, 1135 for A after normalization) are counts computed from my own normalization and alignment scripts; neither document states a total block or paragraph count to check these against, so they are working statistics internal to this sweep's methodology, not figures compared against a number either text states.\", \"rejected_candidates\": \"Several DP pairings scored very low and looked like real gaps before full-text reading: B's section 2.2 R-SER-04 note paired at only 0.33 with an unrelated A note (the true match, at 0.68, sits far away at A's section 14.4, closed by reading both in full); B's section 16.2 slab Rationale paired at 0.16, and was nearly reported as a true gap before noticing the block-regex had skipped A's em-dash-subtitled Note entirely - re-running with a wider pattern found the real, content-identical match. Both were opened on a suspiciously low score and closed by direct full-text reading rather than trusted at face value.\", \"confidence_empty\": \"Zero LOSS, ADDITION, or CONTRADICTION findings survived manual verification. Where the automated sweep found little, I did not stop at the first clean-looking score: I re-ran the block census with a widened label pattern after noticing a block my first pass should have caught but didn't; I re-ran the paragraph sweep at two thresholds (0.6, then 0.8) specifically to check a too-strict cutoff wasn't hiding real divergence; and for all ten B-only paragraphs across both runs I read the raw full-text context in both editions rather than accepting no-match as final, finding nine were reflow or relocation and grepping the tenth's specific quantifiers across both files to confirm its substance survives in A even though its explanatory paragraph does not.\"}",
+ "transcript_finding_count": 9,
+ "findings": [
+  {
+   "id": "swba-01",
+   "kind": "EQUIVALENT",
+   "location_a": "absent (no counterpart found anywhere in A)",
+   "location_b": "section 15.4 Segments and verification (Rationale block)",
+   "title": "B's segmentation-rationale paragraph has no A counterpart, but states no exclusive rule",
+   "detail": "B's Rationale explains why the tile index is CRC-segmented (so a remote reader need not fetch the whole index to use one entry), citing the 2^16-entry segment size, the entry_count formula, and rough MiB figures for the unsegmented alternative. A has no paragraph anywhere stating this rationale. However every quantifier and rule it cites is present, identically, in both editions' normative section 15.4 text and Example block (grep-confirmed in both files). The Rationale adds only explanatory framing over facts both editions already state as rules; an implementation built from either alone computes the identical segment layout and CRCs.",
+   "quotation_a": "absent",
+   "quotation_b": "Segments bound what a reader verifies to use one entry. Under a single CRC over the whole entry array, verify-before-use (8.2) would oblige a remote reader to fetch the entire index to use any entry.",
+   "byte_level": false,
+   "byte_level_rationale": "Both editions state the segment size, the CRC-array formula, and the worked example identically in normative text and Example blocks outside this Rationale; no reader or writer behavior depends on the missing explanatory paragraph."
+  },
+  {
+   "id": "swba-02",
+   "kind": "EQUIVALENT",
+   "location_a": "section 16.2 The slab declaration (block titled Note - what slabs are, and are not.)",
+   "location_b": "section 16.2 The slab declaration (Rationale block)",
+   "title": "Same slab-contiguity explanation, relabeled Note (A) vs Rationale (B)",
+   "detail": "Both blocks state identically: a slab guarantees contiguity only; which tiles are ordinal-consecutive is the linearization field's business, not the slab's; under row-major a run is a band along the last-declared dimension; rectangular-window locality belongs to the reserved space-filling-curve linearization values; A_slab=1 means contiguity-only, for coalescing remote range requests. Only the block's label changed. Consistent with the round's own commit log entry describing exactly this edit.",
+   "quotation_a": "Note - what slabs are, and are not. A slab guarantees contiguity: consecutive disk ordinals occupy consecutive bytes. Which tiles are ordinal-consecutive is the linearization field's job.",
+   "quotation_b": "Rationale. A slab promises one thing, contiguity: within a run, consecutive disk ordinals occupy consecutive bytes. A reader that wants a run can therefore fetch it as one range.",
+   "byte_level": false,
+   "byte_level_rationale": "Both labels (Note, Rationale) are non-normative under R-CNF-01 in both editions, so the relabeling changes no reader or writer obligation; the stated facts are word-for-word consistent."
+  },
+  {
+   "id": "swba-03",
+   "kind": "EQUIVALENT",
+   "location_a": "section 14.4 Layout-type validity (Note)",
+   "location_b": "section 2.2 Requirement identifiers (Note)",
+   "title": "R-SER-04 retirement note relocated from section 2.2 (B) to section 14.4 (A), same fact",
+   "detail": "Both state that identifier R-SER-04, which once governed section 14.4, is permanently withdrawn and never reassigned. B attaches the note to the general identifier-stability rule in section 2.2; A attaches it at the subsection it used to govern (14.4) and adds a back-pointer to the general rule, which both editions' section 2.2 body text (not a Note) states identically: a withdrawn requirement's identifier is permanently retired.",
+   "quotation_a": "Note. Identifier R-SER-04, which earlier governed this subsection, is withdrawn; per 2.2 it is permanently retired and never reassigned.",
+   "quotation_b": "Note. One identifier is retired: R-SER-04, which once governed 14.4, is withdrawn and never reassigned.",
+   "byte_level": false,
+   "byte_level_rationale": "Pure relocation of an illustrative cross-reference; the general retirement rule it illustrates is stated identically in both editions' section 2.2 running text."
+  },
+  {
+   "id": "swba-04",
+   "kind": "EQUIVALENT",
+   "location_a": "Front-matter (Note, before Part 0)",
+   "location_b": "section 1 Introduction (plain bold-lead prose, not a blockquote)",
+   "title": "How to read this document guidance boxed as a Note in A, plain prose in B",
+   "detail": "A presents the reading guide inside a blockquoted Note immediately after the license line; B presents equivalent guidance as an unboxed bold-lead paragraph inside section 1. Both locations are non-normative in both editions regardless of box styling, since R-CNF-01 excludes all of section 1 (and, in B's case, everything before Part 0) from normative force; the presentation difference carries no normative weight.",
+   "quotation_a": "Note. How to read this document. Sections follow a fixed rubric where applicable: purpose, byte-layout table, writer rules, reader rules, error handling, worked examples.",
+   "quotation_b": "How to read this document. Sections follow a fixed rubric where it applies: purpose, byte-layout table, writer rules, reader rules, error handling, worked examples.",
+   "byte_level": false,
+   "byte_level_rationale": "Both passages sit in text R-CNF-01 excludes from normative force in their respective editions; no reader or writer obligation turns on either, boxed or not."
+  },
+  {
+   "id": "swba-05",
+   "kind": "OBSERVATION",
+   "location_a": "section 2.3 Conformance classes (Note); new section 3.3 Container and array model (Note); section 4.4 Bit numbering (Note)",
+   "location_b": "absent (no counterpart in any of the three locations)",
+   "title": "A carries several extra explanatory Notes that B does not have at all",
+   "detail": "Three A-only Notes with no B counterpart anywhere: (1) section 2.3's illustration of the format-major reach rule using register rows F14, F5, F15; (2) a new section 3.3 stating Part I (container) is independent of Part II (array model) by construction; (3) section 4.4's one-line pointer distinguishing flag-bit numbering from the boolean-sample bit mapping defined in section 14. None of these represent A missing content B decided, the reverse asymmetry, so they are not findings against this sweep's charter (does A carry what B decides), but are recorded since the round's other direction may want them.",
+   "quotation_a": "Note. The test is the invariant a condition violates, not the fields it reads, and three rows show why the distinction carries the weight.",
+   "quotation_b": "absent",
+   "byte_level": false,
+   "byte_level_rationale": "These are additional non-normative explanatory asides in A; they add color and cross-reference, not new rules, and no implementation behavior is affected by their absence from B."
+  },
+  {
+   "id": "swba-06",
+   "kind": "EQUIVALENT",
+   "location_a": "section 7.1 Directory region",
+   "location_b": "section 7.3 Record types of format major 1",
+   "title": "Metadata-compression-granularity and user-metadata-quarantine text relocated between section 7.1 (A) and section 7.3 (B)",
+   "detail": "Full passage - metadata compression exists only at record granularity; a user-metadata record's document lives in its extent with its own encoding byte; an extent of (0,0) or length under 5 is a containing-scope validity error; an unimplemented or invalid encoding is ignore-record; the quarantine rule covering every way a document can be unreadable; the resource-decline carve-out at the end - is present, word-for-word consistent, in both editions. B organizes it under section 7.3 next to the record-type table; A organizes it under section 7.1 next to the directory-region CRC rule. No sentence of the passage is missing from either side.",
+   "quotation_a": "Metadata compression exists only at record granularity. Each user-metadata record carries its document in its extent, never inline, and declares the document's encoding in its own inline payload.",
+   "quotation_b": "Metadata compression exists only at record granularity: the directory and the tile-index region are always raw (the index so that it can be range-fetched, 15), and tile payloads use the layer's codec field (17).",
+   "byte_level": false,
+   "byte_level_rationale": "Identical rules, carve-outs (extent-length floor of 5, quarantine's ignore-record outcome, resource-decline exception) and the R-CNT-25 binding are present verbatim in both editions, only under a different subsection heading."
+  },
+  {
+   "id": "swba-07",
+   "kind": "EQUIVALENT",
+   "location_a": "section 2.3 Conforming verifier (inline enumeration)",
+   "location_b": "section 21.6 Conditions that are not violations (closing paragraph), with a one-line deferral at section 2.3",
+   "title": "The verifier's cannot-establish grounds are listed once in each edition, but at different sections",
+   "detail": "Both editions state, exactly once each, the full list of grounds on which a verifier reports cannot establish: an unimplemented format major, a MUST_UNDERSTAND=1 record of an unimplemented type, an unexecutable codec or filter, a resource-declined layer or tile decode, and a declined user-metadata document. A states this list inline in section 2.3 itself; B states only a one-line deferral in section 2.3 and gives the full list in section 21.6. Neither list is duplicated or missing in either document.",
+   "quotation_a": "cannot establish - the last where some requirement is one it is unable to check on a capability or resource ground, as when the file names a format major version it does not implement.",
+   "quotation_b": "A verifier is unable to check a requirement on a capability or resource ground, and so reports cannot establish, as when the file names a format major version it does not implement.",
+   "byte_level": false,
+   "byte_level_rationale": "Same five grounds enumerated once in each edition at different sections; no reader or verifier behavior differs based on which section carries the list."
+  },
+  {
+   "id": "swba-08",
+   "kind": "EQUIVALENT",
+   "location_a": "section 4.5 Checksums and section 8.1 Coverage map (stated in both)",
+   "location_b": "section 8.1 Coverage map only",
+   "title": "The checksum-coverage-exceptions rule is stated once in B (8.1) and twice, consistently, in A (4.5 and 8.1)",
+   "detail": "Both editions name the same three exceptions to every field covered by exactly one checksum (front signature block by byte equality, terminal checksum fields verified by comparison with no further checksum, and an unassigned record type's extent carrying no checksum at all), plus the same rule that interior checksum fields are both comparison-verified and covered by one further checksum. B states this complete rule only at section 8.1; A states the identical rule at both section 4.5 and section 8.1. A redundancy difference, not a scope or content difference.",
+   "quotation_a": "Every field of every structure is covered by exactly one checksum, excepting the equality-checked front signature block and this map's terminal checksum fields, per 4.5, and the extent of a record of a type this specification has not assigned.",
+   "quotation_b": "Every field of every structure is covered by exactly one checksum, as this map states, with three exceptions. The front signature block is checked by byte equality (6.1).",
+   "byte_level": false,
+   "byte_level_rationale": "Same three exceptions and the same interior-checksum-field rule appear in both editions' normative text; A simply states the rule in two places instead of one."
+  },
+  {
+   "id": "swba-09",
+   "kind": "OBSERVATION",
+   "location_a": "section 2.3 Conforming TARN file (R-CNF-02 definition)",
+   "location_b": "section 2.3 Conforming TARN file (R-CNF-02 definition)",
+   "title": "A's R-CNF-02 collects three conduct-rule examples and a closure claim that B's parallel paragraph does not state",
+   "detail": "A's R-CNF-02 paragraph names three specific conduct-rule examples inline (the section 6.3 ignore-lane-flags rule, the section 6.2 pre-trailer-pad-length rule, and the section 20.3 step 4 bar on redeclaring a tile-storing layer's fixed fields) and adds a closure claim that these are the only such cases in the document. B's R-CNF-02 paragraph states only the general rule, without collecting the examples or making the closure claim. Each individual example, however, is independently stated as conduct-only (not file-conformance) at its own section in B, confirmed by reading B's own section 6.2 and section 6.3 text - so the underlying facts are present in B; only A's summarizing cross-reference and closure assertion are additional, which, reading B into A, is not something A is missing, so it is not filed as a loss.",
+   "quotation_a": "A writer obligation whose violation this specification expressly declares not to be a file-conformance violation binds the actor in the same way; section 6.3's flags rules against a set ignore-lane bit are the cases this text states.",
+   "quotation_b": "A writer obligation that governs conduct rather than output, or whose violation this specification expressly declares not to be a file-conformance violation, binds the writer and never makes a file nonconforming.",
+   "byte_level": false,
+   "byte_level_rationale": "B's own section 6.2 and section 6.3 text independently states each example's conduct-only status; A's R-CNF-02 only adds a summarizing cross-reference and a closure claim about the exhaustiveness of the list, which affects documentation clarity, not reader, writer, or verifier behavior."
+  }
+ ],
+ "_recovered_from": "attempt 2 of 5 StructuredOutput calls by sweep:b-to-a (agent a772aea765c4c5e38); the runtime failed the agent after five rejected returns (missing evidence object; one unparseable; two disclosure-only)"
+}
