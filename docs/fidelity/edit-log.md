@@ -310,6 +310,36 @@ All eight graded items go to the maintainer with both texts, as decision
 
 ## Entries
 
+### 2026-10-20 — §16.2: the planner clause cut from the slab Rationale, on round 3's ruling
+
+- **Commit:** `Readable: §16.2 — the planner clause cut from the slab
+  Rationale (round 3's ruling)` (the commit carrying this entry).
+  Previous: `3dc3968` (round 3's artifacts); the spec's previous commit
+  `0c3ab26`.
+- **Sections:** §16.2, the Rationale (the block of `03b5329`).
+  Non-normative.
+- **The ruling.** Round 3's hand-check found one clause of the Rationale
+  that A's text does not support: "and a planner can size a buffer and
+  issue one direct read per run before it has fetched a single index
+  byte". A gives a run's offset and length only from its index entries
+  (`[R-SLB-01]`: "offsets are always explicit"; `[R-SLB-03]`: "stays
+  decidable from the index entries alone"); what the declaration gives in
+  advance is that each run is one range, not where it lies. The entry of
+  2026-10-19 had derived the clause from ADR-0022's context, which is not
+  A's text. The maintainer, on the round's report: "Cut" (2026-10-20).
+- **Edit.** The clause removed; the sentence now ends "however many tiles
+  it holds and whatever their stored sizes." The rest of the block
+  unchanged in words; re-wrapped to 70 columns inside the blockquote.
+- **Removed restatements:** none. Word-level diff: the clause's words
+  lost ("a" ×3, "and" ×2, "planner", "can", "size", "buffer", "issue",
+  "one", "direct", "read", "per", "run", "before", "it", "has",
+  "fetched", "single", "index", "byte"); nothing gained.
+- **Reworded IDs:** none; a Rationale.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before;
+  Notes 55, Rationales 15 and Examples 34 in B against A's 61, 13 and 34.
+  Keyword counts unchanged. B is 4,808 lines and 49,034 words.
+- **Questions raised:** none.
+
 ### 2026-10-19 — §17.4 re-wrapped; §16 and §17 read through
 
 - **Commit:** `Readable: §17.4 — re-wrapped, no word changed` (the commit
