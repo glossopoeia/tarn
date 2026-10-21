@@ -325,6 +325,34 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §18.2: the maintainer's edit to the content-size paragraph's last sentence, reviewed
+
+- **Commit:** `Readable: §18.2 — maintainer's edit, reviewed: the transposed
+  tile rule's tail cut` (the commit carrying this entry). Previous:
+  `9338b94` (the content-size mismatch sentence), also the spec's
+  previous commit.
+- **Sections:** §18.2, the content-size paragraph of the `[R-MTA-09]`
+  split (no ID of its own), its last sentence. Non-normative tail of a
+  paragraph whose keyword clause is untouched.
+- **The maintainer's edit.** "it is the tile rule of `[R-COD-06]`
+  transposed to the quantity a document does have, its decoded length,
+  in place of the declared size it does not." → "it is the tile rule of
+  `[R-COD-06]` transposed to the document's decoded length." Same
+  statement: the transposition names the same quantity. The dropped
+  contrast's reason, that a document has no declared size, stands two
+  paragraphs above ("The decoded-size exception holds because a document
+  has no declared size, which is why the bound above is the reader's own
+  and not the file's"), identical in A. A first version read "documents";
+  the possessive came back on the driver's note.
+- **Removed restatements:** none of a rule; an explanatory contrast cut,
+  its point standing in the decoded-size-exception paragraph. Word-level
+  diff: "quantity a document does have, its", "in place of the declared
+  size it does not" lost; "document's" gained.
+- **Reworded IDs:** none; the paragraph carries no ID.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before.
+  Keyword counts unchanged. B is 4,806 lines and 49,010 words.
+- **Questions raised:** none.
+
 ### 2026-10-21 — §18.2: the content-size mismatch sentence said directly; §18.1 read through
 
 - **Commit:** `Readable: §18.2 — the content-size mismatch sentence said

@@ -2614,8 +2614,7 @@ mismatch breaks a frame constraint and is R4's row, not R3's. The
 frame decodes; its header misstates the decoded length. Routing it to
 R4 keeps the condition checkable from the bytes alone rather than
 turning on a decoder's tolerance (`[R-CNF-02]`); it is the tile rule
-of `[R-COD-06]` transposed to the quantity a document does have, its
-decoded length, in place of the declared size it does not.
+of `[R-COD-06]` transposed to the document's decoded length.
 
 A **verifier** that declines to decode a document on either bound
 above cannot establish that document's conformance and MUST NOT
