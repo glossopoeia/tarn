@@ -2610,13 +2610,12 @@ the `Window_Size` row.
 The frame's content-size field, unlike the decoded size and the
 window, is *not* left to the reader: it MAY be present, and when
 present it MUST equal the byte length of the decoded document. A
-mismatch is one of the frame constraints R4 registers, not a failure
-to decode under R3: the bytes decode, and what is wrong is what the
-header said about them. Routing it to R4 keeps the condition checkable
-from the bytes alone rather than turning on a decoder's tolerance
-(`[R-CNF-02]`); it is the tile rule of `[R-COD-06]` transposed to the
-quantity a document does have, its decoded length, in place of the
-declared size it does not.
+mismatch breaks a frame constraint and is R4's row, not R3's. The
+frame decodes; its header misstates the decoded length. Routing it to
+R4 keeps the condition checkable from the bytes alone rather than
+turning on a decoder's tolerance (`[R-CNF-02]`); it is the tile rule
+of `[R-COD-06]` transposed to the quantity a document does have, its
+decoded length, in place of the declared size it does not.
 
 A **verifier** that declines to decode a document on either bound
 above cannot establish that document's conformance and MUST NOT

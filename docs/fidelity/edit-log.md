@@ -325,6 +325,44 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §18.2: the content-size mismatch sentence said directly; §18.1 read through
+
+- **Commit:** `Readable: §18.2 — the content-size mismatch sentence said
+  directly` (the commit carrying this entry). Previous: `3a6f7e5` (the
+  log: round 3's harness debts paid); the spec's previous commit
+  `de6032c`.
+- **Sections:** §18.2, the content-size paragraph of the `[R-MTA-09]`
+  split (no ID of its own). §18.1 declared good by the maintainer
+  ("Section 18.1 is good", 2026-10-20), no edit; §18 joins the stretch
+  list when its last subsection is done.
+- **The maintainer's ask.** The sentence "A mismatch is one of the frame
+  constraints R4 registers, not a failure to decode under R3: the bytes
+  decode, and what is wrong is what the header said about them" is "one
+  of those AI-sounding sentences that tries to say too much without
+  overstating and ends up sounding like a tautology"; a more direct
+  phrasing. Proposed with before and after, the inventory and the word
+  diff (`pass/s18b.json`, `proposals/s18b-content-size.md`); approved
+  ("Go").
+- **Edit.** "A mismatch breaks a frame constraint and is R4's row, not
+  R3's. The frame decodes; its header misstates the decoded length." The
+  routing kept in R4's own words (its condition cell: "breaks one of the
+  frame constraints §18.2 states"); the reason kept, that decoding
+  succeeds and the header's claim is what is false, "misstates the
+  decoded length" being the field's own definition one sentence earlier
+  ("MUST equal the byte length of the decoded document"). The normative
+  sentence before and the "Routing it to R4" sentence after are
+  unchanged; rows R3 and R4 are identical in both editions.
+- **Removed restatements:** none. Word-level diff: "one of the frame
+  constraints R4 registers", "failure to decode under", "the bytes",
+  "what is wrong is what the header said about them" lost; "breaks a
+  frame constraint", "R4's row", "R3's", "decodes", "its header misstates
+  the decoded length" gained; the paragraph 112 → 102 words.
+- **Reworded IDs:** none; the paragraph carries no ID (the parked ADR
+  candidate for the split stands).
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before.
+  Keyword counts unchanged. B is 4,807 lines and 49,024 words.
+- **Questions raised:** none.
+
 ### 2026-10-20 — §16.2: the planner clause cut from the slab Rationale, on round 3's ruling
 
 - **Commit:** `Readable: §16.2 — the planner clause cut from the slab
