@@ -325,6 +325,48 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §18.2: the carried-over frame constraints as a colon list of "that" clauses
+
+- **Commit:** `Readable: §18.2 — the carried-over constraints as a colon
+  list` (the commit carrying this entry). Previous: `5441ddc` (the
+  maintainer's edit to the content-size paragraph), also the spec's
+  previous commit.
+- **Sections:** §18.2, the encoding-2 paragraph of the `[R-MTA-09]`
+  split (no ID of its own), its third sentence.
+- **The maintainer's ask.** The sentence "Carried over, named for
+  convenience and not as a closed list, are the frame magic; no
+  skippable frame and no second frame; …" "needs some restructure and
+  clarity". A first proposal led with the hedge and listed the five items
+  after a colon in a uniform "no" form; the maintainer asked whether
+  "include: … no skippable frame" reads as "not included", which it can
+  (the original has the same ambiguity, hidden by its inversion). Second
+  proposal, with each item a "that" clause saying what the constraint
+  requires; approved ("Go").
+- **Edit.** "For convenience, and not as a closed list, the constraints
+  carried over include: that the frame begins with the frame magic; that
+  there is no skippable frame and no second frame; that no dictionary is
+  used, disclosed or not, and no nonzero dictionary ID is carried; that
+  the content-checksum flag is not set; and that no buffer is sized from
+  a length the frame itself declares." The five items are `[R-COD-06]`'s
+  five, each in that rule's terms (begins with the compressed-frame
+  magic; a skippable frame or a second frame an error; no dictionary
+  whether or not disclosed and no nonzero dictionary ID; the
+  content-checksum flag not set; no buffer sized from the declared
+  length); "not as a closed list" kept, being the clause that stops a
+  reader taking the list as the rule. The binding sentence before ("under
+  every frame constraint `[R-COD-06]` places on a frame, named here or
+  not, save two") and the "Two of those" sentence after are unchanged.
+- **Removed restatements:** none. Word-level diff: "Carried over, named
+  for … are", "use", "the bar on sizing any" lost; "For convenience",
+  "the constraints carried over include", the five "that" clauses with
+  "begins with", "there is", "is used", "is carried", "is not set", "is
+  sized" gained.
+- **Reworded IDs:** none; the paragraph carries no ID (the parked ADR
+  candidate for the split stands).
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before.
+  Keyword counts unchanged. B is 4,807 lines and 49,026 words.
+- **Questions raised:** none.
+
 ### 2026-10-21 — §18.2: the maintainer's edit to the content-size paragraph's last sentence, reviewed
 
 - **Commit:** `Readable: §18.2 — maintainer's edit, reviewed: the transposed

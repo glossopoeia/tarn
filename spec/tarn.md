@@ -2574,13 +2574,14 @@ occupying the extent's bytes before its terminal CRC, under every
 frame constraint `[R-COD-06]` places on a frame, named here or not,
 save two: what it states against a tile's declared decoded size, and
 what it states about the frame's declared `Window_Size`. This section
-replaces both, below. Carried over, named for convenience and not as a
-closed list, are the frame magic; no skippable frame and no second
-frame; no dictionary use, disclosed or not, and no nonzero dictionary
-ID; no content-checksum flag; and the bar on sizing any buffer from a
-length the frame itself declares. Two of those fall outside the
-register, on the two distinct grounds §21.7 separates, and R4
-registers neither: dictionary use the header does not disclose is a
+replaces both, below. For convenience, and not as a closed list, the
+constraints carried over include: that the frame begins with the frame
+magic; that there is no skippable frame and no second frame; that no
+dictionary is used, disclosed or not, and no nonzero dictionary ID is
+carried; that the content-checksum flag is not set; and that no buffer
+is sized from a length the frame itself declares. Two of those fall
+outside the register, on the two distinct grounds §21.7 separates, and
+R4 registers neither: dictionary use the header does not disclose is a
 writer violation nothing in the extent shows, an unwitnessed condition
 exactly as `[R-COD-06]` has it for a tile (§21.7), while the bar on
 sizing a buffer binds a reader rather than the document, and so states
