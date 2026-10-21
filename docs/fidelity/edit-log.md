@@ -325,6 +325,39 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §18.2: the 16 MiB Note's MAY made the rule's permission
+
+- **Commit:** `Readable: §18.2 — the 16 MiB Note's MAY made the rule's
+  permission` (the commit carrying this entry). Previous: `4f3598d` (the
+  verifier paragraph's splits), also the spec's previous commit.
+- **Sections:** §18.2, the first Note (after `[R-MTA-09]`'s paragraph),
+  byte-identical in A until this edit. Non-normative.
+- **The maintainer's ask.** "The first note in 18.2 contains a full-caps
+  MAY, but is non-normative as a note, probably need to fix." A keyword
+  binds only outside a Note (`[R-CNF-01]`); his standing rule, keywords in
+  capitals only where they bind. Proposed with before and after; approved
+  ("Go").
+- **Edit.** "it MAY instead decline any scope containing the record, the
+  whole file included" → "the same rule lets it decline instead any scope
+  containing the record, the whole file included". The permission is
+  `[R-ERR-04]`'s, named a clause earlier in the same sentence and stated
+  there with the keyword ("It MAY also decline at any scope that
+  contains the narrowest one"), and restated at §7.3 under `[R-CNT-25]`
+  ("a reader that declines a document on resource grounds MAY decline a
+  scope containing it"). The Note's other sentences untouched;
+  re-wrapped.
+- **Removed restatements:** none. Word-level diff: "MAY" lost; "the same
+  rule lets" gained.
+- **Reworded IDs:** none; a Note.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before;
+  `KEYWORD_COUNT` MAY 57 in A against 56 in B (this Note's), beside the
+  carried SHOULD 46 against 47. B is 4,808 lines and 49,036 words.
+- **Questions raised:** none. The other Notes in B carrying a capital
+  keyword, all A's: §2.1's (line 164), which names the keywords as words
+  and stays; §9.2's crash Example (1227) and §15.4's "To use" Note (2172),
+  fixed in the next entry at the maintainer's word; two in the unread
+  stretch (2986, 3248), for the read-through.
+
 ### 2026-10-21 — §18.2: the verifier paragraph's two long sentences made seven; R-MTA-09's line extended
 
 - **Commit:** `Readable: §18.2 — the verifier paragraph's two long

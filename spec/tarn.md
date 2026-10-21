@@ -2636,16 +2636,17 @@ encoding there is no document rule to decline. Such a record is
 `[R-MTA-10]`'s subject. Any violation here is ignore-record, never the
 tile-scope outcome §17.2 assigns. `[R-MTA-09]`
 
-> **Note.** The 16 MiB figure is a §21.9 minimum guarantee, so the
-> two rules compose here as they do elsewhere. A file whose document
+> **Note.** The 16 MiB figure is a §21.9 minimum guarantee, so the two
+> rules compose here as they do elsewhere. A file whose document
 > decodes to more than the guarantee stays conforming, and it falls
 > outside `[R-CNF-03]`'s acceptance duty, which runs only to a
 > conforming file none of whose values exceeds those guarantees. A
 > reader whose own bound it exceeds takes ignore-record for that
 > record, which is also the narrowest scope at which `[R-ERR-04]` lets
-> it decline the document on resource grounds; it MAY instead decline
-> any scope containing the record, the whole file included. Either
-> refusal is reported as a resource limit, not as corruption.
+> it decline the document on resource grounds; the same rule lets it
+> decline instead any scope containing the record, the whole file
+> included. Either refusal is reported as a resource limit, not as
+> corruption.
 
 The decoded document is a JSON text as defined by RFC 8259, encoded in
 UTF-8. Four restrictions apply, and a document violating any of them
