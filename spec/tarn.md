@@ -1224,8 +1224,8 @@ from the second commit onward.
 > ```
 >
 > Mid-commit the physical tail is not a trailer, so a reader on the
-> default path reports the file torn and MUST NOT scan backward
-> (`[R-LIF-05]`). What makes that recoverable rather than fatal is that
+> default path reports the file torn; `[R-LIF-05]` forbids it to scan
+> backward. What makes that recoverable rather than fatal is that
 > trailₙ and everything it reaches are still byte-intact: §9.6's
 > deliberate scan finds trailₙ and truncating to it restores the file
 > exactly. The window is not one in which the old state is *readable* —
@@ -2169,8 +2169,8 @@ in parallel); any mismatch or cross-check failure (`[R-CNT-17]`) is
 reject-layer. `[R-IDX-04]`
 
 > **Note.** "To use" obliges verification, not re-verification:
-> under committed-prefix immutability a reader MAY verify each
-> range once and cache the result, keyed as §9.3 licenses
+> under committed-prefix immutability a reader is free to verify
+> each range once and cache the result, keyed as §9.3 licenses
 > (`[R-LIF-03]`).
 
 > **Rationale.** Segments bound what a reader verifies to use one

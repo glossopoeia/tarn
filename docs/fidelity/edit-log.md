@@ -325,6 +325,39 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §9.2, §15.4: two Notes' keywords made the rules' own bar and permission
+
+- **Commit:** `Readable: §9.2, §15.4 — two Notes' keywords made the rules'
+  own bar and permission` (the commit carrying this entry). Previous:
+  `252aa68` (§18.2's 16 MiB Note), also the spec's previous commit.
+- **Sections:** §9.2, the crash Example's closing paragraph; §15.4, the
+  "To use" Note after `[R-IDX-04]`. Both non-normative, both A's words
+  until this edit. At the maintainer's word on the §18.2 Note ("Go, and
+  fix the three notes we've already come across"); §2.1's Note, which
+  names the keywords as words, left as it stands.
+- **Edits.**
+  1. §9.2: "so a reader on the default path reports the file torn and
+     MUST NOT scan backward (`[R-LIF-05]`)" → "so a reader on the default
+     path reports the file torn; `[R-LIF-05]` forbids it to scan
+     backward." The bar is `[R-LIF-05]`'s ("a reader MUST NOT scan
+     backward", §9.5) and the Example now says so, in the words §9.5's
+     Note already uses ("`[R-LIF-05]` forbids it to scan backward").
+  2. §15.4: "a reader MAY verify each range once and cache the result,
+     keyed as §9.3 licenses (`[R-LIF-03]`)" → "a reader is free to verify
+     each range once and cache the result, keyed as §9.3 licenses
+     (`[R-LIF-03]`)". The permission is `[R-LIF-03]`'s, cited in the same
+     sentence.
+- **Removed restatements:** none. Word-level diff: "and MUST NOT",
+  "MAY" lost; "forbids it to", "is free to" gained; the citation moved
+  before the verb in §9.2.
+- **Reworded IDs:** none; an Example and a Note.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before;
+  `KEYWORD_COUNT` MUST NOT 78 in A against 77 in B and MAY 57 against 55
+  (the three Notes of today), beside the carried SHOULD 46 against 47. B
+  is 4,808 lines and 49,038 words.
+- **Questions raised:** none. Two Notes in the unread stretch still carry
+  a capital keyword (B lines 2986 and 3248), for the read-through.
+
 ### 2026-10-21 — §18.2: the 16 MiB Note's MAY made the rule's permission
 
 - **Commit:** `Readable: §18.2 — the 16 MiB Note's MAY made the rule's
