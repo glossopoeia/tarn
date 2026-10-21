@@ -2624,17 +2624,17 @@ cannot execute; the bound is that verifier's capability and not a
 limit on validity (`[R-CNF-10]`), so the decline is not a finding that
 the file is nonconforming and a verifier MUST NOT report it as one.
 The decline is one of the unchecked requirements `[R-CNF-11]` obliges
-the verifier to report, and it fixes the file's verdict as *cannot
-establish* only where the verifier established no violation elsewhere;
-the verifier SHOULD report the bound it applied and the stored length
-of the extent it declined, since the report `[R-CNF-11]` requires
-names the requirement and the ground but not the quantities an
-operator needs to raise the bound and re-run the check. The decline
-presupposes an encoding this specification assigns, whose document it
-defines; an encoding it does not assign leaves no document rule
-attached and is `[R-MTA-10]`'s subject, not a decline. Any violation
-here is ignore-record, never the tile-scope outcome §17.2 assigns.
-`[R-MTA-09]`
+the verifier to report. It fixes the file's verdict as *cannot
+establish* only where the verifier established no violation elsewhere.
+The verifier SHOULD report the bound it applied and the stored length
+of the extent it declined. The report `[R-CNF-11]` requires names the
+requirement and the ground but not those quantities, which an operator
+needs to raise the bound and re-run the check. A decline can happen
+only under an assigned encoding, because only then does this
+specification define what the document is. Under an unassigned
+encoding there is no document rule to decline. Such a record is
+`[R-MTA-10]`'s subject. Any violation here is ignore-record, never the
+tile-scope outcome §17.2 assigns. `[R-MTA-09]`
 
 > **Note.** The 16 MiB figure is a §21.9 minimum guarantee, so the
 > two rules compose here as they do elsewhere. A file whose document

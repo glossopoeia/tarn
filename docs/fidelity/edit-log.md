@@ -325,6 +325,52 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §18.2: the verifier paragraph's two long sentences made seven; R-MTA-09's line extended
+
+- **Commit:** `Readable: §18.2 — the verifier paragraph's two long
+  sentences split; R-MTA-09's line extended` (the commit carrying this
+  entry). Previous: `ad35941` (the carried-over constraints), also the
+  spec's previous commit.
+- **Sections:** §18.2, the verifier paragraph of the `[R-MTA-09]` split,
+  the one carrying the ID: its two middle sentences, from "The decline is
+  one of the unchecked requirements" to "not a decline".
+- **The maintainer's ask.** The two sentences "need some restructuring
+  and clarity"; on the first proposal, "the final three sentences are
+  still hard to parse". Second proposal approved ("Go").
+- **Edit.** Two sentences made seven, cut at the "and", the semicolons
+  and the "since": the decline as an unchecked requirement `[R-CNF-11]`
+  obliges the verifier to report; the verdict fixed as *cannot establish*
+  only where no violation was established elsewhere; "The verifier SHOULD
+  report the bound it applied and the stored length of the extent it
+  declined", the SHOULD clause verbatim but for its initial capital, in a
+  sentence of its own; its reason after it ("The report `[R-CNF-11]`
+  requires names the requirement and the ground but not those
+  quantities, which an operator needs to raise the bound and re-run the
+  check"); then "A decline can happen only under an assigned encoding,
+  because only then does this specification define what the document is.
+  Under an unassigned encoding there is no document rule to decline. Such
+  a record is `[R-MTA-10]`'s subject." for "The decline presupposes an
+  encoding this specification assigns, whose document it defines; an
+  encoding it does not assign leaves no document rule attached and is
+  `[R-MTA-10]`'s subject, not a decline." ("unassigned" is `[R-MTA-10]`'s
+  own word; "not a decline" is now said by "no document rule to decline").
+  The first and last sentences of the paragraph, with their MUST NOTs and
+  the ignore-record outcome, untouched. Every fact kept in order; nothing
+  added. Proposed with before and after, the inventory and the word diff
+  (`pass/s18d.json`, `proposals/s18d-verifier-decline.md`).
+- **Removed restatements:** none. Word-level diff: "and" ×2, "the" ×2,
+  "it" ×3, "not" ×2, "since", "presupposes", "assigns", "whose",
+  "defines", "assign", "leaves", "attached" lost; the sentence-start
+  capitals, "only" ×2, "those", "which", "can happen under", "assigned",
+  "because then define what", "Under unassigned there", "Such record"
+  gained; 183 → 189 words.
+- **Reworded IDs:** `R-MTA-09`, already listed; its reason line extended
+  for the splits.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before.
+  Keyword counts unchanged (SHOULD 47 in B against 46 in A, as before). B
+  is 4,807 lines and 49,032 words.
+- **Questions raised:** none.
+
 ### 2026-10-21 — §18.2: the carried-over frame constraints as a colon list of "that" clauses
 
 - **Commit:** `Readable: §18.2 — the carried-over constraints as a colon
