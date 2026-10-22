@@ -354,6 +354,33 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §19: the opening paragraph's last sentence said plainly
+
+- **Commit:** `Readable: §19 — the opening paragraph's last sentence said
+  plainly` (the commit carrying this entry). Previous: `e469b8a` (the
+  log: §18 done); the spec's previous commit `02d882b`.
+- **Sections:** §19, the opening paragraph before §19.1. No ID; the
+  sentence carries no keyword. Identical in A until this edit.
+- **The maintainer's ask.** "A row this section does not restate is due
+  at its own tier all the same, with its governing rule's own outcome"
+  has "the AI-writing self-reference / seeming tautology problem", and
+  "is due" is unfamiliar here. Proposed with before and after; approved
+  ("Go").
+- **Edit.** → "A row this section does not mention still applies at its
+  own tier, with the outcome its governing rule assigns." The three facts
+  kept: a row §19 leaves out still binds; at its own tier; with its
+  governing rule's outcome. The three sentences before it, the
+  `[R-CNF-04]` binding included, untouched.
+- **Removed restatements:** none. Word-level diff: "restate", "is due",
+  "own", "all the same", "rule's" lost; "mention", "still applies", "rule
+  assigns" gained; 73 → 71 words.
+- **Reworded IDs:** none.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before
+  (MUST NOT 78 against 77, MAY 57 against 55, SHOULD 46 against 47).
+  Keyword counts unchanged by this edit. B is 4,808 lines and 49,036
+  words.
+- **Questions raised:** none.
+
 ### 2026-10-21 — §9.2, §15.4: two Notes' keywords made the rules' own bar and permission
 
 - **Commit:** `Readable: §9.2, §15.4 — two Notes' keywords made the rules'

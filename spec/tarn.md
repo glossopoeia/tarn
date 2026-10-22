@@ -2798,12 +2798,12 @@ tile-read algorithm. It introduces no new structures; each step
 cites the requirement whose outcome governs its failure.
 
 Each step names the checks its tier's structures turn on. Those
-enumerations are not the complete inventory of what a reader
-detects at that tier: §21's register is, and `[R-CNF-04]` binds a
-reader to every register row whose detector is the reader, at the
-tier that row's *Detected* cell names (§21.1). A row this section
-does not restate is due at its own tier all the same, with its
-governing rule's own outcome.
+enumerations are not the complete inventory of what a reader detects
+at that tier: §21's register is, and `[R-CNF-04]` binds a reader to
+every register row whose detector is the reader, at the tier that
+row's *Detected* cell names (§21.1). A row this section does not
+mention still applies at its own tier, with the outcome its governing
+rule assigns.
 
 #### 19.1 The open algorithm
 
