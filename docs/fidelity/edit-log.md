@@ -354,6 +354,41 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §19.3: the layer-access sentence as a definition, the MUST and a list; R-RDR-03's line extended
+
+- **Commit:** `Readable: §19.3 — the layer-access sentence as a definition,
+  the MUST and a list; R-RDR-03's line extended` (the commit carrying this
+  entry). Previous: `fb0c875` (§19.2's lead-in), also the spec's previous
+  commit. §19.2 declared good by the maintainer ("Section 19.2 is good").
+- **Sections:** §19.3, the whole subsection: one paragraph of one
+  sentence, `[R-RDR-03]`'s, 185 words.
+- **The maintainer's ask.** "That section is both one large paragraph
+  and a massive sentence." Proposed with before and after, the inventory
+  and the word diff (`pass/s19d.json`, `proposals/s19d-layer-access.md`);
+  approved ("Go").
+- **Edit.** Three parts in A's order: the definition of first access as
+  a sentence of its own ("A reader's **first access** to a layer is the
+  first operation using any of the layer's declarations other than its
+  name, whose parse §19.1 step 4 places at the open."); the MUST verbatim
+  ("A first access MUST be preceded by full validation of the layer
+  record, extent slot and inline payload both:") leading into a bulleted
+  list of the twelve items full validation covers, each with its
+  citations, the user-metadata framing rules' parenthesis a colon clause
+  inside its item; and the closing sentence, verbatim, carrying the ID
+  ("All are decidable from the resident directory and F: layer access
+  performs no fetch, and failure takes each cited rule's own scope.
+  `[R-RDR-03]`"). The ID's governing paragraph, as the inventory sees
+  it, is now that closing sentence, the shape §18.2's `[R-MTA-04]` list
+  already has.
+- **Removed restatements:** none. Word-level diff: "which", "and" lost;
+  "A first access" gained; twelve items in, twelve out, every citation
+  kept.
+- **Reworded IDs:** `R-RDR-03`, already listed; its reason line extended
+  for the re-cut.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before.
+  Keyword counts unchanged. B is 4,817 lines and 49,047 words.
+- **Questions raised:** none.
+
 ### 2026-10-21 — §19.2: the validation-timing lead-in in [R-CNF-04]'s words; R-RDR-02's line extended
 
 - **Commit:** `Readable: §19.2 — the validation-timing lead-in in

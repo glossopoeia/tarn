@@ -2900,26 +2900,33 @@ accessed leaves every other layer's reads conforming. `[R-RDR-02]`
 
 #### 19.3 Layer access
 
-A reader's **first access** to a layer, which is the first operation
-using any of the layer's declarations other than its name (whose parse
-§19.1 step 4 places at the open), MUST be preceded by full validation
-of the layer record, extent slot and inline payload both: the slot's
-validity rules (`[R-CNT-13]`), the §7.4 constraint set (`[R-CNT-23]`,
-`[R-CNT-16]`), the exact parse, sub-record walk, and sub-record
-multiplicity (`[R-CNT-18]`, `[R-CNT-14]`), dimension- and channel-name
-rules (`[R-ENC-11]`, `[R-ENC-12]`, `[R-ENC-15]`), the framing rules a
-user-metadata sub-record carries (no (0, 0) slot, extent_length at
-least 5, inline_length exactly 1; `[R-CNT-25]`, `[R-MTA-03]`), the u64
-value domain of §4.2 (`[R-ENC-03]`), the value sets of §7.4, §11.4,
-§12.2, §14.1, §17.2, and §17.3, the per-type fill constraints (§13.2,
-`[R-TYP-07]`), the codec declaration bounds (`[R-COD-07]`), the
-geometry floor and its arithmetic (`[R-GEO-01]`–`[R-GEO-03]`), the 2⁶³
-− 1 ceiling on every quantity that arithmetic derives (`[R-ENC-04]`)
-and on the decoded sizes §14 derives from it (`[R-SER-02]`,
-`[R-SER-07]`), and the index cross-checks computable without I/O
-(`[R-CNT-17]`). All are decidable from the resident directory and F:
-layer access performs no fetch, and failure takes each cited rule's
-own scope. `[R-RDR-03]`
+A reader's **first access** to a layer is the first operation using
+any of the layer's declarations other than its name, whose parse §19.1
+step 4 places at the open. A first access MUST be preceded by full
+validation of the layer record, extent slot and inline payload both:
+
+- the slot's validity rules (`[R-CNT-13]`);
+- the §7.4 constraint set (`[R-CNT-23]`, `[R-CNT-16]`);
+- the exact parse, sub-record walk, and sub-record multiplicity
+  (`[R-CNT-18]`, `[R-CNT-14]`);
+- dimension- and channel-name rules (`[R-ENC-11]`, `[R-ENC-12]`,
+  `[R-ENC-15]`);
+- the framing rules a user-metadata sub-record carries: no (0, 0)
+  slot, extent_length at least 5, inline_length exactly 1
+  (`[R-CNT-25]`, `[R-MTA-03]`);
+- the u64 value domain of §4.2 (`[R-ENC-03]`);
+- the value sets of §7.4, §11.4, §12.2, §14.1, §17.2, and §17.3;
+- the per-type fill constraints (§13.2, `[R-TYP-07]`);
+- the codec declaration bounds (`[R-COD-07]`);
+- the geometry floor and its arithmetic (`[R-GEO-01]`–`[R-GEO-03]`);
+- the 2⁶³ − 1 ceiling on every quantity that arithmetic derives
+  (`[R-ENC-04]`) and on the decoded sizes §14 derives from it
+  (`[R-SER-02]`, `[R-SER-07]`);
+- the index cross-checks computable without I/O (`[R-CNT-17]`).
+
+All are decidable from the resident directory and F: layer access
+performs no fetch, and failure takes each cited rule's own scope.
+`[R-RDR-03]`
 
 #### 19.4 The tile-read algorithm
 
