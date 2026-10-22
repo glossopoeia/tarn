@@ -354,6 +354,39 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §19.2: the validation-timing lead-in in [R-CNF-04]'s words; R-RDR-02's line extended
+
+- **Commit:** `Readable: §19.2 — the validation-timing lead-in in
+  R-CNF-04's words; R-RDR-02's line extended` (the commit carrying this
+  entry). Previous: `855ae02` (§19.1's remark moved), also the spec's
+  previous commit.
+- **Sections:** §19.2, the lead-in sentence of `[R-RDR-02]`'s rule (the
+  ID stands after the tier list; the lead-in is a block of its own, so
+  the inventory does not attribute it, and the ID is listed since the
+  spruce-up). A normative sentence, reworded at the maintainer's ask.
+- **The maintainer's ask.** "whose detection this specification obliges
+  readers to make" "seems a bit tautological and repetitive"; on the
+  first proposal, whether "as its detector" is needed (it is not: the
+  register assigns a violation to an actor only through its Detector
+  cell, which the parenthetical names). Approved ("Go").
+- **Edit.** "A reader MUST detect each violation whose detection this
+  specification obliges readers to make (…)" → "A reader MUST detect
+  each violation the register assigns to the reader (…)". The set is
+  `[R-CNF-04]`'s, stated in §2.3 as "each violation the error register
+  (§21) assigns to the reader as its detector"; the MUST, the
+  parenthetical ("a violation whose assigned detector is the verifier,
+  §2.4, `[R-CNF-12]`, imposes no reader obligation") and the timing
+  clause ("no later than the reader's first reliance on the structure
+  that carries it") verbatim. The tier list untouched.
+- **Removed restatements:** none. Word-level diff: "whose detection this
+  specification obliges readers to make" lost; "the register assigns to
+  the reader" gained; 41 → 39 words.
+- **Reworded IDs:** `R-RDR-02`, already listed; its reason line extended
+  for the lead-in.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before.
+  Keyword counts unchanged. B is 4,810 lines and 49,034 words.
+- **Questions raised:** none.
+
 ### 2026-10-21 — §19.1: the dependency-not-I/O remark moved out of step 1
 
 - **Commit:** `Readable: §19.1 — the dependency-not-I/O remark moved out

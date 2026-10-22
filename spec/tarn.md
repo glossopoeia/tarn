@@ -2862,10 +2862,10 @@ size. `[R-RDR-01]`
 
 #### 19.2 Validation timing
 
-A reader MUST detect each violation whose detection this specification
-obliges readers to make (a violation whose assigned detector is the
-verifier, §2.4, `[R-CNF-12]`, imposes no reader obligation) no later
-than the reader's first reliance on the structure that carries it:
+A reader MUST detect each violation the register assigns to the reader
+(a violation whose assigned detector is the verifier, §2.4,
+`[R-CNF-12]`, imposes no reader obligation) no later than the reader's
+first reliance on the structure that carries it:
 
 - **at open:** the front signature block, for a reader whose open
   leaves it resident (`[R-CNT-04]`), the trailer, the directory region
