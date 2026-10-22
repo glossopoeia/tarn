@@ -192,10 +192,39 @@ certify (`[R-CNF-11]`, `[R-ERR-04]`)"). The stretches as declared:
   "MUST NOT certify the file" for a codec it cannot execute
   (`[R-COD-11]`, restated at §2.3's grounds and §21.6); the shuffle
   mapping's inverse (`[R-COD-10]`, stated once).
+- **§18** (read through 2026-10-20 to 2026-10-21; §18.1 "good", §18.2
+  edited, "the rest of section 18 is good"): `R-MTA-02`, `-03`, `-05`,
+  `-06`, `-07`, `-09`, `-10` listed by the spruce-up, `R-MTA-09`'s line
+  extended on the read-through; in §18.2 the content-size paragraph's
+  mismatch sentence and tail, the carried-over constraints list and the
+  verifier paragraph's two long sentences re-cut, and the 16 MiB Note's
+  MAY made `[R-ERR-04]`'s permission (with the same fix to §9.2's
+  Example and §15.4's Note). Candidate seeds: "a conforming reader MUST
+  be able to decode encoding 2" (`[R-MTA-03]`, stated once); "when
+  present it MUST equal the byte length of the decoded document" (the
+  content-size paragraph of the `[R-MTA-09]` split, stated once in prose,
+  row R4 citing §18.2's constraints as a class); "the verifier SHOULD
+  report the bound it applied and the stored length of the extent it
+  declined" (`[R-MTA-09]`, stated once); "never the tile-scope outcome
+  §17.2 assigns" (`[R-MTA-09]`, restated by §7.3's quarantine under
+  `[R-CNT-25]`: a flip tests reach); "Key identity is the decoded
+  string, not its JSON source bytes" and "Writers SHOULD NOT emit a
+  number binary64 cannot represent exactly" (`[R-MTA-04]`, each stated
+  once); "Readers MUST NOT depend on member order for meaning"
+  (`[R-MTA-05]`, stated once) and "ascending order of their keys' UTF-8
+  bytes" (`[R-MTA-05]`, restated at rows F27 and L48: a flip tests reach);
+  "MUST NOT emit a `tarn.`-prefixed key this specification's registry
+  does not define" (`[R-MTA-06]`, the prefix rule restated in §10.4: a
+  flip tests reach); "MUST ignore a standardized key found outside its
+  listed scope … rather than rejecting the document" (`[R-MTA-07]`,
+  stated once); "MUST NOT use it to skip reading data it would otherwise
+  read" (`[R-MTA-08]`, stated once); "naming the owning scope, the
+  encoding value, and the stored extent length" (`[R-MTA-10]`, restated
+  in Appendix H's verifier checklist: a flip tests reach).
 
 Stretches done through §8 on 2026-10-08; §9 and §10 on 2026-10-14; §11 and
 §12 on 2026-10-15; §13, §14 and §15 on 2026-10-19; §16 and §17 the same day,
-"good for now".
+"good for now"; §18 on 2026-10-21.
 
 **Fidelity round 1 ran on 2026-10-08** over B at `5220d1a`, the head of
 `readable` with §1 through §8 done (`wf_e2a8d709-b50`;
