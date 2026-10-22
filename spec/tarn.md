@@ -2812,16 +2812,12 @@ A conforming reader opens a file by these steps, in order:
 1. **End of file.** Obtain the transport-authoritative file size F
    (`[R-CNT-10]`); an F below 128 is a validity error at file scope
    decided from F alone and needing no other byte of the file
-   (`[R-CNT-27]`, F5). These steps are ordered by dependency, not by
-   I/O: where the transport discloses a range response's complete
-   length, a remote reader's suffix range for step 2 carries F in its
-   own response, so steps 1 and 2 cost one request between them
-   (§6.4), and a local reader obtains F without any. A reader whose
-   open leaves bytes [0, 16) resident, a speculative suffix window
-   that reached offset 0 included, MUST verify the front signature
-   block by byte equality before other processing (mismatch:
-   reject-file); one that would have to issue a further range request
-   for them MAY defer or omit the check (`[R-CNT-04]`).
+   (`[R-CNT-27]`, F5). A reader whose open leaves bytes [0, 16)
+   resident, a speculative suffix window that reached offset 0
+   included, MUST verify the front signature block by byte equality
+   before other processing (mismatch: reject-file); one that would
+   have to issue a further range request for them MAY defer or omit
+   the check (`[R-CNT-04]`).
 2. **Trailer.** Fetch bytes [F − 64, F) and validate them in §6.2's
    fixed order: magic, trailer CRC, version gate, then the remaining
    field gates (`[R-CNT-06]`, `[R-CNT-07]`, `[R-CNT-08]`). The
@@ -2851,6 +2847,12 @@ A conforming reader opens a file by these steps, in order:
    byte comparison, which needs no valid name; so two layers whose
    name fields are byte-identical are a duplicate even when neither
    name is valid.
+
+These steps are ordered by dependency, not by I/O. Where the transport
+discloses a range response's complete length, a remote reader's suffix
+range for step 2 carries F in its own response, so steps 1 and 2 cost
+one request between them (§6.4); a local reader obtains F without any
+request.
 
 Completing these steps is **the open**. It consumes the trailer and
 directory only, no extent slot's content, no tile index, no payload,

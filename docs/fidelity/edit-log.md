@@ -354,6 +354,41 @@ maintainer's word.
 
 ## Entries
 
+### 2026-10-21 — §19.1: the dependency-not-I/O remark moved out of step 1
+
+- **Commit:** `Readable: §19.1 — the dependency-not-I/O remark moved out
+  of step 1` (the commit carrying this entry). Previous: `039802b` (§19's
+  opener), also the spec's previous commit.
+- **Sections:** §19.1, the open algorithm: step 1, and a new paragraph
+  between step 4 and the `[R-RDR-01]` paragraph. No ID paragraph touched;
+  the remark carries no keyword and is A's.
+- **The maintainer's ask.** The remark inside step 1 ("These steps are
+  ordered by dependency, not by I/O: where the transport discloses a
+  range response's complete length, … and a local reader obtains F
+  without any") "almost feels out of place, like it should exist outside
+  the list of steps rather than buried in step 1". Proposed as a move;
+  approved ("Go").
+- **Edit.** The remark leaves step 1, which keeps its rules verbatim
+  (obtain F, `[R-CNT-10]`; F below 128, `[R-CNT-27]`, F5; the
+  resident-front-block MUST and the MAY defer, `[R-CNT-04]`), and stands
+  as a plain paragraph after the list: "These steps are ordered by
+  dependency, not by I/O. Where the transport discloses a range
+  response's complete length, a remote reader's suffix range for step 2
+  carries F in its own response, so steps 1 and 2 cost one request
+  between them (§6.4); a local reader obtains F without any request."
+  The colon made a full stop; "without any" completed to "without any
+  request". A paragraph and not a Note, so its standing under
+  `[R-CNF-01]` is what it had inside the list; it now sits beside the
+  open's own I/O accounting in the `[R-RDR-01]` paragraph, which is
+  untouched, as is step 4.
+- **Removed restatements:** none; a relocation within §19.1 (step 1 →
+  after step 4). Word-level diff: every word lost from step 1 gained by
+  the new paragraph, plus "request".
+- **Reworded IDs:** none.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before.
+  Keyword counts unchanged. B is 4,810 lines and 49,036 words.
+- **Questions raised:** none.
+
 ### 2026-10-21 — §19: the opening paragraph's last sentence said plainly
 
 - **Commit:** `Readable: §19 — the opening paragraph's last sentence said
