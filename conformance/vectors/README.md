@@ -40,4 +40,6 @@ verified*. ADR-0054 states the pass/fail algorithm in full.
 Every vector is a seed plus a recipe — a named field, a value, and the
 checksums to repair — and the build refuses to emit a vector carrying any
 undeclared checksum failure, since such a file tests the covering rule rather
-than the row it names.
+than the row it names. It also refuses a recipe in which a patch changes no
+byte: such a patch names a mutation the file does not carry, so the vector
+would claim a row its bytes do not exercise.

@@ -112,8 +112,13 @@ def _json(doc: bytes) -> Patch:
     return _ext(doc + b" " * (DOC_LEN - len(doc)))
 
 
-ENC = {1: Patch("record[0x0002].inline", b"\x01"),
-       2: Patch("record[0x0002].inline", b"\x02")}
+#: The seed stores its document verbatim: its encoding byte is 1. A recipe
+#: for an encoding-1 document therefore patches the extent alone, and the
+#: fact is asserted here, not written back by each such recipe: a patch
+#: that changes no byte stops the build (tarn_vectors.inert_problems).
+#: An encoding-2 recipe rewrites the byte.
+assert _field("record[0x0002].inline") == b"\x01"
+ENC = {2: Patch("record[0x0002].inline", b"\x02")}
 
 
 # -- RFC 8878 frames, for the encoding-2 rows --------------------------------
@@ -325,14 +330,12 @@ VECTORS = [
     # reader that skips the CRC would read the record and betray the row.
     _v("TV-0506", "user-metadata extent CRC mismatch, top-level extent",
        sub=False, row="R2", rule="R-CNT-20", detected="extent use",
-       patches=[ENC[1],
-                Patch("record[0x0002].extent",
+       patches=[Patch("record[0x0002].extent",
                       _pad_json(DOC_LEN) + u32(crc32c(_pad_json(DOC_LEN)) ^ 0xFFFFFFFF),
                       note="correct document, complemented CRC")]),
     _v("TV-0507", "user-metadata extent CRC mismatch, layer sub-record extent",
        sub=True, row="R2", rule="R-CNT-20", detected="extent use",
-       patches=[ENC[1],
-                Patch("record[0x0002].extent",
+       patches=[Patch("record[0x0002].extent",
                       _pad_json(DOC_LEN) + u32(crc32c(_pad_json(DOC_LEN)) ^ 0xFFFFFFFF))]),
 
     # -- R3: stored bytes fail to decode under the declared encoding ----------
@@ -412,75 +415,75 @@ VECTORS = [
     # `[R-CNT-25]` rather than taking the record's containing scope.
     _v("TV-0520", "string value containing ill-formed UTF-8, top-level document",
        sub=False, row="R5", rule="R-CNT-25", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":"\xff"}')]),
+       patches=[_json(b'{"a":"\xff"}')]),
     _v("TV-0521", "string value containing ill-formed UTF-8, layer sub-record document",
        sub=True, row="R5", rule="R-CNT-25", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":"\xff"}')]),
+       patches=[_json(b'{"a":"\xff"}')]),
     # The same ill-formed byte in a *key*. §4.6 sends ill-formed UTF-8 in any
     # string to the owning scope, and `[R-CNT-25]` quarantines it here.
     _v("TV-0918", "key containing ill-formed UTF-8, top-level document",
        sub=False, row="R5", rule="R-CNT-25", detected="extent use",
-       patches=[ENC[1], _json(b'{"\xff":1}')]),
+       patches=[_json(b'{"\xff":1}')]),
     _v("TV-0919", "key containing ill-formed UTF-8, layer sub-record document",
        sub=True, row="R5", rule="R-CNT-25", detected="extent use",
-       patches=[ENC[1], _json(b'{"\xff":1}')]),
+       patches=[_json(b'{"\xff":1}')]),
     # `[R-MTA-04]`'s fourth bullet: well-formed UTF-8 *after escape
     # resolution*. \ud800 is a lone high surrogate, which has no UTF-8
     # encoding, so the source bytes are valid ASCII and the document is still
     # unreadable — a case no ill-formed-source vector reaches.
     _v("TV-0920", "key with an unpaired-surrogate escape, top-level document",
        sub=False, row="R5", rule="R-CNT-25", detected="extent use",
-       patches=[ENC[1], _json(b'{"\\ud800":1}')]),
+       patches=[_json(b'{"\\ud800":1}')]),
     _v("TV-0921", "key with an unpaired-surrogate escape, layer sub-record document",
        sub=True, row="R5", rule="R-CNT-25", detected="extent use",
-       patches=[ENC[1], _json(b'{"\\ud800":1}')]),
+       patches=[_json(b'{"\\ud800":1}')]),
     _v("TV-0922", "string value with an unpaired-surrogate escape, top-level document",
        sub=False, row="R5", rule="R-CNT-25", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":"\\ud800"}')]),
+       patches=[_json(b'{"a":"\\ud800"}')]),
     _v("TV-0923", "string value with an unpaired-surrogate escape, layer sub-record document",
        sub=True, row="R5", rule="R-CNT-25", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":"\\ud800"}')]),
+       patches=[_json(b'{"a":"\\ud800"}')]),
 
     # -- R6: keys that break §4.6's name rules --------------------------------
     _v("TV-0522", "empty key, top-level document",
        sub=False, row="R6", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"":1}')]),
+       patches=[_json(b'{"":1}')]),
     _v("TV-0523", "empty key, layer sub-record document",
        sub=True, row="R6", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"":1}')]),
+       patches=[_json(b'{"":1}')]),
     # Written as an escape, so the JSON source is well-formed and the violation
     # is in the *decoded* key: §18.2 resolves escapes before applying §4.6.
     _v("TV-0524", "key containing U+0001, top-level document",
        sub=False, row="R6", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a\\u0001":1}')]),
+       patches=[_json(b'{"a\\u0001":1}')]),
     _v("TV-0525", "key containing U+0001, layer sub-record document",
        sub=True, row="R6", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a\\u0001":1}')]),
+       patches=[_json(b'{"a\\u0001":1}')]),
 
     # -- R7: not a JSON object, or marked ------------------------------------
     _v("TV-0526", "document that is not well-formed JSON, top-level document",
        sub=False, row="R7", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":}')]),
+       patches=[_json(b'{"a":}')]),
     _v("TV-0527", "document that is not well-formed JSON, layer sub-record document",
        sub=True, row="R7", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":}')]),
+       patches=[_json(b'{"a":}')]),
     # Well-formed JSON whose top-level value is an array: the parse succeeds and
     # the document is still unreadable, which is why this is its own instance.
     _v("TV-0528", "top-level value is not an object, top-level document",
        sub=False, row="R7", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'[1,2]')]),
+       patches=[_json(b'[1,2]')]),
     _v("TV-0529", "top-level value is not an object, layer sub-record document",
        sub=True, row="R7", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'[1,2]')]),
+       patches=[_json(b'[1,2]')]),
     # A UTF-8-encoded U+FEFF ahead of an otherwise sound object: §18.2 says the
     # encoding carries no byte-order mark, so a reader that strips it silently
     # accepts a document this text calls unreadable.
     _v("TV-0530", "leading U+FEFF, top-level document",
        sub=False, row="R7", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'\xef\xbb\xbf{"a":1}')]),
+       patches=[_json(b'\xef\xbb\xbf{"a":1}')]),
     _v("TV-0531", "leading U+FEFF, layer sub-record document",
        sub=True, row="R7", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'\xef\xbb\xbf{"a":1}')]),
+       patches=[_json(b'\xef\xbb\xbf{"a":1}')]),
 
     # -- R8: a non-finite number ---------------------------------------------
     # ADR-0117 splits this row's two limbs into separate instances, so there are
@@ -502,26 +505,26 @@ VECTORS = [
     # RFC 8259 does not admit at all.
     _v("TV-0532", "overflowing magnitude, top-level document",
        sub=False, row="R8", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":1e400}')]),
+       patches=[_json(b'{"a":1e400}')]),
     _v("TV-0533", "overflowing magnitude, layer sub-record document",
        sub=True, row="R8", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":1e400}')]),
+       patches=[_json(b'{"a":1e400}')]),
     _v("TV-0961", "bare token, top-level document",
        sub=False, row="R8", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":NaN}')]),
+       patches=[_json(b'{"a":NaN}')]),
     _v("TV-0962", "bare token, layer sub-record document",
        sub=True, row="R8", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":NaN}')]),
+       patches=[_json(b'{"a":NaN}')]),
 
     # -- R9: duplicate keys, identity being the decoded string ----------------
     # The register's own example: `"a"` and `"a"` differ in source bytes
     # and are one key. A reader comparing raw source bytes accepts this.
     _v("TV-0534", "two members with the same decoded key, top-level document",
        sub=False, row="R9", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":1,"\\u0061":2}')]),
+       patches=[_json(b'{"a":1,"\\u0061":2}')]),
     _v("TV-0535", "two members with the same decoded key, layer sub-record document",
        sub=True, row="R9", rule="R-MTA-04", detected="extent use",
-       patches=[ENC[1], _json(b'{"a":1,"\\u0061":2}')]),
+       patches=[_json(b'{"a":1,"\\u0061":2}')]),
 
     # -- R10: a key longer than 255 bytes ------------------------------------
     # 256 bytes, one over §4.6's bound. Encoding 2 is not a choice here: a

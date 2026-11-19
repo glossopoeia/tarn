@@ -15,6 +15,12 @@ Both the recipe and the resulting bytes are committed. The bytes so an
 implementer needs no tooling; the recipe so a reviewer sees intent and CI can
 prove the two still agree.
 
+The build refuses two things. A file carrying a checksum failure its vector
+does not declare, for the reason above. And a recipe in which a patch changes
+no byte: a patch says the file differs from its seed at that field, and one
+that writes the bytes already there names a defect the file does not carry,
+with every checksum still verifying.
+
     python3 tarn_vectors.py --emit    # write conformance/vectors/
     python3 tarn_vectors.py           # list what would be written
 """
@@ -189,8 +195,20 @@ class Vector:
 
 
 def apply_recipe(v: Vector) -> bytes:
+    return replay(v)[0]
+
+
+def replay(v: Vector) -> tuple[bytes, list[str]]:
+    """Apply a recipe to its seed: the bytes, and the patches that did nothing.
+
+    The second value names the field of every patch that wrote the bytes
+    already there. Each patch is compared with the buffer as it stands when
+    the patch is applied, so a later patch is free to rewrite a field an
+    earlier one set. inert_problems() says why such a patch stops the build.
+    """
     blob, layout = SEEDS[v.seed]()
     buf = bytearray(blob)
+    inert = []
     for p in v.patches:
         if p.field not in layout:
             raise KeyError(f"{v.id}: no field {p.field!r} in seed {v.seed!r}")
@@ -198,6 +216,8 @@ def apply_recipe(v: Vector) -> bytes:
         val = p.value if p.value is not None else bytes(width)
         if len(val) != width:
             raise ValueError(f"{v.id}: {p.field} is {width} B, patch is {len(val)} B")
+        if bytes(buf[off:off + width]) == val:
+            inert.append(p.field)
         buf[off:off + width] = val
     for what in v.repair:
         if what == "directory.crc":
@@ -230,7 +250,7 @@ def apply_recipe(v: Vector) -> bytes:
             buf += bytes.fromhex(what.split(":", 1)[1])
         else:
             raise KeyError(f"{v.id}: unknown repair {what!r}")
-    return bytes(buf)
+    return bytes(buf), inert
 
 
 def _span(layout, key):
@@ -797,22 +817,53 @@ def verify(built: dict[str, bytes]) -> list[str]:
     return problems
 
 
+def inert_problems(inert: dict[str, list[str]]) -> list[str]:
+    """Every patch in a recipe must change the file.
+
+    A patch is a claim: the file differs from its seed at this field, by this
+    value. One that writes the bytes already there claims a change the file
+    does not carry, and verify() cannot see it, because nothing is broken.
+    TV-0280 stood that way from round 14 until 2026-11-19: a nonconforming
+    L30 vector whose one defect-carrying patch retyped a channel to the type
+    its seed already declared, so that the file carried no L30 defect.
+
+    The rule has no exceptions, so that no vector needs one. A recipe that
+    depends on a value its seed already holds asserts that value in its
+    module and does not write it back.
+
+    What this catches is the patch that changes nothing. A patch that moves a
+    field to another valid value, or a defect an earlier rule masks, still
+    needs a reader of the register (ADR-0053).
+    """
+    return [f"{vid}: the patch to {fld} writes the bytes already there — the "
+            f"recipe names a change the file does not carry"
+            for vid, fields in inert.items() for fld in fields]
+
+
 def main() -> int:
     global VECTORS
     VECTORS = load_vectors()
-    built = {}
+    built, inert = {}, {}
     for v in VECTORS:
-        built[v.id] = apply_recipe(v)
+        built[v.id], inert[v.id] = replay(v)
     problems = verify(built)
+    idle = inert_problems(inert)
     if problems:
         print("ISOLATION FAILURES\n")
         for p in problems:
             print(f"  ✗ {p}")
         print()
-        if "--emit" in sys.argv:
-            return 1
     else:
-        print("isolation: every vector carries exactly the defect it claims\n")
+        print("isolation: every vector carries exactly the defect it claims")
+    if idle:
+        print(("" if problems else "\n") + "INERT PATCHES\n")
+        for p in idle:
+            print(f"  ✗ {p}")
+        print()
+    else:
+        print("recipes: every patch changes at least one byte\n")
+    if (problems or idle) and "--emit" in sys.argv:
+        return 1
     m = manifest(built)
 
     if "--emit" not in sys.argv:
