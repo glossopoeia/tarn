@@ -59,6 +59,11 @@ IDX_OFF, IDX_LEN = _MAP["layer[bad].index_region"]
 REC_LEN = _MAP["layer[bad].record"][1]           # 117
 INLINE = REC_LEN - 24                            # 93
 SENTINEL = b"\xff" * 16 + b"\x00" * 4            # §15.2
+#: `bad`'s one stored tile is four bytes long. L18's vector repoints that
+#: entry and leaves its length as the seed has it, so the length is read
+#: from the seed and asserted, not written back by the recipe.
+TILE_LEN = struct.unpack("<Q", _seed("layer[bad].entry[0].length"))[0]
+assert TILE_LEN == 4, TILE_LEN
 
 
 # --------------------------------------------------------------------------
@@ -416,13 +421,13 @@ VECTORS = [
     # reject-layer rather than reject-file. The entry's crc is set over
     # those four bytes so the overlap is the only defect — every checksum
     # in the file still verifies, which is exactly why this row needs a
-    # verifier and no reader is obliged to detect it.
+    # verifier and no reader is obliged to detect it. The entry's length
+    # is the seed's own and is not patched: TILE_LEN asserts it.
     L("TV-0226", "layer `bad` stored tile [68,72) overlaps its own tile-index region "
       "(instance: tile-index region)",
       "L18", "R-CNT-13",
       [Patch("layer[bad].entry[0].offset", u64(IDX_OFF)),
-       Patch("layer[bad].entry[0].length", u64(4)),
-       Patch("layer[bad].entry[0].crc", u32(crc32c(u64(IDX_OFF)[:4])))],
+       Patch("layer[bad].entry[0].crc", u32(crc32c(u64(IDX_OFF)[:TILE_LEN])))],
       repair=["index:bad", "directory.crc", "trailer.crc"],
       detector="verifier", detected="certification"),
 
