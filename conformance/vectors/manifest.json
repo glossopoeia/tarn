@@ -7092,11 +7092,11 @@
       "id": "TV-0280",
       "file": "reject-layer/TV-0280.tarn",
       "title": "layer `bad` channel `v` is uint8 with a 4-byte fill (instance: prefix longer than the element size)",
-      "sha256": "1408d852e60463ff18470e8b5a2a0d9c0e23f0002875d6a5d52393a0b1cbbc88",
+      "sha256": "7747cf4a51ff9e1de5cd4b12d2008747bd3c0eb939e1c635c214031f9c51b63d",
       "size": 448,
       "conforming": false,
       "derivation": {
-        "seed": "pair",
+        "seed": "l30wide",
         "patches": [
           {
             "field": "layer[bad].entry[0].offset",

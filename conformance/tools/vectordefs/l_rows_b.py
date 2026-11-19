@@ -5,7 +5,9 @@ Every vector damages the `pair` seed's `bad` layer and leaves `ok`
 untouched, so each reject-layer file carries the intact sibling
 [R-VEC-04] requires: without it the file cannot distinguish a reader
 that scopes its refusal from one that rejects the whole file, which
-[R-CNF-12] permits.
+[R-CNF-12] permits. One vector is built on a seed of its own: TV-0280,
+on `l30wide`, which is `pair` with a four-byte fill on `bad`'s channel.
+The comment at that seed says why `pair` cannot carry it.
 
 Two habits run through the file and are worth stating once.
 
@@ -36,8 +38,8 @@ instance needs the same treatment and cannot get it; SKIPPED says why.
 """
 import struct
 
-from tarn_build import crc32c
-from tarn_vectors import SEEDS, Patch, Vector
+from tarn_build import ELEMENT_SIZE, Channel, Layer, build_with_layout, crc32c
+from tarn_vectors import SEEDS, Patch, Vector, register_seed
 
 u8 = lambda v: struct.pack("<B", v)
 u16 = lambda v: struct.pack("<H", v)
@@ -104,6 +106,59 @@ assert struct.unpack("<Q", _field("layer[bad].entry_count"))[0] == 1
 assert len(_REGION) == 24 and len(_SEGS) == 4      # 1 entry, 1 segment CRC
 assert _TILE_OFF % 512 != 0                        # L40 / L42 depend on it
 assert _COCA ^ 0x5A5A5A5A != 0                     # L37's wrong value is wrong
+
+
+# --------------------------------------------------------------------------
+# Seed `l30wide` — seed `pair` with a four-byte fill on `bad`'s channel.
+#
+# ADR-0078 gave L30 the direction axis. The "prefix shorter" instance
+# retypes seed `pair`'s channel upward, uint8 to uint64. The "prefix
+# longer" instance cannot be reached there by retyping: that channel's
+# fill prefix is 1, and no type's element size is below 1 (§12.1). This
+# seed declares the channel uint32, so its fill prefix is 4 and a retype
+# down to uint8 leaves the prefix the longer side. Everything else is
+# `pair`'s: the same two layers in the same order, the same geometry,
+# the same `ok`.
+# --------------------------------------------------------------------------
+
+def seed_l30wide():
+    ok = Layer("ok", extents=(2, 3), tile_extents=(2, 3),
+               channels=[Channel("t", 12)],
+               tiles=[struct.pack("<6I", 0x3F800000, 0x80000000, 0x7FC00001,
+                                  0xC0000000, 0x00000000, 0x7F800000)])
+    bad = Layer("bad", extents=(2, 2), tile_extents=(2, 2),
+                channels=[Channel("v", 8)],
+                tiles=[struct.pack("<4I", 1, 2, 3, 4)])
+    return build_with_layout([ok, bad])
+
+
+register_seed("l30wide", seed_l30wide, ["ok", "bad"])
+_WIDE_BLOB, _WIDE = seed_l30wide()
+
+
+def _wide(f: str) -> bytes:
+    """Seed `l30wide`'s own bytes for a named field."""
+    o, w = _WIDE[f]
+    return _WIDE_BLOB[o:o + w]
+
+
+#: L30's two retypes. Each is a defect only against the fill prefix its
+#: seed stores, so the prefix is read from the seed and compared here. A
+#: retype that lands on a type whose element size equals the stored prefix
+#: changes nothing L30 reads: the file carries no L30 defect while its
+#: manifest entry claims one, and the isolation check passes it, because
+#: every checksum verifies. TV-0280 was built that way in round 14, as
+#: uint8 over seed `pair`'s one-byte fill.
+L30_SHORTER = 9                                    # uint64, on seed `pair`
+L30_LONGER = 6                                     # uint8, on seed `l30wide`
+_PREFIX = _field("layer[bad].chan[0].fill")[0]
+_WIDE_PREFIX = _wide("layer[bad].chan[0].fill")[0]
+assert _PREFIX == 1 < ELEMENT_SIZE[L30_SHORTER]     # TV-0275: 1-byte fill, uint64
+assert _WIDE_PREFIX == 4 > ELEMENT_SIZE[L30_LONGER]  # TV-0280: 4-byte fill, uint8
+# The sibling [R-VEC-04] requires is `pair`'s, byte for byte: the bytes
+# ahead of `bad`'s first structure, and `ok`'s record in the directory.
+assert _WIDE_BLOB[:_TILE_OFF] == _BLOB[:_TILE_OFF]
+assert _wide("layer[ok].record") == _field("layer[ok].record")
 
 VECTORS = [
     # -- L27 · entry_count = 0 with a nonzero crc_of_crc_array ------------
@@ -173,20 +228,20 @@ VECTORS = [
            must_not_serve=["layer:bad"], serves=["ok"]),
 
     # -- L30 · fill length prefix ≠ the type's element size ---------------
-    # A single predicate over two fields (§21.1: one instance), so either
-    # field may carry the change; retyping the channel keeps §7.4's framing
-    # intact, where editing the prefix would shift every following field
-    # and test [R-CNT-18] instead. uint64's element size is 8, the fill
-    # prefix stays 1. The tile is sentinelled because retyping also
-    # changes the decoded size, which codec 1 ties to the entry's length.
-    # ADR-0078 gave L30 the direction axis: TV-0275 declares a type whose
-    # element size EXCEEDS the stored fill prefix, TV-0280 one whose element
-    # size falls below it. Both sentinel the tile, since retyping also moves
-    # the decoded size that codec 1 ties to the entry's length.
-    Vector("TV-0280", "pair",
+    # A single predicate over two fields, so either field may carry the
+    # change; retyping the channel keeps §7.4's framing intact, where
+    # editing the prefix would shift every following field and test
+    # [R-CNT-18] instead. ADR-0078 gave L30 the direction axis, so there
+    # are two files. TV-0275 retypes seed `pair`'s uint8 channel to uint64:
+    # element size 8 against the stored prefix 1, the prefix the shorter
+    # side. TV-0280 retypes seed `l30wide`'s uint32 channel to uint8:
+    # element size 1 against the stored prefix 4, the prefix the longer
+    # side. Both sentinel the tile, since retyping also moves the decoded
+    # size that codec 1 ties to the entry's length.
+    Vector("TV-0280", "l30wide",
            "layer `bad` channel `v` is uint8 with a 4-byte fill (instance: "
            "prefix longer than the element size)", False,
-           patches=SENTINEL + [Patch("layer[bad].chan[0].type", u16(6),
+           patches=SENTINEL + [Patch("layer[bad].chan[0].type", u16(L30_LONGER),
                                      "uint8: element size 1, fill prefix 4")],
            repair=REPAIR_IDX,
            row="L30", rule="R-CNT-23", outcome="reject-layer",
@@ -195,7 +250,7 @@ VECTORS = [
     Vector("TV-0275", "pair",
            "layer `bad` channel `v` is uint64 with a 1-byte fill (instance: "
            "prefix shorter than the element size)", False,
-           patches=SENTINEL + [Patch("layer[bad].chan[0].type", u16(9),
+           patches=SENTINEL + [Patch("layer[bad].chan[0].type", u16(L30_SHORTER),
                                      "uint64: element size 8, fill prefix 1")],
            repair=REPAIR_IDX,
            row="L30", rule="R-CNT-23", outcome="reject-layer",
@@ -261,7 +316,9 @@ VECTORS = [
            row="L32", rule="R-GEO-01", outcome="reject-layer",
            scope={"kind": "layer", "name": "bad"}, detected="layer access",
            must_not_serve=["layer:bad"], serves=["ok"]),
-    # (No TV-0280: L32's channel-count instance is in SKIPPED below.)
+    # (L32's channel-count instance is not built in this module: SKIPPED
+    # below says why, and TV-0911 in structural.py carries it. TV-0280 is
+    # L30's, above.)
 
     # -- L33 · linearization other than 1 ---------------------------------
     # Value 2 (reserved 2–3) is TV-0006; these are the other three
