@@ -80,7 +80,7 @@ these meanings.
 - **layer** — a named N-dimensional array within a file. All layers of a
   file are equally first-class.
 - **dimension** — one axis of a layer's grid, having a name (§4.6), an
-  **extent** (the number of sample positions along the axis), and a
+  **extent** (the number of samples along the axis), and a
   **tile extent** (the number of sample positions per tile along the
   axis). Dimensions are declared in order, and the declared order fixes
   the sample order on disk: within a tile the last-declared dimension
@@ -95,9 +95,12 @@ these meanings.
   within each tile (*interleaved*) or each channel is tiled separately
   (*planar*).
 - **sample** — the tuple of one value per channel at one coordinate.
-- **coordinate** — a *d*-tuple (x₀, …, x_{d−1}), in declared dimension
-  order, with 0 ≤ xᵢ < Eᵢ, identifying one sample position of a layer
-  with extents (E₀, …, E_{d−1}).
+- **position** — a *d*-tuple of integers (x₀, …, x_{d−1}), in declared
+  dimension order. A layer's **sample positions** are the positions its
+  tiles cover: its coordinates, and the padding positions of its edge
+  tiles (§11.3).
+- **coordinate** — a position with 0 ≤ xᵢ < Eᵢ for every dimension,
+  identifying one sample of a layer with extents (E₀, …, E_{d−1}).
 - **tile** — the unit a tile-index entry addresses: in an interleaved
   layer, one cell of the tiling grid carrying all channels; in a planar
   layer, one cell of the grid carrying one channel. A tile *carries* a
@@ -133,8 +136,8 @@ otherwise it is that channel's fill value (§13). In an interleaved layer
 one tile carries every channel, so a coordinate's channel values are
 stored or fill together; in a planar layer each channel's storedness is
 independent, and a single sample can mix decoded and fill values.
-Sample positions that exist only as edge-tile padding (§11.3) have
-coordinates outside the layer's extents and are not part of the
+Sample positions that exist only as edge-tile padding (§11.3) lie
+outside the layer's extents and are not part of the
 reference array. `[R-MDL-01]`
 
 The reference array is this specification's conformance target: a
@@ -1613,13 +1616,12 @@ one exceeding 2⁶³ − 1 as a validity error at layer scope. `[R-GEO-03]`
 
 Every tile of a layer has the same logical shape (T₀, …, T_{d−1}).
 Where Eᵢ mod Tᵢ ≠ 0, the tiles at the high edge of dimension i contain
-**padding positions**: sample positions whose coordinate along that
-axis would be ≥ Eᵢ. That condition is where the grid overhangs the
-extent, stated in a form that forms no product (§4.2). Padding
-positions are serialized like any other position, under §14's
-byte-level rules and padding content, but are not part of the
-reference array (§3.2); a reader MUST NOT return padding positions as
-samples. `[R-GEO-04]`
+**padding positions**: sample positions with xᵢ ≥ Eᵢ. That condition
+is where the grid overhangs the extent, stated in a form that forms no
+product (§4.2). Padding positions are serialized like any other sample
+position, under §14's byte-level rules and padding content, but are
+not part of the reference array (§3.2); a reader MUST NOT return
+padding positions as samples. `[R-GEO-04]`
 
 > **Note.** Tile extents are a writer's choice, and this
 > specification imposes none: the workable range in practice runs
@@ -1971,8 +1973,8 @@ bytes present are 0x00 and 0x01. `[R-SER-08]`
 
 > **Example.** An interleaved layer, tile extents (2, 3), P = 6,
 > channels `a` (uint8) and `b` (uint16): Q = 3, decoded size 18. The
-> position with in-tile coordinates (1, 2) has in-tile ordinal 1·3 + 2
-> = 5; its sample occupies bytes [15, 18), `a` at byte 15 and `b` at
+> sample position at in-tile position (1, 2) has in-tile ordinal 1·3 +
+> 2 = 5; its sample occupies bytes [15, 18), `a` at byte 15 and `b` at
 > bytes 16–17, little-endian. The same layer planar: channel `b`'s
 > tile is 12 bytes, and ordinal 5's value occupies bytes 10–11. With
 > channels `t` (float32) and `m` (bool) interleaved instead: Q = 5,
@@ -2047,19 +2049,20 @@ for its combination of layout and channel types. `[R-SER-09]`
 
 #### 14.5 Padding content
 
-Padding positions (§11.3) are serialized like any other position, and
-their content is fixed: at every padding position, a writer MUST
-encode, for each channel the position carries, that channel's fill
-value, which is the recorded fill bytes for a numeric channel, the
-recorded fill byte for an interleaved bool channel, and the fill bit
-in a packed plane. Every pad bit (§14.3) MUST carry the plane's
-channel's fill bit. A conforming reader never returns this content
-(`[R-GEO-04]`) and is not obligated to check it; a verifier MUST check
-it, and a violation is a validity error at tile scope. `[R-SER-05]`
+Padding positions (§11.3) are serialized like any other sample
+position, and their content is fixed: at every padding position, a
+writer MUST encode, for each channel the position carries, that
+channel's fill value, which is the recorded fill bytes for a numeric
+channel, the recorded fill byte for an interleaved bool channel, and
+the fill bit in a packed plane. Every pad bit (§14.3) MUST carry the
+plane's channel's fill bit. A conforming reader never returns this
+content (`[R-GEO-04]`) and is not obligated to check it; a verifier
+MUST check it, and a violation is a validity error at tile scope.
+`[R-SER-05]`
 
 > **Example.** A layer with extents (5, 5), tile extents (4, 4): grid
-> 2 × 2, and the edge tile at tile coordinates (1, 1) covers
-> coordinates 4–7 along both axes, one real position, (4, 4), and 15
+> 2 × 2, and the edge tile at tile coordinates (1, 1) covers sample
+> positions 4–7 along both axes, one real position, (4, 4), and 15
 > padding positions. With one uint16 channel and fill `0xABCD`, that
 > decoded tile is 32 bytes: value 0 is the stored sample, and values
 > 1–15 are each the bytes `CD AB`.
@@ -2930,15 +2933,15 @@ performs no fetch, and failure takes each cited rule's own scope.
 
 #### 19.4 The tile-read algorithm
 
-A **point request** names a single coordinate (§3.1); a **region
-request** names a region of coordinates, one integer interval per
-dimension. If every interval holds a single position, the request is
+A **point request** names a single position (§3.1); a **region
+request** names a region of positions, one integer interval per
+dimension. If every interval holds a single integer, the request is
 still a region request. For a request of either form against an
 accessed layer, a conforming reader proceeds as follows; each step's
 failure takes the cited rule's outcome:
 
 1. **Domain.** For a point request, verify 0 ≤ xᵢ < Eᵢ for every
-   dimension; a coordinate outside the extents addresses nothing in
+   dimension; a position outside the extents addresses nothing in
    the reference array (`[R-MDL-01]`): the request fails as a request,
    with no verdict on the file. A region request covers the region's
    intersection with the extents: a region wholly outside them, or any
@@ -3873,7 +3876,7 @@ reported as `[R-ERR-04]` requires.
 | Condition | Defined behavior | Rule |
 |---|---|---|
 | An index entry is the sentinel | The tile is addressed but not stored; every sample position it carries inside the layer's extents reads, for each channel the tile carries, as that channel's fill | `[R-IDX-02]`, `[R-TYP-08]` |
-| A requested coordinate lies outside the layer's extents | The request fails as a request, with no verdict on the file; a region request returns the intersection, empty if disjoint | `[R-MDL-01]`, `[R-GEO-02]`, `[R-RDR-04]` |
+| A requested position lies outside the layer's extents | The request fails as a request, with no verdict on the file; a region request returns the intersection, empty if disjoint | `[R-MDL-01]`, `[R-GEO-02]`, `[R-RDR-04]` |
 | A dimension has extent 0 | A valid, empty layer: zero addressed tiles, an empty index, reads returning no samples | `[R-GEO-02]` |
 | The file contains zero layers | A conforming file: a directory carrying no layer record is a conforming generation whether or not it carries other records, an empty directory included | `[R-CNT-14]`, `[R-CNT-02]` |
 | A record type this specification has not assigned, from the experimental range (≥ 0x8000, §10.2), carries MU = 0 | Ignored, and preserved or dropped per its PE bit; a *reserved*-range type is read the same way, but emitting one is a violation (F36, L25) | `[R-CNT-15]`, `[R-CNT-18]`, `[R-WRT-08]` |

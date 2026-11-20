@@ -354,6 +354,84 @@ maintainer's word.
 
 ## Entries
 
+### 2026-11-20 — §3.1, §3.2, §11.3, §14.2, §14.5, §19.4, §21.6: ADR-0135 ported, *position* defined in both editions
+
+- **Commit:** `Readable: §3.1, §3.2, §11.3, §14.2, §14.5, §19.4, §21.6 —
+  ADR-0135 ported: a position is any integer tuple, a coordinate one
+  inside the extents` (the commit carrying this entry). Previous: the
+  merge of `main` (`b2bfd0c`; ADR-0135 `f443ac6`) with B's spec kept;
+  before it the merge that brought Q-I8 (`e74e249`; the question
+  `43863fe`); the spec's previous commit `041f998` (§19.4's lead-in).
+- **Sections:** §3.1 (the *dimension* entry's extent gloss; a new
+  *position* entry; the *coordinate* entry); §3.2 (`[R-MDL-01]`); §11.3
+  (`[R-GEO-04]`); §14.2's Example; §14.5 (`[R-SER-05]` and its Example);
+  §19.4 (`[R-RDR-04]`'s lead-in and step 1); §21.6's row on a request
+  outside the extents.
+- **The decision.** ADR-0135 (Q-I8, option (a), the maintainer's
+  direction of 2026-11-20: "Proceed with answering Q-I8 now, with your
+  suggestion"): *position* for any *d*-tuple of integers, *sample
+  position* for one a tile covers, *coordinate* for one inside the
+  extents. The second decision against A since B opened, taken on `main`
+  under the old gates and ported here under ADR-0133 decision 1 and its
+  erratum of 2026-10-14. The question came out of this read-through (the
+  entry below) and was opened on `main` on 2026-11-19.
+- **Edits**, each in the words the ADR put into A.
+  1. §3.1, *dimension*: "an **extent** (the number of sample positions
+     along the axis)" → "(the number of samples along the axis)"; the
+     line as in A, the rest of B's entry untouched.
+  2. §3.1: the new *position* entry and the restated *coordinate* entry,
+     byte-identical to A's.
+  3. §3.2, `[R-MDL-01]`: "have coordinates outside the layer's extents"
+     → "lie outside the layer's extents"; the two lines as in A, the
+     paragraph still verbatim.
+  4. §11.3, `[R-GEO-04]`: "sample positions whose coordinate along that
+     axis would be ≥ Eᵢ" → "sample positions with xᵢ ≥ Eᵢ"; "like any
+     other position" → "like any other sample position"; re-wrapped.
+  5. §14.2's Example: "The position with in-tile coordinates (1, 2)" →
+     "The sample position at in-tile position (1, 2)".
+  6. §14.5, `[R-SER-05]`: "like any other position" → "like any other
+     sample position"; re-wrapped. Its Example: "covers coordinates 4–7"
+     → "covers sample positions 4–7".
+  7. §19.4's lead-in: "a single coordinate (§3.1)" → "a single position
+     (§3.1)"; "a region of coordinates" → "a region of positions";
+     "holds a single position" → "holds a single integer". B keeps its
+     own "region", its "one integer interval per dimension" and its two
+     sentences (the entry below); A reads "a rectangular range of
+     positions, one interval per dimension, and a range whose every
+     interval holds a single integer is a region request".
+  8. §19.4 step 1: "a coordinate outside the extents" → "a position
+     outside the extents".
+  9. §21.6's row: "A requested coordinate lies" → "A requested position
+     lies"; the row as in A.
+- **The reference.** The export `scratch/cleanroom/editions/a/tarn.md` is
+  refreshed from `main` (`f443ac6`'s spec, sha256 `21e0fb1f…`, 5,007
+  lines and 50,088 words), as the erratum directs, before the port; the
+  inventory below compares against it. Against the refreshed export and
+  before the port, the inventory reported two hard items, `[R-MDL-01]`'s
+  paragraph and the missing term *position*; after it, none. The merge
+  kept B's spec.
+- **Removed restatements:** none. Word-level diff per passage
+  (`pass/port135.py`): the words lost are "coordinate" or "coordinates"
+  at each site with the phrases they stood in ("have", "whose … along
+  that axis would be", "with"), and "sample positions" in the extent
+  gloss; the words gained are "position" or "positions", "sample",
+  "samples", "lie", "with xᵢ", "at", "integer", and the new entry's own.
+  The four keyword clauses of `[R-GEO-04]` and `[R-SER-05]` verbatim.
+- **Reworded IDs:** none new; `R-GEO-04`, `R-SER-05` and `R-RDR-04` lines
+  extended; `R-MDL-01` identical in both editions and not listed.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before,
+  the same 143 by kind and subject. Terms 19 in each edition: *position*
+  and *coordinate* identical in both, *dimension* still among the eight
+  reworded. Keyword counts unchanged. B is 4,820 lines and 49,074 words.
+- **Questions raised:** none that held the commit; Q-I8 resolved on
+  `main`. Three consequences of the decision were the driver's to word
+  and are the maintainer's to strike: the extent gloss ("samples"), the
+  two "like any other sample position" clauses, and "holds a single
+  integer". Noted in §11.3: B's "That condition is where the grid
+  overhangs the extent" now follows "with xᵢ ≥ Eᵢ"; it refers to the
+  paragraph's opening condition, Eᵢ mod Tᵢ ≠ 0, as before, and is left
+  as B had it.
+
 ### 2026-11-19 — §19.4: a region request names a region of coordinates; R-RDR-04's line extended
 
 - **Commit:** `Readable: §19.4 — a region request names a region of
@@ -372,13 +450,13 @@ maintainer's word.
 - **The maintainer's ask.** "In 19.4, is 'rectangular range' of
   coordinates the proper terminology, given the multidimensional space
   we're talking about?" Answered: loose, not wrong; "region" is the noun
-  step 1, `[R-GEO-02]` and the Note already use. He chose the
-  replacement and gave a wording of his own: "a region request names a
+  step 1, `[R-GEO-02]` and the Note already use. The maintainer chose
+  the replacement and gave a wording: "a region request names a
   region of coordinates, one positive integer interval per dimension. If
   every interval is of size 1, the request is still a valid region
   request." Reviewed against A by rule; its two-sentence shape taken,
-  three of its words held and put to him with the reasons below;
-  approved without them ("1), looks good").
+  three of its words held and put to the maintainer with the reasons
+  below; approved without them ("1), looks good").
 - **Held from the maintainer's wording.**
   - "positive": read as numbers above zero it puts position 0 outside
     every region request, and §3.1's coordinates start at 0; read as an
