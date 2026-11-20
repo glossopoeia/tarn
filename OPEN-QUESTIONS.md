@@ -2051,7 +2051,19 @@ readable edition; both editions carry the text identically.
   Appendix H's writer checklist; (a) a class and a checklist; (c) a
   sentence in §2.3. Owning sections §2.3, §9.6.
 
-### Q-I8. Does *coordinate* name a tuple outside the extents, and if not, what does? [shaping]
+### Q-I8. Does *coordinate* name a tuple outside the extents, and if not, what does? [Resolved → ADR-0135]
+**Resolution (ADR-0135, option (a)):** three nested words. A *position* is a
+*d*-tuple of integers in declared dimension order, of any value. A layer's
+*sample positions* are the positions its tiles cover: its coordinates, and
+the padding positions of its edge tiles. A *coordinate* is a position with 0
+≤ xᵢ < Eᵢ for every dimension. §3.1 gains the entry *position*, which
+carries *sample position*, and states *coordinate* over it. The six passages
+take the wider word, and §14.2's Example takes §11.4's *in-tile position*.
+Three sentences the new entry reaches follow it: an extent counts samples
+along its axis; `[R-GEO-04]` and `[R-SER-05]` say "like any other sample
+position"; and an interval of §19.4's lead-in holds an integer. No
+requirement identifier, register row, vector or outcome changes. The
+question below stands as it was asked, quoting the text as it then read.
 **Question:** §3.1 defines a **coordinate** as "a *d*-tuple (x₀, …,
 x_{d−1}), in declared dimension order, with 0 ≤ xᵢ < Eᵢ, identifying one
 sample position of a layer with extents (E₀, …, E_{d−1})", so no coordinate

@@ -771,10 +771,10 @@ SKIPPED = {
         "outcome and no register condition. The guarantee bounds what a "
         "reader may decline, not what a file may contain.",
     # §21.6, row 2.
-    "§21.6/coordinate outside the layer's extents":
+    "§21.6/position outside the layer's extents":
         "The condition is a property of a *request*, not of a file: the "
         "bytes a reader is handed are identical whether or not anyone asks "
-        "for an out-of-range coordinate, so no two conforming files differ "
+        "for a position outside the extents, so no two conforming files differ "
         "by it and §21.1's 'one distinguishable file' test cannot be met. "
         "[R-VEC-02]'s manifest entry records decoded content per scope and "
         "has no place to state a request, so a vector here would carry an "

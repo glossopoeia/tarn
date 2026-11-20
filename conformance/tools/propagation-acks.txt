@@ -219,3 +219,7 @@ R-CNT-08 -> R-CNF-05: the erratum states the two positions a new-file writer tak
 R-WRT-09 -> R-CNF-06: the erratum scoped Appendix H's validation clause to an appender and named a rewriter's depth as [R-WRT-09]'s; the line also carries step 4's "a layer that stores a tile" phrase, which §20.5's opening uses for the re-declaring rewrite and which was not the subject.
 R-WRT-09 -> R-LIF-01: the same line; §20.3 step 4's head is the source of the phrase and was not the subject.
 R-CNT-21 -> R-CNT-08: the erratum says Appendix H's advisory report is an appender's and a rewriter's alike; [R-CNT-08] uses "appender and rewriter alike" of the ignore-lane bits, a different duty, and was not the subject.
+
+# ADR-0135 (2026-11-20): a position is any integer tuple, a coordinate one inside the extents.
+R-MDL-01 -> R-GEO-02: §21.6's row says "position" where it said "coordinate"; §19.4 step 1 restates the row and took the same word in the same commit, on the line above the flagged one. The flagged line carries the outcome ("with no verdict on the file") and the region clause, which the decision leaves standing in both places.
+R-MDL-01 -> R-MDL-01: the same pair. The flagged line is step 1's continuation ("in the reference array ([R-MDL-01])", "the request fails as a request"); its subject, "a position outside the extents", is on the line before it and was changed with the row.
