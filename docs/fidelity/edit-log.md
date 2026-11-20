@@ -354,6 +354,77 @@ maintainer's word.
 
 ## Entries
 
+### 2026-11-19 — §19.4: a region request names a region of coordinates; R-RDR-04's line extended
+
+- **Commit:** `Readable: §19.4 — a region request names a region of
+  coordinates; R-RDR-04's line extended` (the commit carrying this
+  entry). Previous: `acff939` (the second of two merges of main made on
+  2026-11-19, the generator's inert-patch check; neither merge touched
+  B's spec); the spec's previous commit `2204554` (§19.3).
+- **Sections:** §19.4: the lead-in paragraph before the eight steps, and
+  the first sentence of the Note on region reads. The lead-in is a block
+  of its own (`[R-RDR-04]` stands at the end of step 8), so the
+  inventory does not attribute it; the ID is listed since the
+  spruce-up. The lead-in was byte-identical in A until this edit, and
+  the Note's first sentence carried A's words. The lead-in defines the
+  two request forms the steps act on: a normative sentence, reworded at
+  the maintainer's ask.
+- **The maintainer's ask.** "In 19.4, is 'rectangular range' of
+  coordinates the proper terminology, given the multidimensional space
+  we're talking about?" Answered: loose, not wrong; "region" is the noun
+  step 1, `[R-GEO-02]` and the Note already use. He chose the
+  replacement and gave a wording of his own: "a region request names a
+  region of coordinates, one positive integer interval per dimension. If
+  every interval is of size 1, the request is still a valid region
+  request." Reviewed against A by rule; its two-sentence shape taken,
+  three of its words held and put to him with the reasons below;
+  approved without them ("1), looks good").
+- **Held from the maintainer's wording.**
+  - "positive": read as numbers above zero it puts position 0 outside
+    every region request, and §3.1's coordinates start at 0; read as an
+    interval that is not empty it states a condition A does not. A
+    constrains no interval: step 1 has a region request cover "the
+    region's intersection with the extents", and "a region wholly
+    outside them, or any region of a zero-extent layer, succeeds and
+    returns no samples" (`[R-GEO-02]`). A condition on the intervals
+    would be a new rule, by ADR against A.
+  - "valid": A only classifies (such a request "is a region request",
+    that is, not a point request). A has no notion of a valid request,
+    and validity is the specification's word for file states.
+  - "of size 1": the count of positions, or the distance between the
+    ends; A's "holds a single position" kept.
+  - "integer" kept: A implies it by "holds a single position".
+- **Edit.** The lead-in: "a **region request** names a rectangular range
+  of coordinates, one interval per dimension, and a range whose every
+  interval holds a single position is a region request." → "a **region
+  request** names a region of coordinates, one integer interval per
+  dimension. If every interval holds a single position, the request is
+  still a region request." The point-request clause before it and the
+  sentence after it ("For a request of either form against an accessed
+  layer, a conforming reader proceeds as follows; each step's failure
+  takes the cited rule's outcome:") verbatim; the paragraph re-wrapped.
+  The Note: "A rectangular-region read" → "A region read"; every other
+  word verbatim, its capital MAY included (held for the maintainer, not
+  part of this change); its first three lines re-wrapped. §16.2's
+  Rationale keeps "a rectangular window", which names a window of tiles
+  and not a request; not asked.
+- **Removed restatements:** none. Word-level diff, the lead-in: "a",
+  "rectangular", "range" twice, "and", "whose" lost; "request",
+  "region", "integer", "If", "the", "still" gained; 59 → 59 words. The
+  Note: "rectangular" lost from "rectangular-region", nothing gained.
+- **Reworded IDs:** `R-RDR-04`, already listed; its reason line extended
+  for the lead-in.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before.
+  Keyword counts unchanged. B is 4,817 lines and 49,047 words.
+- **Questions raised:** none needing an ADR. Noted for the maintainer,
+  not opened: §3.1 defines a *coordinate* "with 0 ≤ xᵢ < Eᵢ", while
+  §3.2 (`[R-MDL-01]`: padding positions "have coordinates outside the
+  layer's extents"), §19.4 step 1 ("a coordinate outside the extents")
+  and §21.6's row ("A requested coordinate lies outside the layer's
+  extents") use the word for tuples outside the extents. Shared text of
+  A, and this edit leaves it as it was ("of coordinates" is A's phrase
+  in the lead-in).
+
 ### 2026-10-21 — §19.3: the layer-access sentence as a definition, the MUST and a list; R-RDR-03's line extended
 
 - **Commit:** `Readable: §19.3 — the layer-access sentence as a definition,

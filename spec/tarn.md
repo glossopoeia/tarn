@@ -2931,11 +2931,11 @@ performs no fetch, and failure takes each cited rule's own scope.
 #### 19.4 The tile-read algorithm
 
 A **point request** names a single coordinate (§3.1); a **region
-request** names a rectangular range of coordinates, one interval
-per dimension, and a range whose every interval holds a single
-position is a region request. For a request of either form
-against an accessed layer, a conforming reader proceeds as
-follows; each step's failure takes the cited rule's outcome:
+request** names a region of coordinates, one integer interval per
+dimension. If every interval holds a single position, the request is
+still a region request. For a request of either form against an
+accessed layer, a conforming reader proceeds as follows; each step's
+failure takes the cited rule's outcome:
 
 1. **Domain.** For a point request, verify 0 ≤ xᵢ < Eᵢ for every
    dimension; a coordinate outside the extents addresses nothing in
@@ -2992,9 +2992,9 @@ follows; each step's failure takes the cited rule's outcome:
 > whole-CRC-array verification is shared across all of them.
 > Channel-subset reads verify only the segments they touch.
 
-> **Note — region reads.** A rectangular-region read is this algorithm
-> applied per covered tile. Readers MAY coalesce the payload fetches
-> of ordinal-adjacent stored tiles; a slab declaration guarantees
+> **Note — region reads.** A region read is this algorithm applied per
+> covered tile. Readers MAY coalesce the payload fetches of
+> ordinal-adjacent stored tiles; a slab declaration guarantees
 > contiguity only for stored tiles within one run (§16.2), and across
 > runs, and across planar channel blocks, placement is unconstrained
 > (`[R-SLB-05]`), so coalescing is always driven by the entries'
