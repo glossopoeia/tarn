@@ -2051,6 +2051,73 @@ readable edition; both editions carry the text identically.
   Appendix H's writer checklist; (a) a class and a checklist; (c) a
   sentence in §2.3. Owning sections §2.3, §9.6.
 
+### Q-I8. Does *coordinate* name a tuple outside the extents, and if not, what does? [shaping]
+**Question:** §3.1 defines a **coordinate** as "a *d*-tuple (x₀, …,
+x_{d−1}), in declared dimension order, with 0 ≤ xᵢ < Eᵢ, identifying one
+sample position of a layer with extents (E₀, …, E_{d−1})", so no coordinate
+lies outside the extents. Six passages use the word for a tuple that does,
+or for a request that can name one: §3.2 `[R-MDL-01]` ("Sample positions
+that exist only as edge-tile padding (§11.3) have coordinates outside the
+layer's extents"); §11.3 `[R-GEO-04]` ("sample positions whose coordinate
+along that axis would be ≥ Eᵢ", which its "would be" hedges); §14.5's
+Example (the edge tile of a layer with extents (5, 5) "covers coordinates
+4–7 along both axes"); §19.4's lead-in ("A **point request** names a single
+coordinate (§3.1)", a region request "a rectangular range of coordinates"),
+whose step 1 then tests the point against the extents and lets a region lie
+wholly outside them; step 1 itself ("a coordinate outside the extents
+addresses nothing in the reference array"); and §21.6's row ("A requested
+coordinate lies outside the layer's extents"). §14.2's Example adds a slip
+of the other kind, "in-tile coordinates" for what §11.4 defines as the
+**in-tile position**. The document has a wider word already. A *sample
+position* is a slot of the tiling grid whether or not it lies inside the
+extents: §3.1's *dimension* and *tile* entries count sample positions, §11.3
+defines **padding positions** among them, and §14.5's Example and row T2
+call the others "real". But §3.1 gives *sample position* no entry of its
+own, and a tuple a request names beyond the tiling grid is no sample
+position either. Raised by the maintainer on 2026-11-19 reading §19.4's
+lead-in in the readable edition, with a suggested answer, option (a) below;
+both editions carry every passage quoted, the readable edition's lead-in
+saying "a region of coordinates" since that day.
+- **Why it matters:** no byte and no outcome turns on it. Step 1 and §21.6
+  say what a reader does with every tuple a request names, inside the
+  extents or out. What is at stake is whether §3.1's list holds for the
+  document that states it. The bound has decided a reading before: ADR-0123
+  records that "§3.1 bounds a coordinate by the extents", from which a
+  reader could hold that a shrink alters "the coordinate §11.4 assigns any
+  value they decode to", and §20.3 step 4 still explains its bar by a stored
+  tile's "values' coordinates". Read by the definition, §19.4's point
+  request names only a tuple inside the extents and step 1's test cannot
+  fail; read by step 1, it names any tuple. Two rules carry the loose use in
+  their own paragraphs (`[R-MDL-01]`, `[R-GEO-04]`), and a third in its
+  lead-in and first step (`[R-RDR-04]`).
+- **Options:** (a) The maintainer's suggestion: *position* for a tuple
+  whether inside or outside the extents, *coordinate* for one inside them.
+  §3.1 gains an entry for the wider word and defines a coordinate as a
+  position with 0 ≤ xᵢ < Eᵢ; the six passages take "position" (a point
+  request names a position, step 1 tests it, §21.6's row reads "A requested
+  position lies outside the layer's extents"); every use that means a tuple
+  inside the extents stands as written. The new entry has to place the word
+  against *sample position*: either a position is any integer tuple of the
+  layer's rank and a sample position is one a tile covers, or the two are
+  one notion and a request's tuple beyond the grid needs other words.
+  "Position" is also the per-axis word in §3.1's *dimension* entry and in
+  §19.4's "holds a single position". (b) Widen *coordinate*: §3.1 drops the
+  bound, a coordinate is any tuple, and one inside the extents identifies a
+  sample. The six passages stand, and every rule that leans on the bound is
+  re-read: §3.2's reference array, §11.4's `[R-GEO-06]`, §20.3 step 4's bar,
+  and ADR-0123's ground with it. (c) Leave the text. Each loose use says
+  "outside the extents" in so many words, step 1 and §21.6 fix what a reader
+  does, and the cleanroom transcripts use the phrase as the document does;
+  the cost is a defined term used against its definition under three rules.
+- **What settles it:** whether §3.1's entries are to hold at every use of
+  their terms and, under (a), what a position is beside a sample position.
+  (a) costs one §3.1 entry and six rewordings, with §14.2's Example a
+  seventh: two in the paragraphs of `[R-MDL-01]` and `[R-GEO-04]`, two under
+  `[R-RDR-04]` (its lead-in and step 1), one in an Example and one in a row
+  of §21.6's table. No register row's condition, no vector and no outcome
+  moves. (b) costs one clause of §3.1 and the re-reading. (c) costs nothing
+  now. Owning sections §3.1, §3.2, §11.3, §14.5, §19.4, §21.6.
+
 ### Q-I2. Cleanroom-test protocol details. [Resolved → ADR-0034]
 **Resolution:** four parallel roles (reader/verifier/writer/quiz),
 spec-text-only access, finding taxonomy with mandatory disposition;
