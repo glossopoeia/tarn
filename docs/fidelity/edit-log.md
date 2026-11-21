@@ -354,6 +354,46 @@ maintainer's word.
 
 ## Entries
 
+### 2026-11-20 — §19.4: the region-reads Note's MAY made "are free to"
+
+- **Commit:** `Readable: §19.4 — the region-reads Note's MAY made "are
+  free to"` (the commit carrying this entry). Previous: `2f07f83`
+  (ADR-0135's port), also the spec's previous commit.
+- **Sections:** §19.4, the Note on region reads after the eight steps.
+  Non-normative. The sentence was A's words until this edit; the Note's
+  first sentence was edited on 2026-11-19 (two entries below).
+- **The maintainer's ask.** "Fix the capital MAY in the region-reads
+  Note". One of the two Notes held for the read-through since 2026-10-21
+  (the entry "§9.2, §15.4: two Notes' keywords made the rules' own bar
+  and permission"). A keyword binds only outside a labelled block
+  (`[R-CNF-01]`), and the standing rule is keywords in capitals only
+  where they bind. Applied on that word, in the form §15.4's Note took.
+- **Edit.** "Readers MAY coalesce the payload fetches of
+  ordinal-adjacent stored tiles" → "Readers are free to coalesce the
+  payload fetches of ordinal-adjacent stored tiles". Every other word of
+  the Note untouched; one line changed, no re-wrap.
+- **Where the freedom comes from.** No rule grants coalescing by name.
+  The word stands only in this Note and in §16.2's Rationale (a Note in
+  A), and ADR-0040, whose batch added this Note (`79f79ce`), does not
+  mention it. The sentence is true because no rule fixes how a reader
+  groups its fetches: step 5 fixes which bytes are fetched and that the
+  entry's crc is verified over them before decoding (`[R-CNT-20]`), and
+  §6.4's Note says of the open that "no request count is a conformance
+  property, and nothing here bounds what a reader fetches". So the Note
+  states a freedom and names no rule as its source. The three Notes of
+  2026-10-21 differed: each had its rule in the same sentence.
+- **Removed restatements:** none. Word-level diff: "MAY" lost; "are",
+  "free", "to" gained; 81 → 83 words.
+- **Reworded IDs:** none; a Note.
+- **Soft items:** `ID_REWORDED_LISTED` ×128; the carried items as before;
+  `KEYWORD_COUNT` MAY 57 in A against 54 in B (four Notes' keywords now
+  out of their labelled blocks), beside the carried MUST NOT 78 against
+  77 and SHOULD 46 against 47. B is 4,820 lines and 49,076 words.
+- **Questions raised:** none. One Note in the unread stretch still
+  carries a capital keyword, §20.3's "small updates SHOULD batch them
+  into one commit" (B line 3261), for the read-through; §2.1's Note
+  names the keywords as words and stays.
+
 ### 2026-11-20 — §3.1, §3.2, §11.3, §14.2, §14.5, §19.4, §21.6: ADR-0135 ported, *position* defined in both editions
 
 - **Commit:** `Readable: §3.1, §3.2, §11.3, §14.2, §14.5, §19.4, §21.6 —

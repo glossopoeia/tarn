@@ -2996,7 +2996,7 @@ failure takes the cited rule's outcome:
 > Channel-subset reads verify only the segments they touch.
 
 > **Note — region reads.** A region read is this algorithm applied per
-> covered tile. Readers MAY coalesce the payload fetches of
+> covered tile. Readers are free to coalesce the payload fetches of
 > ordinal-adjacent stored tiles; a slab declaration guarantees
 > contiguity only for stored tiles within one run (§16.2), and across
 > runs, and across planar channel blocks, placement is unconstrained
