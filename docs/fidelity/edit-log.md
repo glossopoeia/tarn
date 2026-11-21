@@ -354,6 +354,47 @@ maintainer's word.
 
 ## Entries
 
+### 2026-11-20 — §20.3: the commit-cost Note's SHOULD made "are better off"
+
+- **Commit:** `Readable: §20.3 — the commit-cost Note's SHOULD made "are
+  better off"` (the commit carrying this entry). Previous: `62003ef`
+  (§19.4's region-reads Note), also the spec's previous commit.
+- **Sections:** §20.3, the Note after the append procedure's step 6.
+  Non-normative. A's words until this edit, its dash a semicolon since
+  the spruce-up.
+- **The maintainer's ask.** "fix the 20.3 note with a capitalized
+  SHOULD", given with the ruling on the entry below ("1) keep it"). The
+  last of the Notes held since 2026-10-21. §20 is not yet read; this
+  Note is fixed ahead of the read-through at the maintainer's word.
+- **Edit.** "Writers doing many small updates SHOULD batch them into one
+  commit, and compact (§20.5) when slack grows" → "Writers doing many
+  small updates are better off batching them into one commit, and
+  compacting (§20.5) when slack grows". Every other word of the Note
+  untouched; its last three lines re-wrapped.
+- **Where the advice comes from.** No rule states it. "Batch" stands
+  nowhere else in either edition, and no rule says when to compact:
+  §5.2 says only that the slack total "is what tells an operator to
+  compact". The Note came with ADR-0048 (`f738b29`), whose Consequences
+  say "bulk work then compaction is the intended shape, and a long
+  series of small edits is supported but wasteful". So the Note keeps
+  its advice and names no rule; its ground is its own first sentence,
+  that a change to a layer's stored-tile set re-emits the layer's whole
+  tile-index region.
+- **Removed restatements:** none. Word-level diff: "SHOULD", "batch",
+  "compact" lost; "are", "better", "off", "batching", "compacting"
+  gained; 77 → 79 words.
+- **Reworded IDs:** none; a Note.
+- **Soft items:** 142, one fewer than before. `KEYWORD_COUNT` SHOULD is
+  no longer reported, the count being 46 in each edition, and **the
+  equality hides two differences that cancel**: `[R-CNT-26]`'s elided
+  keyword is written out in B, one more than A, and this Note's keyword
+  is out of B, one fewer. `ID_REWORDED_LISTED` ×128; the carried items
+  as before; `KEYWORD_COUNT` MUST NOT 78 in A against 77 in B and MAY 57
+  against 54. B is 4,820 lines and 49,078 words.
+- **Questions raised:** none. No labelled block of B now carries a
+  capital keyword except §2.1's Note, which names the keywords as words
+  and stays.
+
 ### 2026-11-20 — §19.4: the region-reads Note's MAY made "are free to"
 
 - **Commit:** `Readable: §19.4 — the region-reads Note's MAY made "are

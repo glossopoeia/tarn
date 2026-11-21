@@ -3258,9 +3258,9 @@ or the declaration is cleared (`[R-SLB-01]`, `[R-CNF-05]`).
 > any change to a layer's stored-tile set re-emits that layer's whole
 > tile-index region, so editing one sample of a 10⁶-tile layer appends
 > about 20 MB of index and leaves as much slack. Writers doing many
-> small updates SHOULD batch them into one commit, and compact (§20.5)
-> when slack grows; a verifier whose walk completes reports its total
-> (§9.7).
+> small updates are better off batching them into one commit, and
+> compacting (§20.5) when slack grows; a verifier whose walk completes
+> reports its total (§9.7).
 
 > **Example.** Superseding one 100,000-byte stored tile of a 32-tile
 > interleaved layer appends: the new payload (100,000 bytes), the
